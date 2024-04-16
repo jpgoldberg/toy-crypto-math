@@ -12,6 +12,14 @@ def factor(n: int, ith: int = 0) -> Factorization:
     Returns list (prime, exponent) factors of n.
     Starts trial div at ith prime.
     """
+
+    if not isinstance(n, int):
+        raise TypeError('input must be an int')
+    if n < 1:
+        raise ValueError('input must be positive')
+    if n == 1:
+        return []
+
     low_primes: list[int] = [
         2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
         67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137,
@@ -45,7 +53,7 @@ def factor(n: int, ith: int = 0) -> Factorization:
 
     top = math.ceil(math.sqrt(n))
 
-    if ith < len(low_primes):
+    if ith < len(low_primes) and n <= low_primes[-1] ** 2:
         for ith, p in enumerate(low_primes[ith:]):
             if p > top:
                 break
@@ -59,5 +67,31 @@ def factor(n: int, ith: int = 0) -> Factorization:
                     reduced, remainder = divmod(reduced, p)
                 factors.append((p, exponent))
                 return factors + factor(prev_reduced, ith)
+        return [(n, 1)]
 
     return factors
+
+
+def gcd(a: int, b: int) -> int:
+    """Returns greatest common denomenator of a and b."""
+    while a != 0:
+        a, b = b % a, a
+    return b
+
+
+def egcd(a: int, b: int) -> tuple[int, int, int]:
+    """returns (g, x, y) such that a*x + b*y = gcd(a, b) = g."""
+    x0, x1, y0, y1 = 0, 1, 1, 0
+    while a != 0:
+        (q, a), b = divmod(b, a), a
+        y0, y1 = y1, y0 - q * y1
+        x0, x1 = x1, x0 - q * x1
+    return b, x0, y0
+
+
+def modinv(a: int, m: int) -> int:
+    """returns x such that a * x mod m = 1,"""
+    g, x, _ = egcd(a, m)
+    if g != 1:
+        raise ValueError(f'{a} and {m} are not co-prime')
+    return x

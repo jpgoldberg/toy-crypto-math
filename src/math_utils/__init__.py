@@ -40,8 +40,10 @@ def factor(n: int, ith: int = 0) -> Factorization:
     ]
 
     factors: Factorization = []
+    if n in low_primes:
+        return [(n, 1)]
 
-    top = math.floor(math.sqrt(n))
+    top = math.ceil(math.sqrt(n))
 
     if ith < len(low_primes):
         for ith, p in enumerate(low_primes[ith:]):
@@ -49,7 +51,7 @@ def factor(n: int, ith: int = 0) -> Factorization:
                 break
             reduced, remainder = divmod(n, p)
             if remainder == 0:
-                exponent = 1
+                exponent = 0
                 prev_reduced = reduced
                 while remainder == 0:
                     exponent += 1

@@ -3,9 +3,20 @@
 # SPDX-License-Identifier: MIT
 
 from math import floor, ceil, sqrt
+from functools import reduce
+from collections.abc import Iterable
 from collections import UserList
 from typing import Self
 import random  # random is good enough for Miller-Rabin.
+
+
+# E731 tells me to def prod instead of bind it to a lambda.
+# https://docs.astral.sh/ruff/rules/lambda-assignment/
+
+
+def prod[T](iterable: Iterable[T]) -> T:
+    """Returns the product of the elements of it"""
+    return reduce(lambda a, b: a * b, iterable)  # type: ignore
 
 
 class FactorList(UserList):
@@ -15,6 +26,12 @@ class FactorList(UserList):
 
         # Normalization will do some sanity checking as well
         self.normalize()
+
+        # properity-like things that are computed when first needed
+        self._n: int | None = None
+        self._totient: int | None = None
+        self._radical: 'FactorList | None' = None
+        self._radical_value: int | None = None
 
     def normalize(self) -> Self:
         """
@@ -49,6 +66,59 @@ class FactorList(UserList):
         self.data = [(p, d[p]) for p in sorted(d.keys())]
 
         return self
+
+    @property
+    def n(self) -> int:
+        if self._n is None:
+            n = 1
+            for p, e in self.data:
+                n *= p ** e
+            self._n = n
+        return self._n
+
+    @property
+    def phi(self) -> int:
+        """
+        Returns Euler's Totient (phi)
+
+        phi(n) is the number of numbers less than n which are coprime with n.
+
+        This assumes that the factorization (self) is a prime factorization.
+
+        """
+
+        if self._totient is None:
+            self._totient = reduce(
+                lambda a, b: a * b,
+                [p ** (e - 1) * (p - 1) for p, e in self.data])
+
+        return self._totient
+
+    # some aliases and such to implement a few more
+    # of the SageMath Factorization methods
+
+    def unit(self) -> int:
+        """We only handle positive integers, so"""
+        return 1
+
+    def is_integral(self) -> bool:
+        return True
+
+    def value(self):
+        return self.n
+
+    def radical(self) -> 'FactorList':
+        '''All exponenents on factors set to 1'''
+        if self._radical is None:
+            self._radical = FactorList([(p, 1) for p, _ in self.data])
+        return self._radical
+
+    def radical_value(self) -> int:
+        if self._radical_value is None:
+            self._radical_value = reduce(
+                lambda a, b: a * b,
+                [p for p, _ in self.data])
+        return self._radical_value
 
 
 def factor(n: int, ith: int = 0) -> FactorList:

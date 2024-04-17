@@ -67,3 +67,50 @@ def test_factor_large() -> None:
     for tv in test_vectors:
         n, expected = tv
         assert factor(n) == expected
+
+
+def test_phi() -> None:
+    test_vectors = [
+        ([(3, 1), (5, 1)], 8),
+        ([(2, 2), (5, 1)], 8),
+        ([(65537, 1)], 65536),
+    ]
+    for f, expected in test_vectors:
+        assert FactorList(f).phi == expected
+
+
+def test_n() -> None:
+    test_vectors = [
+        ([(3, 1), (5, 1)], 15),
+        ([(2, 2), (5, 1)], 20),
+        ([(65537, 1)], 65537),
+    ]
+    for input, expected in test_vectors:
+        f = FactorList(input)
+        assert f.n == expected
+        assert f.value() == expected
+
+
+def test_radical() -> None:
+    test_vectors = [
+        (
+            [(3, 1), (5, 1)],
+            [(3, 1), (5, 1)],
+            15
+        ),
+        (
+            [(2, 2), (5, 4)],
+            [(2, 1), (5, 1)],
+            10
+        ),
+        (
+            [(2, 32)],
+            [(2, 1)],
+            2
+        ),
+    ]
+
+    for input, exp_r, exp_rv in test_vectors:
+        f = FactorList(input)
+        assert f.radical() == exp_r
+        assert f.radical_value() == exp_rv

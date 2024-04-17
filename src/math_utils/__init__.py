@@ -2,12 +2,19 @@
 #
 # SPDX-License-Identifier: MIT
 
-import math
+from math import floor, ceil, sqrt
+from collections import UserList
 
-Factorization = list[tuple[int, int]]
+
+class FactorList(UserList):
+
+    def __init__(self, prime_factors: list[tuple[int,int]] = []):
+        # We will assume for now that prime_factors are in good order.
+        # TODO: Check that prime_factors is sane
+        super().__init__(prime_factors)
 
 
-def factor(n: int, ith: int = 0) -> Factorization:
+def factor(n: int, ith: int = 0) -> FactorList:
     """
     Returns list (prime, exponent) factors of n.
     Starts trial div at ith prime.
@@ -18,7 +25,7 @@ def factor(n: int, ith: int = 0) -> Factorization:
     if n < 1:
         raise ValueError('input must be positive')
     if n == 1:
-        return []
+        return FactorList([])
 
     low_primes: list[int] = [
         2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
@@ -47,13 +54,13 @@ def factor(n: int, ith: int = 0) -> Factorization:
         2011, 2017, 2027, 2029, 2039,
     ]
 
-    factors: Factorization = []
+    factors = FactorList()
     if n in low_primes:
-        return [(n, 1)]
+        return FactorList([(n, 1)])
 
-    top = math.ceil(math.sqrt(n))
+    top = ceil(sqrt(n))
 
-    if ith < len(low_primes) and n <= low_primes[-1] ** 2:
+    if ith < len(low_primes):
         for ith, p in enumerate(low_primes[ith:]):
             if p > top:
                 break
@@ -67,9 +74,20 @@ def factor(n: int, ith: int = 0) -> Factorization:
                     reduced, remainder = divmod(reduced, p)
                 factors.append((p, exponent))
                 return factors + factor(prev_reduced, ith)
-        return [(n, 1)]
 
-    return factors
+    # n is not divisible by any of our low primes
+    if n <= low_primes[-1] ** 2:  # n is prime
+        return FactorList([(n, 1)])
+
+    # Now we use Fermat's method (in the form of OLF
+    # Note that OLF finds a (possibly composite factor),
+    # So we will need to recurse and combine results.
+
+    f = OLF(n)
+    if f == 1:  # n is prime
+        return FactorList([(n, 1)])
+
+    return factor(f) + factor(n//f)
 
 
 def gcd(a: int, b: int) -> int:
@@ -95,3 +113,26 @@ def modinv(a: int, m: int) -> int:
     if g != 1:
         raise ValueError(f'{a} and {m} are not co-prime')
     return x
+
+
+def is_square(n: int) -> bool:
+    """
+    True iff n is a perfect square.
+
+    This may become unreliable for very large n"""
+    r = sqrt(float(n))
+    rr = int(round(r))
+    return rr * rr == n
+
+
+# From https://programmingpraxis.com/2014/01/28/harts-one-line-factoring-algorithm/
+def OLF(n) -> int:
+    """Returns 1 if n is prime, else a factor (possibly composite) of n"""
+    for ni in range(n, n*n, n):
+        cs = ceil(sqrt(ni))
+        pcs = pow(cs, 2, n)
+        if is_square(pcs):
+            return gcd(n, floor(cs - sqrt(pcs)))
+
+    # This will never be reached, but linters don't know that
+    return 1

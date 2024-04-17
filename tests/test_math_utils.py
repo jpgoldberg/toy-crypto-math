@@ -1,6 +1,6 @@
 import pytest
 import sys
-from math_utils import FactorList, factor, OLF
+from math_utils import FactorList, factor, OLF, miller_rabin
 
 
 def test_factor_small() -> None:
@@ -127,6 +127,18 @@ def test_repr() -> None:
         f = FactorList(input)
         assert f.__repr__() == expected
 
+
+def test_mr() -> None:
+    test_vectors = [
+        (1729, False),
+        (104297, True),
+        (1180775137873020977354442912336269, True),
+        (1025046047436407593990706183629376939000352221561805965005888683119,
+         False),
+    ]
+
+    for n, is_prime in test_vectors:
+        assert miller_rabin(n) == is_prime
 
 
 if __name__ == '__main__':

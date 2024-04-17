@@ -4,6 +4,7 @@
 
 from math import floor, ceil, sqrt
 from collections import UserList
+from typing import Self
 
 
 class FactorList(UserList):
@@ -12,6 +13,23 @@ class FactorList(UserList):
         # We will assume for now that prime_factors are in good order.
         # TODO: Check that prime_factors is sane
         super().__init__(prime_factors)
+
+    def normalize(self) -> Self:
+        """Dedupicates primes and sorts in prime order."""
+
+        # this calls for some clever list comprehensions.
+        # But I am not feeling that clever at the moment
+
+        # I will construct a dict from the data and then
+        # reconstruct the data from the dict
+
+        d = {p: 0 for (p, _) in self.data}
+        for p, e in self.data:
+            d[p] += e
+
+        self.data = [(p, d[p]) for p in sorted(d.keys())]
+
+        return self
 
 
 def factor(n: int, ith: int = 0) -> FactorList:
@@ -87,7 +105,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
     if f == 1:  # n is prime
         return FactorList([(n, 1)])
 
-    return factor(f) + factor(n//f)
+    return (factor(f) + factor(n//f)).normalize()
 
 
 def gcd(a: int, b: int) -> int:

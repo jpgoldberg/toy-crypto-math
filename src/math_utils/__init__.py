@@ -11,12 +11,24 @@ import random  # random is good enough for Miller-Rabin.
 class FactorList(UserList):
 
     def __init__(self, prime_factors: list[tuple[int,int]] = []):
-        # We will assume for now that prime_factors are in good order.
-        # TODO: Check that prime_factors is sane
         super().__init__(prime_factors)
 
+        # Normalization will do some sanity checking as well
+        self.normalize()
+
     def normalize(self) -> Self:
-        """Dedupicates primes and sorts in prime order."""
+        """
+        Dedupicates primes and sorts in prime order.
+
+        Exceptions:
+
+            TypeError if prime and exponents are not ints
+
+            ValueError if p < 2 or e < 1
+
+        This does not check that the primes are actually prime.
+
+        """
 
         # this calls for some clever list comprehensions.
         # But I am not feeling that clever at the moment
@@ -26,6 +38,12 @@ class FactorList(UserList):
 
         d = {p: 0 for (p, _) in self.data}
         for p, e in self.data:
+            if not isinstance(p, int) or not isinstance(e, int):
+                raise TypeError("Primes and exponents must be integers")
+            if p < 2:
+                raise ValueError(f"{p} should be greater than 1")
+            if e < 1:
+                raise ValueError(f'{e} should be greater than 0')
             d[p] += e
 
         self.data = [(p, d[p]) for p in sorted(d.keys())]

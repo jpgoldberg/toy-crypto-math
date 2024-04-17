@@ -1,3 +1,5 @@
+import pytest
+import sys
 from math_utils import FactorList, factor, OLF
 
 
@@ -12,8 +14,7 @@ def test_factor_small() -> None:
         (1999162, [(2, 1), (11, 3), (751, 1)]),
     ]
 
-    for tv in test_vectors:
-        n, expected = tv
+    for n, expected in test_vectors:
         assert factor(n) == expected
 
 
@@ -23,8 +24,7 @@ def test_OLF() -> None:
         (22171 * 45827 * 5483, 22171 * 5483),
     ]
 
-    for tv in test_vectors:
-        n, expected = tv
+    for n, expected in test_vectors:
         assert OLF(n) == expected
 
 
@@ -64,8 +64,7 @@ def test_factor_large() -> None:
         ),
     ]
 
-    for tv in test_vectors:
-        n, expected = tv
+    for n, expected in test_vectors:
         assert factor(n) == expected
 
 
@@ -114,3 +113,21 @@ def test_radical() -> None:
         f = FactorList(input)
         assert f.radical() == exp_r
         assert f.radical_value() == exp_rv
+
+
+def test_repr() -> None:
+    test_vectors = [
+        ([(5483, 2)],'5483^2'),
+        ([(11, 2), (5483, 1), (104243, 1)], '11^2 * 5483 * 104243'),
+        ([(2, 32)], '2^32'),
+        ([(2, 6), (3, 3), (5, 3)], '2^6 * 3^3 * 5^3'),
+    ]
+
+    for input, expected in test_vectors:
+        f = FactorList(input)
+        assert f.__repr__() == expected
+
+
+
+if __name__ == '__main__':
+    sys.exit(pytest.main())

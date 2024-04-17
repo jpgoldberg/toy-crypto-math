@@ -12,8 +12,6 @@ import random  # random is good enough for Miller-Rabin.
 
 # E731 tells me to def prod instead of bind it to a lambda.
 # https://docs.astral.sh/ruff/rules/lambda-assignment/
-
-
 def prod[T](iterable: Iterable[T]) -> T:
     """Returns the product of the elements of it"""
     return reduce(lambda a, b: a * b, iterable)  # type: ignore
@@ -32,6 +30,13 @@ class FactorList(UserList):
         self._totient: int | None = None
         self._radical: 'FactorList | None' = None
         self._radical_value: int | None = None
+
+    def __repr__(self) -> str:
+        s: list[str] = []
+        for p, e in self.data:
+            term = f'{p}' if e == 1 else f'{p}^{e}'
+            s.append(term)
+        return ' * '.join(s)
 
     def normalize(self) -> Self:
         """
@@ -70,10 +75,7 @@ class FactorList(UserList):
     @property
     def n(self) -> int:
         if self._n is None:
-            n = 1
-            for p, e in self.data:
-                n *= p ** e
-            self._n = n
+            self._n = prod([p ** e for p, e in self.data])
         return self._n
 
     @property
@@ -88,9 +90,8 @@ class FactorList(UserList):
         """
 
         if self._totient is None:
-            self._totient = reduce(
-                lambda a, b: a * b,
-                [p ** (e - 1) * (p - 1) for p, e in self.data])
+            self._totient = prod([p ** (e - 1) * (p - 1)
+                                  for p, e in self.data])
 
         return self._totient
 
@@ -115,9 +116,7 @@ class FactorList(UserList):
 
     def radical_value(self) -> int:
         if self._radical_value is None:
-            self._radical_value = reduce(
-                lambda a, b: a * b,
-                [p for p, _ in self.data])
+            self._radical_value = prod([p for p, _ in self.data])
         return self._radical_value
 
 

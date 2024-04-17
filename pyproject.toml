@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "math-utils-jpgoldberg"
+name = "math-utils"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -30,6 +30,7 @@ Source = "https://github.com/unknown/math-utils"
 
 [tool.hatch.version]
 path = "src/math_utils/__about__.py"
+
 
 [tool.hatch.envs.default]
 dependencies = [

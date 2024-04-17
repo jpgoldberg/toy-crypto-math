@@ -5,6 +5,7 @@
 from math import floor, ceil, sqrt
 from collections import UserList
 from typing import Self
+import random  # random is good enough for Miller-Rabin.
 
 
 class FactorList(UserList):
@@ -101,6 +102,12 @@ def factor(n: int, ith: int = 0) -> FactorList:
     # Note that OLF finds a (possibly composite factor),
     # So we will need to recurse and combine results.
 
+    # OLE is a really, really, really slow way to test primality.
+    # So we will do Miller-Rabin first
+
+    if miller_rabin(n):
+        return FactorList([(n, 1)])
+
     f = OLF(n)
     if f == 1:  # n is prime
         return FactorList([(n, 1)])
@@ -154,3 +161,40 @@ def OLF(n) -> int:
 
     # This will never be reached, but linters don't know that
     return 1
+
+
+# lifted from https://gist.github.com/Ayrx/5884790
+# k of 40 seems really high to me, but I see that the recommendation is from
+# Thomas Pornin, so I am going to use that.
+def miller_rabin(n: int, k: int = 40) -> bool:
+    """Returns True if n is prime or if you had really bad luck."""
+
+    # Implementation uses the Miller-Rabin Primality Test
+    # The optimal number of rounds for this test is 40
+    # See https://stackoverflow.com/a/6330138/1304076
+    # for justification
+
+    # If number is even, it's a composite number
+
+    if n == 2:
+        return True
+
+    if n % 2 == 0:
+        return False
+
+    r, s = 0, n - 1
+    while s % 2 == 0:
+        r += 1
+        s //= 2
+    for _ in range(k):
+        a = random.randrange(2, n - 1)
+        x = pow(a, s, n)
+        if x == 1 or x == n - 1:
+            continue
+        for _ in range(r - 1):
+            x = pow(x, 2, n)
+            if x == n - 1:
+                break
+        else:
+            return False
+    return True

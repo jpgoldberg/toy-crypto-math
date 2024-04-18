@@ -11,7 +11,7 @@ requires-python = ">=3.11"
 license = "MIT"
 keywords = []
 authors = [
-  { name = "Jeffrey Goldberg", email = "jeff@agilebits.com" },
+  { name = "Jeffrey Goldberg", email = "jeffrey@goldmark.org" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -36,6 +36,7 @@ path = "src/math_utils/__about__.py"
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "ruff",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
@@ -48,6 +49,7 @@ cov = [
   "test-cov",
   "cov-report",
 ]
+lint = "ruff check {args:src/math_utils tests}"
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11", "3.12"]

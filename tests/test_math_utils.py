@@ -128,6 +128,17 @@ def test_repr() -> None:
         assert f.__repr__() == expected
 
 
+def test_coprimes() -> None:
+    test_vectors = [
+        (15, [1, 2, 4, 7, 8, 11, 13, 14]),
+        (17, list(range(1, 17))),
+    ]
+
+    for n, relprimes in test_vectors:
+        f = factor(n)
+        assert list(f.coprimes()) == relprimes
+
+
 def test_mr() -> None:
     test_vectors = [
         (1729, False),

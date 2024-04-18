@@ -4,7 +4,7 @@
 
 from math import floor, ceil, sqrt
 from functools import reduce
-from collections.abc import Iterable
+from collections.abc import Iterable, Generator
 from collections import UserList
 from typing import Self
 import random  # random is good enough for Miller-Rabin.
@@ -12,9 +12,9 @@ import random  # random is good enough for Miller-Rabin.
 
 # E731 tells me to def prod instead of bind it to a lambda.
 # https://docs.astral.sh/ruff/rules/lambda-assignment/
-def prod[T](iterable: Iterable[T]) -> T:
+def prod[T](iterable: Iterable[T]) -> T:  # type: ignore
     """Returns the product of the elements of it"""
-    return reduce(lambda a, b: a * b, iterable)  # type: ignore
+    return reduce(lambda a, b: a * b, iterable)
 
 
 # primes under 2^21
@@ -46,7 +46,7 @@ LOW_PRIMES: list[int] = [
     ]
 
 
-class FactorList(UserList):
+class FactorList(UserList[tuple[int,int]]):
 
     def __init__(self, prime_factors: list[tuple[int, int]] = []):
         super().__init__(prime_factors)
@@ -124,8 +124,11 @@ class FactorList(UserList):
 
         return self._totient
 
-    # some aliases and such to implement a few more
-    # of the SageMath Factorization methods
+    def coprimes(self) -> Generator[int, None, None]:
+        prime_factors = [p for p, _ in self.data]
+        for a in range(1, self.n):
+            if not any([a % p == 0 for p in prime_factors]):
+                yield a
 
     def unit(self) -> int:
         """We only handle positive integers, so"""
@@ -134,7 +137,7 @@ class FactorList(UserList):
     def is_integral(self) -> bool:
         return True
 
-    def value(self):
+    def value(self) -> int:
         return self.n
 
     def radical(self) -> 'FactorList':
@@ -193,12 +196,14 @@ def factor(n: int, ith: int = 0) -> FactorList:
 
     # OLE is a really, really, really slow way to test primality.
     # So we will do Miller-Rabin first
-
     if miller_rabin(n):
         return FactorList([(n, 1)])
 
     f = OLF(n)
     if f == 1:  # n is prime
+        # This shouldn't happen, as we've already checked for primality
+        # But I am leaving it in in case I somehow remove the
+        # earlier primality check.
         return FactorList([(n, 1)])
 
     return (factor(f) + factor(n//f)).normalize()
@@ -240,7 +245,7 @@ def is_square(n: int) -> bool:
 
 
 # From https://programmingpraxis.com/2014/01/28/harts-one-line-factoring-algorithm/
-def OLF(n) -> int:
+def OLF(n: int) -> int:
     """Returns 1 if n is prime, else a factor (possibly composite) of n"""
     for ni in range(n, n*n, n):
         cs = ceil(sqrt(ni))

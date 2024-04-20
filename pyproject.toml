@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "math-utils"
+name = "toy-crypto-math"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -31,6 +31,9 @@ Source = "https://github.com/unknown/math-utils"
 [tool.hatch.version]
 path = "src/math_utils/__about__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
 
 [tool.hatch.envs.default]
 dependencies = [
@@ -52,7 +55,7 @@ cov = [
 lint = "ruff check {args:src/math_utils tests}"
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+python = ["3.11", "3.12"]
 
 [tool.hatch.envs.types]
 dependencies = [

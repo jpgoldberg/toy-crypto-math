@@ -6,7 +6,7 @@ from math import floor, ceil, sqrt
 from functools import reduce
 from collections.abc import Iterable, Generator
 from collections import UserList
-from typing import Self
+from typing import Self, Optional
 import random  # random is good enough for Miller-Rabin.
 
 
@@ -46,7 +46,7 @@ LOW_PRIMES: list[int] = [
     ]
 
 
-class FactorList(UserList[tuple[int,int]]):
+class FactorList(UserList[tuple[int, int]]):
 
     def __init__(self, prime_factors: list[tuple[int, int]] = []):
         super().__init__(prime_factors)
@@ -295,3 +295,99 @@ def miller_rabin(n: int, k: int = 40) -> bool:
 
     # We've run all k trials, without any a telling us n is composite
     return True
+
+
+def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
+    """For odd prime m return (r, m-r) s.t. r^2 = a (mod m) if r exists.
+
+    m must be an odd prime. If p is not prime, you might get a nice error,
+    but sometimes you will get garbage results.
+    """
+
+    # I would have thought that there was a library for this.
+    # Can't find it outside of sage, which is a bit big to import.
+
+    # Algorithm taken from https://www.rieselprime.de/ziki/Modular_square_root
+
+    if m < 5:
+        raise ValueError("modulus must be an odd prime")
+
+    a = a % m
+    if a == 0:
+        return None
+
+    # check that a is a quadratic residue, return None if not
+    if pow(a, (m - 1) // 2, m) != 1:
+        return None
+
+    if m % 4 == 3:  # if r exists then r = a^{(m+1)/2}
+        r = pow(a, (m + 1) // 4, m)
+        return r, (m - r) % m
+
+    # Now we move to the tricky cases
+    if m % 8 == 5:
+        v = pow(2 * a, (m - 5) // 8, m)
+        i = (2 * a * v * v) % m
+        r = (a * v * (i - 1)) % m
+        return r, (m - r) % m
+
+    if m % 8 != 1:
+        raise ValueError("modulus must be prime")
+
+    # Now we are at the m % 8 == 1 case for which the algorithm is messy
+    # Instructions quoted from
+    #     https://www.rieselprime.de/ziki/Modular_square_root
+
+    # Step 1: "Set e and odd q s.t. m = (2^e)q + 1"
+    # Well, thanks. Let's figure out how to do that.
+
+    # m is odd so we know that (2^1)q + 1 = m has
+    # an integer q. So we start there
+    e = 1
+    q = (m - 1) // 2
+    # while q is even if cut it in half and increment e
+    while q % 2 == 0:
+        e += 1
+        q //= 2  # could do q >>= 1, but compiler will pick that if faster
+
+    # just a check that we got an e and q
+    if m != (2**e) * q + 1:
+        raise Exception(f"Shouldn't happen: 2^{e} * {q} + 1 != {m}")
+    if q % 2 == 0:
+        raise Exception(f"Shouldn't happen: q ({q}) isn't odd.")
+
+    # Step 2.
+    # Find an x such that x is a quadratic non-residue of m.
+    # We don't need good randomness, and half of possible x
+    # are quadratic non-residues
+    x: int = random.randint(2, m - 1)
+    z: int = pow(x, q, m)
+    while pow(z, 2 ** (e - 1), m) == 1:
+        x = random.randint(2, m - 1)
+        z = pow(x, q, m)
+
+    # step 3:
+    # x should now be a QNR in Zm
+    y = z
+    r = e
+    x = pow(a, (q - 1) // 2, m)
+    v = (a * x) % m
+    w = (v * x) % m
+
+    # step 4:
+    # I do not understand why this all works.
+    while w != 1:
+        # step 5: "Find the smallest value of k such that w^(2^k) % m == 1"
+        k = 1
+        w2 = w * w
+        while w2 % m != 1:
+            w2 *= w2
+            k += 1
+        # step 6:
+        d = pow(y, 2 ** (r - k - 1), m)
+        y = (d * d) % m
+        r = k
+        v = (d * v) % m
+        w = (w * y) % m
+
+    return v, (m - v) % m

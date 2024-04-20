@@ -1,6 +1,7 @@
 import pytest
 import sys
-from math_utils import FactorList, factor, OLF, miller_rabin, gcd, egcd
+from typing import NamedTuple
+from math_utils import FactorList, factor, OLF, miller_rabin, gcd, egcd, mod_sqrt
 
 
 class TestFactor:
@@ -170,6 +171,32 @@ class TestMath:
             g, x, y = egcd(a, b)
             assert g == gcd(a, b)
             assert a * x + b * y == g
+
+    def test_mod_sqrt(self) -> None:
+        class TestVector(NamedTuple):
+            a: int
+            m: int
+            expected: tuple[int, int] | None
+
+        tests = [
+            TestVector(58, 101, (82, 19)),
+            TestVector(26, 101, None),
+            TestVector(111, 113, (87, 26)),
+            TestVector(55, 113, None),
+            TestVector(30, 103, (37, 103 - 37)),
+            TestVector(31, 103, None),
+        ]
+
+        for a, m, expected in tests:
+            # first some verification of the roots in test vectors
+            if expected:
+                for root in expected:
+                    assert a == root * root % m
+
+            e: list[int] = [] if expected is None else sorted(list(expected))
+            ret = mod_sqrt(a, m)
+            r: list[int] = [] if ret is None else sorted(list(ret))
+            assert e == r
 
 
 if __name__ == "__main__":

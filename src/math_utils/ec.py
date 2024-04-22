@@ -37,13 +37,12 @@ def is_modulus(n: Any) -> TypeGuard[Modulus]:
 
 
 class Curve:
-    """Define a curve of the form y^2 = x^3 + ax + b (mod p).
-    """
+    """Define a curve of the form y^2 = x^3 + ax + b (mod p)."""
 
     def __init__(self, a: int, b: int, p: int) -> None:
         self.a: int = a
         self.b: int = b
-        self.p: Modulus = p
+        self.p: Modulus = Modulus(p)
 
         if self.is_singular():
             raise ValueError(f"{self} is singular")
@@ -51,7 +50,7 @@ class Curve:
         if not is_modulus(self.p):
             raise ValueError("Bad modulus p")
 
-        self._pai = FFPoint(0, 0, self, is_zero=True)
+        self._pai = Point(0, 0, self, is_zero=True)
 
     def is_singular(self) -> bool:
         return (4 * self.a**3 + 27 * self.b * self.b) % self.p == 0
@@ -105,9 +104,7 @@ class Point:
         self.is_zero: bool = is_zero
 
         if not (isinstance(self.x, int) and isinstance(self.y, int)):
-            raise TypeError(
-                "Points in finite fields must have integer coordinates"
-            )
+            raise TypeError("Points must have integer coordinates")
 
         self.x %= self.curve.p
         self.y %= self.curve.p
@@ -116,7 +113,6 @@ class Point:
             raise ValueError("point not on curve")
 
     def on_curve(self) -> bool:
-
         if self.is_zero:
             return True
 
@@ -260,8 +256,8 @@ class Point:
 
         xy = self._double()
         if not xy:
-            self.x = 0,
-            self.y = 0,
+            self.x = (0,)
+            self.y = (0,)
             self.is_zero = True
         else:
             self.x, self.y = xy

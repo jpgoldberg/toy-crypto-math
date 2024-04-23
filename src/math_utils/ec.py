@@ -20,7 +20,6 @@ if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import NewType, TypeGuard, Optional, Self, Any
 from collections.abc import Generator
-from math import isclose
 from . import mod_sqrt, miller_rabin
 
 Modulus = NewType("Modulus", int)
@@ -40,9 +39,9 @@ class Curve:
     """Define a curve of the form y^2 = x^3 + ax + b (mod p)."""
 
     def __init__(self, a: int, b: int, p: int) -> None:
+        self.p: Modulus = Modulus(p)
         self.a: int = a
         self.b: int = b
-        self.p: Modulus = Modulus(p)
 
         if self.is_singular():
             raise ValueError(f"{self} is singular")
@@ -62,7 +61,7 @@ class Curve:
     @property
     def PAI(self) -> "Point":
         return self._pai
-    
+
     @property
     def order(self):
         return self._order
@@ -262,10 +261,10 @@ class Point:
         if self.is_zero:
             return self
 
-        xy = self._double()
+        xy = self._xy_double()
         if not xy:
-            self.x = (0,)
-            self.y = (0,)
+            self.x = 0
+            self.y = 0
             self.is_zero = True
         else:
             self.x, self.y = xy
@@ -281,7 +280,7 @@ class Point:
 
         return P
 
-    def _double(self) -> Optional[tuple[int, int]]:
+    def _xy_double(self) -> Optional[tuple[int, int]]:
         """(x, y) for x, y of doubled point. None if point at infinity
 
         :returns: new coordinates, x and y
@@ -318,7 +317,7 @@ class Point:
     def scaler_multiply(self, n: int) -> "Point":
         """returns n * self"""
 
-        n %= self.curve.order
+        n = n % self.curve.order
         sum = self.curve.PAI  # additive identity
         doubled = self
         for bit in lsb_to_msb(n):
@@ -365,15 +364,12 @@ def lsb_to_msb(n: int) -> Generator[int, None, None]:
     """
     Creates a generator of bits of n, starting from the least significant bit.
     """
-    while n:
+
+    if not isinstance(n, int):
+        raise TypeError("n must be an integer")
+
+    if n < 0:
+        raise ValueError("n cannot be negative")
+    while n > 0:
         yield n & 1
         n >>= 1
-
-
-def demo():
-    """Demonstrations should go here"""
-    pass
-
-
-if __name__ == "__main__":
-    demo()

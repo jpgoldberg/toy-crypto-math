@@ -52,12 +52,20 @@ class Curve:
 
         self._pai = Point(0, 0, self, is_zero=True)
 
+        # This assumes (without checking) that the curve has good paramaters
+        # and that a generator (base point) has been chosen correctly/
+        self._order = (self.p + 1) // 2
+
     def is_singular(self) -> bool:
         return (4 * self.a**3 + 27 * self.b * self.b) % self.p == 0
 
     @property
     def PAI(self) -> "Point":
         return self._pai
+    
+    @property
+    def order(self):
+        return self._order
 
     def __repr__(self) -> str:
         # There is probably a nice way to do with with
@@ -73,7 +81,7 @@ class Curve:
         else:
             b = f"+ {self.b}"
 
-        return f"y^2 = x^3 {ax}{b} (mod {self.p})"
+        return f"y^2 = x^3 {ax} {b} (mod {self.p})"
 
     def y_positive(self, x: float) -> float:
         return (x**3 + self.a * x + self.b) ** 0.5
@@ -220,7 +228,7 @@ class Point:
 
         # P + P
         if self == Q:
-            return self.double()
+            return self.idouble()
 
         # P + -P = 0
         if self.x == Q.x:
@@ -268,15 +276,8 @@ class Point:
         if self.is_zero:
             return self.cp()
 
-        P: Point
-        if is_ff_point(self):
-            P = FFPoint.from_point(self)
-            P = P._double()
-        elif is_real_point(self):
-            P = RealPoint.from_point(self)
-            P = P._double()
-        else:
-            raise Exception("should not happen")
+        P = self.cp()
+        P = P.idouble()
 
         return P
 
@@ -316,6 +317,8 @@ class Point:
 
     def scaler_multiply(self, n: int) -> "Point":
         """returns n * self"""
+
+        n %= self.curve.order
         sum = self.curve.PAI  # additive identity
         doubled = self
         for bit in lsb_to_msb(n):

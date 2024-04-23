@@ -35,6 +35,9 @@ print(f'base point as at {g.xy()}')
 order = g.order()
 print(f'Generator order is {order}')
 
+# construct test vectors
+vectors = []
 for d in range(1, order):
-    dG = d * g
-    print(f'{d} * G = {dG.xy()}')
+    vectors.append((d, ((d * g).xy())))
+
+print(vectors)

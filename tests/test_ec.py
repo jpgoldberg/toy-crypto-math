@@ -21,12 +21,28 @@ def test_curve_repr() -> None:
     assert name == expected
 
 
-def test_PQ_setup() -> None:
+def test_P_setup() -> None:
     P = Point(Px, Py, curve)
     exp_P = 3, 46
 
     assert P.x == exp_P[0]
     assert P.y == exp_P[1]
+
+
+def test_compute_y() -> None:
+    Qyy = curve.compute_y(Qx)
+    if Qyy is None:
+        pytest.fail("Qxy should exist")
+
+    y0, y1 = Qyy
+
+    Q0 = Point(Qx, y0, curve)
+    assert Q0.on_curve()
+
+    Q1 = Point(Qx, y1, curve)
+    assert Q1.on_curve()
+
+    assert (y0 + y1) % curve.p == 0
 
 
 def test_order() -> None:
@@ -83,6 +99,17 @@ def test_bits() -> None:
     for n, expected in vectors:
         bits = [bit for bit in lsb_to_msb(n)]
         assert bits == expected
+
+
+def test_double() -> None:
+    G = Point(*sc_generator, curve)
+
+    G2 = G.double()
+    assert G2.x, G2.y == (8, 174)
+
+    G4 = G2.double()
+    assert G4.x, G4.y == (4, 96)
+
 
 
 def test_scaler_multipy() -> None:

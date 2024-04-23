@@ -89,6 +89,7 @@ class Curve:
         return -self.y_positive(x)
 
     def compute_y(self, x: int) -> Optional[tuple[int, int]]:
+        "Retruns pair of y vaules for x on curve. None otherwise."
         a = self.a
         b = self.b
         p = self.p

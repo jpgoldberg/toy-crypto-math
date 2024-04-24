@@ -62,7 +62,7 @@ class Curve:
         return self._pai
 
     @property
-    def order(self):
+    def order(self) -> int:
         return self._order
 
     def __repr__(self) -> str:
@@ -80,12 +80,6 @@ class Curve:
             b = f"+ {self.b}"
 
         return f"y^2 = x^3 {ax} {b} (mod {self.p})"
-
-    def y_positive(self, x: float) -> float:
-        return (x**3 + self.a * x + self.b) ** 0.5
-
-    def y_negative(self, x: float) -> float:
-        return -self.y_positive(x)
 
     def compute_y(self, x: int) -> Optional[tuple[int, int]]:
         "Retruns pair of y vaules for x on curve. None otherwise."

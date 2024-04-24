@@ -1,6 +1,6 @@
 import pytest
 import sys
-from math_utils.ec import Curve, Point, Modulus
+from math_utils.ec import Curve, Modulus
 
 
 class TestSeriousCurve:
@@ -182,10 +182,10 @@ class TestSeriousCurve:
 
     def test_double(self) -> None:
         G2 = self.G.double()
-        assert G2.x, G2.y == (8, 174)
+        assert (G2.x, G2.y) == (8, 174)
 
         G4 = G2.double()
-        assert G4.x, G4.y == (4, 96)
+        assert (G4.x, G4.y) == (4, 96)
 
     def test_doubling_only(self) -> None:
         doubled_only = [d for d in self.sage_vectors if d.bit_count() == 1]

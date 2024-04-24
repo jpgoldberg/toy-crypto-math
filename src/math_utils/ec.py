@@ -319,7 +319,7 @@ class Point:
         """returns n * self"""
 
         n = n % self.curve.order
-        sum = self.curve.PAI  # additive identity
+        sum = self.curve.PAI.cp()  # additive identity
         doubled = self
         for bit in lsb_to_msb(n):
             if bit == 1:

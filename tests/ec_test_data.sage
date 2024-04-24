@@ -36,8 +36,8 @@ order = g.order()
 print(f'Generator order is {order}')
 
 # construct test vectors
-vectors = []
+vectors: dict[int, tuple[int, int]] = {}
 for d in range(1, order):
-    vectors.append((d, ((d * g).xy())))
+    vectors[d] = (d * g).xy()
 
 print(vectors)

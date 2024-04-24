@@ -391,3 +391,18 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
         w = (w * y) % m
 
     return v, (m - v) % m
+
+
+def lsb_to_msb(n: int) -> Generator[int, None, None]:
+    """
+    Creates a generator of bits of n, starting from the least significant bit.
+    """
+
+    if not isinstance(n, int):
+        raise TypeError("n must be an integer")
+
+    if n < 0:
+        raise ValueError("n cannot be negative")
+    while n > 0:
+        yield n & 1
+        n >>= 1

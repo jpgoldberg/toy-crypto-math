@@ -1,6 +1,6 @@
 import pytest
-from math_utils.ec import Curve, Point, Modulus, lsb_to_msb
-from math_utils import is_square
+import sys
+from math_utils.ec import Curve, Point, Modulus
 
 
 class TestSeriousCurve:
@@ -147,13 +147,5 @@ def test_curve_validation() -> None:
         Curve(2, 3, p=Modulus(5))
 
 
-def test_bits() -> None:
-    vectors = [
-        (0b1101, [1, 0, 1, 1]),
-        (1, [1]),
-        (0, []),
-        (0o644, [0, 0, 1, 0, 0, 1, 0, 1, 1]),
-    ]
-    for n, expected in vectors:
-        bits = [bit for bit in lsb_to_msb(n)]
-        assert bits == expected
+if __name__ == "__main__":
+    sys.exit(pytest.main(args=[__file__]))

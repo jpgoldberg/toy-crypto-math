@@ -19,8 +19,7 @@ import sys
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import NewType, TypeGuard, Optional, Self, Any
-from collections.abc import Generator
-from . import mod_sqrt, miller_rabin
+from . import mod_sqrt, miller_rabin, lsb_to_msb
 
 Modulus = NewType("Modulus", int)
 
@@ -359,18 +358,3 @@ class Point:
         y %= m
 
         return x, y
-
-
-def lsb_to_msb(n: int) -> Generator[int, None, None]:
-    """
-    Creates a generator of bits of n, starting from the least significant bit.
-    """
-
-    if not isinstance(n, int):
-        raise TypeError("n must be an integer")
-
-    if n < 0:
-        raise ValueError("n cannot be negative")
-    while n > 0:
-        yield n & 1
-        n >>= 1

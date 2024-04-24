@@ -1,7 +1,16 @@
 import pytest
 import sys
 from typing import NamedTuple
-from math_utils import FactorList, factor, OLF, miller_rabin, gcd, egcd, mod_sqrt
+from math_utils import (
+    FactorList,
+    factor,
+    OLF,
+    miller_rabin,
+    gcd,
+    egcd,
+    mod_sqrt,
+    lsb_to_msb,
+)
 
 
 class TestFactor:
@@ -199,5 +208,19 @@ class TestMath:
             assert e == r
 
 
+class TestUtils:
+
+    def test_bits(self) -> None:
+        vectors = [
+            (0b1101, [1, 0, 1, 1]),
+            (1, [1]),
+            (0, []),
+            (0o644, [0, 0, 1, 0, 0, 1, 0, 1, 1]),
+        ]
+        for n, expected in vectors:
+            bits = [bit for bit in lsb_to_msb(n)]
+            assert bits == expected
+
+
 if __name__ == "__main__":
-    sys.exit(pytest.main())
+    sys.exit(pytest.main(args=[__file__]))

@@ -129,8 +129,7 @@ class TestSeriousCurve:
 
     def test_compute_y(self) -> None:
         Qyy = self.curve.compute_y(self.Qx)
-        if Qyy is None:
-            pytest.fail("Qxy should exist")
+        assert Qyy is not None
 
         y0, y1 = Qyy
 

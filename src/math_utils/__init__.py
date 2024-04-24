@@ -393,6 +393,11 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
     return v, (m - v) % m
 
 
+def lcm(a: int, b: int) -> int:
+    """Least common multiple"""
+    return abs(a*b)//gcd(a, b)
+
+
 def lsb_to_msb(n: int) -> Generator[int, None, None]:
     """
     Creates a generator of bits of n, starting from the least significant bit.

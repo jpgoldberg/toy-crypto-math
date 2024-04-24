@@ -10,6 +10,7 @@ from math_utils import (
     egcd,
     mod_sqrt,
     lsb_to_msb,
+    modinv,
 )
 
 
@@ -206,6 +207,24 @@ class TestMath:
             ret = mod_sqrt(a, m)
             r: list[int] = [] if ret is None else sorted(list(ret))
             assert e == r
+
+    def test_modinv(self) -> None:
+
+
+        p = 868112830765445632873217196988651
+        q = 1180775137873020977354442912336269
+
+        p_inv = modinv(p, q)
+        q_inv = modinv(q, p)
+
+        assert (p_inv * p) % q == 1
+        assert (q_inv * q) % p == 1
+
+        assert p_inv > 0
+        assert p_inv < q
+
+        assert q_inv > 0
+        assert q_inv < p
 
 
 class TestUtils:

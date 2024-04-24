@@ -231,7 +231,7 @@ def modinv(a: int, m: int) -> int:
     g, x, _ = egcd(a, m)
     if g != 1:
         raise ValueError(f'{a} and {m} are not co-prime')
-    return x
+    return x % m
 
 
 def is_square(n: int) -> bool:

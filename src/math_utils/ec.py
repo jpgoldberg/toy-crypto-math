@@ -96,6 +96,9 @@ class Curve:
         y = mod_sqrt(y2, p)
         return y
 
+    def point(self, x: int, y: int) -> 'Point':
+        return Point(x, y, self, is_zero=False)
+
 
 class Point:
     """Point on elliptic curve over the reals"""

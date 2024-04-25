@@ -1,4 +1,4 @@
-from math_utils import rsa
+from math_utils import rsa, lcm
 from typing import Optional
 
 
@@ -37,7 +37,7 @@ class TestCitm:
     def test_encrypt(self) -> None:
         for critter in [self.patty, self.molly, self.mr_talk]:
             p, q = critter.factors
-            key = rsa.PrivateKey(p, q, pub_exponent=17)
+            key = rsa.PrivateKey(p, q, pub_exponent=self.e)
             pubkey = key.pub_key
 
             for ptext, ctext in critter.test_data:
@@ -46,7 +46,7 @@ class TestCitm:
     def test_decrypt(self) -> None:
         for critter in [self.patty, self.molly, self.mr_talk]:
             p, q = critter.factors
-            key = rsa.PrivateKey(p, q, pub_exponent=17)
+            key = rsa.PrivateKey(p, q, pub_exponent=self.e)
 
             for ptext, ctext in critter.test_data:
                 assert ptext == key.decrypt(ctext)
@@ -54,7 +54,7 @@ class TestCitm:
     def test_N(self) -> None:
         for critter in [self.patty, self.molly, self.mr_talk]:
             p, q = critter.factors
-            key = rsa.PrivateKey(p, q, pub_exponent=17)
+            key = rsa.PrivateKey(p, q, pub_exponent=self.e)
             pubkey = key.pub_key
 
             assert pubkey.N == critter.expected_N
@@ -62,6 +62,55 @@ class TestCitm:
     def test_d(self) -> None:
         for critter in [self.patty, self.molly, self.mr_talk]:
             p, q = critter.factors
-            key = rsa.PrivateKey(p, q, pub_exponent=17)
+            key = rsa.PrivateKey(p, q, pub_exponent=self.e)
 
             assert key._d == critter.expected_d
+
+
+class TestSage:
+    """Test data from SageMath Tutorial
+
+    https://doc.sagemath.org/html/en/thematic_tutorials/numtheory_rsa.html
+
+    The tutorial correctly points out that they way the primes
+    were generated is inappropriate for real work.
+
+    The tutorial uses phi directly instead of lcm(p-1, q-1).
+    """
+
+    # Don't use mersenne primes in real life
+    p = (2**31) - 1
+    q = (2**61) - 1
+    e = 1850567623300615966303954877
+    m = 72697676798779827668  # message
+
+    n = 4951760154835678088235319297
+    phi = 4951760152529835076874141700
+    d = 4460824882019967172592779313
+    c = 630913632577520058415521090
+
+    λ = lcm(p - 1, q - 1)
+
+    def test_encrypt(self) -> None:
+        priv_key = rsa.PrivateKey(self.p, self.q, self.e)
+        pub_key = priv_key.pub_key
+
+        assert pub_key.encrypt(self.m) == self.c
+
+    def test_decrypt(self) -> None:
+        priv_key = rsa.PrivateKey(self.p, self.q, self.e)
+
+        assert priv_key.decrypt(self.c) == self.m
+
+    def test_N(self) -> None:
+        priv_key = rsa.PrivateKey(self.p, self.q, self.e)
+        pub_key = priv_key.pub_key
+
+        assert pub_key.N == self.n
+
+    def test_d(self) -> None:
+        priv_key = rsa.PrivateKey(self.p, self.q, self.e)
+
+        # We (almost certainly) get a smaller d where the lcm check matters
+        if self.phi == self.λ:
+            assert priv_key._d == self.d

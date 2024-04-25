@@ -37,6 +37,7 @@ class PrivateKey:
 
         self._dP = modinv(self._e, p - 1)
         self._dQ = modinv(self._e, (self._q - 1))
+        self._qInv = modinv(self._q, self._p)
 
         self._d = self._compute_d()
 
@@ -56,8 +57,18 @@ class PrivateKey:
             raise ValueError("Inverse of e mod λ does not exist")
 
     def decrypt(self, ciphertext: int) -> int:
-
-        # for small moduli we don't use the CRT
-        return pow(base=ciphertext, exp=self._d, mod=self._N)
+        if self._N < 1024:
+            # for small moduli we don't use the CRT
+            return pow(base=ciphertext, exp=self._d, mod=self._N)
 
         # TODO: CRT version
+        # CRT version comes from  rfc8017 §5.1.2
+
+        m_1 = pow(ciphertext, self._dP, self._p)
+        m_2 = pow(ciphertext, self._dQ, self._q)
+
+        # I need to review CRT to see what this is for
+        h = ((m_1 - m_2) * self._qInv) % self._p
+
+        m = m_2 + self._q * h
+        return m

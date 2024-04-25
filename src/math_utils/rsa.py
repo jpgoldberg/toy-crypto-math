@@ -54,3 +54,10 @@ class PrivateKey:
             return modinv(self.e, λ)
         except ValueError:
             raise ValueError("Inverse of e mod λ does not exist")
+
+    def decrypt(self, ciphertext: int) -> int:
+
+        # for small moduli we don't use the CRT
+        return pow(base=ciphertext, exp=self._d, mod=self._N)
+
+        # TODO: CRT version

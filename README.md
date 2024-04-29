@@ -24,7 +24,22 @@ a Python-like environment use [SageMath].
 
 ## Motivation
 
-As I said above, this is almost certainly not the package you are looking for. Instead, [pyca] or [SageMath] will better suite your needs.
+This package is almost certainly not the package you are looking for. Instead, [pyca] or [SageMath] will better suite your needs.
+I created it to meet a number of my own idiosyncratic  needs.
+
+- I don't have the flexibility of Python version that I may want when using [SageMath].
+  
+  Perhaps when [`sagemath-standard`](https://pypi.org/project/sagemath-standard/) quickly becomes available for the latest Python versions, I won't need to have my own, pure Python (failable and incomplete) substitutes for what is available in SageMath.
+
+- I sometimes talk about these algorithms for teaching purposes. Having pure Python versions allows me to present these.
+
+- Some of these I created or copied for my own learning purposes.
+
+- I have a number of "good enough" (for my purposes) implementations of things that I want to reuse.
+
+  For example, Birthday collision calculations are things I occasionally want, and I don't want to hunt for wherever I have something like that written or rewrite it yet again.
+  Likewise, I wouldn't be surprised if I'm written the extended GCD algorithm more than a dozen times
+  (not all in Python), and so would like to have at least the Python version in one place
 
 I wanted to have access to something that behaved a bit like SageMath's `factor()` without having do everything in Sage. If the sagemath-standard experimental package were less experimental, I wouldn't have needed to do this.
 
@@ -32,7 +47,7 @@ Note that my implementations of things like `factor()` or `is_square()` are not 
 
 ## Installation
 
-Don't. This is not being maintained for general use.
+Don't. This is not being maintained for general use. I may make substantial changes between updates.
 
 ### If you must
 
@@ -43,4 +58,4 @@ Installing this may create conflicts with anything else called math_utils, inclu
 
 ## License
 
-`math-utils` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
+`toy-crypto-math` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.

@@ -1,11 +1,21 @@
-# A personal collection of math utilities I use
+# Toy cryptographic utilities
 
-Although this is a public repository for those who might wish to poke around in it,
-it is not being maintained for public consumption. And it is not being published to PyPi.
+This is almost certainly not the package you are looking for.
+
+The material here is meant for learning purposes only, often my own learning.
+Do not use it for anything else. And if you do, understand that it focuses on what
+I am trying to illustrate or learn. It may not always be correct.
+
+- If you want to use cryptographic tools in Python use [pyca].
+- If you want to play with some of the mathematics of some things underlying Cryptography in
+a Python-like environment use [SageMath].
+
+[pyca]: https://cryptography.io
+[SageMath]: https://doc.sagemath.org/
 
 ## Table of Contents
 
-- [A personal collection of math utilities I use](#a-personal-collection-of-math-utilities-i-use)
+- [Toy cryptographic utilities](#toy-cryptographic-utilities)
   - [Table of Contents](#table-of-contents)
   - [Motivation](#motivation)
   - [Installation](#installation)
@@ -13,6 +23,8 @@ it is not being maintained for public consumption. And it is not being published
   - [License](#license)
 
 ## Motivation
+
+As I said above, this is almost certainly not the package you are looking for. Instead, [pyca] or [SageMath] will better suite your needs.
 
 I wanted to have access to something that behaved a bit like SageMath's `factor()` without having do everything in Sage. If the sagemath-standard experimental package were less experimental, I wouldn't have needed to do this.
 

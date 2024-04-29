@@ -17,7 +17,7 @@ class PublicKey:
     def encrypt(self, message: int) -> int:
         """raw encryption with neither padding nor nonce"""
         if message < 0:
-            raise ValueError("Possitive messages only")
+            raise ValueError("Positive messages only")
         if not message < self._N:
             raise ValueError("Message too big")
 
@@ -57,12 +57,14 @@ class PrivateKey:
             raise ValueError("Inverse of e mod λ does not exist")
 
     def decrypt(self, ciphertext: int) -> int:
-        if self._N < 1024:
-            # for small moduli we don't use the CRT
-            return pow(base=ciphertext, exp=self._d, mod=self._N)
+        """Decrypt ciphertext"""
 
-        # TODO: CRT version
-        # CRT version comes from  rfc8017 §5.1.2
+        if ciphertext < 1 or not ciphertext < self.pub_key.N:
+            raise ValueError("ciphertext is out of range")
+
+        # m =  pow(base=ciphertext, exp=self._d, mod=self._N)
+        # but we will use the CRT
+        # version comes from  rfc8017 §5.1.2
 
         m_1 = pow(ciphertext, self._dP, self._p)
         m_2 = pow(ciphertext, self._dQ, self._q)

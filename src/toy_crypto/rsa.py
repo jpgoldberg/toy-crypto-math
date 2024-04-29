@@ -1,4 +1,4 @@
-from . import lcm, modinv
+from toy_crypto.nt import lcm, modinv
 
 
 class PublicKey:

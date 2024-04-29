@@ -1,6 +1,6 @@
 import pytest
 import sys
-from math_utils.ec import Curve, Modulus
+from toy_crypto.ec import Curve, Modulus
 
 
 class TestSeriousCurve:

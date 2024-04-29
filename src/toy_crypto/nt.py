@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+# Number Theory (nt) module
+
 from math import floor, ceil, sqrt
 from functools import reduce
 from collections.abc import Iterable, Generator

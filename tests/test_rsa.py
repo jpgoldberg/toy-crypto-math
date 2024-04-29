@@ -1,5 +1,7 @@
-from math_utils import rsa, lcm
+from toy_crypto import rsa
 from typing import Optional
+
+from toy_crypto.nt import lcm
 
 
 class TestCitm:

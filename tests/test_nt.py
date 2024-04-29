@@ -1,17 +1,7 @@
 import pytest
 import sys
 from typing import NamedTuple
-from math_utils import (
-    FactorList,
-    factor,
-    OLF,
-    miller_rabin,
-    gcd,
-    egcd,
-    mod_sqrt,
-    lsb_to_msb,
-    modinv,
-)
+from toy_crypto import nt
 
 
 class TestFactor:
@@ -32,7 +22,7 @@ class TestFactor:
         ]
 
         for n, expected in vectors:
-            assert factor(n) == expected
+            assert nt.factor(n) == expected
 
     def test_OLF(self) -> None:
         vectors: list[tuple[int, int]] = [
@@ -41,21 +31,21 @@ class TestFactor:
         ]
 
         for n, expected in vectors:
-            assert OLF(n) == expected
+            assert nt.OLF(n) == expected
 
     def test_normalize(self) -> None:
-        text_vectors: list[tuple[FactorList, FactorList]] = [
+        text_vectors: list[tuple[nt.FactorList, nt.lcmFactorList]] = [
             (
-                FactorList([(2, 1), (11, 3), (751, 1)]),
-                FactorList([(2, 1), (11, 3), (751, 1)]),
+                nt.FactorList([(2, 1), (11, 3), (751, 1)]),
+                nt.FactorList([(2, 1), (11, 3), (751, 1)]),
             ),
             (
-                FactorList([(11, 3), (2, 1), (751, 1)]),
-                FactorList([(2, 1), (11, 3), (751, 1)]),
+                nt.FactorList([(11, 3), (2, 1), (751, 1)]),
+                nt.FactorList([(2, 1), (11, 3), (751, 1)]),
             ),
             (
-                FactorList([(11, 1), (2, 1), (11, 1), (751, 1), (11, 1)]),
-                FactorList([(2, 1), (11, 3), (751, 1)]),
+                nt.FactorList([(11, 1), (2, 1), (11, 1), (751, 1), (11, 1)]),
+                nt.FactorList([(2, 1), (11, 3), (751, 1)]),
             ),
         ]
         for tv in text_vectors:
@@ -73,7 +63,7 @@ class TestFactor:
         ]
 
         for n, expected in vectors:
-            assert factor(n) == expected
+            assert nt.factor(n) == expected
 
     def test_phi(self) -> None:
         vectors = [
@@ -83,7 +73,7 @@ class TestFactor:
             ([(2, 1), (5, 1), (3, 1)], 8),
         ]
         for f, expected in vectors:
-            assert FactorList(f).phi == expected
+            assert nt.FactorList(f).phi == expected
 
     def test_n(self) -> None:
         vectors = [
@@ -92,7 +82,7 @@ class TestFactor:
             ([(65537, 1)], 65537),
         ]
         for input, expected in vectors:
-            f = FactorList(input)
+            f = nt.FactorList(input)
             assert f.n == expected
             assert f.value() == expected
 
@@ -104,7 +94,7 @@ class TestFactor:
         ]
 
         for input, exp_r, exp_rv in vectors:
-            f = FactorList(input)
+            f = nt.FactorList(input)
             assert f.radical() == exp_r
             assert f.radical_value() == exp_rv
 
@@ -117,7 +107,7 @@ class TestFactor:
         ]
 
         for input, expected in vectors:
-            f = FactorList(input)
+            f = nt.FactorList(input)
             assert f.__repr__() == expected
 
     def test_coprimes(self) -> None:
@@ -129,7 +119,7 @@ class TestFactor:
         ]
 
         for n, relprimes in vectors:
-            f = factor(n)
+            f = nt.factor(n)
             assert list(f.coprimes()) == relprimes
 
 
@@ -146,7 +136,7 @@ class TestMath:
         ]
 
         for n, is_prime in vectors:
-            assert miller_rabin(n) == is_prime
+            assert nt.miller_rabin(n) == is_prime
 
     def test_gcd(self) -> None:
         vectors = [
@@ -161,7 +151,7 @@ class TestMath:
 
         for input, expected in vectors:
             a, b = input
-            assert gcd(a, b) == expected
+            assert nt.gcd(a, b) == expected
 
     def test_egcd(self) -> None:
         vectors = [
@@ -178,8 +168,8 @@ class TestMath:
         ]
 
         for a, b in vectors:
-            g, x, y = egcd(a, b)
-            assert g == gcd(a, b)
+            g, x, y = nt.egcd(a, b)
+            assert g == nt.gcd(a, b)
             assert a * x + b * y == g
 
     def test_mod_sqrt(self) -> None:
@@ -204,7 +194,7 @@ class TestMath:
                     assert a == root * root % m
 
             e: list[int] = [] if expected is None else sorted(list(expected))
-            ret = mod_sqrt(a, m)
+            ret = nt.mod_sqrt(a, m)
             r: list[int] = [] if ret is None else sorted(list(ret))
             assert e == r
 
@@ -214,8 +204,8 @@ class TestMath:
         p = 868112830765445632873217196988651
         q = 1180775137873020977354442912336269
 
-        p_inv = modinv(p, q)
-        q_inv = modinv(q, p)
+        p_inv = nt.modinv(p, q)
+        q_inv = nt.modinv(q, p)
 
         assert (p_inv * p) % q == 1
         assert (q_inv * q) % p == 1
@@ -237,7 +227,7 @@ class TestUtils:
             (0o644, [0, 0, 1, 0, 0, 1, 0, 1, 1]),
         ]
         for n, expected in vectors:
-            bits = [bit for bit in lsb_to_msb(n)]
+            bits = [bit for bit in nt.lsb_to_msb(n)]
             assert bits == expected
 
 

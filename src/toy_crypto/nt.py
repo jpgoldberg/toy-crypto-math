@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024-present Jeffrey Goldberg <jeff@agilebits.com>
+# SPDX-FileCopyrightText: 2024-present Jeffrey Goldberg <jeffrey@goldmark.org>
 #
 # SPDX-License-Identifier: MIT
 
@@ -398,18 +398,3 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
 def lcm(a: int, b: int) -> int:
     """Least common multiple"""
     return abs(a*b)//gcd(a, b)
-
-
-def lsb_to_msb(n: int) -> Generator[int, None, None]:
-    """
-    Creates a generator of bits of n, starting from the least significant bit.
-    """
-
-    if not isinstance(n, int):
-        raise TypeError("n must be an integer")
-
-    if n < 0:
-        raise ValueError("n cannot be negative")
-    while n > 0:
-        yield n & 1
-        n >>= 1

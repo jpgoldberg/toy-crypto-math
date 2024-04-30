@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2024-present Jeffrey Goldberg <jeff@agilebits.com>
+# SPDX-FileCopyrightText: 2024-present Jeffrey Goldberg <jeffrey@goldmark.org>
 #
 # SPDX-License-Identifier: MIT
 

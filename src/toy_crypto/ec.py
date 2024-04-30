@@ -19,7 +19,8 @@ import sys
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import NewType, TypeGuard, Optional, Self, Any
-from toy_crypto.nt import mod_sqrt, miller_rabin, lsb_to_msb
+from toy_crypto.nt import mod_sqrt, miller_rabin
+from toy_crypto.utils import lsb_to_msb
 
 Modulus = NewType("Modulus", int)
 

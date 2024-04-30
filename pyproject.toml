@@ -24,12 +24,12 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Documentation = "https://github.com/unknown/math-utils#readme"
-Issues = "https://github.com/unknown/math-utils/issues"
-Source = "https://github.com/unknown/math-utils"
+Documentation = "https://github.com/unknown/toy-crypto-math#readme"
+Issues = "https://github.com/unknown/toy-crypto-math/issues"
+Source = "https://github.com/unknown/toy-crypto-math"
 
 [tool.hatch.version]
-path = "src/math_utils/__about__.py"
+path = "src/toy_crypto/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
@@ -52,7 +52,7 @@ cov = [
   "test-cov",
   "cov-report",
 ]
-lint = "ruff check {args:src/math_utils tests}"
+lint = "ruff check {args:src/toy_crypto tests}"
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.11", "3.12"]
@@ -62,19 +62,19 @@ dependencies = [
   "mypy>=1.0.0",
 ]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/math_utils tests}"
+check = "mypy --install-types --non-interactive {args:src/toy_crypto tests}"
 
 [tool.coverage.run]
-source_pkgs = ["math_utils", "tests"]
+source_pkgs = ["toy_crypto", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/math_utils/__about__.py",
+  "src/toy_crypto/__about__.py",
 ]
 
 [tool.coverage.paths]
-math_utils = ["src/math_utils", "*/math-utils/src/math_utils"]
-tests = ["tests", "*/math-utils/tests"]
+toy_crypto = ["src/toy_crypto", "*/toy-crypto-math/src/toy_crypto"]
+tests = ["tests", "*/toy-crypto-math/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -82,3 +82,4 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
+

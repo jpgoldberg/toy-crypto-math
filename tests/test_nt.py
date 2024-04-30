@@ -34,7 +34,7 @@ class TestFactor:
             assert nt.OLF(n) == expected
 
     def test_normalize(self) -> None:
-        text_vectors: list[tuple[nt.FactorList, nt.lcmFactorList]] = [
+        text_vectors: list[tuple[nt.FactorList, nt.FactorList]] = [
             (
                 nt.FactorList([(2, 1), (11, 3), (751, 1)]),
                 nt.FactorList([(2, 1), (11, 3), (751, 1)]),
@@ -215,20 +215,6 @@ class TestMath:
 
         assert q_inv > 0
         assert q_inv < p
-
-
-class TestUtils:
-
-    def test_bits(self) -> None:
-        vectors = [
-            (0b1101, [1, 0, 1, 1]),
-            (1, [1]),
-            (0, []),
-            (0o644, [0, 0, 1, 0, 0, 1, 0, 1, 1]),
-        ]
-        for n, expected in vectors:
-            bits = [bit for bit in nt.lsb_to_msb(n)]
-            assert bits == expected
 
 
 if __name__ == "__main__":

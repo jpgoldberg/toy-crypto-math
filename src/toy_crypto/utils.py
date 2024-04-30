@@ -18,6 +18,14 @@ def lsb_to_msb(n: int) -> Generator[int, None, None]:
         n >>= 1
 
 
+def digit_count(x: float, b: int = 10) -> int:
+    """returns the nunmber of  digits (base b) in the integer part of x"""
+
+    x = abs(x)
+    result = math.floor(math.log(x, base=b) + 1)
+    return result
+
+
 Prob = NewType("Prob", float)
 PositiveInt = NewType("PositiveInt", int)
 
@@ -67,9 +75,9 @@ def pbirthday(n: int, d: int = 365, mode: str = "auto") -> Prob:
     """
 
     if not is_positive_int(n):
-        raise TypeError("n must be a positive integer")
+        raise ValueError("n must be a positive integer")
     if not is_positive_int(d):
-        raise TypeError("d must be a possible integer")
+        raise ValueError("d must be a possible integer")
 
     EXACT_THRESHOLD = 1000
 
@@ -84,3 +92,14 @@ def pbirthday(n: int, d: int = 365, mode: str = "auto") -> Prob:
             return _pbirthday_approx(n, d)
         case _:
             raise ValueError('mode must be "auto", "exact", or  "approximate"')
+
+
+def qbirthday(p:float = 0.5, d: int = 365) -> int:
+    """Returns number minimum number n to get a prob of p for d "days"
+
+    Approximate
+    """
+    if not is_prob(p) or p == 0.0:
+        raise ValueError(f'p ({p}) must be a positive probability')
+    n = math.sqrt(2 * d * math.log(1.0/(1.0 - p)))
+    return math.ceil(n)

@@ -45,11 +45,15 @@ def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
 
 
 def _pbirthday_exact(n: PositiveInt, d: PositiveInt) -> Prob:
-    if n >= d:
+    # use notation  from Diconis and Mosteller 1969
+    c = d  # classes
+    # k = 2  # coincidences
+
+    if n >= c:
         return Prob(1.0)
 
-    v_dn = math.perm(d, n)
-    v_t = pow(d, n)
+    v_dn = math.perm(c, n)
+    v_t = pow(c, n)
 
     p = 1.0 - float(v_dn / v_t)
     if not is_prob(p):
@@ -58,10 +62,19 @@ def _pbirthday_exact(n: PositiveInt, d: PositiveInt) -> Prob:
 
 
 def _pbirthday_approx(n: PositiveInt, d: PositiveInt) -> Prob:
-    if n >= d:
+    # DM1969 notation
+    c = d  # classes
+    k = 2  # coincidences
+
+    if n >= c * (k - 1):
         return Prob(1.0)
 
-    p = 1.0 - math.exp(-(n * n) / (2 * d))
+    # p = 1.0 - math.exp(-(n * n) / (2 * d))
+
+    # lifted from R src/library/stats/R/birthday.R
+    LHS = n * math.exp(-n/(c*k))/(1 - n/(c*(k+1))) ** (1/k)
+    lxx = k*math.log(LHS) - (k-1)*math.log(c) - math.lgamma(k+1)
+    p = -math.expm1(-math.exp(lxx))
     if not is_prob(p):
         raise Exception("this should not happen")
     return p

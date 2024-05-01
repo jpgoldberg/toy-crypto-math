@@ -1,6 +1,5 @@
 import pytest
 import sys
-import math
 from toy_crypto import utils
 
 
@@ -49,12 +48,12 @@ class TestBirthday:
         for n in range(10, 360, 10):
             p = utils.pbirthday(n, d)
 
-            # This will go very badly when p gets large
-            if p > 0.99:
+            # qbirthday only works when p < 0.5
+            if p > 0.5:
                 break
             n2 = utils.qbirthday(p, d)
 
-            assert math.isclose(n, n2, rel_tol=0.5)
+            assert n == n2
 
 
 if __name__ == "__main__":

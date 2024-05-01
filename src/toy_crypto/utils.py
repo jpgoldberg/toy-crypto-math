@@ -44,6 +44,9 @@ def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     return val >= 1
 
 
+MAX_QBIRTHDAY_P = 1.0 - (10 ** -8)
+
+
 def _pbirthday_exact(n: PositiveInt, d: PositiveInt) -> Prob:
     # use notation  from Diconis and Mosteller 1969
     c = d  # classes
@@ -80,12 +83,17 @@ def _pbirthday_approx(n: PositiveInt, d: PositiveInt) -> Prob:
     return p
 
 
-def pbirthday(n: int, d: int = 365, mode: str = "auto") -> Prob:
+def pbirthday(n: int, d: int = 365, coincident: int = 2, mode: str = "auto") -> Prob:
     """prob of at least 1 collision among n "people" for d possible "days".
 
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
     """
+
+    k = coincident
+
+    if k != 2:
+        raise NotImplementedError("Not implemented for coincidence greater than 2")
 
     if not is_positive_int(n):
         raise ValueError("n must be a positive integer")
@@ -107,16 +115,38 @@ def pbirthday(n: int, d: int = 365, mode: str = "auto") -> Prob:
             raise ValueError('mode must be "auto", "exact", or  "approximate"')
 
 
-def qbirthday(p:float = 0.5, d: int = 365) -> int:
-    """Returns number minimum number n to get a prob of p for d "days"
+def qbirthday(p:float = 0.5, c: int = 365, k:int = 2) -> int:
+    """Returns number minimum number n to get a prob of p for c classes
 
     Approximation only implemented for p < 0.5
     """
-    if not is_prob(p) or p == 0.0:
-        raise ValueError(f'p ({p}) must be a positive probability')
 
-    if p > 0.5:
-        raise NotImplementedError("Sorry, this only works for p < .5")
+    if not is_prob(p):
+        raise ValueError(f'p ({p}) must be a probability')
+    
+    if p > MAX_QBIRTHDAY_P:
+        raise NotImplementedError(f"Cannot compute for p > {MAX_QBIRTHDAY_P}")
 
-    n = math.sqrt(2 * d * math.log(1.0/(1.0 - p)))
-    return math.ceil(n)
+    # Lifted from R src/library/stats/R/birthday.R
+    if p == Prob(0):
+        return 1
+    if math.isclose(p, 1.0):
+        return c * (k-1) + 1
+
+    # Frist approximation
+    n = math.exp(((k-1)*math.log(c) + math.lgamma(k+1) + math.log(-math.log1p(-p)))/k)
+    n = math.ceil(n)
+    if pbirthday(n, c, coincident=k) < p:
+        n += 1
+        while pbirthday(n, c, coincident=k) < p:
+            n += 1
+    elif pbirthday(n-1, c, coincident=k) >= p:
+        n -= 1
+        while pbirthday(n-1, c, coincident=k) >= p:
+            n -= 1
+
+    return n
+
+
+   #  n = math.sqrt(2 * c * math.log(1.0/(1.0 - p)))
+   # return math.ceil(n)

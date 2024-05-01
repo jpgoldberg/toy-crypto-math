@@ -4,7 +4,6 @@ import math
 from toy_crypto import utils
 
 
-
 class TestUtils:
 
     def test_bits(self) -> None:
@@ -40,7 +39,7 @@ class TestBirthday:
     def test_qbrithday(self) -> None:
 
         for expected_n, d, p in self.vectors:
-            if p >= 0.5:
+            if p > utils.MAX_QBIRTHDAY_P:
                 continue
             n = utils.qbirthday(p, d)
             assert n == expected_n
@@ -51,10 +50,8 @@ class TestBirthday:
 
         for n in range(10, 360, 10):
             p = utils.pbirthday(n, d)
-
-            # qbirthday only works when p < 0.5
-            if p > 0.5:
-                break
+            if p > utils.MAX_QBIRTHDAY_P:
+                continue
             n2 = utils.qbirthday(p, d)
 
             assert n == n2

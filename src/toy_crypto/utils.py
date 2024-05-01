@@ -97,9 +97,13 @@ def pbirthday(n: int, d: int = 365, mode: str = "auto") -> Prob:
 def qbirthday(p:float = 0.5, d: int = 365) -> int:
     """Returns number minimum number n to get a prob of p for d "days"
 
-    Approximate
+    Highly approximate for small numbers or large p
     """
     if not is_prob(p) or p == 0.0:
         raise ValueError(f'p ({p}) must be a positive probability')
+
+    if math.isclose(p, 1.0):
+        return d
+
     n = math.sqrt(2 * d * math.log(1.0/(1.0 - p)))
     return math.ceil(n)

@@ -44,13 +44,18 @@ def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     return val >= 1
 
 
-MAX_QBIRTHDAY_P = 1.0 - (10 ** -8)
+MAX_QBIRTHDAY_P = 1.0 - (10**-8)
 
 
-def _pbirthday_exact(n: PositiveInt, d: PositiveInt) -> Prob:
+def _pbirthday_exact(n: PositiveInt, classes: PositiveInt, coincident: int) -> Prob:
     # use notation  from Diconis and Mosteller 1969
-    c = d  # classes
-    # k = 2  # coincidences
+    c = classes  # classes
+    k = coincident
+
+    if k < 2:
+        return Prob(1.0)
+    if k > 2:
+        return _pbirthday_approx(n, c, coincident=k)
 
     if n >= c:
         return Prob(1.0)
@@ -64,66 +69,78 @@ def _pbirthday_exact(n: PositiveInt, d: PositiveInt) -> Prob:
     return p
 
 
-def _pbirthday_approx(n: PositiveInt, d: PositiveInt) -> Prob:
+def _pbirthday_approx(
+    n: PositiveInt, classes: PositiveInt, coincident: int
+) -> Prob:
     # DM1969 notation
-    c = d  # classes
+    c = classes  # classes
     k = 2  # coincidences
 
     if n >= c * (k - 1):
         return Prob(1.0)
 
+    if k < 2:
+        return Prob(1.0)
+
     # p = 1.0 - math.exp(-(n * n) / (2 * d))
 
     # lifted from R src/library/stats/R/birthday.R
-    LHS = n * math.exp(-n/(c*k))/(1 - n/(c*(k+1))) ** (1/k)
-    lxx = k*math.log(LHS) - (k-1)*math.log(c) - math.lgamma(k+1)
+    LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
+    lxx = k * math.log(LHS) - (k - 1) * math.log(c) - math.lgamma(k + 1)
     p = -math.expm1(-math.exp(lxx))
     if not is_prob(p):
         raise Exception("this should not happen")
     return p
 
 
-def pbirthday(n: int, d: int = 365, coincident: int = 2, mode: str = "auto") -> Prob:
-    """prob of at least 1 collision among n "people" for d possible "days".
+def pbirthday(
+    n: int, classes: int = 365, coincident: int = 2, mode: str = "auto"
+) -> Prob:
+    """prob of at least 1 collision among n "people" for c classes".
 
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
     """
-
+    c = classes
     k = coincident
-
-    if k != 2:
-        raise NotImplementedError("Not implemented for coincidence greater than 2")
 
     if not is_positive_int(n):
         raise ValueError("n must be a positive integer")
-    if not is_positive_int(d):
-        raise ValueError("d must be a possible integer")
+    if not is_positive_int(c):
+        raise ValueError("classes must be a possible integer")
+    if not is_positive_int(k):
+        raise ValueError("coincident must be a possible integer")
+
+    if k == 1:
+        return Prob(1.0)
 
     EXACT_THRESHOLD = 1000
 
+    if mode == "auto":
+        mode = "exact" if c < EXACT_THRESHOLD else "approximate"
     match mode:
         case "exact":
-            return _pbirthday_exact(n, d)
+            return _pbirthday_exact(n, c, coincident=k)
         case "approximate":
-            return _pbirthday_approx(n, d)
-        case "auto" if n < EXACT_THRESHOLD:
-            return _pbirthday_exact(n, d)
-        case "auto":  # n >- EXACT_THRESHOLD
-            return _pbirthday_approx(n, d)
+            return _pbirthday_approx(n, c, coincident=k)
         case _:
             raise ValueError('mode must be "auto", "exact", or  "approximate"')
 
 
-def qbirthday(p:float = 0.5, c: int = 365, k:int = 2) -> int:
-    """Returns number minimum number n to get a prob of p for c classes
+def qbirthday(
+                prob: float = 0.5,
+                classes: int = 365,
+                coincident: int = 2
+            ) -> int:
+    """Returns number minimum number n to get a prob of p for c classes"""
 
-    Approximation only implemented for p < 0.5
-    """
-
+    # Use DM69 notation
+    p = prob
+    c = classes
+    k = coincident
     if not is_prob(p):
-        raise ValueError(f'p ({p}) must be a probability')
-    
+        raise ValueError(f"p ({p}) must be a probability")
+
     if p > MAX_QBIRTHDAY_P:
         raise NotImplementedError(f"Cannot compute for p > {MAX_QBIRTHDAY_P}")
 
@@ -131,22 +148,24 @@ def qbirthday(p:float = 0.5, c: int = 365, k:int = 2) -> int:
     if p == Prob(0):
         return 1
     if math.isclose(p, 1.0):
-        return c * (k-1) + 1
+        return c * (k - 1) + 1
 
     # Frist approximation
-    n = math.exp(((k-1)*math.log(c) + math.lgamma(k+1) + math.log(-math.log1p(-p)))/k)
+    # broken down so that I can better understand this.
+    term1 = (k - 1) * math.log(c)  # log(c^{k-1})
+    term2 = math.lgamma(k + 1)  # log k!
+    term3 = math.log(-math.log1p(-p))  # ?
+    log_n = (term1 + term2 + term3) / k  # adding log x_i is log prod x_i
+    n = math.exp(log_n)
     n = math.ceil(n)
+
     if pbirthday(n, c, coincident=k) < p:
         n += 1
         while pbirthday(n, c, coincident=k) < p:
             n += 1
-    elif pbirthday(n-1, c, coincident=k) >= p:
+    elif pbirthday(n - 1, c, coincident=k) >= p:
         n -= 1
-        while pbirthday(n-1, c, coincident=k) >= p:
+        while pbirthday(n - 1, c, coincident=k) >= p:
             n -= 1
 
     return n
-
-
-   #  n = math.sqrt(2 * c * math.log(1.0/(1.0 - p)))
-   # return math.ceil(n)

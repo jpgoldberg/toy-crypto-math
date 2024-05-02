@@ -132,24 +132,24 @@ class TestBirthday:
 
     def test_pbirthday(self) -> None:
         for n, d, expected in self.vectors:
-            p = birthday.pbirthday(n, d, mode="exact")
+            p = birthday.P(n, d, mode="exact")
             assert math.isclose(p, expected)
 
     def test_qbrithday(self) -> None:
         for expected_n, d, p in self.vectors:
             if p > birthday.MAX_QBIRTHDAY_P:
                 continue
-            n = birthday.qbirthday(p, d)
+            n = birthday.Q(p, d)
             assert n == expected_n
 
     def test_inverse_365(self) -> None:
         d = 365
 
         for n in range(10, 360, 10):
-            p = birthday.pbirthday(n, d)
+            p = birthday.P(n, d)
             if p > birthday.MAX_QBIRTHDAY_P:
                 continue
-            n2 = birthday.qbirthday(p, d)
+            n2 = birthday.Q(p, d)
 
             assert n == n2
 
@@ -158,10 +158,10 @@ class TestBirthday:
             if p < 3:  # We need a differnt test in these cases
                 continue
             c = 2**bits
-            my_p = birthday.pbirthday(n, c)
+            my_p = birthday.P(n, c)
             assert math.isclose(p, my_p)
 
-            my_n = birthday.qbirthday(p, c)
+            my_n = birthday.Q(p, c)
             assert math.isclose(n, my_n)
 
 

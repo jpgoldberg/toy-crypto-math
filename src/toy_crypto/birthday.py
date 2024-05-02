@@ -3,9 +3,12 @@ from . import types
 
 
 MAX_QBIRTHDAY_P = 1.0 - (10**-8)
+EXACT_THRESHOLD = 1000
 
 
-def _pbirthday_exact(n: types.PositiveInt, classes: types.PositiveInt, coincident: int) -> types.Prob:
+def _pbirthday_exact(
+    n: types.PositiveInt, classes: types.PositiveInt, coincident: int
+) -> types.Prob:
     # use notation  from Diconis and Mosteller 1969
     c = classes  # classes
     k = coincident
@@ -51,7 +54,7 @@ def _pbirthday_approx(
     return p
 
 
-def pbirthday(
+def P(
     n: int, classes: int = 365, coincident: int = 2, mode: str = "auto"
 ) -> types.Prob:
     """prob of at least 1 collision among n "people" for c classes".
@@ -72,8 +75,6 @@ def pbirthday(
     if k == 1:
         return types.Prob(1.0)
 
-    EXACT_THRESHOLD = 1000
-
     if mode == "auto":
         mode = "exact" if c < EXACT_THRESHOLD else "approximate"
     match mode:
@@ -85,11 +86,7 @@ def pbirthday(
             raise ValueError('mode must be "auto", "exact", or  "approximate"')
 
 
-def qbirthday(
-                prob: float = 0.5,
-                classes: int = 365,
-                coincident: int = 2
-            ) -> int:
+def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     """Returns number minimum number n to get a prob of p for c classes"""
 
     # Use DM69 notation
@@ -117,13 +114,13 @@ def qbirthday(
     n = math.exp(log_n)
     n = math.ceil(n)
 
-    if pbirthday(n, c, coincident=k) < p:
+    if P(n, c, coincident=k) < p:
         n += 1
-        while pbirthday(n, c, coincident=k) < p:
+        while P(n, c, coincident=k) < p:
             n += 1
-    elif pbirthday(n - 1, c, coincident=k) >= p:
+    elif P(n - 1, c, coincident=k) >= p:
         n -= 1
-        while pbirthday(n - 1, c, coincident=k) >= p:
+        while P(n - 1, c, coincident=k) >= p:
             n -= 1
 
     return n

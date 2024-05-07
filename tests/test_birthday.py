@@ -130,6 +130,22 @@ class TestBirthday:
         ),
     ]
 
+    # From table 3 of DM69
+    k_p50_c365_vectors = [
+        (2, 23),
+        (3, 88),
+        (4, 187),
+        (5, 313),
+        (6, 460),
+        (7, 623),
+        (8, 798),
+        (9, 985),
+        (10, 1181),
+        (11, 1385),
+        (12, 1596),
+        (13, 1813),
+    ]
+
     def test_pbirthday(self) -> None:
         for n, d, expected in self.vectors:
             p = birthday.P(n, d, mode="exact")
@@ -163,6 +179,24 @@ class TestBirthday:
 
             my_n = birthday.Q(p, c)
             assert math.isclose(n, my_n)
+
+    def test_k_p(self) -> None:
+        expected_p = 0.5
+        c = 365
+        wiggle_room = 0.01  # because P always uses approximation when k > 2
+        for k, n in self.k_p50_c365_vectors:
+            calculated_p = birthday.P(n, c, k)
+            p_below = birthday.P(n - 1, c, k)
+
+            assert calculated_p + wiggle_room >= expected_p
+            assert p_below < expected_p + wiggle_room
+
+    def test_k_q(self) -> None:
+        p = 0.5
+        c = 365
+        for k, expected_n in self.k_p50_c365_vectors:
+            calculated_n = birthday.Q(p, c, k)
+            assert math.isclose(calculated_n, expected_n, rel_tol=0.01)
 
 
 if __name__ == "__main__":

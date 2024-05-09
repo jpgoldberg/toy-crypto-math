@@ -236,14 +236,42 @@ def modinv(a: int, m: int) -> int:
     return x % m
 
 
-def is_square(n: int) -> bool:
-    """
-    True iff n is a perfect square.
+# from https://en.wikipedia.org/wiki/Integer_square_root
+def isqrt(s: int) -> int:
+    """returns the greatest n such that n * n =< s"""
+    if s < 0:
+        raise ValueError("s cannot be negative")
+    if not isinstance(s, int):
+        raise TypeError("s must be an int")
 
-    This may become unreliable for very large n"""
-    r = sqrt(float(n))
-    rr = int(round(r))
-    return rr * rr == n
+    if s < 2:
+        return s
+
+    x0 = pow(2, (s.bit_length() // 2) + 1)
+    x1 = (x0 + s // x0) // 2
+
+    while x1 < x0:
+        x0 = x1
+        x1 = (x0 + s // x0) // 2
+
+    return x0
+
+
+def is_square(n: int) -> bool:
+    """True iff n is a perfect square."""
+
+    # We can eliminate some quickly as
+    #  - even squares must be 0 mod 4
+    #  - odd squares must be 1 mod 8
+    if n % 2 == 0:
+        if n % 4 != 0:
+            return False
+    else:  # n is odd
+        if n % 8 != 1:
+            return False
+
+    r = isqrt(n)
+    return r * r == n
 
 
 # From https://programmingpraxis.com/2014/01/28/harts-one-line-factoring-algorithm/

@@ -215,6 +215,16 @@ class TestMath:
         assert q_inv > 0
         assert q_inv < p
 
+    def test_isqrt(self) -> None:
+        vectors = [
+            (2_000_000, 1414),
+            (99, 9),  # check when n+1 is a a perfect square
+            (100, 10),
+        ]
+
+        for n, expected in vectors:
+            assert nt.isqrt(n) == expected
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

@@ -216,10 +216,15 @@ class TestMath:
         assert q_inv < p
 
     def test_isqrt(self) -> None:
+        p = 868112830765445632873217196988651
         vectors = [
             (2_000_000, 1414),
             (99, 9),  # check when n+1 is a a perfect square
             (100, 10),
+            (1, 1),
+            (0, 0),
+            (p * p, p),
+            ((p * p) + 1, p),
         ]
 
         for n, expected in vectors:

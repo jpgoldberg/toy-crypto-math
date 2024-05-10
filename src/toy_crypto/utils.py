@@ -18,7 +18,7 @@ def lsb_to_msb(n: int) -> Generator[int, None, None]:
 
 
 def digit_count(x: float, b: int = 10) -> int:
-    """returns the nunmber of  digits (base b) in the integer part of x"""
+    """returns the nunmber of digits (base b) in the integer part of x"""
 
     x = abs(x)
     result = math.floor(math.log(x, base=b) + 1)

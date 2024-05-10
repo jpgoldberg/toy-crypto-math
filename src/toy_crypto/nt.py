@@ -21,35 +21,319 @@ def prod[T](iterable: Iterable[T]) -> T:  # type: ignore
 
 # primes under 2^21
 LOW_PRIMES: list[int] = [
-        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61,
-        67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137,
-        139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211,
-        223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283,
-        293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379,
-        383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461,
-        463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563,
-        569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643,
-        647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739,
-        743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829,
-        839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937,
-        941, 947, 953, 967, 971, 977, 983, 991, 997, 1009, 1013, 1019, 1021,
-        1031, 1033, 1039, 1049, 1051, 1061, 1063, 1069, 1087, 1091, 1093, 1097,
-        1103, 1109, 1117, 1123, 1129, 1151, 1153, 1163, 1171, 1181, 1187, 1193,
-        1201, 1213, 1217, 1223, 1229, 1231, 1237, 1249, 1259, 1277, 1279, 1283,
-        1289, 1291, 1297, 1301, 1303, 1307, 1319, 1321, 1327, 1361, 1367, 1373,
-        1381, 1399, 1409, 1423, 1427, 1429, 1433, 1439, 1447, 1451, 1453, 1459,
-        1471, 1481, 1483, 1487, 1489, 1493, 1499, 1511, 1523, 1531, 1543, 1549,
-        1553, 1559, 1567, 1571, 1579, 1583, 1597, 1601, 1607, 1609, 1613, 1619,
-        1621, 1627, 1637, 1657, 1663, 1667, 1669, 1693, 1697, 1699, 1709, 1721,
-        1723, 1733, 1741, 1747, 1753, 1759, 1777, 1783, 1787, 1789, 1801, 1811,
-        1823, 1831, 1847, 1861, 1867, 1871, 1873, 1877, 1879, 1889, 1901, 1907,
-        1913, 1931, 1933, 1949, 1951, 1973, 1979, 1987, 1993, 1997, 1999, 2003,
-        2011, 2017, 2027, 2029, 2039,
-    ]
+    2,
+    3,
+    5,
+    7,
+    11,
+    13,
+    17,
+    19,
+    23,
+    29,
+    31,
+    37,
+    41,
+    43,
+    47,
+    53,
+    59,
+    61,
+    67,
+    71,
+    73,
+    79,
+    83,
+    89,
+    97,
+    101,
+    103,
+    107,
+    109,
+    113,
+    127,
+    131,
+    137,
+    139,
+    149,
+    151,
+    157,
+    163,
+    167,
+    173,
+    179,
+    181,
+    191,
+    193,
+    197,
+    199,
+    211,
+    223,
+    227,
+    229,
+    233,
+    239,
+    241,
+    251,
+    257,
+    263,
+    269,
+    271,
+    277,
+    281,
+    283,
+    293,
+    307,
+    311,
+    313,
+    317,
+    331,
+    337,
+    347,
+    349,
+    353,
+    359,
+    367,
+    373,
+    379,
+    383,
+    389,
+    397,
+    401,
+    409,
+    419,
+    421,
+    431,
+    433,
+    439,
+    443,
+    449,
+    457,
+    461,
+    463,
+    467,
+    479,
+    487,
+    491,
+    499,
+    503,
+    509,
+    521,
+    523,
+    541,
+    547,
+    557,
+    563,
+    569,
+    571,
+    577,
+    587,
+    593,
+    599,
+    601,
+    607,
+    613,
+    617,
+    619,
+    631,
+    641,
+    643,
+    647,
+    653,
+    659,
+    661,
+    673,
+    677,
+    683,
+    691,
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751,
+    757,
+    761,
+    769,
+    773,
+    787,
+    797,
+    809,
+    811,
+    821,
+    823,
+    827,
+    829,
+    839,
+    853,
+    857,
+    859,
+    863,
+    877,
+    881,
+    883,
+    887,
+    907,
+    911,
+    919,
+    929,
+    937,
+    941,
+    947,
+    953,
+    967,
+    971,
+    977,
+    983,
+    991,
+    997,
+    1009,
+    1013,
+    1019,
+    1021,
+    1031,
+    1033,
+    1039,
+    1049,
+    1051,
+    1061,
+    1063,
+    1069,
+    1087,
+    1091,
+    1093,
+    1097,
+    1103,
+    1109,
+    1117,
+    1123,
+    1129,
+    1151,
+    1153,
+    1163,
+    1171,
+    1181,
+    1187,
+    1193,
+    1201,
+    1213,
+    1217,
+    1223,
+    1229,
+    1231,
+    1237,
+    1249,
+    1259,
+    1277,
+    1279,
+    1283,
+    1289,
+    1291,
+    1297,
+    1301,
+    1303,
+    1307,
+    1319,
+    1321,
+    1327,
+    1361,
+    1367,
+    1373,
+    1381,
+    1399,
+    1409,
+    1423,
+    1427,
+    1429,
+    1433,
+    1439,
+    1447,
+    1451,
+    1453,
+    1459,
+    1471,
+    1481,
+    1483,
+    1487,
+    1489,
+    1493,
+    1499,
+    1511,
+    1523,
+    1531,
+    1543,
+    1549,
+    1553,
+    1559,
+    1567,
+    1571,
+    1579,
+    1583,
+    1597,
+    1601,
+    1607,
+    1609,
+    1613,
+    1619,
+    1621,
+    1627,
+    1637,
+    1657,
+    1663,
+    1667,
+    1669,
+    1693,
+    1697,
+    1699,
+    1709,
+    1721,
+    1723,
+    1733,
+    1741,
+    1747,
+    1753,
+    1759,
+    1777,
+    1783,
+    1787,
+    1789,
+    1801,
+    1811,
+    1823,
+    1831,
+    1847,
+    1861,
+    1867,
+    1871,
+    1873,
+    1877,
+    1879,
+    1889,
+    1901,
+    1907,
+    1913,
+    1931,
+    1933,
+    1949,
+    1951,
+    1973,
+    1979,
+    1987,
+    1993,
+    1997,
+    1999,
+    2003,
+    2011,
+    2017,
+    2027,
+    2029,
+    2039,
+]
 
 
 class FactorList(UserList[tuple[int, int]]):
-
     def __init__(self, prime_factors: list[tuple[int, int]] = []):
         super().__init__(prime_factors)
 
@@ -59,15 +343,15 @@ class FactorList(UserList[tuple[int, int]]):
         # properity-like things that are computed when first needed
         self._n: int | None = None
         self._totient: int | None = None
-        self._radical: 'FactorList | None' = None
+        self._radical: "FactorList | None" = None
         self._radical_value: int | None = None
 
     def __repr__(self) -> str:
         s: list[str] = []
         for p, e in self.data:
-            term = f'{p}' if e == 1 else f'{p}^{e}'
+            term = f"{p}" if e == 1 else f"{p}^{e}"
             s.append(term)
-        return ' * '.join(s)
+        return " * ".join(s)
 
     def normalize(self) -> Self:
         """
@@ -96,7 +380,7 @@ class FactorList(UserList[tuple[int, int]]):
             if p < 2:
                 raise ValueError(f"{p} should be greater than 1")
             if e < 1:
-                raise ValueError(f'{e} should be greater than 0')
+                raise ValueError(f"{e} should be greater than 0")
             d[p] += e
 
         self.data = [(p, d[p]) for p in sorted(d.keys())]
@@ -106,7 +390,7 @@ class FactorList(UserList[tuple[int, int]]):
     @property
     def n(self) -> int:
         if self._n is None:
-            self._n = prod([p ** e for p, e in self.data])
+            self._n = int(prod([p**e for p, e in self.data]))
         return self._n
 
     @property
@@ -121,8 +405,8 @@ class FactorList(UserList[tuple[int, int]]):
         """
 
         if self._totient is None:
-            self._totient = prod([p ** (e - 1) * (p - 1)
-                                  for p, e in self.data])
+            self._totient = int(prod([p ** (e - 1) * (p - 1)
+                                     for p, e in self.data]))
 
         return self._totient
 
@@ -142,8 +426,8 @@ class FactorList(UserList[tuple[int, int]]):
     def value(self) -> int:
         return self.n
 
-    def radical(self) -> 'FactorList':
-        '''All exponenents on factors set to 1'''
+    def radical(self) -> "FactorList":
+        """All exponenents on factors set to 1"""
         if self._radical is None:
             self._radical = FactorList([(p, 1) for p, _ in self.data])
         return self._radical
@@ -161,9 +445,9 @@ def factor(n: int, ith: int = 0) -> FactorList:
     """
 
     if not isinstance(n, int):
-        raise TypeError('input must be an int')
+        raise TypeError("input must be an int")
     if n < 1:
-        raise ValueError('input must be positive')
+        raise ValueError("input must be positive")
     if n == 1:
         return FactorList([])
 
@@ -208,7 +492,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
         # earlier primality check.
         return FactorList([(n, 1)])
 
-    return (factor(f) + factor(n//f)).normalize()
+    return (factor(f) + factor(n // f)).normalize()
 
 
 def gcd(a: int, b: int) -> int:
@@ -232,7 +516,7 @@ def modinv(a: int, m: int) -> int:
     """returns x such that a * x mod m = 1,"""
     g, x, _ = egcd(a, m)
     if g != 1:
-        raise ValueError(f'{a} and {m} are not co-prime')
+        raise ValueError(f"{a} and {m} are not co-prime")
     return x % m
 
 
@@ -247,8 +531,8 @@ def isqrt(s: int) -> int:
     if s < 2:
         return s
 
-    x0 = pow(2, (s.bit_length() // 2) + 1)
-    x1 = (x0 + s // x0) // 2
+    x0: int = pow(2, (s.bit_length() // 2) + 1)
+    x1: int = (x0 + s // x0) // 2
 
     while x1 < x0:
         x0 = x1
@@ -277,8 +561,11 @@ def is_square(n: int) -> bool:
 # From https://programmingpraxis.com/2014/01/28/harts-one-line-factoring-algorithm/
 def OLF(n: int) -> int:
     """Returns 1 if n is prime, else a factor (possibly composite) of n"""
-    for ni in range(n, n*n, n):
-        cs = ceil(sqrt(ni))
+    for ni in range(n, n * n, n):
+        cs = isqrt(ni)
+        # isqrt(x) gives us floor(sqrt(x)), but we need ceil(sqrt(n))
+        if cs * cs != ni:
+            cs += 1
         pcs = pow(cs, 2, n)
         if is_square(pcs):
             return gcd(n, floor(cs - sqrt(pcs)))
@@ -425,4 +712,4 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
 
 def lcm(a: int, b: int) -> int:
     """Least common multiple"""
-    return abs(a*b)//gcd(a, b)
+    return abs(a * b) // gcd(a, b)

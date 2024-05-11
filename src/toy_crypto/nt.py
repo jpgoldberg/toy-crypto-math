@@ -4,7 +4,6 @@
 
 # Number Theory (nt) module
 
-from math import floor, ceil, sqrt
 from functools import reduce
 from collections.abc import Iterable, Generator
 from collections import UserList
@@ -353,6 +352,11 @@ class FactorList(UserList[tuple[int, int]]):
             s.append(term)
         return " * ".join(s)
 
+    def __add__(self, other: Iterable[tuple[int, int]]) -> 'FactorList':
+        added = super().__add__(other)
+        added = FactorList(added.data)  # init will normalize
+        return added
+
     def normalize(self) -> Self:
         """
         Dedupicates primes and sorts in prime order.
@@ -437,12 +441,23 @@ class FactorList(UserList[tuple[int, int]]):
             self._radical_value = prod([p for p, _ in self.data])
         return self._radical_value
 
+    def square(self) -> 'FactorList':
+        """Returns factor list with exponents doubled"""
+
+        return FactorList([(p, 2 * e) for p, e in self.data])
+
 
 def factor(n: int, ith: int = 0) -> FactorList:
     """
     Returns list (prime, exponent) factors of n.
     Starts trial div at ith prime.
     """
+
+    # This uses trial division by low primes for things upto the square
+    # of the largeest low primes and uses Fermet's method for everything else.
+    # Fermat's method is really bad when the
+    # factors are far away from each other, so my low primes list
+    # is longer than would make sense for other factoring strategies
 
     if not isinstance(n, int):
         raise TypeError("input must be an int")
@@ -455,7 +470,10 @@ def factor(n: int, ith: int = 0) -> FactorList:
     if n in LOW_PRIMES:
         return FactorList([(n, 1)])
 
-    top = ceil(sqrt(n))
+    root_n = isqrt(n)
+    if root_n * root_n == n:
+        return factor(root_n).square()
+    top = root_n
 
     if ith < len(LOW_PRIMES):
         for ith, p in enumerate(LOW_PRIMES[ith:]):
@@ -492,7 +510,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
         # earlier primality check.
         return FactorList([(n, 1)])
 
-    return (factor(f) + factor(n // f)).normalize()
+    return factor(f) + factor(n // f)
 
 
 def gcd(a: int, b: int) -> int:
@@ -568,7 +586,7 @@ def OLF(n: int) -> int:
             cs += 1
         pcs = pow(cs, 2, n)
         if is_square(pcs):
-            return gcd(n, floor(cs - sqrt(pcs)))
+            return gcd(n, cs - isqrt(pcs))
 
     # This will never be reached, but linters don't know that
     return 1

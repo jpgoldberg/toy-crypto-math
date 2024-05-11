@@ -19,6 +19,7 @@ class TestFactor:
                 2**64 - 1,
                 [(3, 1), (5, 1), (17, 1), (257, 1), (641, 1), (65537, 1), (6700417, 1)],
             ),
+            (3 * 5 * 5 * 7, [(3, 1), (5, 2), (7, 1)]),
         ]
 
         for n, expected in vectors:
@@ -52,6 +53,24 @@ class TestFactor:
             input, expected = tv
             assert input.normalize() == expected
 
+    def test_add(self) -> None:
+        # Mostly we are checking that result is normalized
+        vectors = [
+            (
+                nt.FactorList([(11, 1), (2, 1), (11, 1)]),
+                nt.FactorList([(751, 1), (11, 1)]),
+                nt.FactorList([(2, 1), (11, 3), (751, 1)]),
+            ),
+            (
+                nt.FactorList([(11, 1), (2, 1), (11, 1)]),
+                nt.FactorList([]),
+                nt.FactorList([(2, 1), (11, 2)]),
+            ),
+        ]
+        for a, b, expected in vectors:
+            assert a + b == expected
+            assert b + a == expected
+
     def test_factor_large(self) -> None:
         """for input that should trigger Fermat's method,"""
 
@@ -60,8 +79,8 @@ class TestFactor:
             (5483 * 104243 * 11 * 11, [(11, 2), (5483, 1), (104243, 1)]),
             (2**32, [(2, 32)]),
             ((2**31) - 1, [(2147483647, 1)]),
+            (104243 * 2147483647 * 2147483647, [(104243, 1), (2147483647, 2)]),
         ]
-
         for n, expected in vectors:
             assert nt.factor(n) == expected
 
@@ -199,7 +218,6 @@ class TestMath:
             assert e == r
 
     def test_modinv(self) -> None:
-
         p = 868112830765445632873217196988651
         q = 1180775137873020977354442912336269
 

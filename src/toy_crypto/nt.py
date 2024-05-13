@@ -352,7 +352,7 @@ class FactorList(UserList[tuple[int, int]]):
             s.append(term)
         return " * ".join(s)
 
-    def __add__(self, other: Iterable[tuple[int, int]]) -> 'FactorList':
+    def __add__(self, other: Iterable[tuple[int, int]]) -> "FactorList":
         added = super().__add__(other)
         added = FactorList(added.data)  # init will normalize
         return added
@@ -409,8 +409,7 @@ class FactorList(UserList[tuple[int, int]]):
         """
 
         if self._totient is None:
-            self._totient = int(prod([p ** (e - 1) * (p - 1)
-                                     for p, e in self.data]))
+            self._totient = int(prod([p ** (e - 1) * (p - 1) for p, e in self.data]))
 
         return self._totient
 
@@ -441,7 +440,7 @@ class FactorList(UserList[tuple[int, int]]):
             self._radical_value = prod([p for p, _ in self.data])
         return self._radical_value
 
-    def square(self) -> 'FactorList':
+    def square(self) -> "FactorList":
         """Returns factor list with exponents doubled"""
 
         return FactorList([(p, 2 * e) for p, e in self.data])

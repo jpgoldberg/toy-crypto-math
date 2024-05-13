@@ -91,7 +91,7 @@ class Curve:
         y = mod_sqrt(y2, p)
         return y
 
-    def point(self, x: int, y: int) -> 'Point':
+    def point(self, x: int, y: int) -> "Point":
         return Point(x, y, self, is_zero=False)
 
 

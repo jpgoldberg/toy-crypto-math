@@ -34,7 +34,7 @@ def _pbirthday_approx(
     n: types.PositiveInt, classes: types.PositiveInt, coincident: int
 ) -> types.Prob:
     # DM1969 notation
-    c = classes  
+    c = classes
     k = coincident
 
     if n >= c * (k - 1):

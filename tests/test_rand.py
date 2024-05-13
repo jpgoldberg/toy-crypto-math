@@ -17,6 +17,20 @@ class TestRandRange:
         # let's start with this
         assert all([c > 0 for c in counts.values()])
 
+    def test_single_arg(self) -> None:
+        top = 20
+        trials = 200 * top
+        counts: dict[int, int] = {r: 0 for r in range(top)}
+
+        for _ in range(trials):
+            r = rand.randrange(top)
+            assert r >= 0
+            assert r < top
+
+            counts[r] +=1
+
+        assert all([c > 0 for c in counts.values()])
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

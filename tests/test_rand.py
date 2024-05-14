@@ -27,7 +27,7 @@ class TestRandRange:
             assert r >= 0
             assert r < top
 
-            counts[r] +=1
+            counts[r] += 1
 
         assert all([c > 0 for c in counts.values()])
 

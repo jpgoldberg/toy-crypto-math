@@ -1,6 +1,8 @@
 """Supplements Python secrets module"""
 
 import secrets
+from collections.abc import MutableSequence
+from typing import Any
 
 
 def randrange(*args: int) -> int:
@@ -40,3 +42,17 @@ def randrange(*args: int) -> int:
     r += start
 
     return r
+
+
+def shuffle(x: MutableSequence[Any]) -> None:
+    """Shuffles x in place"""
+
+    # Uses the "modern" Fisher-Yates shuffle from Knuth via
+    # https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm
+
+    n = len(x)
+    if n < 2:
+        return
+    for i in range(n):
+        j = randrange(i, n)
+        x[i], x[j] = x[j], x[i]

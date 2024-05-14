@@ -53,6 +53,6 @@ def shuffle(x: MutableSequence[Any]) -> None:
     n = len(x)
     if n < 2:
         return
-    for i in range(n):
+    for i in range(n-1):
         j = randrange(i, n)
         x[i], x[j] = x[j], x[i]

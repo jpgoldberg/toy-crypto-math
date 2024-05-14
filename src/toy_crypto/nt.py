@@ -10,6 +10,8 @@ from collections import UserList
 from typing import Self, Optional
 import random  # random is good enough for Miller-Rabin.
 
+from . import types
+
 
 # E731 tells me to def prod instead of bind it to a lambda.
 # https://docs.astral.sh/ruff/rules/lambda-assignment/
@@ -383,8 +385,10 @@ class FactorList(UserList[tuple[int, int]]):
                 raise TypeError("Primes and exponents must be integers")
             if p < 2:
                 raise ValueError(f"{p} should be greater than 1")
-            if e < 1:
-                raise ValueError(f"{e} should be greater than 0")
+            if e == 0:
+                continue
+            if e < 0:
+                raise ValueError(f"exponent ({e}) should not be negative")
             d[p] += e
 
         self.data = [(p, d[p]) for p in sorted(d.keys())]
@@ -414,9 +418,8 @@ class FactorList(UserList[tuple[int, int]]):
         return self._totient
 
     def coprimes(self) -> Generator[int, None, None]:
-        prime_factors = [p for p, _ in self.data]
         for a in range(1, self.n):
-            if not any([a % p == 0 for p in prime_factors]):
+            if not any([a % p == 0 for p, _ in self.data]):
                 yield a
 
     def unit(self) -> int:
@@ -440,28 +443,29 @@ class FactorList(UserList[tuple[int, int]]):
             self._radical_value = prod([p for p, _ in self.data])
         return self._radical_value
 
-    def square(self) -> "FactorList":
-        """Returns factor list with exponents doubled"""
+    def pow(self, n) -> 'FactorList':
+        '''Return self ** n, where n is positive int'''
+        if not types.is_positive_int(n):
+            raise TypeError("n must be a positive integer")
 
-        return FactorList([(p, 2 * e) for p, e in self.data])
+        return FactorList([(p, n * e) for p, e in self.data])
 
 
 def factor(n: int, ith: int = 0) -> FactorList:
     """
     Returns list (prime, exponent) factors of n.
     Starts trial div at ith prime.
+
+    This uses trial division by low primes for things upto the square
+    of the largeest low primes and uses Fermet's method for everything else.
+    Fermat's method is really bad when the
+    factors are far away from each other, so my low primes list
+    is longer than would make sense for other factoring strategies
     """
 
-    # This uses trial division by low primes for things upto the square
-    # of the largeest low primes and uses Fermet's method for everything else.
-    # Fermat's method is really bad when the
-    # factors are far away from each other, so my low primes list
-    # is longer than would make sense for other factoring strategies
+    if not types.is_positive_int(n):
+        raise TypeError("input must be a positive int")
 
-    if not isinstance(n, int):
-        raise TypeError("input must be an int")
-    if n < 1:
-        raise ValueError("input must be positive")
     if n == 1:
         return FactorList([])
 
@@ -471,7 +475,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
 
     root_n = isqrt(n)
     if root_n * root_n == n:
-        return factor(root_n).square()
+        return factor(root_n).pow(2)
     top = root_n
 
     if ith < len(LOW_PRIMES):
@@ -641,14 +645,25 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
     # I would have thought that there was a library for this.
     # Can't find it outside of sage, which is a bit big to import.
 
+
     # Algorithm taken from https://www.rieselprime.de/ziki/Modular_square_root
 
-    if m < 5:
+    if m < 3:
         raise ValueError("modulus must be an odd prime")
+
+    if a == 1:
+        return (1, m - 1)
+
+    if m == 3:
+        return None
 
     a = a % m
     if a == 0:
         return None
+
+    # Use a small k, as we aren't claiming a definitive test
+    if not miller_rabin(m, k=5):
+        raise ValueError("m is not prime")
 
     # check that a is a quadratic residue, return None if not
     if pow(a, (m - 1) // 2, m) != 1:

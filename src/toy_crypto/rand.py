@@ -3,6 +3,7 @@
 import secrets
 from collections.abc import MutableSequence
 from typing import Any
+import math
 
 
 def randrange(*args: int) -> int:
@@ -56,3 +57,17 @@ def shuffle(x: MutableSequence[Any]) -> None:
     for i in range(n-1):
         j = randrange(i, n)
         x[i], x[j] = x[j], x[i]
+
+
+# from FullRandom example in 
+# https://docs.python.org/3/library/random.html#examples
+def random() -> float:
+    """returns a 32-bit float in [0.0, 1.0)"""
+
+    mantissa = 0x10_0000_0000_0000 | secrets.randbits(52)
+    exponent = -53
+    x = 0
+    while not x:
+        x = secrets.randbits(32)
+        exponent += x.bit_length() - 32
+    return math.ldexp(mantissa, exponent)

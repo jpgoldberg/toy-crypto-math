@@ -32,5 +32,38 @@ class TestRandRange:
         assert all([c > 0 for c in counts.values()])
 
 
+def test_random() -> None:
+    trials = 1024
+    for _ in range(trials):
+        x = rand.random()
+        assert x >= 0.0
+        assert x < 1.0
+
+
+@pytest.mark.statistical
+def test_shuffle() -> None:
+    trials = 2048
+
+    input = ['A', 'B', 'C']
+    permutations = ["ABC", "ACB", "BAC", "BCA", "CAB", "CBA"]
+    counts = {p: 0 for p in permutations}
+
+    for _ in range(trials):
+        # Note that shuffle suffles in place
+        c = input.copy()
+        rand.shuffle(c)
+        s = ''.join(c)
+        assert s in permutations
+        counts[s] += 1
+
+    mle = trials // len(permutations)
+    # I should calculate the odds of test failure for good shuffle, but not now
+    expected_floor = int(mle / 2)
+    expected_ceiling = trials - expected_floor
+
+    assert min(counts.values()) > expected_floor
+    assert max(counts.values()) < expected_ceiling
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

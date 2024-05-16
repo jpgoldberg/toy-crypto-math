@@ -9,7 +9,7 @@ Number Theory (nt) module
 from functools import reduce
 from collections.abc import Iterable, Generator
 from collections import UserList
-from typing import Self
+from typing import Optional, Self
 import random  # random is good enough for Miller-Rabin.
 
 from . import types
@@ -352,24 +352,28 @@ class FactorList(UserList[tuple[int, int]]):
     use SageMath.
     """
 
-    def __init__(self, prime_factors: list[tuple[int, int]] = []):
+    def __init__(
+        self,
+        prime_factors: list[tuple[int, int]] = [],
+        check_primes: bool = False,
+    ) -> None:
         """
         prime_factors should be a list of (prime, exponent) tuples.
 
-        It is your responsibility to ensure that the primes really are
-        prime.
+        Either you ensure that the primes really are prime or use
+        check_primes = True
         """
         super().__init__(prime_factors)
 
         # Normalization will do some sanity checking as well
-        self.normalize()
+        self.normalize(check_primes=check_primes)
 
         # properity-like things that are computed when first needed
-        self._n: int | None = None
-        self._totient: int | None = None
-        self._radical: "FactorList | None" = None
-        self._radical_value: int | None = None
-        self._factors_are_prime: bool | None = None
+        self._n: Optional[int] = None
+        self._totient: Optional[int] = None
+        self._radical: Optional['FactorList'] = None
+        self._radical_value: Optional[int] = None
+        self._factors_are_prime: Optional[bool] = None
 
     def __repr__(self) -> str:
         s: list[str] = []
@@ -404,7 +408,7 @@ class FactorList(UserList[tuple[int, int]]):
         added = FactorList(added.data)  # init will normalize
         return added
 
-    def normalize(self) -> Self:
+    def normalize(self, check_primes: bool = False) -> Self:
         """
         Dedupicates and sorts in prime order, removing exponent == 0 cases.
 
@@ -414,7 +418,7 @@ class FactorList(UserList[tuple[int, int]]):
 
             ValueError if p < 2 or e < 0
 
-        This does not check that the primes are actually prime.
+        This only checks that primes are prime if check_primes is True.
 
         """
 
@@ -434,6 +438,9 @@ class FactorList(UserList[tuple[int, int]]):
                 continue
             if e < 0:
                 raise ValueError(f"exponent ({e}) should not be negative")
+            if check_primes:
+                if not probably_prime(p, k=5):
+                    raise ValueError(f"{p} is composite")
             d[p] += e
 
         self.data = [(p, d[p]) for p in sorted(d.keys())]
@@ -442,6 +449,7 @@ class FactorList(UserList[tuple[int, int]]):
 
     @property
     def factors_are_prime(self) -> bool:
+        """True iff all the alleged primes are prime."""
         if self._factors_are_prime is not None:
             return self._factors_are_prime
         self._factors_are_prime = all(
@@ -451,6 +459,7 @@ class FactorList(UserList[tuple[int, int]]):
 
     @property
     def n(self) -> int:
+        """The integer that this is a factorization of"""
         if self._n is None:
             self._n = int(prod([p**e for p, e in self.data]))
         return self._n

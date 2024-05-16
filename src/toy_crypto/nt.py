@@ -335,6 +335,8 @@ LOW_PRIMES: list[int] = [
     2039,
 ]
 
+MAX_LOW_PRIME_SQUARE = LOW_PRIMES[-1] * LOW_PRIMES[-1]
+
 
 class FactorList(UserList[tuple[int, int]]):
     """
@@ -367,6 +369,7 @@ class FactorList(UserList[tuple[int, int]]):
         self._totient: int | None = None
         self._radical: "FactorList | None" = None
         self._radical_value: int | None = None
+        self._factors_are_prime: bool | None = None
 
     def __repr__(self) -> str:
         s: list[str] = []
@@ -438,6 +441,15 @@ class FactorList(UserList[tuple[int, int]]):
         return self
 
     @property
+    def factors_are_prime(self) -> bool:
+        if self._factors_are_prime is not None:
+            return self._factors_are_prime
+        self._factors_are_prime = all(
+            [probably_prime(p, k=5) for p, _ in self.data]
+        )
+        return self._factors_are_prime
+
+    @property
     def n(self) -> int:
         if self._n is None:
             self._n = int(prod([p**e for p, e in self.data]))
@@ -455,7 +467,9 @@ class FactorList(UserList[tuple[int, int]]):
         """
 
         if self._totient is None:
-            self._totient = int(prod([p ** (e - 1) * (p - 1) for p, e in self.data]))
+            self._totient = int(
+                prod([p ** (e - 1) * (p - 1) for p, e in self.data])
+            )
 
         return self._totient
 
@@ -545,7 +559,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
 
     # OLE is a really, really, really slow way to test primality.
     # So we will do Miller-Rabin first
-    if miller_rabin(n):
+    if probably_prime(n):
         return FactorList([(n, 1)])
 
     f = OLF(n)
@@ -640,14 +654,26 @@ def OLF(n: int) -> int:
 # lifted from https://gist.github.com/Ayrx/5884790
 # k of 40 seems really high to me, but I see that the recommendation is from
 # Thomas Pornin, so I am going to use that.
-def miller_rabin(n: int, k: int = 40) -> bool:
-    """Returns True if n is prime or if you had really bad luck."""
+def probably_prime(n: int, k: int = 40) -> bool:
+    """Returns True if n is prime or if you had really bad luck.
+
+    Runs the Miller-Rabin primality test with k trials.
+    Default value of k=40 is appropriate for use in key generation,
+    but may be way high in other contexts.
+
+    If you need a real primality check, use sympy.isprime() instead.
+    """
 
     if n == 2:
         return True
 
-    if n % 2 == 0:
-        return False
+    if n in LOW_PRIMES:
+        return True
+    if n <= MAX_LOW_PRIME_SQUARE:
+        for p in LOW_PRIMES:
+            if n % p == 0:
+                return False
+        return True
 
     # This s reduction is what distinguishes M-R from FLT
     r, s = 0, n - 1
@@ -703,7 +729,7 @@ def mod_sqrt(a: int, m: int) -> list[int]:
         return [0]
 
     # Use a small k, as we aren't claiming a definitive test
-    if not miller_rabin(m, k=5):
+    if not probably_prime(m, k=5):
         raise ValueError("m is not prime")
 
     # check that a is a quadratic residue, return None if not

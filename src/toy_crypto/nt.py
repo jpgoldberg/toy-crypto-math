@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-# Number Theory (nt) module
+"""
+Number Theory (nt) module
+"""
 
 from functools import reduce
 from collections.abc import Iterable, Generator
@@ -335,7 +337,26 @@ LOW_PRIMES: list[int] = [
 
 
 class FactorList(UserList[tuple[int, int]]):
+    """
+    A FactorList is an list of (prime, exponenbt) tuples.
+
+    It representents the prime factorization of a number.
+
+    Some of the methods here are meant to mimick what we
+    see in SageMath's Factorization class, but this is
+    limited to ints, and isn't always going to have the
+    same behavior. If you need something as reliable and
+    general and fast as SageMath's Factorization tools,
+    use SageMath.
+    """
+
     def __init__(self, prime_factors: list[tuple[int, int]] = []):
+        """
+        prime_factors should be a list of (prime, exponent) tuples.
+
+        It is your responsibility to ensure that the primes really are
+        prime.
+        """
         super().__init__(prime_factors)
 
         # Normalization will do some sanity checking as well
@@ -354,6 +375,27 @@ class FactorList(UserList[tuple[int, int]]):
             s.append(term)
         return " * ".join(s)
 
+    def __eq__(self, other: object) -> bool:
+        # Implemented for
+        #  - list
+        #  - int
+        #  - UserDict
+        if isinstance(other, list):
+            try:
+                other_f = FactorList(other)
+            except (ValueError, TypeError):
+                return False
+            return self.data == other_f.data
+
+        # Fundamental theorem of arithmatic
+        if isinstance(other, int):
+            return self.n == other
+
+        if not isinstance(other, UserList):
+            return NotImplemented
+
+        return self.data == other.data
+
     def __add__(self, other: Iterable[tuple[int, int]]) -> "FactorList":
         added = super().__add__(other)
         added = FactorList(added.data)  # init will normalize
@@ -361,13 +403,13 @@ class FactorList(UserList[tuple[int, int]]):
 
     def normalize(self) -> Self:
         """
-        Dedupicates primes and sorts in prime order.
+        Dedupicates and sorts in prime order, removing exponent == 0 cases.
 
         Exceptions:
 
             TypeError if prime and exponents are not ints
 
-            ValueError if p < 2 or e < 1
+            ValueError if p < 2 or e < 0
 
         This does not check that the primes are actually prime.
 

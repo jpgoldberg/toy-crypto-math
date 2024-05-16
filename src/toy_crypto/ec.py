@@ -88,8 +88,11 @@ class Curve:
         b = self.b
         p = self.p
         y2: int = (pow(x, 3, p) + ((a * x) % p) + b) % p
-        y = mod_sqrt(y2, p)
-        return y
+        roots = mod_sqrt(y2, p)
+        if len(roots) != 2:
+            raise ValueError("x is rootless")
+
+        return roots[0], roots[1]
 
     def point(self, x: int, y: int) -> "Point":
         return Point(x, y, self, is_zero=False)

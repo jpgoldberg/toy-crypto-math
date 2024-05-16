@@ -54,12 +54,12 @@ def shuffle(x: MutableSequence[Any]) -> None:
     n = len(x)
     if n < 2:
         return
-    for i in range(n-1):
+    for i in range(n - 1):
         j = randrange(i, n)
         x[i], x[j] = x[j], x[i]
 
 
-# from FullRandom example in 
+# from FullRandom example in
 # https://docs.python.org/3/library/random.html#examples
 def random() -> float:
     """returns a 32-bit float in [0.0, 1.0)"""

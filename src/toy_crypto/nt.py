@@ -7,7 +7,7 @@
 from functools import reduce
 from collections.abc import Iterable, Generator
 from collections import UserList
-from typing import Self, Optional
+from typing import Self
 import random  # random is good enough for Miller-Rabin.
 
 from . import types
@@ -443,8 +443,8 @@ class FactorList(UserList[tuple[int, int]]):
             self._radical_value = prod([p for p, _ in self.data])
         return self._radical_value
 
-    def pow(self, n) -> 'FactorList':
-        '''Return self ** n, where n is positive int'''
+    def pow(self, n: int) -> "FactorList":
+        """Return self ** n, where n is positive int"""
         if not types.is_positive_int(n):
             raise TypeError("n must be a positive integer")
 
@@ -635,7 +635,7 @@ def miller_rabin(n: int, k: int = 40) -> bool:
     return True
 
 
-def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
+def mod_sqrt(a: int, m: int) -> list[int]:
     """For odd prime m return (r, m-r) s.t. r^2 = a (mod m) if r exists.
 
     m must be an odd prime. If p is not prime, you might get a nice error,
@@ -645,21 +645,20 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
     # I would have thought that there was a library for this.
     # Can't find it outside of sage, which is a bit big to import.
 
-
     # Algorithm taken from https://www.rieselprime.de/ziki/Modular_square_root
 
     if m < 3:
         raise ValueError("modulus must be an odd prime")
 
     if a == 1:
-        return (1, m - 1)
+        return [1, m - 1]
 
     if m == 3:
-        return None
+        return []
 
     a = a % m
     if a == 0:
-        return None
+        return [0]
 
     # Use a small k, as we aren't claiming a definitive test
     if not miller_rabin(m, k=5):
@@ -667,18 +666,18 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
 
     # check that a is a quadratic residue, return None if not
     if pow(a, (m - 1) // 2, m) != 1:
-        return None
+        return []
 
     if m % 4 == 3:  # if r exists then r = a^{(m+1)/2}
         r = pow(a, (m + 1) // 4, m)
-        return r, (m - r) % m
+        return [r, (m - r) % m]
 
     # Now we move to the tricky cases
     if m % 8 == 5:
         v = pow(2 * a, (m - 5) // 8, m)
         i = (2 * a * v * v) % m
         r = (a * v * (i - 1)) % m
-        return r, (m - r) % m
+        return [r, (m - r) % m]
 
     if m % 8 != 1:
         raise ValueError("modulus must be prime")
@@ -739,7 +738,7 @@ def mod_sqrt(a: int, m: int) -> Optional[tuple[int, int]]:
         v = (d * v) % m
         w = (w * y) % m
 
-    return v, (m - v) % m
+    return [v, (m - v) % m]
 
 
 def lcm(a: int, b: int) -> int:

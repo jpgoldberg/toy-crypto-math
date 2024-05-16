@@ -40,11 +40,11 @@ def test_random() -> None:
         assert x < 1.0
 
 
-@pytest.mark.statistical
+@pytest.mark.statistical  # type: ignore
 def test_shuffle() -> None:
     trials = 2048
 
-    input = ['A', 'B', 'C']
+    input = ["A", "B", "C"]
     permutations = ["ABC", "ACB", "BAC", "BCA", "CAB", "CBA"]
     counts = {p: 0 for p in permutations}
 
@@ -52,7 +52,7 @@ def test_shuffle() -> None:
         # Note that shuffle suffles in place
         c = input.copy()
         rand.shuffle(c)
-        s = ''.join(c)
+        s = "".join(c)
         assert s in permutations
         counts[s] += 1
 

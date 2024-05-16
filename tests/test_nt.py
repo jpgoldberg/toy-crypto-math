@@ -195,15 +195,15 @@ class TestMath:
         class TestVector(NamedTuple):
             a: int
             m: int
-            expected: tuple[int, int] | None
+            expected: list[int]
 
         tests = [
-            TestVector(58, 101, (82, 19)),
-            TestVector(26, 101, None),
-            TestVector(111, 113, (87, 26)),
-            TestVector(55, 113, None),
-            TestVector(30, 103, (37, 103 - 37)),
-            TestVector(31, 103, None),
+            TestVector(58, 101, [82, 19]),
+            TestVector(26, 101, []),
+            TestVector(111, 113, [87, 26]),
+            TestVector(55, 113, []),
+            TestVector(30, 103, [37, 103 - 37]),
+            TestVector(31, 103, []),
         ]
 
         for a, m, expected in tests:

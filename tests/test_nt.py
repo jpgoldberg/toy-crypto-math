@@ -17,7 +17,15 @@ class TestFactor:
             ((2**32) - 1, [(3, 1), (5, 1), (17, 1), (257, 1), (65537, 1)]),
             (
                 2**64 - 1,
-                [(3, 1), (5, 1), (17, 1), (257, 1), (641, 1), (65537, 1), (6700417, 1)],
+                [
+                    (3, 1),
+                    (5, 1),
+                    (17, 1),
+                    (257, 1),
+                    (641, 1),
+                    (65537, 1),
+                    (6700417, 1),
+                ],
             ),
             (3 * 5 * 5 * 7, [(3, 1), (5, 2), (7, 1)]),
         ]
@@ -155,7 +163,7 @@ class TestMath:
         ]
 
         for n, is_prime in vectors:
-            assert nt.miller_rabin(n) == is_prime
+            assert nt.probably_prime(n) == is_prime
 
     def test_gcd(self) -> None:
         vectors = [

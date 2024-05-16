@@ -19,7 +19,7 @@ import sys
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import NewType, TypeGuard, Optional, Self, Any
-from toy_crypto.nt import mod_sqrt, miller_rabin
+from toy_crypto.nt import mod_sqrt, probably_prime
 from toy_crypto.utils import lsb_to_msb
 
 Modulus = NewType("Modulus", int)
@@ -30,7 +30,7 @@ def is_modulus(n: Any) -> TypeGuard[Modulus]:
         return False
     if n < 2:
         return False
-    if not miller_rabin(n):
+    if not probably_prime(n):
         return False
     return True
 
@@ -105,7 +105,9 @@ class Point:
     # but I don't quite get python's classes to do that.
     # as this is all a toy, I'm not going to worry about this now
 
-    def __init__(self, x: int, y: int, curve: Curve, is_zero: bool = False) -> None:
+    def __init__(
+        self, x: int, y: int, curve: Curve, is_zero: bool = False
+    ) -> None:
         self.x: int = x
         self.y: int = y
         self.curve: Curve = curve

@@ -19,7 +19,7 @@ import sys
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import NewType, TypeGuard, Optional, Self, Any
-from toy_crypto.nt import mod_sqrt, probably_prime
+from toy_crypto.nt import mod_sqrt, isprime
 from toy_crypto.utils import lsb_to_msb
 
 Modulus = NewType("Modulus", int)
@@ -30,7 +30,7 @@ def is_modulus(n: Any) -> TypeGuard[Modulus]:
         return False
     if n < 2:
         return False
-    if not probably_prime(n):
+    if not isprime(n):
         return False
     return True
 

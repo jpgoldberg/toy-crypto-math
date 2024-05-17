@@ -21,7 +21,9 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "primefac >= 2.0.12"
+]
 
 [project.urls]
 Documentation = "https://github.com/unknown/toy-crypto-math#readme"

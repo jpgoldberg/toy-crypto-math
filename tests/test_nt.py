@@ -163,7 +163,7 @@ class TestMath:
         ]
 
         for n, is_prime in vectors:
-            assert nt.probably_prime(n) == is_prime
+            assert nt.isprime(n) == is_prime
 
     def test_gcd(self) -> None:
         vectors = [

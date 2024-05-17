@@ -1,7 +1,7 @@
 import pytest
 import sys
 from typing import NamedTuple
-from toy_crypto import nt
+from toy_crypto import nt, redundent
 
 
 class TestFactor:
@@ -40,7 +40,7 @@ class TestFactor:
         ]
 
         for n, expected in vectors:
-            assert nt.OLF(n) == expected
+            assert redundent.OLF(n) == expected
 
     def test_normalize(self) -> None:
         text_vectors: list[tuple[nt.FactorList, nt.FactorList]] = [

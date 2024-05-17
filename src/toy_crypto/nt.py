@@ -27,6 +27,7 @@ def prod[T](iterable: Iterable[T]) -> T:  # type: ignore
 
 
 def isprime(n: int) -> bool:
+    """False if composite; True if very probably prime."""
     return primefac.isprime(n)
 
 
@@ -256,22 +257,6 @@ def is_square(n: int) -> bool:
     """True iff n is a perfect square."""
 
     return primefac.ispower(n, 2) is not None
-
-
-# From https://programmingpraxis.com/2014/01/28/harts-one-line-factoring-algorithm/
-def OLF(n: int) -> int:
-    """Returns 1 if n is prime, else a factor (possibly composite) of n"""
-    for ni in range(n, n * n, n):
-        cs = isqrt(ni)
-        # isqrt(x) gives us floor(sqrt(x)), but we need ceil(sqrt(n))
-        if cs * cs != ni:
-            cs += 1
-        pcs = pow(cs, 2, n)
-        if is_square(pcs):
-            return gcd(n, cs - isqrt(pcs))
-
-    # This will never be reached, but linters don't know that
-    return 1
 
 
 def mod_sqrt(a: int, m: int) -> list[int]:

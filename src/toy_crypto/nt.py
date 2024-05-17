@@ -10,7 +10,6 @@ from functools import reduce
 from collections.abc import Iterable, Generator
 from collections import UserList
 from typing import Optional, Self
-import random  # random is good enough for Miller-Rabin.
 import math
 import primefac
 
@@ -163,9 +162,7 @@ class FactorList(UserList[tuple[int, int]]):
         """True iff all the alleged primes are prime."""
         if self._factors_are_prime is not None:
             return self._factors_are_prime
-        self._factors_are_prime = all(
-            [isprime(p) for p, _ in self.data]
-        )
+        self._factors_are_prime = all([isprime(p) for p, _ in self.data])
         return self._factors_are_prime
 
     @property
@@ -307,6 +304,8 @@ def mod_sqrt(a: int, m: int) -> list[int]:
     return [v, (m - v) % m]
 
 
-def lcm(a: int, b: int) -> int:
+def lcm(*integers: int) -> int:
     """Least common multiple"""
-    return abs(a * b) // gcd(a, b)
+
+    # requires python 3.9, but I'm already requiring 3.11
+    return math.lcm(*integers)

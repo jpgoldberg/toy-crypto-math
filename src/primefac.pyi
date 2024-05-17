@@ -7,21 +7,32 @@ version: str
 # def primegen(limit=...) -> Generator[Incomplete, Incomplete, Incomplete]: ...
 # def ilog(x, b): ...
 
-
 def modinv(a: int, m: int) -> int: ...
-
-
 def introot(n: int, r: int = 2) -> int: ...
-
-
 def ispower(n: int, r: int = 0) -> Optional[tuple[int, int] | int]: ...
 
 # def jacobi(a, n): ...
 
-
 def isprime(
     n: int,
-    tb: tuple[int, ...] = (3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59),
+    tb: tuple[int, ...] = (
+        3,
+        5,
+        7,
+        11,
+        13,
+        17,
+        19,
+        23,
+        29,
+        31,
+        37,
+        41,
+        43,
+        47,
+        53,
+        59,
+    ),
 ) -> bool: ...
 
 # def pollardrho_brent(n, verbose: bool = False): ...
@@ -35,11 +46,10 @@ def isprime(
 # def ecmparams(n) -> Generator[Incomplete, None, None]: ...
 # def ecm(n, paramseq=..., nprocs: int = 1, verbose: bool = False): ...
 
-
 def sqrtmod_prime(a: int, p: int) -> int: ...
+
 # def siqs(n, verbose: bool = False): ...
 # def multifactor(n, methods=..., verbose: bool = False): ...
-
 
 def primefac(
     n: int,
@@ -50,6 +60,5 @@ def primefac(
 ) -> Generator[int, None, None]: ...
 
 # def rpn(instr) -> Generator[Incomplete, None, None]: ...
-
 
 usage: str

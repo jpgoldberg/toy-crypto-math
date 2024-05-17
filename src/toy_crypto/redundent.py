@@ -371,7 +371,7 @@ class FactorList(UserList[tuple[int, int]]):
         # properity-like things that are computed when first needed
         self._n: Optional[int] = None
         self._totient: Optional[int] = None
-        self._radical: Optional['FactorList'] = None
+        self._radical: Optional["FactorList"] = None
         self._radical_value: Optional[int] = None
         self._factors_are_prime: Optional[bool] = None
 

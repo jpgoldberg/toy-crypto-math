@@ -8,10 +8,12 @@ I am trying to illustrate or learn. It may not always be correct.
 
 - If you want to use cryptographic tools in Python use [pyca].
 - If you want to play with some of the mathematics of some things underlying Cryptography in
-a Python-like environment use [SageMath].
+a Python-like environment use [SageMath], [sympy], or [primefac].
 
 [pyca]: https://cryptography.io
 [SageMath]: https://doc.sagemath.org/
+[sympy]: https://www.sympy.org/en/
+[primefac]: https://pypi.org/project/primefac/
 
 ## Table of Contents
 
@@ -24,7 +26,8 @@ a Python-like environment use [SageMath].
 
 ## Motivation
 
-This package is almost certainly not the package you are looking for. Instead, [pyca] or [SageMath] will better suite your needs.
+This package is almost certainly not the package you are looking for.
+Instead, [pyca] or [SageMath] will better suite your needs.
 I created it to meet a number of my own idiosyncratic  needs.
 
 - I don't have the flexibility of Python version that I may want when using [SageMath].

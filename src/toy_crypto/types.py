@@ -1,4 +1,5 @@
 from typing import NewType, TypeGuard, Any
+from toy_crypto.nt import isprime
 
 
 Prob = NewType("Prob", float)
@@ -19,3 +20,16 @@ def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     if not isinstance(val, int):
         return False
     return val >= 1
+
+
+Modulus = NewType("Modulus", int)
+
+
+def is_modulus(n: Any) -> TypeGuard[Modulus]:
+    if not isinstance(n, int):
+        return False
+    if n < 2:
+        return False
+    if not isprime(n):
+        return False
+    return True

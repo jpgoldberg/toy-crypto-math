@@ -18,21 +18,11 @@ import sys
 
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
-from typing import NewType, TypeGuard, Optional, Self, Any
-from toy_crypto.nt import mod_sqrt, isprime
+from typing import Optional, Self, Any
+from toy_crypto.nt import mod_sqrt
 from toy_crypto.utils import lsb_to_msb
-
-Modulus = NewType("Modulus", int)
-
-
-def is_modulus(n: Any) -> TypeGuard[Modulus]:
-    if not isinstance(n, int):
-        return False
-    if n < 2:
-        return False
-    if not isprime(n):
-        return False
-    return True
+from toy_crypto.types import Modulus as Modulus
+from toy_crypto.types import is_modulus
 
 
 class Curve:

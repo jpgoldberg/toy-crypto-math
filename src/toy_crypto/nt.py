@@ -6,7 +6,6 @@
 Number Theory (nt) module
 """
 
-from functools import reduce
 from collections.abc import Iterable, Generator
 from collections import UserList
 from typing import Optional, Self
@@ -14,16 +13,6 @@ import math
 import primefac
 
 from . import types
-
-
-# E731 tells me to def prod instead of bind it to a lambda.
-# https://docs.astral.sh/ruff/rules/lambda-assignment/
-def prod[T](iterable: Iterable[T]) -> T:  # type: ignore
-    """Returns the product of the elements of it"""
-    return reduce(lambda a, b: a * b, iterable, 1)
-
-
-# primes under 2^21
 
 
 def isprime(n: int) -> bool:
@@ -51,7 +40,7 @@ def modinv(a: int, m: int) -> int:
 
 class FactorList(UserList[tuple[int, int]]):
     """
-    A FactorList is an list of (prime, exponenbt) tuples.
+    A FactorList is an list of (prime, exponent) tuples.
 
     It representents the prime factorization of a number.
 
@@ -170,7 +159,7 @@ class FactorList(UserList[tuple[int, int]]):
     def n(self) -> int:
         """The integer that this is a factorization of"""
         if self._n is None:
-            self._n = int(prod([p**e for p, e in self.data]))
+            self._n = int(math.prod([p**e for p, e in self.data]))
         return self._n
 
     @property
@@ -186,7 +175,7 @@ class FactorList(UserList[tuple[int, int]]):
 
         if self._totient is None:
             self._totient = int(
-                prod([p ** (e - 1) * (p - 1) for p, e in self.data])
+                math.prod([p ** (e - 1) * (p - 1) for p, e in self.data])
             )
 
         return self._totient
@@ -214,7 +203,7 @@ class FactorList(UserList[tuple[int, int]]):
 
     def radical_value(self) -> int:
         if self._radical_value is None:
-            self._radical_value = prod([p for p, _ in self.data])
+            self._radical_value = math.prod([p for p, _ in self.data])
         return self._radical_value
 
     def pow(self, n: int) -> "FactorList":

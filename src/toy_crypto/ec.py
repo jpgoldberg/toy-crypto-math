@@ -21,8 +21,8 @@ if sys.version_info < (3, 11):
 from typing import Optional, Self, Any
 from toy_crypto.nt import mod_sqrt
 from toy_crypto.utils import lsb_to_msb
-from toy_crypto.types import Modulus as Modulus
-from toy_crypto.types import is_modulus
+from toy_crypto.nt import Modulus as Modulus
+from toy_crypto.nt import is_modulus
 
 
 class Curve:

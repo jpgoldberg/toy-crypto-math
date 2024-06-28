@@ -8,11 +8,24 @@ Number Theory (nt) module
 
 from collections.abc import Iterable, Generator
 from collections import UserList
-from typing import Optional, Self
+from typing import Any, NewType, Optional, Self, TypeGuard
 import math
 import primefac
 
 from . import types
+
+Modulus = NewType("Modulus", int)
+
+
+def is_modulus(n: Any) -> TypeGuard[Modulus]:
+    if not isinstance(n, int):
+        return False
+    if n < 2:
+        return False
+    if not isprime(n):
+        return False
+    return True
+
 
 
 def isprime(n: int) -> bool:

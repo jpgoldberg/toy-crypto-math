@@ -2,9 +2,9 @@ from toy_crypto.nt import lcm, modinv
 
 
 class PublicKey:
-    def __init__(self, modulus: int, public_expotent: int) -> None:
+    def __init__(self, modulus: int, public_exponent: int) -> None:
         self._N = modulus
-        self._e = public_expotent
+        self._e = public_exponent
 
     @property
     def N(self) -> int:

@@ -1,7 +1,7 @@
-from toy_crypto import rsa
 from typing import Optional
 
 from toy_crypto.nt import lcm
+from toy_crypto import rsa
 
 
 class TestCitm:
@@ -116,3 +116,54 @@ class TestSage:
         # We (almost certainly) get a smaller d where the lcm check matters
         if self.phi == self.λ:
             assert priv_key._d == self.d
+
+
+class TestMG177:
+
+    # some utilities for doing the text to int and int to text from the
+    # RSA-129 Challenge from Martin Gardner's 1977 article"
+    abc = list(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    abc_index = {c: i for i, c in enumerate(abc)}
+
+    @classmethod
+    def encode(cls, text: str) -> int:
+        result = 0
+        for c in text:
+            result *= 100
+            result += cls.abc_index[c]
+        return result
+
+    @classmethod
+    def decode(cls, number: int) -> str:
+        chars: list[str] = []
+        while True:
+            number, rem = divmod(number, 100)
+            chars.append(cls.abc[rem])
+            if number == 0:
+                break
+        return ''.join(reversed(chars))
+
+    def test_magic(self) -> None:
+        """Test the RSA-129 Challenge from Martin Gardner's 1977 article"""
+
+        # From Martin Gardner's 19
+        e = 9007
+        n = 114381625757888867669235779976146612010218296721242362562561842935706935245733897830597123563958705058989075147599290026879543541
+
+        p = 3490529510847650949147849619903898133417764638493387843990820577
+        q = 32769132993266709549961988190834461413177642967992942539798288533
+
+        pub_key = rsa.PublicKey(n, e)
+
+        plaintext = "THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE"
+
+        plain_num: int = self.encode(plaintext)
+
+        cipher_num = pub_key.encrypt(plain_num)
+
+        priv_key = rsa.PrivateKey(p, q, pub_exponent=e)
+
+        decrypted_num: int = priv_key.decrypt(cipher_num)
+        decrypted: str = self.decode(decrypted_num)
+
+        assert decrypted == plaintext

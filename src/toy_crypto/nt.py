@@ -27,7 +27,6 @@ def is_modulus(n: Any) -> TypeGuard[Modulus]:
     return True
 
 
-
 def isprime(n: int) -> bool:
     """False if composite; True if very probably prime."""
     return primefac.isprime(n)

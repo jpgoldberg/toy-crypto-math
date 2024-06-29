@@ -1,7 +1,6 @@
 from typing import NewType, TypeGuard, Any
 
 
-
 Prob = NewType("Prob", float)
 
 

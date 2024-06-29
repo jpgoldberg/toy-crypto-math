@@ -1,4 +1,5 @@
 from typing import Optional
+from collections import namedtuple
 
 from toy_crypto.nt import lcm
 from toy_crypto import rsa
@@ -119,7 +120,6 @@ class TestSage:
 
 
 class TestMG177:
-
     # some utilities for doing the text to int and int to text from the
     # RSA-129 Challenge from Martin Gardner's 1977 article"
     abc = list(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -141,29 +141,43 @@ class TestMG177:
             chars.append(cls.abc[rem])
             if number == 0:
                 break
-        return ''.join(reversed(chars))
+        return "".join(reversed(chars))
 
     def test_magic(self) -> None:
         """Test the RSA-129 Challenge from Martin Gardner's 1977 article"""
 
-        # From Martin Gardner's 19
-        e = 9007
-        n = 114381625757888867669235779976146612010218296721242362562561842935706935245733897830597123563958705058989075147599290026879543541
+        Challenge = namedtuple(
+            "Challenge", ["modulus", "pub_exponent", "ctext"]
+        )
+        Solution = namedtuple("Solution", ["p", "q", "plaintext"])
 
-        p = 3490529510847650949147849619903898133417764638493387843990820577
-        q = 32769132993266709549961988190834461413177642967992942539798288533
+        # From Martin Gardner's 1977
+        challenge = Challenge(
+            modulus=114381625757888867669235779976146612010218296721242362562561842935706935245733897830597123563958705058989075147599290026879543541,
+            pub_exponent=9007,
+            ctext=96869613754622061477140922254355882905759991124574319874695120930816298225145708356931476622883989628013391990551829945157815154,
+        )
 
-        pub_key = rsa.PublicKey(n, e)
+        # From Atkins et al 1995
+        solution = Solution(
+            p=3490529510847650949147849619903898133417764638493387843990820577,
+            q=32769132993266709549961988190834461413177642967992942539798288533,
+            plaintext="THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE",
+        )
 
-        plaintext = "THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE"
+        pub_key = rsa.PublicKey(challenge.modulus, challenge.pub_exponent)
 
-        plain_num: int = self.encode(plaintext)
-
+        # First test encryption
+        plain_num: int = self.encode(solution.plaintext)
         cipher_num = pub_key.encrypt(plain_num)
+        assert cipher_num == challenge.ctext
 
-        priv_key = rsa.PrivateKey(p, q, pub_exponent=e)
+        # Now test decryption
+        priv_key = rsa.PrivateKey(
+            solution.p, solution.q, challenge.pub_exponent
+        )
 
         decrypted_num: int = priv_key.decrypt(cipher_num)
         decrypted: str = self.decode(decrypted_num)
 
-        assert decrypted == plaintext
+        assert decrypted == solution.plaintext

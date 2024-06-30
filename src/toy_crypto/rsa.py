@@ -1,4 +1,4 @@
-from toy_crypto.nt import lcm, modinv
+from toy_crypto.nt import lcm, modinv, gcd
 
 
 class PublicKey:
@@ -22,6 +22,17 @@ class PublicKey:
             raise ValueError("Message too big")
 
         return pow(base=message, exp=self._e, mod=self._N)
+
+    def __eq__(self, other) -> bool:
+        """True when each has the same modulus and public exponent.
+        
+        When comparing to a PrivateKey, this compares only the public parts.
+        """
+        if isinstance(other, PublicKey):
+            return self.e == other.e and self.N == other.N
+        if isinstance(other, PrivateKey):
+            return self == other.pub_key
+        return NotImplemented
 
 
 class PrivateKey:
@@ -49,6 +60,27 @@ class PrivateKey:
     def e(self) -> int:
         return self._e
 
+    def __eq__(self, other) -> bool:
+        '''True iff keys are mathematically equivalent
+
+        Private keys with internal differences can behave identically
+        with respect to input and output. This comparison will return
+        True when they are equivalent in this respect.
+
+        When compared to a PublicKey, this compares only the public part.
+        '''
+        if isinstance(other, PrivateKey):
+            if self.pub_key != other.pub_key:
+                return False
+            # as long as each d has a common factor with each other
+            # they will behave the same way.
+            return gcd(self._d, other._d) != 1
+
+        if isinstance(other, PublicKey):
+            return self.pub_key == other
+
+        return NotImplemented
+
     def _compute_d(self) -> int:
         λ = lcm(self._p - 1, self._q - 1)
         try:
@@ -59,7 +91,7 @@ class PrivateKey:
     def decrypt(self, ciphertext: int) -> int:
         """Decrypt ciphertext"""
 
-        if ciphertext < 1 or not ciphertext < self.pub_key.N:
+        if ciphertext < 1 or ciphertext >= self.pub_key.N:
             raise ValueError("ciphertext is out of range")
 
         # m =  pow(base=ciphertext, exp=self._d, mod=self._N)

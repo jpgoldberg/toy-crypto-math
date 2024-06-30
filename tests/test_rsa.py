@@ -119,7 +119,7 @@ class TestSage:
             assert priv_key._d == self.d
 
 
-class TestMG177:
+class TestMG1977:
     # some utilities for doing the text to int and int to text from the
     # RSA-129 Challenge from Martin Gardner's 1977 article"
     abc = list(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -169,15 +169,16 @@ class TestMG177:
 
         # First test encryption
         plain_num: int = self.encode(solution.plaintext)
-        cipher_num = pub_key.encrypt(plain_num)
-        assert cipher_num == challenge.ctext
+        ctext = pub_key.encrypt(plain_num)
+        assert ctext == challenge.ctext
 
         # Now test decryption
         priv_key = rsa.PrivateKey(
             solution.p, solution.q, challenge.pub_exponent
         )
+        assert priv_key == pub_key
 
-        decrypted_num: int = priv_key.decrypt(cipher_num)
+        decrypted_num: int = priv_key.decrypt(ctext)
         decrypted: str = self.decode(decrypted_num)
 
         assert decrypted == solution.plaintext

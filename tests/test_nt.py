@@ -257,5 +257,18 @@ class TestMath:
             assert nt.isqrt(n) == expected
 
 
+class TestSieve:
+
+    def test_sieve_30(self):
+
+        s30 = nt.Sieve(30)
+        expected = '001101010001010001010001000001'
+
+        assert s30.to01() == expected
+
+
+
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

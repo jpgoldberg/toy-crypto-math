@@ -11,6 +11,8 @@ from collections import UserList
 from typing import Any, NewType, Optional, Self, TypeGuard
 import math
 import primefac
+from bitarray import bitarray
+from bitarray.util import count_n
 
 from . import types
 
@@ -295,3 +297,58 @@ def lcm(*integers: int) -> int:
 
     # requires python 3.9, but I'm already requiring 3.11
     return math.lcm(*integers)
+
+
+class Sieve:
+    """Sieve of Eratosthenes"""
+
+    def __init__(self, n: int) -> None:
+        if not isinstance(n, int):
+            raise TypeError
+        if n < 2:
+            raise ValueError("n must be greater than 2")
+
+        self._array: bitarray = bitarray(n)  # type: ignore
+        self._array[:] = True
+        self._array[0:2] = False
+
+        for i in range(2, isqrt(n) + 1):
+            if self._array[i] is False:
+                continue
+
+            self._array[i * i :: i] = False
+
+        self._count: int = self._array.count()
+        self._bitstring: Optional[str] = None
+
+    @property
+    def array(self) -> bitarray:
+        """The sieve as a bitarray."""
+        return self._array
+
+    @property
+    def count(self) -> int:
+        """The number of primes in the sieve."""
+        return self._count
+
+    def to01(self) -> str:
+        """The sieve as a string of 0s and 1s.
+
+        The output is to be read left to right. That is, it should begin with
+        ``001101010001`` corresponding to primes [2, 3, 5, 7, 11]
+        """
+
+        if self._bitstring is None:
+            self._bitstring = self._array.to01()
+        return self._bitstring
+
+    def nth_prime(self, n) -> int:
+        """Returns n-th prime.
+
+        Raises ValueError if n exceeds count.
+        """
+
+        if n > self._count:
+            raise ValueError("n cannot exceed count")
+
+        return count_n(self._array, n)

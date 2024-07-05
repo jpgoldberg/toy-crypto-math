@@ -258,16 +258,24 @@ class TestMath:
 
 
 class TestSieve:
-
-    def test_sieve_30(self):
-
+    def test_sieve_30(self) -> None:
         s30 = nt.Sieve(30)
-        expected = '001101010001010001010001000001'
+        expected = "001101010001010001010001000001"
+        s30_count = 10
 
         assert s30.to01() == expected
+        assert s30_count == s30.count
 
+        # test that s30 still behaves as if it is 30 even if we create
+        # a larger internal sieve
+        s200 = nt.Sieve(200)
 
+        # test that the larger sieve was indeed created
+        s200_count = 46  # primes below 200
+        assert s200.count == s200_count
 
+        # large underlying sieve leaves s30's behavior unchanged
+        assert s30.to01() == expected
 
 
 if __name__ == "__main__":

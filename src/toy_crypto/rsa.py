@@ -1,4 +1,5 @@
 from toy_crypto.nt import lcm, modinv, gcd
+from typing import Any
 
 
 class PublicKey:
@@ -23,9 +24,9 @@ class PublicKey:
 
         return pow(base=message, exp=self._e, mod=self._N)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """True when each has the same modulus and public exponent.
-        
+
         When comparing to a PrivateKey, this compares only the public parts.
         """
         if isinstance(other, PublicKey):
@@ -60,15 +61,15 @@ class PrivateKey:
     def e(self) -> int:
         return self._e
 
-    def __eq__(self, other) -> bool:
-        '''True iff keys are mathematically equivalent
+    def __eq__(self, other: Any) -> bool:
+        """True iff keys are mathematically equivalent
 
         Private keys with internal differences can behave identically
         with respect to input and output. This comparison will return
         True when they are equivalent in this respect.
 
         When compared to a PublicKey, this compares only the public part.
-        '''
+        """
         if isinstance(other, PrivateKey):
             if self.pub_key != other.pub_key:
                 return False

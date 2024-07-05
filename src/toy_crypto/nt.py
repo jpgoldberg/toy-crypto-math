@@ -302,29 +302,57 @@ def lcm(*integers: int) -> int:
 class Sieve:
     """Sieve of Eratosthenes"""
 
+    ## We keep the largest sieve created, which will be shared
+    ## among all instances
+    _cached_array = bitarray("0011")
+
+    def _make_array(self, n: int) -> None:
+        len_c = len(self._cached_array)
+        if n <= len_c:
+            return
+
+        len_e = n - len_c
+        # Not thread safe. Need to make this atomic
+        self._cached_array.extend([True] * len_e)
+
+        for p in range(len_c):
+            if not self._cached_array[p]:
+                continue
+            # We need to find the smallest multiple of p that is >= len_c
+            q, r = divmod(len_c, p)
+            if r == 0:
+                least_mul = len_c
+            else:
+                least_mul = p * (q + 1)
+
+            # Falsify all multiples of p from least multiple upward
+            self._cached_array[least_mul::p] = False
+
+        for i in range(len_c, isqrt(n) + 1):
+            if self._cached_array[i] is False:
+                continue
+            self._cached_array[i * i :: i] = False
+
     def __init__(self, n: int) -> None:
         if not isinstance(n, int):
             raise TypeError
         if n < 2:
             raise ValueError("n must be greater than 2")
 
-        self._array: bitarray = bitarray(n)  # type: ignore
-        self._array[:] = True
-        self._array[0:2] = False
+        self._make_array(n)
+        self._n = n
 
-        for i in range(2, isqrt(n) + 1):
-            if self._array[i] is False:
-                continue
-
-            self._array[i * i :: i] = False
-
-        self._count: int = self._array.count()
+        self._count: int = self._cached_array[:n].count()
         self._bitstring: Optional[str] = None
+
+    @property
+    def n(self) -> int:
+        return self._n
 
     @property
     def array(self) -> bitarray:
         """The sieve as a bitarray."""
-        return self._array
+        return self._cached_array[: self._n]
 
     @property
     def count(self) -> int:
@@ -339,10 +367,10 @@ class Sieve:
         """
 
         if self._bitstring is None:
-            self._bitstring = self._array.to01()
+            self._bitstring = self._cached_array[: self._n].to01()
         return self._bitstring
 
-    def nth_prime(self, n) -> int:
+    def nth_prime(self, n: int) -> int:
         """Returns n-th prime.
 
         Raises ValueError if n exceeds count.
@@ -351,4 +379,4 @@ class Sieve:
         if n > self._count:
             raise ValueError("n cannot exceed count")
 
-        return count_n(self._array, n)
+        return count_n(self._cached_array, n)

@@ -315,23 +315,18 @@ class Sieve:
         # Not thread safe. Need to make this atomic
         self._cached_array.extend([True] * len_e)
 
-        for p in range(len_c):
-            if not self._cached_array[p]:
-                continue
-            # We need to find the smallest multiple of p that is >= len_c
-            q, r = divmod(len_c, p)
-            if r == 0:
-                least_mul = len_c
-            else:
-                least_mul = p * (q + 1)
-
-            # Falsify all multiples of p from least multiple upward
-            self._cached_array[least_mul::p] = False
-
-        for i in range(len_c, isqrt(n) + 1):
+        for i in range(2, isqrt(n) + 1):
             if self._cached_array[i] is False:
                 continue
             self._cached_array[i * i :: i] = False
+
+    @classmethod
+    def clear(cls) -> None:
+        """Resets the cached array.
+
+        There is no reason to every use this outside of performance testing.
+        """
+        cls._cached_array = bitarray("0011")
 
     def __init__(self, n: int) -> None:
         if not isinstance(n, int):

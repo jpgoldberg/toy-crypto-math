@@ -30,8 +30,7 @@ class PublicKey:
         """
         if isinstance(other, PublicKey):
             return self.e == other.e and self.N == other.N
-        if isinstance(other, PrivateKey):
-            return self == other.pub_key
+
         return NotImplemented
 
 
@@ -70,10 +69,7 @@ class PrivateKey:
         When compared to a PublicKey, this compares only the public part.
         """
         if isinstance(other, PrivateKey):
-            if self.pub_key != other.pub_key:
-                return False
-
-            return {self._p, self._q} == {other._p, other._q}
+            return self.pub_key == other.pub_key
 
         if isinstance(other, PublicKey):
             return self.pub_key == other

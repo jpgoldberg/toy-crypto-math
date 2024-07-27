@@ -1,7 +1,7 @@
 from typing import Optional
 from collections import namedtuple
 
-from toy_crypto.nt import lcm
+from toy_crypto.nt import lcm, modinv
 from toy_crypto import rsa
 
 
@@ -182,3 +182,37 @@ class TestMG1977:
         decrypted: str = self.decode(decrypted_num)
 
         assert decrypted == solution.plaintext
+
+
+class TestEq:
+    # We will reuse magic values for this test, but anything should do
+    p = 3490529510847650949147849619903898133417764638493387843990820577
+    q = 32769132993266709549961988190834461413177642967992942539798288533
+    e = 9007
+
+    def test_pq_order(self) -> None:
+        priv_pq = rsa.PrivateKey(self.p, self.q)
+        priv_qp = rsa.PrivateKey(self.q, self.p)
+
+        assert priv_pq == priv_qp
+
+    def test_pub(self) -> None:
+        priv_pq = rsa.PrivateKey(self.p, self.q, pub_exponent=self.e)
+        priv_qp = rsa.PrivateKey(self.q, self.p, pub_exponent=self.e)
+
+        assert priv_pq == priv_qp
+
+    def test_pub_phi(self) -> None:
+        """Key computed with 𝜑 is equivalent to key computed with λ."""
+
+        key_lambda = rsa.PrivateKey(self.p, self.q, self.e)
+
+        # can only construct key_phi by changing what would be private fields
+        key_phi = rsa.PrivateKey(self.p, self.q, self.e)
+
+        phi = (self.p - 1) * (self.q - 1)
+        d_phi = modinv(key_phi.e, phi)
+
+        key_phi._d = d_phi
+
+        assert key_phi == key_lambda

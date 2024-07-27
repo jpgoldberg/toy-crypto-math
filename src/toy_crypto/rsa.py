@@ -1,4 +1,4 @@
-from toy_crypto.nt import lcm, modinv, gcd
+from toy_crypto.nt import lcm, modinv
 
 
 class PublicKey:
@@ -72,9 +72,8 @@ class PrivateKey:
         if isinstance(other, PrivateKey):
             if self.pub_key != other.pub_key:
                 return False
-            # as long as each d has a common factor with each other
-            # they will behave the same way.
-            return gcd(self._d, other._d) != 1
+
+            return {self._p, self._q} == {other._p, other._q}
 
         if isinstance(other, PublicKey):
             return self.pub_key == other

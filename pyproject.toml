@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "toy-crypto-math"
+name = "toycrypto"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
@@ -43,6 +43,7 @@ dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
   "ruff",
+  "mypy",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"

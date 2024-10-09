@@ -1,4 +1,5 @@
-from collections.abc import Generator, MutableSequence
+from collections.abc import Generator, MutableSequence, Sequence
+from typing import Any
 import math
 import secrets
 
@@ -25,7 +26,7 @@ def digit_count(x: float, b: int = 10) -> int:
     return result
 
 
-def suffle(x: MutableSequence) -> MutableSequence:
+def suffle(x: MutableSequence[Any]) -> Sequence[Any]:
     "Shuffles sequence in places using a Cryptographically Secure RNG."
 
     # Fisher-Yates Shuffle.

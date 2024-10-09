@@ -4,8 +4,9 @@ from collections.abc import Sequence
 from itertools import cycle
 from typing import Any, Optional, TypeAlias, Union
 
-# Letter is intended to be a single character or byte, but this is not enforced.
+# Letter is meant to be a single character or byte, but this is not enforced.
 Letter: TypeAlias = Union[str, bytes]
+Letters: TypeAlias = Sequence[Letter]
 
 
 class Alphabet_meta(type):
@@ -18,8 +19,16 @@ class Alphabet_meta(type):
         cls._default_alphabet = cls._abc_caps_only
 
     @property
-    def default_alphabet(cls) -> str:
+    def default_alphabet(cls) -> Letters:
         return cls._default_alphabet
+
+    @property
+    def abc_caps_only(cls) -> Letters:
+        return cls._abc_caps_only
+
+    @property
+    def abc_printable(cls) -> Letters:
+        return cls._abc_shuffled_printable
 
 
 class Alphabet(metaclass=Alphabet_meta):
@@ -33,7 +42,7 @@ class Alphabet(metaclass=Alphabet_meta):
 
     def __init__(
         self,
-        alphabet: Optional[Sequence[Letter]] = None,
+        alphabet: Optional[Letters] = None,
         prebaked: Optional[str] = None,
     ):
         """This does not check if the alphabet is sensible. In particular, you
@@ -42,24 +51,24 @@ class Alphabet(metaclass=Alphabet_meta):
         """
 
         match (alphabet, prebaked):
-            case (None, None):
-                alphabet = self._default_alphabet
-            case (None, "default") | (None, "caps"):
-                alphabet = self._default_alphabet
+            case (None, None) | (None, "default"):
+                abc = Alphabet.default_alphabet
+            case (None, "caps"):
+                abc = Alphabet.abc_caps_only
             case (None, "printable"):
-                alphabet = self._abc_shuffled_printable
+                abc = Alphabet.abc_printable
             case (None, _):
                 raise ValueError("Unknown pre-baked alphabet")
             case (_, None):
-                pass
+                if not isinstance(alphabet, Sequence):
+                    raise TypeError("alphabet must be a Sequence")
+                abc = alphabet
             case (_, _):
                 raise ValueError(
                     "Can't use both explicit and pre-baked alphabet"
                 )
 
-        if not isinstance(alphabet, Sequence):
-            raise TypeError("alphabet must be a Sequence")
-        self._alphabet = alphabet
+        self._alphabet = abc
 
         self._modulus = len(self._alphabet)
 
@@ -69,7 +78,7 @@ class Alphabet(metaclass=Alphabet_meta):
         }
 
     @property
-    def alphabet(self) -> Sequence:
+    def alphabet(self) -> Letters:
         return self._alphabet
 
     @property
@@ -108,7 +117,9 @@ class Alphabet(metaclass=Alphabet_meta):
 class Cipher:
     """A Vigenère Cipher is a key and an alphabet."""
 
-    def __init__(self, key: str, alphabet: Alphabet | str | None = None):
+    def __init__(
+        self, key: Letters, alphabet: Alphabet | Letters | None = None
+    ):
         if isinstance(alphabet, Alphabet):
             abc = alphabet
         else:
@@ -123,17 +134,17 @@ class Cipher:
             raise ValueError(
                 "key must be comprised of characters in the alphabet"
             )
-        self._key: str = key
+        self._key: Letters = key
 
     @property
     def alphabet(self) -> Alphabet:
         return self._alphabet
 
     @property
-    def key(self) -> str:
+    def key(self) -> Letters:
         return self._key
 
-    def crypt(self, text: str, mode: str) -> str:
+    def crypt(self, text: Letters, mode: str) -> Letters:
         """{en,de}crypts text depending on mode"""
 
         match mode:
@@ -145,7 +156,7 @@ class Cipher:
                 raise ValueError("mode must be 'encrypt' or 'decrypt")
 
         # TODO: Generalize this for streaming input and output
-        output: list[str] = []
+        output: list[Letter] = []
 
         for c, k in zip(text, cycle(self.key)):
             if c not in self.alphabet:
@@ -155,14 +166,16 @@ class Cipher:
 
             output.append(result)
 
-        return "".join(output)
+        if isinstance(text, bytes):
+            return b"".join(output)  # type: ignore[arg-type]
+        return "".join(output)  # type: ignore[arg-type]
 
-    def encrypt(self, plaintext: str) -> str:
+    def encrypt(self, plaintext: Letters) -> Letters:
         """Returns ciphertext."""
 
         return self.crypt(plaintext, mode="encrypt")
 
-    def decrypt(self, ciphertext: str) -> str:
+    def decrypt(self, ciphertext: Letters) -> Letters:
         """Returns plaintext."""
 
         return self.crypt(ciphertext, mode="decrypt")

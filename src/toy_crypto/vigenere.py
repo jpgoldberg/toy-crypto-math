@@ -1,18 +1,25 @@
 """Vigenère: For demonstration use."""
 
 from collections.abc import Sequence
-from itertools import repeat
+from itertools import cycle
 from typing import Any
 
 
-class Alphabet:
+class Alphabet_meta(type):
+    def __init__(cls, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
+        cls._default_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+    @property
+    def default_alphabet(cls) -> str:
+        return cls._default_alphabet
+
+
+class Alphabet(metaclass=Alphabet_meta):
     """An alphabet.
 
     This does not check if the alphabet is sensible. In particular, you may get
     very peculiar results if the alphabet contains duplicate elements.
     """
-
-    default_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     def __init__(self, alphabet: str | None = None):
         """This does not check if the alphabet is sensible. In particular, you
@@ -21,18 +28,30 @@ class Alphabet:
         """
 
         if alphabet is None:
-            alphabet = self.default_alphabet
+            alphabet = self._default_alphabet  # type: ignore[attr-defined]
 
         if not isinstance(alphabet, Sequence):
             raise TypeError("alphabet must be a Sequence")
-        self.alphabet = alphabet
+        self._alphabet = alphabet
 
-        self.modulus = len(self.alphabet)
+        self._modulus = len(self._alphabet)
 
         # Set up char to index table
-        self.abc2idx: dict[str, int] = {
-            c: i for i, c in enumerate(self.alphabet)
+        self._abc2idx: dict[str, int] = {
+            c: i for i, c in enumerate(self._alphabet)
         }
+
+    @property
+    def alphabet(self) -> str:
+        return self._alphabet
+
+    @property
+    def modulus(self) -> int:
+        return self._modulus
+
+    @property
+    def abc2idx(self) -> dict[str, int]:
+        return self._abc2idx
 
     # We will want to use 'in' for Alphabet instances
     def __contains__(self, item: Any) -> bool:
@@ -51,7 +70,7 @@ class Alphabet:
         """Returns the additive inverse of character c"""
         if c not in self:
             raise ValueError("argument not an element")
-        idx = self.modulus - self.abc2idx[c]
+        idx = (self.modulus - self.abc2idx[c]) % self.modulus
         return self.alphabet[idx]
 
     def subtract(self, a: str, b: str) -> str:
@@ -64,19 +83,28 @@ class Cipher:
 
     def __init__(self, key: str, alphabet: Alphabet | str | None = None):
         if isinstance(alphabet, Alphabet):
-            self.alphabet = alphabet
+            abc = alphabet
         else:
-            self.alphabet = Alphabet(alphabet)
+            abc = Alphabet(alphabet)
+
+        self._alphabet = abc
 
         if not key:
             raise ValueError("key must not be empty")
 
-        if any([k not in self.alphabet for k in key]):
+        if any([k not in self._alphabet for k in key]):
             raise ValueError(
                 "key must be comprised of characters in the alphabet"
             )
+        self._key: str = key
 
-        self.key = key
+    @property
+    def alphabet(self) -> Alphabet:
+        return self._alphabet
+
+    @property
+    def key(self) -> str:
+        return self._key
 
     def crypt(self, text: str, mode: str) -> str:
         """{en,de}crypts text depending on mode"""
@@ -92,7 +120,7 @@ class Cipher:
         # TODO: Generalize this for streaming input and output
         output: list[str] = []
 
-        for c, k in zip(text, repeat(self.key)):
+        for c, k in zip(text, cycle(self.key)):
             if c not in self.alphabet:
                 result = c
             else:
@@ -100,7 +128,7 @@ class Cipher:
 
             output.append(result)
 
-        return str(output)
+        return ''.join(output)
 
     def encrypt(self, plaintext: str) -> str:
         """Returns ciphertext."""

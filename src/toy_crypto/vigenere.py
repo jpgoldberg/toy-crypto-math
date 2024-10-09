@@ -128,7 +128,7 @@ class Cipher:
 
             output.append(result)
 
-        return ''.join(output)
+        return "".join(output)
 
     def encrypt(self, plaintext: str) -> str:
         """Returns ciphertext."""

@@ -30,8 +30,7 @@ class TestCryptionDefault:
             "RAVEN",
             "ONCE UPON A MIDNIGHT DREARY",
             "FNXI LPJR R HMQEIBLG DMINIY",
-        )
-
+        ),
     ]
 
     def test_encrypt(self) -> None:

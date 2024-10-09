@@ -2,12 +2,20 @@
 
 from collections.abc import Sequence
 from itertools import cycle
-from typing import Any
+from typing import Any, Optional, TypeAlias, Union
+
+# Letter is intended to be a single character or byte, but this is not enforced.
+Letter: TypeAlias = Union[str, bytes]
 
 
 class Alphabet_meta(type):
     def __init__(cls, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
-        cls._default_alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        cls._abc_caps_only = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        # Printable 7 bit ASCI with space but excluding backlash. Shuffled.
+        cls._abc_shuffled_printable = r"""JDi-Km9247oBEctS%Isxz{<;=W^fL,[Y3Mgd6HV(kR8:_CF"*')>|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&ru5Q"""
+
+        cls._default_alphabet = cls._abc_caps_only
 
     @property
     def default_alphabet(cls) -> str:
@@ -19,16 +27,35 @@ class Alphabet(metaclass=Alphabet_meta):
 
     This does not check if the alphabet is sensible. In particular, you may get
     very peculiar results if the alphabet contains duplicate elements.
+
+    Instances of this class are conventionally immutable.
     """
 
-    def __init__(self, alphabet: str | None = None):
+    def __init__(
+        self,
+        alphabet: Optional[Sequence[Letter]] = None,
+        prebaked: Optional[str] = None,
+    ):
         """This does not check if the alphabet is sensible. In particular, you
         may get  very peculiar results if the alphabet contains duplicate
         elements.
         """
 
-        if alphabet is None:
-            alphabet = self._default_alphabet  # type: ignore[attr-defined]
+        match (alphabet, prebaked):
+            case (None, None):
+                alphabet = self._default_alphabet
+            case (None, "default") | (None, "caps"):
+                alphabet = self._default_alphabet
+            case (None, "printable"):
+                alphabet = self._abc_shuffled_printable
+            case (None, _):
+                raise ValueError("Unknown pre-baked alphabet")
+            case (_, None):
+                pass
+            case (_, _):
+                raise ValueError(
+                    "Can't use both explicit and pre-baked alphabet"
+                )
 
         if not isinstance(alphabet, Sequence):
             raise TypeError("alphabet must be a Sequence")
@@ -37,12 +64,12 @@ class Alphabet(metaclass=Alphabet_meta):
         self._modulus = len(self._alphabet)
 
         # Set up char to index table
-        self._abc2idx: dict[str, int] = {
+        self._abc2idx: dict[Letter, int] = {
             c: i for i, c in enumerate(self._alphabet)
         }
 
     @property
-    def alphabet(self) -> str:
+    def alphabet(self) -> Sequence:
         return self._alphabet
 
     @property
@@ -50,7 +77,7 @@ class Alphabet(metaclass=Alphabet_meta):
         return self._modulus
 
     @property
-    def abc2idx(self) -> dict[str, int]:
+    def abc2idx(self) -> dict[Letter, int]:
         return self._abc2idx
 
     # We will want to use 'in' for Alphabet instances
@@ -59,21 +86,21 @@ class Alphabet(metaclass=Alphabet_meta):
 
     # annoyingly, the type str is also used for single character strings
     # add, inverse, subtract all deal with single characters
-    def add(self, a: str, b: str) -> str:
+    def add(self, a: Letter, b: Letter) -> Letter:
         """Returns the modular sum of two characters."""
         if a not in self or b not in self:
             raise ValueError("argument not an element")
         idx = (self.abc2idx[a] + self.abc2idx[b]) % self.modulus
         return self.alphabet[idx]
 
-    def inverse(self, c: str) -> str:
+    def inverse(self, c: Letter) -> Letter:
         """Returns the additive inverse of character c"""
         if c not in self:
             raise ValueError("argument not an element")
         idx = (self.modulus - self.abc2idx[c]) % self.modulus
         return self.alphabet[idx]
 
-    def subtract(self, a: str, b: str) -> str:
+    def subtract(self, a: Letter, b: Letter) -> Letter:
         """Returns the character corresponding to a - b."""
         return self.add(a, self.inverse(b))
 

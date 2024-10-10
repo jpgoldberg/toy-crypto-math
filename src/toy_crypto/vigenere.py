@@ -167,7 +167,7 @@ class Cipher:
             output.append(result)
 
         if isinstance(text, bytes):
-            return b"".join(output)  # type: ignore[arg-type]
+            return b"".join(output)
         return "".join(output)  # type: ignore[arg-type]
 
     def encrypt(self, plaintext: Letters) -> Letters:

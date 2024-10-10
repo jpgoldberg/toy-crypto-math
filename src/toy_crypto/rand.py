@@ -7,7 +7,7 @@ import math
 
 
 def randrange(*args: int) -> int:
-    """Same as randmon.randrange(), but uses RNG from secrets."""
+    """Same as random.randrange(), but uses RNG from secrets."""
 
     start = 0
     step = 1
@@ -46,7 +46,7 @@ def randrange(*args: int) -> int:
 
 
 def shuffle(x: MutableSequence[Any]) -> None:
-    """Shuffles x in place"""
+    """Shuffles x in place using CSPRNG"""
 
     # Uses the "modern" Fisher-Yates shuffle from Knuth via
     # https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm

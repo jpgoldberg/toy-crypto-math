@@ -39,8 +39,8 @@ def test_random() -> None:
         assert x >= 0.0
         assert x < 1.0
 
-
-@pytest.mark.statistical  # type: ignore
+# Slightly different invocations of mypy have very different opinions
+@pytest.mark.statistical  # type: ignore[misc,unused-ignore]
 def test_shuffle() -> None:
     trials = 2048
 
@@ -49,7 +49,7 @@ def test_shuffle() -> None:
     counts = {p: 0 for p in permutations}
 
     for _ in range(trials):
-        # Note that shuffle suffles in place
+        # Note that shuffle shuffles in place
         c = input.copy()
         rand.shuffle(c)
         s = "".join(c)

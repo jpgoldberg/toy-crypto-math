@@ -1,19 +1,29 @@
 # Toy cryptographic utilities
 
-This is almost certainly not the package you are looking for.
+[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json)](https://docs.astral.sh/ruff/)
+[![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://hatch.pypa.io/latest/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/jpgoldberg/toy-crypto-math/blob/main/LICENSE.txt)
+
+----
+
+
+This is (almost certainly) not the package you are looking for.
 
 The material here is meant for learning purposes only, often my own learning.
 Do not use it for anything else. And if you do, understand that it focuses on what
-I am trying to illustrate or learn. It may not always be correct.
+I am trying to illustrate or learn.
+It may not always be correct, and it is not coded with safely in mind.
 
-- If you want to use cryptographic tools in Python use [pyca].
-- If you want to play with some of the mathematics of some things underlying Cryptography in
-a Python-like environment use [SageMath], [sympy], or [primefac].
+- Use [pyca] if you need to use cryptographic tools in Python.
+- Use [SageMath], [sympy], or [primefac] if you want to play with some of the mathematics of some things underlying Cryptography in
+a Python-like environment.
 
 [pyca]: https://cryptography.io
 [SageMath]: https://doc.sagemath.org/
 [sympy]: https://www.sympy.org/en/
 [primefac]: https://pypi.org/project/primefac/
+[PyPi]: https://pypi.org/
 
 ## Table of Contents
 
@@ -33,9 +43,19 @@ I created it to meet a number of my own idiosyncratic  needs.
 
 - I don't have the flexibility of Python version that I may want when using [SageMath].
 
+  For example, I want to have access to something that behaves a bit like SageMath's `factor()`
+  or the ability to play with elliptic curves without having do everything in Sage.
   Perhaps when [sagemath-standard](https://pypi.org/project/sagemath-standard/) quickly becomes available for the latest Python versions, I won't need to have my own (failable and incomplete) pure Python substitutes for some things I need.
 
 - I sometimes talk about these algorithms for teaching purposes. Having pure Python versions allows me to present these.
+
+  Proper cryptographic packages, like [pyca],
+
+  - Correctly obscure the lower level primitives I may wish to exhibit;
+  - Correctly prevent use of unsafe parameters such as small keys;
+  - Correctly involve a lot of abstractions in the calls to the concealed primitives.
+
+  Those features, essential for something to be used, are not great for expository discussion.
 
 - Some of these I created or copied for my own learning purposes.
 
@@ -47,48 +67,29 @@ I created it to meet a number of my own idiosyncratic  needs.
 
 - I want to use cryptographic examples in Jupyter Notebooks.
 
-  Proper cryptographic packages, like [pyca],
-
-  - Correctly obscure the lower level primitives I may wish to exhibit;
-  - Correctly prevent use of unsafe parameters such as small keys;
-  - Correctly involve a lot of abstractions in the calls to the concealed primitives.
-
-  Those features, essential for something to be used, are not great for expository discussion.
-
-I wanted to have access to something that behaved a bit like SageMath's `factor()` without having do everything in Sage. If the `sagemath-standard` experimental package were less experimental, I wouldn't have needed to do this.
-
-Note that my implementations of things like `factor()` or `is_square()` are not really optimized, and may fail in odd ways for very large numbers. These are quick and dirty substitutes that I hope will work well enough for numbers less than 2^64.
+  I also want them to be _reproducible_, which is why I am making this public.
 
 ## Installation
 
-Don't. This is not being maintained for general use. I may make substantial changes between updates.
+Don't. If you need to do cryptography in Python use [pyca].
 
 ### If you must
 
-[hatchling]: https://pypi.org/project/hatchling/ "hatchling: Python build backend"
+Once I've published this to [PyPi], you will be able to install it with
 
-1. Have working Python setup.
-2. Clone this repository.
-3. Install the development requirements from `dev-requirements.txt`, that can be done with something like
+```console
+pip install toycrypto
+```
 
-   ```command
-   pip install -r dev-requirements.txt
-   ```
-
-4. For testing, you will also need to dependencies from `requirements.txt`.
-5. Build with [hatchling]. (There are other ways to do it, but this is what works for me)
-
-   ```command
-   hatch build
-   ```
-
-6. That will create a `.whl` file in the `./dist`, with a name like `toycrypto-VERSION-NUMBER-py3-none-any.whl`. Use `pip install dist/toycrypto-VERSION-NUMBER-py3-none-any.whl`, but with the appropriate version number.
-
+Until this is released on PyPi, you will just have to install from this source.
 
 ## Usage
 
-this is erratically documented at best, a combination of `pydoc` and reading the source it what you will need.
-But an example might be something like this,
+This is erratically documented at best, a combination of `pydoc` and reading the source it what you will need.
+
+The import namespace is `toy_crypto`
+
+An example might be something like this,
 using the `factor` function from the Number Theory (nt) module.
 
 ```python

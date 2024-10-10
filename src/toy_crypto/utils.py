@@ -1,5 +1,6 @@
 from collections.abc import Generator
 import math
+import itertools
 
 
 def lsb_to_msb(n: int) -> Generator[int, None, None]:
@@ -22,3 +23,14 @@ def digit_count(x: float, b: int = 10) -> int:
     x = abs(x)
     result = math.floor(math.log(x, base=b) + 1)
     return result
+
+
+def xor(m: bytes, pad: bytes) -> bytes:
+    """Returns the xor of m with a (repeated) pad.
+
+    The pad is repeated if it is shorter than m.
+    """
+
+    r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]
+
+    return b''.join(r)

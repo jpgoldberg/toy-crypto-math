@@ -1,0 +1,25 @@
+name: lint
+run-name: ${{ github.actor }} is linting
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.py'
+      - 'mypy.ini'
+      - 'ruff.toml'
+      - "pyproject.toml"
+
+jobs:
+  type-format-checking:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: mypy check
+        uses: jpetrucciani/mypy-check@master
+        with:
+          requirements_file: "requirements.txt"
+          python_version: "3.11"
+          path: '.'
+      - name: ruff check
+        uses: jpetrucciani/ruff-check@main

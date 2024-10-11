@@ -53,7 +53,20 @@ dependencies = [
   "ruff",
   "mypy>=1.11",
 ]
-[tool.hatch.envs.default.scripts]
+
+[tool.hatch.envs.test]
+dependencies = [
+  "coverage[toml]>=6.5",
+  "pytest",
+  "ruff",
+  "mypy>=1.11",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["3.11", "3.12", "3.13"]
+
+[tool.hatch.envs.test.scripts]
+types = "mypy --install-types --non-interactive {args:src/toy_crypto tests}"
 test = "pytest {args:tests}"
 test-cov = "coverage run -m pytest {args:tests}"
 cov-report = [
@@ -65,16 +78,6 @@ cov = [
   "cov-report",
 ]
 lint = "ruff check {args:src/toy_crypto tests}"
-
-[[tool.hatch.envs.default.matrix]]
-python = ["3.11", "3.12", "3.13"]
-
-[tool.hatch.envs.types]
-dependencies = [
-  "mypy>=1.11",
-]
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/toy_crypto tests}"
 
 [tool.coverage.run]
 source_pkgs = ["toy_crypto", "tests"]

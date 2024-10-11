@@ -1,6 +1,7 @@
-from _typeshed import Incomplete
 from collections.abc import Generator
 from typing import Callable, Optional
+
+from _typeshed import Incomplete
 
 version: str
 
@@ -15,24 +16,7 @@ def ispower(n: int, r: int = 0) -> Optional[tuple[int, int] | int]: ...
 
 def isprime(
     n: int,
-    tb: tuple[int, ...] = (
-        3,
-        5,
-        7,
-        11,
-        13,
-        17,
-        19,
-        23,
-        29,
-        31,
-        37,
-        41,
-        43,
-        47,
-        53,
-        59,
-    ),
+    tb: tuple[int, ...] = ...,
 ) -> bool: ...
 
 # def pollardrho_brent(n, verbose: bool = False): ...

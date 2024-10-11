@@ -1,7 +1,6 @@
-import timeit
-
 import os
 import sys
+import timeit
 
 PROJECT_PATH = os.getcwd()
 SOURCE_PATH = os.path.join(PROJECT_PATH, "src")

@@ -1,6 +1,7 @@
-import pytest
 import sys
 from typing import NamedTuple
+
+import pytest
 from toy_crypto import nt, redundent
 
 

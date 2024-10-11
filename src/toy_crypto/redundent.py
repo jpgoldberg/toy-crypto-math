@@ -3,25 +3,24 @@
 # SPDX-License-Identifier: MIT
 
 """
-Redundent definitions
+Redundant definitions
 
 Things here have been replace by what is in the nt module,
 which wraps other, better implementations (mostly from primefac and math)
 """
 
-from functools import reduce
-from collections.abc import Iterable
 import random  # random is good enough for Miller-Rabin.
 
-from . import types
-from . import nt
+from . import nt, types
 
+# Generics require Python 3.12+, and it is hard to please type checkers here,
+# So I am getting rid of this.
 
 # E731 tells me to def prod instead of bind it to a lambda.
 # https://docs.astral.sh/ruff/rules/lambda-assignment/
-def prod[T](iterable: Iterable[T]) -> T:  # type: ignore
-    """Returns the product of the elements of it"""
-    return reduce(lambda a, b: a * b, iterable)
+# def prod[T](iterable: Iterable[T]) -> T:  # type: ignore
+#    """Returns the product of the elements of it"""
+#    return reduce(lambda a, b: a * b, iterable)
 
 
 # primes under 2^21
@@ -460,9 +459,8 @@ def is_square(n: int) -> bool:
     if n % 2 == 0:
         if n % 4 != 0:
             return False
-    else:  # n is odd
-        if n % 8 != 1:
-            return False
+    elif n % 8 != 1:
+        return False
 
     r = isqrt(n)
     return r * r == n

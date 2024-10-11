@@ -1,5 +1,6 @@
-import pytest
 import sys
+
+import pytest
 from toy_crypto import rand
 
 
@@ -38,6 +39,7 @@ def test_random() -> None:
         x = rand.random()
         assert x >= 0.0
         assert x < 1.0
+
 
 # Slightly different invocations of mypy have very different opinions
 @pytest.mark.statistical  # type: ignore[misc,unused-ignore]

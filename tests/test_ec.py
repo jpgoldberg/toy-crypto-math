@@ -1,5 +1,6 @@
-import pytest
 import sys
+
+import pytest
 from toy_crypto.ec import Curve
 from toy_crypto.nt import Modulus
 
@@ -212,7 +213,7 @@ class TestSeriousCurve:
         assert PaI.is_zero
         assert PaI + P == P
         assert P + PaI == P
-        assert P - P == PaI
+        assert PaI == P - P
         assert negP + P == PaI
 
     def test_point_validation(self) -> None:

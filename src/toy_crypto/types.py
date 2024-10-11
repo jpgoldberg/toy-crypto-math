@@ -1,5 +1,4 @@
-from typing import NewType, TypeGuard, Any
-
+from typing import Any, NewType, TypeGuard
 
 Prob = NewType("Prob", float)
 

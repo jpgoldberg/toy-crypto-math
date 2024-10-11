@@ -6,10 +6,11 @@
 Number Theory (nt) module
 """
 
-from collections.abc import Iterable, Generator
-from collections import UserList
-from typing import Any, NewType, Optional, Self, TypeGuard
 import math
+from collections import UserList
+from collections.abc import Generator, Iterable
+from typing import Any, NewType, Optional, Self, TypeGuard
+
 import primefac
 from bitarray import bitarray
 from bitarray.util import count_n
@@ -85,7 +86,7 @@ class FactorList(UserList[tuple[int, int]]):
         # properity-like things that are computed when first needed
         self._n: Optional[int] = None
         self._totient: Optional[int] = None
-        self._radical: Optional["FactorList"] = None
+        self._radical: Optional[FactorList] = None
         self._radical_value: Optional[int] = None
         self._factors_are_prime: Optional[bool] = None
 

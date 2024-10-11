@@ -18,11 +18,11 @@ import sys
 
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
-from typing import Optional, Self, Any
-from toy_crypto.nt import mod_sqrt
-from toy_crypto.utils import lsb_to_msb
+from typing import Optional, Self
+
 from toy_crypto.nt import Modulus as Modulus
-from toy_crypto.nt import is_modulus
+from toy_crypto.nt import is_modulus, mod_sqrt
+from toy_crypto.utils import lsb_to_msb
 
 
 class Curve:
@@ -141,7 +141,7 @@ class Point:
     def __sub__(self, Q: "Point") -> "Point":
         return self.__add__(Q.__neg__())
 
-    def __eq__(self, Q: Any) -> bool:
+    def __eq__(self, Q: object) -> bool:
         if not isinstance(Q, Point):
             return NotImplemented
         if not self and not Q:  # both are 0

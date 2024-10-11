@@ -1,6 +1,6 @@
 import math
-from . import types
 
+from . import types
 
 MAX_QBIRTHDAY_P = 1.0 - (10**-8)
 EXACT_THRESHOLD = 1000

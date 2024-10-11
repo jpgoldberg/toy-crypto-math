@@ -1,6 +1,6 @@
-from collections.abc import Generator
-import math
 import itertools
+import math
+from collections.abc import Generator
 
 
 def lsb_to_msb(n: int) -> Generator[int, None, None]:
@@ -33,4 +33,4 @@ def xor(m: bytes, pad: bytes) -> bytes:
 
     r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]
 
-    return b''.join(r)
+    return b"".join(r)

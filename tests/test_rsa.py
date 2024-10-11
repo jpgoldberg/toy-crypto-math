@@ -1,8 +1,8 @@
-from typing import Optional
 from collections import namedtuple
+from typing import Optional
 
-from toy_crypto.nt import lcm, modinv
 from toy_crypto import rsa
+from toy_crypto.nt import lcm, modinv
 
 
 class TestCitm:
@@ -60,7 +60,7 @@ class TestCitm:
             key = rsa.PrivateKey(p, q, pub_exponent=self.e)
             pubkey = key.pub_key
 
-            assert pubkey.N == critter.expected_N
+            assert critter.expected_N == pubkey.N
 
     def test_d(self) -> None:
         for critter in [self.patty, self.molly, self.mr_talk]:
@@ -109,7 +109,7 @@ class TestSage:
         priv_key = rsa.PrivateKey(self.p, self.q, self.e)
         pub_key = priv_key.pub_key
 
-        assert pub_key.N == self.n
+        assert self.n == pub_key.N
 
     def test_d(self) -> None:
         priv_key = rsa.PrivateKey(self.p, self.q, self.e)

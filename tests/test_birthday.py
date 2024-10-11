@@ -1,6 +1,7 @@
-import pytest
-import sys
 import math
+import sys
+
+import pytest
 from toy_crypto import birthday
 
 

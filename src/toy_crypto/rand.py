@@ -1,9 +1,9 @@
 """Supplements Python secrets module"""
 
+import math
 import secrets
 from collections.abc import MutableSequence
 from typing import Any
-import math
 
 
 def randrange(*args: int) -> int:

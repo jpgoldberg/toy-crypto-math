@@ -43,6 +43,18 @@ True
 
 Note again that the `SageMath Factorization class <https://doc.sagemath.org/html/en/reference/structure/sage/structure/factorization.html>`_ is far more efficient and general than what exists in this toy cryptography module.
 
+Modules 
+-------
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Documented modules:
+
+   utils
+   nt
+   rsa
+
+
 Motiviation
 -----------
 
@@ -77,15 +89,4 @@ I created it to meet a number of my own idiosyncratic  needs.
 - I want to use cryptographic examples in Jupyter Notebooks.
 
   I also want them to be *reproducible*, which is why I am making this public.
-
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   utils
-   nt
-   rsa
-
 

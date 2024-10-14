@@ -39,9 +39,7 @@ extensions: list[str] = [
     "sphinx.ext.doctest",
 ]
 
-extensions.append("sphinx_autodoc_typehints")
-type_hints_use_signature = True
-typehints_use_signature_return = True
+autodoc_typehints = "both"
 
 extensions.append("sphinx.ext.intersphinx")
 intersphinx_mapping = {
@@ -49,11 +47,11 @@ intersphinx_mapping = {
     "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
 
-st_prolog = f"""
+rst_prolog = f"""
 .. |project| replace:: **{project}**
-.. |root| replace:: :mod:`hostname`
-.. |True| replace:: :py:const:`True`
-.. |False| replace:: :py:const:`False`
+.. |root| replace:: :mod:`toy_crypto`
+.. _pyca: https://cryptography.io/en/latest/
+.. _SageMath: https://www.sagemath.org
 """
 
 

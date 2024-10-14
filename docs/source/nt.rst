@@ -1,3 +1,5 @@
+.. include:: ../common/unsafe.rst
+
 Number Theory
 ==============
 

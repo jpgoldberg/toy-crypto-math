@@ -3,17 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. include:: ../common/unsafe.rst
+
 Toy cryptographic functions and utilities
 ==========================================
 
-.. DANGER::
-  Nothing here should be used for any security purposes.
-  
-  - If you need cryptographic tools in a Python environment use `pyca`_.
-  - If you need efficient and reliable abstract math utilities in Python-like environment use `SageMath`_.
-
-.. _pyca: https://cryptography.io/en/latest/
-.. _SageMath: https://www.sagemath.org
+Some toy (unsafe for actual use) cryptography related utilites.
 
 Installation
 ------------
@@ -89,7 +84,8 @@ I created it to meet a number of my own idiosyncratic  needs.
    :maxdepth: 2
    :caption: Contents:
 
+   utils
    nt
    rsa
-   
+
 

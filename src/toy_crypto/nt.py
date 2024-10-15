@@ -2,10 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-"""
-Number Theory (nt) module
-"""
-
 import math
 from collections import UserList
 from collections.abc import Iterator, Iterable
@@ -17,7 +13,9 @@ from bitarray.util import count_n
 
 from . import types
 
+
 Modulus = NewType("Modulus", int)
+"""type Modulus is an int greater than 1"""
 
 
 def is_modulus(n: Any) -> TypeGuard[Modulus]:
@@ -76,7 +74,7 @@ class FactorList(UserList[tuple[int, int]]):
         # Normalization will do some sanity checking as well
         self.normalize(check_primes=check_primes)
 
-        # properity-like things that are computed when first needed
+        # property-like things that are computed when first needed
         self._n: Optional[int] = None
         self._totient: Optional[int] = None
         self._radical: Optional[FactorList] = None

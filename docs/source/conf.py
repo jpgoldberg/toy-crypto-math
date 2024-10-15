@@ -52,6 +52,7 @@ rst_prolog = f"""
 .. |root| replace:: :mod:`toy_crypto`
 .. _pyca: https://cryptography.io/en/latest/
 .. _SageMath: https://www.sagemath.org
+.. _primefac: https://pypi.org/project/primefac/
 """
 
 

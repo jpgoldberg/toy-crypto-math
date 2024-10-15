@@ -24,6 +24,7 @@ use SageMath_.
     :members:
 
 .. autofunction:: toy_crypto.nt.factor
+    :no-index:
 
 The :class:`Sieve` class
 ---------------------------
@@ -32,10 +33,34 @@ The :class:`Sieve` class
     :class-doc-from: both
     :members:
 
-Other functions
-----------------
+Functions
+----------
+
+.. autofunction:: toy_crypto.nt.egcd
+
+.. autoclass:: toy_crypto.nt.Modulus
+
+.. autofunction:: toy_crypto.nt.is_modulus
+
+
+Wrapping some :py:mod:`math`
+'''''''''''''''''''''''''''''
+
+There are functions which either weren't part of the Python standard library at the time I started putting some things together, or I wasn't aware of their existence, or I just wanted to write for myself some reason or the other.
+
+But now, at least in this module, I wrap those. 
 
 .. automodule:: toy_crypto.nt
-    :members: gcd, lcm, egcd, is_square, mod_sqrt
+    :members: gcd, lcm, modinv
+
+Wrapping from primefac_
+'''''''''''''''''''''''''
+
+Functions here wrap functions from the primefac_ Python package.
+Note that the wrapping is not completely transparent in some cases.
+That is the interface and behavior may differ.
+
+.. automodule:: toy_crypto.nt
+    :members: factor, is_square, mod_sqrt, isqrt, isprime
    
    

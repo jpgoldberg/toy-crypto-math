@@ -1,11 +1,16 @@
+"""Utility functions"""
+
 import itertools
 import math
-from collections.abc import Generator
+from collections.abc import Iterator
 
 
-def lsb_to_msb(n: int) -> Generator[int, None, None]:
+def lsb_to_msb(n: int) -> Iterator[int]:
     """
-    Returns a generator of bits of n, starting from the least significant bit.
+    Iterator 0s and 1s representing bits of n, starting with the least significant bit.
+
+    :raises TypeError: if n is not an integer.
+    :raises ValueError: if n is negative.
     """
     if not isinstance(n, int):
         raise TypeError("n must be an integer")
@@ -29,6 +34,7 @@ def xor(m: bytes, pad: bytes) -> bytes:
     """Returns the xor of m with a (repeated) pad.
 
     The pad is repeated if it is shorter than m.
+    This can be thought of as bytewise Vigenère
     """
 
     r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]

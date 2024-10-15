@@ -8,7 +8,7 @@ Number Theory (nt) module
 
 import math
 from collections import UserList
-from collections.abc import Generator, Iterable
+from collections.abc import Iterator, Iterable
 from typing import Any, NewType, Optional, Self, TypeGuard
 
 import primefac
@@ -44,9 +44,9 @@ def isqrt(n: int) -> int:
 
 def modinv(a: int, m: int) -> int:
     """
-    Returns b s.t a * b = 1 modulo m.
+    Returns b such that :math:`ab \equiv 1 \pmod m`.
 
-    Raises: ValueError if a is not coprime with m
+    :raises ValueError: if a is not coprime with m
     """
 
     # python 3.8 allows -1 as power.
@@ -57,14 +57,7 @@ class FactorList(UserList[tuple[int, int]]):
     """
     A FactorList is an list of (prime, exponent) tuples.
 
-    It representents the prime factorization of a number.
-
-    Some of the methods here are meant to mimick what we
-    see in SageMath's Factorization class, but this is
-    limited to ints, and isn't always going to have the
-    same behavior. If you need something as reliable and
-    general and fast as SageMath's Factorization tools,
-    use SageMath.
+    It represents the prime factorization of a number.
     """
 
     def __init__(
@@ -76,7 +69,7 @@ class FactorList(UserList[tuple[int, int]]):
         prime_factors should be a list of (prime, exponent) tuples.
 
         Either you ensure that the primes really are prime or use
-        check_primes = True
+        ``check_primes = True``.
         """
         super().__init__(prime_factors)
 
@@ -125,15 +118,13 @@ class FactorList(UserList[tuple[int, int]]):
 
     def normalize(self, check_primes: bool = False) -> Self:
         """
-        Dedupicates and sorts in prime order, removing exponent == 0 cases.
+        Deduplicates and sorts in prime order, removing exponent == 0 cases.
 
-        Exceptions:
+        :raises TypeError: if prime and exponents are not ints
 
-            TypeError if prime and exponents are not ints
+        :raises ValueError: if p < 2 or e < 0
 
-            ValueError if p < 2 or e < 0
-
-        This only checks that primes are prime if check_primes is True.
+        This only checks that primes are prime if ``check_primes`` is True.
 
         """
 
@@ -182,10 +173,10 @@ class FactorList(UserList[tuple[int, int]]):
         """
         Returns Euler's Totient (phi)
 
-        phi(n) is the number of numbers less than n which are coprime with n.
+        :math:`\phi(n)` is the number of numbers
+        less than n which are coprime with n.
 
         This assumes that the factorization (self) is a prime factorization.
-
         """
 
         if self._totient is None:
@@ -195,28 +186,32 @@ class FactorList(UserList[tuple[int, int]]):
 
         return self._totient
 
-    def coprimes(self) -> Generator[int, None, None]:
+    def coprimes(self) -> Iterator[int]:
+        """Iterator of coprimes."""
         for a in range(1, self.n):
             if not any([a % p == 0 for p, _ in self.data]):
                 yield a
 
     def unit(self) -> int:
-        """We only handle positive integers, so"""
+        """Unit is always 1 for positive integer factorization."""
         return 1
 
     def is_integral(self) -> bool:
+        """Always true for integer factorization."""
         return True
 
     def value(self) -> int:
+        """Same as ``n()``."""
         return self.n
 
     def radical(self) -> "FactorList":
-        """All exponenents on factors set to 1"""
+        """All exponents on factors set to 1"""
         if self._radical is None:
             self._radical = FactorList([(p, 1) for p, _ in self.data])
         return self._radical
 
     def radical_value(self) -> int:
+        """Product of factors each used only once."""
         if self._radical_value is None:
             self._radical_value = math.prod([p for p, _ in self.data])
         return self._radical_value
@@ -234,7 +229,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
     Returns list (prime, exponent) factors of n.
     Starts trial div at ith prime.
 
-    This wraps primefac.primefac(), but creates our FactorList
+    This wraps ``primefac.primefac()``, but creates our FactorList
     """
 
     primes = primefac.primefac(n)
@@ -248,7 +243,7 @@ def gcd(*integers: int) -> int:
 
 
 def egcd(a: int, b: int) -> tuple[int, int, int]:
-    """returns (g, x, y) such that a*x + b*y = gcd(a, b) = g."""
+    """returns (g, x, y) such that :math:`ax + by = \gcd(a, b) = g`."""
     x0, x1, y0, y1 = 0, 1, 1, 0
     while a != 0:
         (q, a), b = divmod(b, a), a
@@ -264,10 +259,22 @@ def is_square(n: int) -> bool:
 
 
 def mod_sqrt(a: int, m: int) -> list[int]:
-    """For odd prime m return (r, m-r) s.t. r^2 = a (mod m) if r exists.
+    """Modular square root.
 
-    m must be prime. If m is not prime, you might get a nice error,
-    but sometimes you will get garbage results.
+    For prime m, this generally returns a list with either two members,
+    :math:`[r, m - r]` such that :math:`r^2 = {(m - r)}^2 = a \pmod m`
+    if such an a is a quadratic residue the empty list if there is no such r.
+
+    However, for compatibility with SageMath this can return a list with just
+    one element in some special cases
+
+    - returns ``[0]`` if :math:`m = 3` or :math:`a = 0`.
+    - returns ``[a % m]`` if :math:`m = 2`.
+
+    Otherwise it returns a list with the two quadratic residues if they exist
+    or and empty list otherwise.
+
+    **Warning**: The behavior is undefined if m is not prime.
     """
 
     match m:
@@ -301,10 +308,16 @@ def lcm(*integers: int) -> int:
 
 
 class Sieve:
-    """Sieve of Eratosthenes"""
+    """Sieve of Eratosthenes.
 
-    ## We keep the largest sieve created, which will be shared
-    ## among all instances
+    The good parts of this implementation are lifted from the example provided
+    with the `bitarray package <https://pypi.org/project/bitarray/>`_ source.
+    """
+
+    """
+    We keep the largest sieve created, which will be shared
+    among all instances
+    """
     _cached_array = bitarray("0011")
 
     def _make_array(self, n: int) -> None:
@@ -325,11 +338,17 @@ class Sieve:
     def clear(cls) -> None:
         """Resets the cached array.
 
-        There is no reason to every use this outside of performance testing.
+        There is no reason to ever use this outside of performance testing.
         """
         cls._cached_array = bitarray("0011")
 
     def __init__(self, n: int) -> None:
+        """Creates sieve covering the first n integers.
+
+        :raises TypeError: if n in not an int.
+        :raises ValueError: if n < 2.
+        """
+
         if not isinstance(n, int):
             raise TypeError
         if n < 2:
@@ -369,7 +388,7 @@ class Sieve:
     def nth_prime(self, n: int) -> int:
         """Returns n-th prime.
 
-        Raises ValueError if n exceeds count.
+        :raises ValueError: if n exceeds count.
         """
 
         if n > self._count:

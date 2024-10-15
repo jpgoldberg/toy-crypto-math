@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/unknown/toy-crypto-math#readme"
+Documentation = "https://jpgoldberg.github.io/toy-crypto-math/"
 Issues = "https://github.com/unknown/toy-crypto-math/issues"
 Source = "https://github.com/unknown/toy-crypto-math"
 

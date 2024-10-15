@@ -86,6 +86,7 @@ Until this is released on PyPi, you will just have to install from this source.
 ## Usage
 
 This is erratically documented at best, a combination of `pydoc` and reading the source it what you will need.
+Documentation is started to appear at <https://jpgoldberg.github.io/toy-crypto-math/>
 
 The import namespace is `toy_crypto`
 

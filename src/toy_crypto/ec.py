@@ -98,30 +98,46 @@ class Point:
     def __init__(
         self, x: int, y: int, curve: Curve, is_zero: bool = False
     ) -> None:
-        self.x: int = x
-        self.y: int = y
-        self.curve: Curve = curve
-        self.is_zero: bool = is_zero
+        self._x: int = x
+        self._y: int = y
+        self._curve: Curve = curve
+        self._is_zero: bool = is_zero
 
-        if not (isinstance(self.x, int) and isinstance(self.y, int)):
+        if not (isinstance(self._x, int) and isinstance(self._y, int)):
             raise TypeError("Points must have integer coordinates")
 
-        self.x %= self.curve.p
-        self.y %= self.curve.p
+        self._x %= self._curve.p
+        self._y %= self._curve.p
 
         if not self.on_curve():
             raise ValueError("point not on curve")
 
+    @property
+    def x(self) -> int:
+        return self._x
+
+    @property
+    def y(self) -> int:
+        return self._y
+
+    @property
+    def curve(self) -> Curve:
+        return self._curve
+
+    @property
+    def is_zero(self) -> bool:
+        return self._is_zero
+
     def on_curve(self) -> bool:
-        if self.is_zero:
+        if self._is_zero:
             return True
 
-        x = int(self.x)
-        y = int(self.y)
+        x = int(self._x)
+        y = int(self._y)
         a = int(self.curve.a)
         b = int(self.curve.b)
 
-        p = self.curve.p
+        p = self._curve.p
         # breaking this down for debugging
         lhs = pow(y, 2, p)
         rhs = (pow(x, 3, p) + a * x + b) % p
@@ -146,15 +162,15 @@ class Point:
             return NotImplemented
         if not self and not Q:  # both are 0
             return True
-        if self.x != Q.x or self.y != Q.y:  # x's and y's don't match
+        if self._x != Q.x or self._y != Q.y:  # x's and y's don't match
             return False
-        if self.curve != Q.curve:  # They are defined for different curves
+        if self._curve != Q.curve:  # They are defined for different curves
             return False
         return True
 
     def __bool__(self) -> bool:
         """P is True iff P is not the zero point."""
-        return not self.is_zero
+        return not self._is_zero
 
     def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
@@ -170,25 +186,19 @@ class Point:
             return self
 
         r = self.cp()
-        r.y = self.curve.p - r.y
+        r._y = self._curve.p - r._y
         return r
 
     # I don't know how shallow a copy() is in Python, so
     def cp(self) -> "Point":
         """Return a copy of self."""
 
-        return Point(self.x, self.y, self.curve, is_zero=self.is_zero)
+        return Point(self._x, self._y, self._curve, is_zero=self._is_zero)
 
     def iadd(self, Q: "Point") -> Self:
         """add point to self in place.
 
-        :param Q: Point to be added
-        :type Q: Point
-
-        :returns: Point
-
         :raises TypeError: if Q is not a point
-        :raises ValueError if P and Q are not the same subclass of Point
         :raises ValueError: if Q is not on its own curve
         :raises ValueError: if Q is on a distinct curve
         """
@@ -209,9 +219,9 @@ class Point:
 
         # 0 + Q = Q
         if not self:
-            self.x, self.y = Q.x, Q.y
-            self.curve = Q.curve
-            self.is_zero = Q.is_zero
+            self._x, self._y = Q.x, Q.y
+            self._curve = Q.curve
+            self._is_zero = Q.is_zero
             return self
 
         # if Q is on a different curve, something bad is happening
@@ -223,16 +233,16 @@ class Point:
             return self.idouble()
 
         # P + -P = 0
-        if self.x == Q.x:
-            self.x, self.y = 0, 0
-            self.is_zero = True
+        if self._x == Q.x:
+            self._x, self._y = 0, 0
+            self._is_zero = True
             return self
 
         # Generics would be better than the abuse of type
         # narrowing that I am doing here to call different
         # _addition() methods
 
-        self.x, self.y = self._nz_addition(Q)
+        self._x, self._y = self._nz_addition(Q)
 
         return self
 
@@ -256,11 +266,11 @@ class Point:
 
         xy = self._xy_double()
         if not xy:
-            self.x = 0
-            self.y = 0
-            self.is_zero = True
+            self._x = 0
+            self._y = 0
+            self._is_zero = True
         else:
-            self.x, self.y = xy
+            self._x, self._y = xy
 
         return self
 
@@ -290,14 +300,14 @@ class Point:
         - self is not the point at infinity
         """
 
-        if self.is_zero:
+        if self._is_zero:
             return None
 
-        if self.y == 0:
+        if self._y == 0:
             return None
 
-        m = self.curve.p
-        top = ((3 * (self.x * self.x)) % m + self.curve.a) % m
+        m = self._curve.p
+        top = ((3 * (self._x * self._x)) % m + self._curve.a) % m
         bottom = (2 * self.y) % m
         inv_bottom = pow(bottom, m - 2, m)
         s = top * inv_bottom % m
@@ -322,7 +332,7 @@ class Point:
     def _nz_addition(self, Q: "Point") -> tuple[int, int]:
         """returns x, y over finite field Z_p"""
 
-        if self.is_zero or Q.is_zero:
+        if self._is_zero or Q.is_zero:
             raise ValueError("this is for non-zero points only")
 
         m = self.curve.p  # have the modulus handy

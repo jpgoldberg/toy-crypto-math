@@ -53,7 +53,13 @@ Modules
    utils
    nt
    rsa
-
+   ec
+   rand
+   birthday
+   types
+   vigenere
+   redundent
+   
 
 Motiviation
 -----------

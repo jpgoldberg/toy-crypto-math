@@ -3,6 +3,9 @@
 Number Theory
 ==============
 
+.. py:module:: toy_crypto.nt
+    :synopsis: Number theorertic utilities and integer factorization tools
+
 This are imported with::
 
     import toy_crypto.nt
@@ -19,28 +22,30 @@ If you need something as reliable and
 general and fast as SageMath's Factorization tools,
 use SageMath_.
 
-.. autoclass:: toy_crypto.nt.FactorList
+
+
+.. autoclass:: FactorList
     :class-doc-from: both
     :members:
 
-.. autofunction:: toy_crypto.nt.factor
+.. autofunction:: factor
     :no-index:
 
 The :class:`Sieve` class
 ---------------------------
 
-.. autoclass:: toy_crypto.nt.Sieve
+.. autoclass:: Sieve
     :class-doc-from: both
     :members:
 
 Functions
 ----------
 
-.. autofunction:: toy_crypto.nt.egcd
+.. autofunction:: egcd
 
-.. autoclass:: toy_crypto.nt.Modulus
+.. autoclass:: Modulus
 
-.. autofunction:: toy_crypto.nt.is_modulus
+.. autofunction:: is_modulus
 
 
 Wrapping some :py:mod:`math`
@@ -50,8 +55,13 @@ There are functions which either weren't part of the Python standard library at 
 
 But now, at least in this module, I wrap those. 
 
-.. automodule:: toy_crypto.nt
-    :members: gcd, lcm, modinv
+.. autofunction:: gcd
+
+.. autofunction:: lcm
+
+.. autofunction:: modinv
+
+
 
 Wrapping from primefac_
 '''''''''''''''''''''''''
@@ -60,7 +70,14 @@ Functions here wrap functions from the primefac_ Python package.
 Note that the wrapping is not completely transparent in some cases.
 That is the interface and behavior may differ.
 
-.. automodule:: toy_crypto.nt
-    :members: factor, is_square, mod_sqrt, isqrt, isprime
+.. autofunction:: factor
+
+.. autofunction:: mod_sqrt
+
+.. autofunction:: is_square
+
+.. autofunction:: isqrt
+
+.. autofunction:: isprime
    
    

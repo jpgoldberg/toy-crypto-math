@@ -1,3 +1,5 @@
+[
+
 # Changelog
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -13,8 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Improved
 
-- `ec` classes use `@property` instead of exposing some attributes directly. 
-- `ec` module now has a documentation page.
+- `ec` classes use `@property` instead of exposing some attributes directly.
+- `ec` module now has a [documentation page]( https://jpgoldberg.github.io/toy-crypto-math/ec.html).
 - This changelog is now in the proper location.
 - This changelog is better formatted.
 
@@ -22,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- _Partial_ [documentation](https://jpgoldberg.github.io/toy-crypto-math/)
+- _Partial_ [documentation][docs].
 
 ### Improved
 
@@ -51,3 +53,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First public release
   
+[docs]: https://jpgoldberg.github.io/toy-crypto-math/

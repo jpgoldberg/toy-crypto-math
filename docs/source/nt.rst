@@ -68,7 +68,7 @@ Wrapping from primefac_
 
 Functions here wrap functions from the primefac_ Python package.
 Note that the wrapping is not completely transparent in some cases.
-That is the interface and behavior may differ.
+That is, the interface and behavior may differ.
 
 .. autofunction:: factor
 

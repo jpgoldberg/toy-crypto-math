@@ -1,18 +1,4 @@
-"""Do not use this!
-
-Do not use this. All of this is just to provide a working context
-for the scaler_multiply() method.
-
-This is more complicated because I unwisely attempted to make this work both
-for elliptic curves defined over the reals (for the drawings) and for curves
-defined over integer fields.
-
-- If you want cryptography in python use https://cryptography.io/en/latest/
-
-- If you want to play with elliptic curves in a python-esque environment use SageMath.
-
-Do not use the module you are looking at now for anything.
-"""
+"""Simple elliptic curve groups."""
 
 import sys
 
@@ -25,13 +11,20 @@ from toy_crypto.nt import is_modulus, mod_sqrt
 from toy_crypto.utils import lsb_to_msb
 
 
+"""
+This is more complicated because I unwisely attempted to make this work both
+for elliptic curves defined over the reals (for the drawings) and for curves
+defined over integer fields.
+"""
+
+
 class Curve:
-    """Define a curve of the form y^2 = x^3 + ax + b (mod p)."""
+    """Define a curve of the form :math:`y^2 = x^3 + ax + b \\pmod p`."""
 
     def __init__(self, a: int, b: int, p: int) -> None:
-        self.p: Modulus = Modulus(p)
-        self.a: int = a
-        self.b: int = b
+        self._p: Modulus = Modulus(p)
+        self._a: int = a
+        self._b: int = b
 
         if self.is_singular():
             raise ValueError(f"{self} is singular")
@@ -45,11 +38,27 @@ class Curve:
         # and that a generator (base point) has been chosen correctly/
         self._order = (self.p + 1) // 2
 
+    @property
+    def a(self) -> int:
+        """The 'a' of :math:`y^2 = x^3 + ax + b \\pmod p`."""
+        return self._a
+
+    @property
+    def b(self) -> int:
+        """The 'b' of :math:`y^2 = x^3 + ax + b \\pmod p`."""
+        return self._b
+
+    @property
+    def p(self) -> Modulus:
+        """The 'p' of :math:`y^2 = x^3 + ax + b \\pmod p`."""
+        return self._p
+
     def is_singular(self) -> bool:
-        return (4 * self.a**3 + 27 * self.b * self.b) % self.p == 0
+        return (4 * self._a**3 + 27 * self._b * self._b) % self._p == 0
 
     @property
     def PAI(self) -> "Point":
+        """Point At Infinity"""
         return self._pai
 
     @property
@@ -60,23 +69,22 @@ class Curve:
         # There is probably a nice way to do with with
         # format directives, but I'm not going to dig
         # into those docs now.
-        if self.a < 0:
-            ax = f"- {-self.a}x"
+        if self._a < 0:
+            ax = f"- {-self._a}x"
         else:
-            ax = f"+ {self.a}"
-
+            ax = f"+ {self._a}"
         if self.b < 0:
-            b = f"- {-self.b}x"
+            b = f"- {-self._b}x"
         else:
             b = f"+ {self.b}"
 
-        return f"y^2 = x^3 {ax} {b} (mod {self.p})"
+        return f"y^2 = x^3 {ax} {b} (mod {self._p})"
 
     def compute_y(self, x: int) -> Optional[tuple[int, int]]:
-        "Retruns pair of y vaules for x on curve. None otherwise."
-        a = self.a
-        b = self.b
-        p = self.p
+        "Returns pair of y values for x on curve. None otherwise."
+        a = self._a
+        b = self._b
+        p = self._p
         y2: int = (pow(x, 3, p) + ((a * x) % p) + b) % p
         roots = mod_sqrt(y2, p)
         if len(roots) != 2:
@@ -89,7 +97,7 @@ class Curve:
 
 
 class Point:
-    """Point on elliptic curve over the reals"""
+    """Point on elliptic curve over finite field."""
 
     # I would prefer to have all points belong to a curve
     # but I don't quite get python's classes to do that.

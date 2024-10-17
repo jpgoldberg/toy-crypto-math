@@ -44,7 +44,9 @@ The :mod:`ec` classes
 ----------------------
 
 .. autoclass:: Curve
+    :class-doc-from: both
     :members:
 
 .. autoclass:: Point
+    :class-doc-from: both
     :members:

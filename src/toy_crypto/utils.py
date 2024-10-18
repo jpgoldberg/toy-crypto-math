@@ -23,10 +23,23 @@ def lsb_to_msb(n: int) -> Iterator[int]:
 
 
 def digit_count(x: float, b: int = 10) -> int:
-    """returns the number of digits (base b) in the integer part of x"""
+    """returns the number of digits (base b) in the integer part of x.
+
+    This can produce incorrect results due to limited precision of math.log
+    """
+
+    """
+    We need to add some rounding error leeway because
+    log(1000, 10) returns 2.9999999999999996
+    So like any small value, we will call it epsilon.
+
+    It is possible that this might bite us for some other values.
+    """
+
+    epsilon = 1.0e-15
 
     x = abs(x)
-    result = math.floor(math.log(x, base=b) + 1)
+    result = math.floor(math.log(x, b) + 1 + epsilon)
     return result
 
 

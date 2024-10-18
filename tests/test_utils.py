@@ -5,6 +5,20 @@ from toy_crypto import utils
 
 
 class TestUtils:
+    def test_digit_count(self) -> None:
+        vectors = [
+            (999, 3),
+            (1000, 4),
+            (1001, 4),
+            (
+                9999999999999998779999999999999999999999999999999999099999999,
+                61,
+            ),
+        ]
+        for n, expected in vectors:
+            d = utils.digit_count(n)
+            assert d == expected
+
     def test_bits(self) -> None:
         vectors = [
             (0b1101, [1, 0, 1, 1]),

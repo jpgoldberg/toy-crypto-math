@@ -5,9 +5,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- keyword argument name `b` changed to "`base`" in `utils.digit_count`.
+
+### Fixed
+
+- `utils.digit_count` Fixed bug that could yield incorrect results in close cases.
+  
 ### Improved
 
-- Identified, partially corrected, and documented bug in `utils.digit_count()`.
+- Improved documentation and test coverage for `utils`.
 
 ## 0.1.3 2024-10-17
 

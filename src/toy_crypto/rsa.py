@@ -1,21 +1,36 @@
 from toy_crypto.nt import lcm, modinv
 
+_DEFAULT_E = 65537
+
+
+def default_e() -> int:
+    """Returns the default public exponent, 65537"""
+    return _DEFAULT_E
+
 
 class PublicKey:
     def __init__(self, modulus: int, public_exponent: int) -> None:
+        """Public key from public values."""
         self._N = modulus
         self._e = public_exponent
 
     @property
     def N(self) -> int:
+        """Public modulus N."""
         return self._N
 
     @property
     def e(self) -> int:
+        """Public exponent e"""
         return self._e
 
     def encrypt(self, message: int) -> int:
-        """raw encryption with neither padding nor nonce"""
+        """Primitive encryption with neither padding nor nonce.
+
+        :raises ValueError: if message < 0
+        :raises ValueError: if message isn't less than the public modulus
+        """
+
         if message < 0:
             raise ValueError("Positive messages only")
         if not message < self._N:
@@ -35,9 +50,15 @@ class PublicKey:
 
 
 class PrivateKey:
-    DEFAULT_E = 65537
+    def __init__(self, p: int, q: int, pub_exponent: int = _DEFAULT_E) -> None:
+        """RSA private key from primes p and q.
 
-    def __init__(self, p: int, q: int, pub_exponent: int = DEFAULT_E) -> None:
+        This does not perform any sanity checks on p and q.
+        It is your responsibility to ensure that p and q are prime
+
+        :raises ValueError: if e is not coprime with lcm(p - 1, q - 1).
+        """
+
         self._p = p
         self._q = q
         self._e = pub_exponent
@@ -49,14 +70,23 @@ class PrivateKey:
         self._dQ = modinv(self._e, (self._q - 1))
         self._qInv = modinv(self._q, self._p)
 
-        self._d = self._compute_d()
+        try:
+            self._d = self._compute_d()
+        except ValueError:
+            raise ValueError("p, q, and e are incompatible with each other ")
 
     @property
     def pub_key(self) -> PublicKey:
+        """The public key corresponding to self.
+
+        The public key does not contain any secrets.
+        """
+
         return self._pubkey
 
     @property
     def e(self) -> int:
+        """Public exponent."""
         return self._e
 
     def __eq__(self, other: object) -> bool:
@@ -84,7 +114,7 @@ class PrivateKey:
             raise ValueError("Inverse of e mod λ does not exist")
 
     def decrypt(self, ciphertext: int) -> int:
-        """Decrypt ciphertext"""
+        """Primitive decryption."""
 
         if ciphertext < 1 or ciphertext >= self.pub_key.N:
             raise ValueError("ciphertext is out of range")

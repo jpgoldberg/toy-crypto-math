@@ -1,13 +1,12 @@
 """Utility functions"""
 
 import itertools
-import math
 from collections.abc import Iterator
 
 
 def lsb_to_msb(n: int) -> Iterator[int]:
     """
-    Iterator 0s and 1s representing bits of n, starting with the least significant bit.
+    0s and 1s representing bits of n, starting with the least significant bit.
 
     :raises TypeError: if n is not an integer.
     :raises ValueError: if n is negative.
@@ -22,25 +21,32 @@ def lsb_to_msb(n: int) -> Iterator[int]:
         n >>= 1
 
 
-def digit_count(x: float, b: int = 10) -> int:
-    """returns the number of digits (base b) in the integer part of x.
+def digit_count(n: int, base: int = 10) -> int:
+    """returns the number of digits (base b) of integer n.
 
-    This can produce incorrect results due to limited precision of math.log
+    :raises ValueError: if base < 2
+    :raises TypeError: if n is not an integer
+
     """
 
-    """
-    We need to add some rounding error leeway because
-    log(1000, 10) returns 2.9999999999999996
-    So like any small value, we will call it epsilon.
+    if base < 2:
+        raise ValueError("base must be at least 2")
 
-    It is possible that this might bite us for some other values.
-    """
+    if not isinstance(n, int):
+        raise TypeError("n must be an integer")
 
-    epsilon = 1.0e-15
+    n = abs(n)
 
-    x = abs(x)
-    result = math.floor(math.log(x, b) + 1 + epsilon)
-    return result
+    # Handling this case separately seems better than trying
+    # to simulate a do-while in Python.
+    if n == 0:
+        return 1
+
+    digits = 0
+    while n > 0:
+        digits += 1
+        n = n // base
+    return digits
 
 
 def xor(m: bytes, pad: bytes) -> bytes:

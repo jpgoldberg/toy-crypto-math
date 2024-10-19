@@ -3,14 +3,23 @@
 RSA
 ==============
 
-This are imported with::
 
-    import toy_crypto.rsa
+.. py:module:: toy_crypto.rsa
+    :synopsis: Some primative RSA classes
 
+    Imported with::
 
-All :mod:`rsa` classes 
-----------------------
+        import toy_crypto.rsa
 
-.. automodule:: toy_crypto.rsa
+.. autoclass:: PublicKey
+    :class-doc-from: both
     :members:
     :undoc-members:
+
+
+.. autoclass:: PrivateKey
+    :class-doc-from: both
+    :members:
+    :undoc-members:
+
+.. autofunction:: default_e

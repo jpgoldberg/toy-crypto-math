@@ -216,3 +216,16 @@ class TestEq:
         key_phi._d = d_phi
 
         assert key_phi == key_lambda
+
+
+class TestMisc:
+    p = 3490529510847650949147849619903898133417764638493387843990820577
+    q = 32769132993266709549961988190834461413177642967992942539798288533
+
+    def test_default_e(self) -> None:
+        default_e = rsa.default_e()
+        assert default_e == 65537
+
+        priv_key = rsa.PrivateKey(self.p, self.q)
+
+        assert priv_key.e == default_e

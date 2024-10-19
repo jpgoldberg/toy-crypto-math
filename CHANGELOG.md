@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - keyword argument name `b` changed to "`base`" in `utils.digit_count`.
 
+### Added
+
+- Text encoder for the R129 challenge is exposed in `utils`.
+  
+  Previously this had just lived only in test routines.
+
 ### Fixed
 
 - `utils.digit_count` Fixed bug that could yield incorrect results in close cases.
@@ -16,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Improved
 
 - Improved documentation and test coverage for `utils`.
+- Improved documentation for the `rsa` module.
 
 ## 0.1.3 2024-10-17
 

@@ -3,6 +3,7 @@ from typing import Optional
 
 from toy_crypto import rsa
 from toy_crypto.nt import lcm, modinv
+from toy_crypto.utils import Rsa129
 
 
 class TestCitm:
@@ -81,7 +82,7 @@ class TestSage:
     The tutorial uses phi directly instead of lcm(p-1, q-1).
     """
 
-    # Don't use mersenne primes in real life
+    # Don't use Mersenne primes in real life
     p = (2**31) - 1
     q = (2**61) - 1
     e = 1850567623300615966303954877
@@ -120,29 +121,7 @@ class TestSage:
 
 
 class TestMG1977:
-    # some utilities for doing the text to int and int to text from the
-    # RSA-129 Challenge from Martin Gardner's 1977 article"
-    abc = list(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    abc_index = {c: i for i, c in enumerate(abc)}
-
-    @classmethod
-    def encode(cls, text: str) -> int:
-        result = 0
-        for c in text:
-            result *= 100
-            result += cls.abc_index[c]
-        return result
-
-    @classmethod
-    def decode(cls, number: int) -> str:
-        chars: list[str] = []
-        while True:
-            number, rem = divmod(number, 100)
-            chars.append(cls.abc[rem])
-            if number == 0:
-                break
-        return "".join(reversed(chars))
-
+    # encoder/decoder is in utils.Rsa129
     def test_magic(self) -> None:
         """Test the RSA-129 Challenge from Martin Gardner's 1977 article"""
 
@@ -168,7 +147,7 @@ class TestMG1977:
         pub_key = rsa.PublicKey(challenge.modulus, challenge.pub_exponent)
 
         # First test encryption
-        plain_num: int = self.encode(solution.plaintext)
+        plain_num: int = Rsa129.encode(solution.plaintext)
         ctext = pub_key.encrypt(plain_num)
         assert ctext == challenge.ctext
 
@@ -179,7 +158,7 @@ class TestMG1977:
         assert priv_key == pub_key
 
         decrypted_num: int = priv_key.decrypt(ctext)
-        decrypted: str = self.decode(decrypted_num)
+        decrypted: str = Rsa129.decode(decrypted_num)
 
         assert decrypted == solution.plaintext
 

@@ -2,6 +2,7 @@
 
 import itertools
 from collections.abc import Iterator
+from typing import Optional
 
 
 def lsb_to_msb(n: int) -> Iterator[int]:
@@ -59,3 +60,44 @@ def xor(m: bytes, pad: bytes) -> bytes:
     r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]
 
     return b"".join(r)
+
+
+class Rsa129:
+    """Text encoder/decoder used in RSA-129 challenge.
+
+    Encoding scheme from Martin Gardner's 1977 article.
+    """
+
+    _abc: list[str] = list(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    _abc_index: Optional[dict[str, int]] = None
+
+    @classmethod
+    def _make_index(cls) -> dict[str, int]:
+        if cls._abc_index is None:
+            cls._abc_index = {c: i for i, c in enumerate(cls._abc)}
+        return cls._abc_index
+
+    def __init__(self) -> None:
+        self._make_index()
+
+    @classmethod
+    def encode(cls, text: str) -> int:
+        """Encode text"""
+
+        indx = cls._make_index()
+        result = 0
+        for c in text:
+            result *= 100
+            result += indx[c]
+        return result
+
+    @classmethod
+    def decode(cls, number: int) -> str:
+        """Decode text."""
+        chars: list[str] = []
+        while True:
+            number, rem = divmod(number, 100)
+            chars.append(cls._abc[rem])
+            if number == 0:
+                break
+        return "".join(reversed(chars))

@@ -57,3 +57,5 @@ through side channels.
 >>> modified_message
 b'Attack at dusk!'
  
+.. autoclass:: toy_crypto.utils.Rsa129
+    :members:

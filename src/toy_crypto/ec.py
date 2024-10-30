@@ -6,9 +6,16 @@ if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import Optional, Self
 
-from toy_crypto.nt import Modulus as Modulus
-from toy_crypto.nt import is_modulus, mod_sqrt
-from toy_crypto.utils import lsb_to_msb
+"""
+Until some of the self-type issues with mypy are better sorted out,
+use of Self is minimal.
+
+https://github.com/python/mypy/labels/topic-self-types
+"""
+
+from toy_crypto.nt import Modulus as Modulus  # noqa: E402
+from toy_crypto.nt import is_modulus, mod_sqrt  # noqa: E402
+from toy_crypto.utils import lsb_to_msb  # noqa: E402
 
 
 """
@@ -34,7 +41,7 @@ class Curve:
 
         self._pai = Point(0, 0, self, is_zero=True)
 
-        # This assumes (without checking) that the curve has good paramaters
+        # This assumes (without checking) that the curve has good parameters
         # and that a generator (base point) has been chosen correctly/
         self._order = (self.p + 1) // 2
 

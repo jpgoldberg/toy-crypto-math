@@ -160,16 +160,16 @@ class Point:
         return lhs == rhs
 
     # define P + Q; -P; P += Q;  P - Q; P == Q
-    def __add__(self, Q: "Point") -> "Point":
+    def __add__(self: Self, Q: Self) -> Self:
         return self.add(Q)
 
-    def __neg__(self) -> "Point":
+    def __neg__(self) -> Self:
         return self.neg()
 
-    def __iadd__(self, Q: "Point") -> Self:
+    def __iadd__(self: Self, Q: Self) -> Self:
         return self.iadd(Q)
 
-    def __sub__(self, Q: "Point") -> "Point":
+    def __sub__(self, Q: Self) -> Self:
         return self.__add__(Q.__neg__())
 
     def __eq__(self, Q: object) -> bool:
@@ -190,7 +190,7 @@ class Point:
     def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
 
-    def neg(self) -> "Point":
+    def neg(self: Self) -> Self:
         """Return additive inverse.
 
         :returns: Additive inverse
@@ -205,12 +205,12 @@ class Point:
         return r
 
     # I don't know how shallow a copy() is in Python, so
-    def cp(self) -> "Point":
+    def cp(self: Self) -> Self:
         """Return a copy of self."""
 
-        return Point(self._x, self._y, self._curve, is_zero=self._is_zero)
+        return type(self)(self._x, self._y, self._curve, is_zero=self._is_zero)
 
-    def iadd(self, Q: "Point") -> Self:
+    def iadd(self: Self, Q: Self) -> Self:
         """add point to self in place.
 
         :raises TypeError: if Q is not a point
@@ -261,7 +261,7 @@ class Point:
 
         return self
 
-    def add(self, Q: "Point") -> "Point":
+    def add(self: Self, Q: Self) -> Self:
         """Add points.
 
         :param Q: Point to add
@@ -289,7 +289,7 @@ class Point:
 
         return self
 
-    def double(self) -> "Point":
+    def double(self: Self) -> Self:
         if self.is_zero:
             return self.cp()
 
@@ -344,7 +344,7 @@ class Point:
             doubled = doubled.double()  # toil and trouble
         return sum
 
-    def _nz_addition(self, Q: "Point") -> tuple[int, int]:
+    def _nz_addition(self, Q: Self) -> tuple[int, int]:
         """returns x, y over finite field Z_p"""
 
         if self._is_zero or Q.is_zero:

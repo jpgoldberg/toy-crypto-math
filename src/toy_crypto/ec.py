@@ -39,7 +39,9 @@ class Curve:
         if not is_modulus(self.p):
             raise ValueError("Bad modulus p")
 
-        self._pai = Point(0, 0, self, is_zero=True)
+        self._pai = Point(0, 0, self)
+        self._pai._is_mutable = False
+        self._pai._is_pai = True
 
         # This assumes (without checking) that the curve has good parameters
         # and that a generator (base point) has been chosen correctly/
@@ -100,23 +102,22 @@ class Curve:
         return roots[0], roots[1]
 
     def point(self, x: int, y: int) -> "Point":
-        return Point(x, y, self, is_zero=False)
+        return Point(x, y, self)
 
 
 class Point:
-    """Point on elliptic curve over finite field."""
+    """Finite Point on elliptic curve over finite field."""
 
-    # I would prefer to have all points belong to a curve
-    # but I don't quite get python's classes to do that.
-    # as this is all a toy, I'm not going to worry about this now
+    def __init__(self, x: int, y: int, curve: Curve) -> None:
+        """Create a mutable point on a curve."""
 
-    def __init__(
-        self, x: int, y: int, curve: Curve, is_zero: bool = False
-    ) -> None:
         self._x: int = x
         self._y: int = y
-        self._curve: Curve = curve
-        self._is_zero: bool = is_zero
+        self._curve = curve
+
+        # We are creating a normal point, so we set these
+        self._is_mutable: bool = True
+        self._is_pai = False
 
         if not (isinstance(self._x, int) and isinstance(self._y, int)):
             raise TypeError("Points must have integer coordinates")
@@ -141,10 +142,10 @@ class Point:
 
     @property
     def is_zero(self) -> bool:
-        return self._is_zero
+        return self._is_pai
 
     def on_curve(self) -> bool:
-        if self._is_zero:
+        if self._is_pai:
             return True
 
         x = int(self._x)
@@ -185,7 +186,7 @@ class Point:
 
     def __bool__(self) -> bool:
         """P is True iff P is not the zero point."""
-        return not self._is_zero
+        return not self._is_pai
 
     def __repr__(self) -> str:
         return f"({self.x}, {self.y})"
@@ -206,9 +207,12 @@ class Point:
 
     # I don't know how shallow a copy() is in Python, so
     def cp(self: Self) -> Self:
-        """Return a copy of self."""
+        """Return a mutable copy"""
 
-        return type(self)(self._x, self._y, self._curve, is_zero=self._is_zero)
+        c = type(self)(self._x, self._y, self._curve)
+        c._is_pai = self._is_pai
+        c._is_mutable = True
+        return c
 
     def iadd(self: Self, Q: Self) -> Self:
         """add point to self in place.
@@ -217,6 +221,9 @@ class Point:
         :raises ValueError: if Q is not on its own curve
         :raises ValueError: if Q is on a distinct curve
         """
+
+        if not self._is_mutable:
+            raise NotImplementedError("Point must be mutable")
 
         # The order of checking matters, as each check is seen as
         # as a fall through of prior checks
@@ -236,7 +243,7 @@ class Point:
         if not self:
             self._x, self._y = Q.x, Q.y
             self._curve = Q.curve
-            self._is_zero = Q.is_zero
+            self._is_pai = Q.is_zero
             return self
 
         # if Q is on a different curve, something bad is happening
@@ -250,7 +257,7 @@ class Point:
         # P + -P = 0
         if self._x == Q.x:
             self._x, self._y = 0, 0
-            self._is_zero = True
+            self._is_pai = True
             return self
 
         # Generics would be better than the abuse of type
@@ -276,6 +283,12 @@ class Point:
         return r
 
     def idouble(self) -> Self:
+        """Double point in place."""
+
+        if not self._is_mutable:
+            raise NotImplementedError(
+                "Point must be mutable for in-place operation."
+            )
         if self.is_zero:
             return self
 
@@ -283,7 +296,7 @@ class Point:
         if not xy:
             self._x = 0
             self._y = 0
-            self._is_zero = True
+            self._is_pai = True
         else:
             self._x, self._y = xy
 
@@ -315,7 +328,7 @@ class Point:
         - self is not the point at infinity
         """
 
-        if self._is_zero:
+        if self._is_pai:
             return None
 
         if self._y == 0:
@@ -347,7 +360,7 @@ class Point:
     def _nz_addition(self, Q: Self) -> tuple[int, int]:
         """returns x, y over finite field Z_p"""
 
-        if self._is_zero or Q.is_zero:
+        if self._is_pai or Q.is_zero:
             raise ValueError("this is for non-zero points only")
 
         m = self.curve.p  # have the modulus handy

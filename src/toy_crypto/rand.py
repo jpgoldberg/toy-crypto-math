@@ -3,11 +3,15 @@
 import math
 import secrets
 from collections.abc import MutableSequence
-from typing import Any
 
 
 def randrange(*args: int) -> int:
-    """Same as random.randrange(), but uses RNG from secrets."""
+    """
+    Like :py:func:`random.randrange`, but uses RNG from :py:mod:`secrets`.
+    """
+
+    if any([isinstance(arg, int) for arg in args]):
+        raise TypeError("arguments must be integers")
 
     start = 0
     step = 1
@@ -23,7 +27,7 @@ def randrange(*args: int) -> int:
             step = args[2]
 
         case _:
-            raise TypeError("a more useful message should go here")
+            raise TypeError("Must have 1, 2, or 3 arguments")
 
     diff = stop - start
     if diff < 1:
@@ -45,8 +49,8 @@ def randrange(*args: int) -> int:
     return r
 
 
-def shuffle(x: MutableSequence[Any]) -> None:
-    """Shuffles x in place using CSPRNG"""
+def shuffle(x: MutableSequence[object]) -> None:
+    """Like :py:func:`random.shuffle`, but uses RNG from :py:mod:`secrets`."""
 
     # Uses the "modern" Fisher-Yates shuffle from Knuth via
     # https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm

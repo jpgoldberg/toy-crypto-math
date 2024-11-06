@@ -5,6 +5,7 @@ import sys
 if sys.version_info < (3, 11):
     raise Exception("Requires python 3.11")
 from typing import Optional, Self
+from functools import cached_property
 
 """
 Until some of the self-type issues with mypy are better sorted out,
@@ -26,9 +27,9 @@ defined over integer fields.
 
 
 class Curve:
-    """Define a curve of the form :math:`y^2 = x^3 + ax + b \\pmod p`."""
 
     def __init__(self, a: int, b: int, p: int) -> None:
+        """Define a curve of the form :math:`y^2 = x^3 + ax + b \\pmod p`."""
         self._p: Modulus = Modulus(p)
         self._a: int = a
         self._b: int = b
@@ -39,9 +40,7 @@ class Curve:
         if not is_modulus(self.p):
             raise ValueError("Bad modulus p")
 
-        self._pai = Point(0, 0, self)
-        self._pai._is_mutable = False
-        self._pai._is_pai = True
+        self._pai: Optional[Point] = None
 
         # This assumes (without checking) that the curve has good parameters
         # and that a generator (base point) has been chosen correctly/
@@ -65,9 +64,13 @@ class Curve:
     def is_singular(self) -> bool:
         return (4 * self._a**3 + 27 * self._b * self._b) % self._p == 0
 
-    @property
+    @cached_property
     def PAI(self) -> "Point":
-        """Point At Infinity"""
+        """Point At Infinity: the additive identity."""
+        if self._pai is None:
+            self._pai = Point(0, 0, self)
+            self._pai._is_mutable = False
+            self._pai._is_pai = True
         return self._pai
 
     @property

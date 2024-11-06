@@ -27,7 +27,6 @@ defined over integer fields.
 
 
 class Curve:
-
     def __init__(self, a: int, b: int, p: int) -> None:
         """Define a curve of the form :math:`y^2 = x^3 + ax + b \\pmod p`."""
         self._p: Modulus = Modulus(p)
@@ -220,9 +219,12 @@ class Point:
     def iadd(self: Self, Q: Self) -> Self:
         """add point to self in place.
 
-        :raises TypeError: if Q is not a point
+        The Point at Infinity is not mutable. But you can make a mutable copy
+        with ``curve.PAI.cp()``.
+
         :raises ValueError: if Q is not on its own curve
-        :raises ValueError: if Q is on a distinct curve
+        :raises ValueError: if Q and self are on different curves
+        :raises NotImplementedError if self is not a mutable point.
         """
 
         if not self._is_mutable:
@@ -286,7 +288,13 @@ class Point:
         return r
 
     def idouble(self) -> Self:
-        """Double point in place."""
+        """Double point in place.
+
+        The Point at Infinity is not mutable. But you can make a mutable copy
+        with :func:`curve.PAI.cp` or just use :func:`double`.
+
+        :raises NotImplementedError if self is not a mutable point.
+        """
 
         if not self._is_mutable:
             raise NotImplementedError(

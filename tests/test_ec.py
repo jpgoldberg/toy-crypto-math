@@ -216,6 +216,13 @@ class TestSeriousCurve:
         assert PaI == P - P
         assert negP + P == PaI
 
+    def test_pai_imutable(self) -> None:
+        c = self.curve
+        Z = c.PAI
+        P = c.point(self.Px, self.Py)
+        with pytest.raises(NotImplementedError):
+            Z += P
+
     def test_point_validation(self) -> None:
         with pytest.raises(ValueError):
             self.curve.point(self.Px, self.Py + 1)

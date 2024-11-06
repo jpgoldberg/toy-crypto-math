@@ -100,7 +100,7 @@ class FactorList(UserList[tuple[int, int]]):
                 return False
             return self.data == other_f.data
 
-        # Fundamental theorem of arithmatic
+        # Fundamental theorem of arithmetic
         if isinstance(other, int):
             return self.n == other
 
@@ -171,7 +171,7 @@ class FactorList(UserList[tuple[int, int]]):
         """
         Returns Euler's Totient (phi)
 
-        :math:`\phi(n)` is the number of numbers
+        :math:`\\phi(n)` is the number of numbers
         less than n which are coprime with n.
 
         This assumes that the factorization (self) is a prime factorization.
@@ -215,7 +215,7 @@ class FactorList(UserList[tuple[int, int]]):
         return self._radical_value
 
     def pow(self, n: int) -> "FactorList":
-        """Return self ** n, where n is positive int"""
+        """Return (self)^n, where *n* is positive int."""
         if not types.is_positive_int(n):
             raise TypeError("n must be a positive integer")
 

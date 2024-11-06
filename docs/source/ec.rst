@@ -1,9 +1,10 @@
 .. include:: ../common/unsafe.rst
 
-
-
 Elliptic curves
 ================
+
+.. py:module:: toy_crypto.ec
+    :synopsis: Simple elliptic curves
 
 This are imported with::
 
@@ -13,7 +14,7 @@ This are imported with::
 
 I wrote this for the sole purposes of
 
-1. Providing a working context to illustrate the double-and-add algorithm in the :py:meth:`~toy_crypto.ec.Curve.scaler_multiply` method.
+1. Providing a working context to illustrate the double-and-add algorithm in the :py:meth:`Point.scaler_multiply` method.
 2. Doing calculations over floats that I could use for diagrams.
 
 And I have since removed the code for (2).
@@ -24,7 +25,7 @@ And I have since removed the code for (2).
     from toy_crypto.nt import Modulus
 
     
-    # Example curve from Serious Cryptograph
+    # Example curve from Serious Cryptography
 
     curve = Curve(-4, 0, 191)
     assert str(curve) == "y^2 = x^3 - 4x + 0 (mod 191)"

@@ -216,7 +216,7 @@ class TestSeriousCurve:
         assert PaI == P - P
         assert negP + P == PaI
 
-    def test_pai_imutable(self) -> None:
+    def test_pai_immutable(self) -> None:
         c = self.curve
         Z = c.PAI
         P = c.point(self.Px, self.Py)

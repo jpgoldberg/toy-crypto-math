@@ -219,12 +219,14 @@ class Point:
     def iadd(self: Self, Q: Self) -> Self:
         """add point to self in place.
 
-        The Point at Infinity is not mutable. But you can make a mutable copy
+        The Point at Infinity is not mutable.
+        But you can make a mutable copy
         with ``curve.PAI.cp()``.
+        Or you could just use :meth:`Point.add`.
 
         :raises ValueError: if Q is not on its own curve
         :raises ValueError: if Q and self are on different curves
-        :raises NotImplementedError if self is not a mutable point.
+        :raises NotImplementedError: if self is not a mutable point.
         """
 
         if not self._is_mutable:
@@ -290,10 +292,12 @@ class Point:
     def idouble(self) -> Self:
         """Double point in place.
 
-        The Point at Infinity is not mutable. But you can make a mutable copy
-        with :func:`curve.PAI.cp` or just use :func:`double`.
+        The Point at Infinity is not mutable.
+        But you can make a mutable copy
+        with ``curve.PAI.cp()``
+        or just use :meth:`Point.double`.
 
-        :raises NotImplementedError if self is not a mutable point.
+        :raises NotImplementedError: if self is not a mutable point.
         """
 
         if not self._is_mutable:

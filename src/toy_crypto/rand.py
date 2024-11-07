@@ -10,7 +10,7 @@ def randrange(*args: int) -> int:
     Like :py:func:`random.randrange`, but uses RNG from :py:mod:`secrets`.
     """
 
-    if any([isinstance(arg, int) for arg in args]):
+    if any([not isinstance(arg, int) for arg in args]):
         raise TypeError("arguments must be integers")
 
     start = 0

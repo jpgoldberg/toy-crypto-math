@@ -21,8 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   
 ### Improved
 
-- Improved documentation and test coverage for `utils`.
+- `rand` module now has a [documentation page]( https://jpgoldberg.github.io/toy-crypto-math/rand.html).
+- Improved error messages for some Type and Value Errors.
+- Made it harder to accidentally mutate things in the `ec` class that shouldn't be mutated.
+- Improved documentation and test coverage for `utils` and `ec`.
 - Improved documentation for the `rsa` module.
+- Minor improvements to other documentation and docstrings
 
 ## 0.1.3 2024-10-17
 

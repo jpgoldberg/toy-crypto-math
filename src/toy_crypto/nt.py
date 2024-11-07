@@ -42,7 +42,7 @@ def isqrt(n: int) -> int:
 
 def modinv(a: int, m: int) -> int:
     """
-    Returns b such that :math:`ab \equiv 1 \pmod m`.
+    Returns b such that :math:`ab \\equiv 1 \\pmod m`.
 
     :raises ValueError: if a is not coprime with m
     """
@@ -241,7 +241,7 @@ def gcd(*integers: int) -> int:
 
 
 def egcd(a: int, b: int) -> tuple[int, int, int]:
-    """returns (g, x, y) such that :math:`ax + by = \gcd(a, b) = g`."""
+    """returns (g, x, y) such that :math:`ax + by = \\gcd(a, b) = g`."""
     x0, x1, y0, y1 = 0, 1, 1, 0
     while a != 0:
         (q, a), b = divmod(b, a), a
@@ -260,7 +260,7 @@ def mod_sqrt(a: int, m: int) -> list[int]:
     """Modular square root.
 
     For prime m, this generally returns a list with either two members,
-    :math:`[r, m - r]` such that :math:`r^2 = {(m - r)}^2 = a \pmod m`
+    :math:`[r, m - r]` such that :math:`r^2 = {(m - r)}^2 = a \\pmod m`
     if such an a is a quadratic residue the empty list if there is no such r.
 
     However, for compatibility with SageMath this can return a list with just

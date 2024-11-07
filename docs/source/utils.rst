@@ -3,7 +3,7 @@
 Utility functions
 =================
 
-This are imported with:
+This module is imported with:
 
     import toy_crypto.utils
 

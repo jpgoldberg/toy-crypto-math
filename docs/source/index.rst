@@ -48,7 +48,7 @@ Modules
 
 .. toctree::
    :maxdepth: 1
-   :caption: Documented modules:
+   :caption: Modules currently documented:
 
    utils
    nt

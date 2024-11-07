@@ -6,7 +6,7 @@ Random Numbers
 .. py:module:: toy_crypto.rand
     :synopsis: Randon number utitilities
 
-This are imported with::
+This module is imported with::
 
     import toy_crypto.rand
 

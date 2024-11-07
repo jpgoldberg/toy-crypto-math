@@ -6,7 +6,7 @@ Elliptic curves
 .. py:module:: toy_crypto.ec
     :synopsis: Simple elliptic curves
 
-This are imported with::
+This module is imported with::
 
     import toy_crypto.ec
 

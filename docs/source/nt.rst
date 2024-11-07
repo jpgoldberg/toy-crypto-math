@@ -6,7 +6,7 @@ Number Theory
 .. py:module:: toy_crypto.nt
     :synopsis: Number theorertic utilities and integer factorization tools
 
-This are imported with::
+This module is imported with::
 
     import toy_crypto.nt
 

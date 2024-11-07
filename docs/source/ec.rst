@@ -15,9 +15,8 @@ This module is imported with::
 I wrote this for the sole purposes of
 
 1. Providing a working context to illustrate the double-and-add algorithm in the :py:meth:`Point.scaler_multiply` method.
-2. Doing calculations over floats that I could use for diagrams.
+2. Doing calculations over floats that I could use for diagrams. (That code has been removed.)
 
-And I have since removed the code for (2).
 
 .. testcode::
 

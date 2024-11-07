@@ -61,10 +61,12 @@ def _pbirthday_approx(
 def P(
     n: int, classes: int = 365, coincident: int = 2, mode: str = "auto"
 ) -> types.Prob:
-    """probability of at least 1 collision among n individulas for c classes".
+    """probability of at least 1 collision among n individuals for c classes".
 
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
+
+    :raises ValueError: if not all arguments are positive integers.
     """
     c = classes
     k = coincident
@@ -72,9 +74,9 @@ def P(
     if not types.is_positive_int(n):
         raise ValueError("n must be a positive integer")
     if not types.is_positive_int(c):
-        raise ValueError("classes must be a possible integer")
+        raise ValueError("classes must be a positive integer")
     if not types.is_positive_int(k):
-        raise ValueError("coincident must be a possible integer")
+        raise ValueError("coincident must be a positive integer")
 
     if k == 1:
         return types.Prob(1.0)
@@ -91,7 +93,11 @@ def P(
 
 
 def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
-    """Returns minimum number n to get a probability of p for c classes"""
+    """Returns minimum number n to get a probability of p for c classes.
+
+    :raises ValueError: if prop is not a probability.
+    :raises NotImplementedError: if prob is greater than MAX_QBIRTHDAY.
+    """
 
     # Use DM69 notation
     p = prob

@@ -1,8 +1,7 @@
-"""Supplements Python secrets module"""
-
 import math
 import secrets
 from collections.abc import MutableSequence
+from typing import Any
 
 
 def randrange(*args: int) -> int:
@@ -49,7 +48,7 @@ def randrange(*args: int) -> int:
     return r
 
 
-def shuffle(x: MutableSequence[object]) -> None:
+def shuffle(x: MutableSequence[Any]) -> None:
     """Like :py:func:`random.shuffle`, but uses RNG from :py:mod:`secrets`."""
 
     # Uses the "modern" Fisher-Yates shuffle from Knuth via

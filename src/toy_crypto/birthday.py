@@ -2,8 +2,12 @@ import math
 
 from . import types
 
+
 MAX_QBIRTHDAY_P = 1.0 - (10**-8)
+"""Maximum probability that Q can handle."""
+
 EXACT_THRESHOLD = 1000
+"""With auto mode, the threshold for using exact or approximate modes."""
 
 
 def _pbirthday_exact(
@@ -57,7 +61,7 @@ def _pbirthday_approx(
 def P(
     n: int, classes: int = 365, coincident: int = 2, mode: str = "auto"
 ) -> types.Prob:
-    """prob of at least 1 collision among n "people" for c classes".
+    """probability of at least 1 collision among n individulas for c classes".
 
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
@@ -87,7 +91,7 @@ def P(
 
 
 def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
-    """Returns number minimum number n to get a prob of p for c classes"""
+    """Returns minimum number n to get a probability of p for c classes"""
 
     # Use DM69 notation
     p = prob
@@ -105,7 +109,7 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     if math.isclose(p, 1.0):
         return c * (k - 1) + 1
 
-    # Frist approximation
+    # First approximation
     # broken down so that I can better understand this.
     term1 = (k - 1) * math.log(c)  # log(c^{k-1})
     term2 = math.lgamma(k + 1)  # log k!

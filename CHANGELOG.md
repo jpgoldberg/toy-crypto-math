@@ -9,13 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `vigenere` now only works with `str`. If you want to do things with `bytes`, use `utils.xor`.
 
+- Vigenère encryption and decryption no longer advance the key when passing through input that is not in the alphabet.
+  
 ### Fixed
+
+- Vigenère behavior on input not in alphabet is less incoherent than before, though perhaps it should be considered undefined.
 
 - Sprinkled more `py.typed` files around so this really should get marked at typed now.
   
 ### Improved
 
-- - `birthday` module now has a [documentation page](https://jpgoldberg.github.io/toy-crypto-math/birthday.html).
+- `birthday` module now has a [documentation page](https://jpgoldberg.github.io/toy-crypto-math/birthday.html).
 
 ## 0.1.4 2024-11-06
 

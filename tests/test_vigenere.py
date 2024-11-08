@@ -31,7 +31,12 @@ class TestCryptionDefault:
         TVector(
             "RAVEN",
             "ONCE UPON A MIDNIGHT DREARY",
-            "FNXI LPJR R HMQEIBLG DMINIY",
+            "FNXI HGOI E ZZDIMTYT YVRRRT",
+        ),
+        TVector(
+            "RAVEN",
+            "AAAA AAAA A AAAAAAAA AAAAAA",
+            "RAVE NRAV E NRAVENRA VENRAV",
         ),
     ]
 

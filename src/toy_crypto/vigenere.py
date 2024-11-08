@@ -1,6 +1,3 @@
-"""Vigenère: For demonstration use."""
-
-from itertools import cycle
 from typing import Any, Optional, TypeAlias
 
 Letter: TypeAlias = str
@@ -148,14 +145,22 @@ class Cipher:
                 "key must be comprised of characters in the alphabet"
             )
         self._key: str = key
+        self._key_length = len(self._key)
 
     @property
     def alphabet(self) -> Alphabet:
+        """The Alphabet for this cipher."""
         return self._alphabet
 
     @property
     def key(self) -> str:
+        """Shhh! This is the key. Keep it secret."""
         return self._key
+
+    @property
+    def modulus(self) -> int:
+        """The modulus."""
+        return self._alphabet.modulus
 
     def crypt(self, text: str, mode: str) -> str:
         """{en,de}crypts text depending on mode"""
@@ -171,11 +176,19 @@ class Cipher:
         # TODO: Generalize this for streaming input and output
         output: list[Letter] = []
 
-        for c, k in zip(text, cycle(self.key)):
+        """
+        I would love to use zip and cycle, but I need to handle input
+        characters that are not in the alphabet.
+        """
+
+        key_idx = 0
+        for c in text:
             if c not in self.alphabet:
                 result = c
             else:
+                k = self.key[key_idx]
                 result = operation(c, k)
+                key_idx = (key_idx + 1) % self._key_length
 
             output.append(result)
 

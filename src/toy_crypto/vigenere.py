@@ -14,18 +14,23 @@ class Alphabet_meta(type):
         # Printable 7 bit ASCI with space but excluding backslash. Shuffled.
         cls._abc_shuffled_printable = r"""JDi-Km9247oBEctS%Isxz{<;=W^fL,[Y3Mgd6HV(kR8:_CF"*')>|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&ru5Q"""
 
-        cls._default_alphabet = cls._abc_caps_only
-
     @property
     def DEFAULT(cls) -> str:
-        return cls._default_alphabet
+        """CAPS_ONLY is the default."""
+        return cls.CAPS_ONLY
 
     @property
     def CAPS_ONLY(cls) -> str:
+        """Uppercase A through Z"""
         return cls._abc_caps_only
 
     @property
     def PRINTABLE(cls) -> str:
+        """Printable 7-bit ASCII in a fixed scrambled order.
+
+        It does not include the backslash character,
+        and the scrambled order is hardcoded.
+        """
         return cls._abc_shuffled_printable
 
 
@@ -77,19 +82,31 @@ class Alphabet(metaclass=Alphabet_meta):
 
     @property
     def alphabet(self) -> str:
+        """The underlying alphabet."""
         return self._alphabet
 
     @property
     def modulus(self) -> int:
+        """The modulus."""
         return self._modulus
 
     @property
     def abc2idx(self) -> dict[Letter, int]:
+        """Dictionary of letter to position in the alphabet."""
         return self._abc2idx
 
     # We will want to use 'in' for Alphabet instances
     def __contains__(self, item: Any) -> bool:
+        """
+        Allows the 'in' and 'not in' operators.
+
+        So if `abc` is an Alphabet, ``'Z' in abc`` is well defined.
+        """
         return item in self.alphabet
+
+    def __getitem__(self, index: slice | int) -> str:
+        """Allows retrieving bits of the Alphabet through [index] notation."""
+        return self.alphabet[index]
 
     # annoyingly, the type str is also used for single character strings
     # add, inverse, subtract all deal with single characters

@@ -5,6 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- `vigenere` now only works with `str`. If you want to do things with `bytes`, use `utils.xor`.
+
+### Fixed
+
+- Sprinkled more `py.typed` files around so this really should get marked at typed now.
+  
+### Improved
+
+- - `birthday` module now has a [documentation page](https://jpgoldberg.github.io/toy-crypto-math/birthday.html).
+
 ## 0.1.4 2024-11-06
 
 ### Changed
@@ -23,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   
 ### Improved
 
-- `rand` module now has a [documentation page]( https://jpgoldberg.github.io/toy-crypto-math/rand.html).
+- `rand` module now has a [documentation page](https://jpgoldberg.github.io/toy-crypto-math/rand.html).
 - Improved error messages for some Type and Value Errors.
 - Made it harder to accidentally mutate things in the `ec` class that shouldn't be mutated.
 - Improved documentation and test coverage for `utils` and `ec`.

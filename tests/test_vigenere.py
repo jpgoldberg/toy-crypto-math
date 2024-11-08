@@ -4,7 +4,6 @@ import pytest
 from toy_crypto import vigenere
 
 Letter = vigenere.Letter
-Letters = vigenere.Letters
 
 
 class TestCryptionDefault:
@@ -13,9 +12,7 @@ class TestCryptionDefault:
     default_abc = vigenere.Alphabet(None)
 
     class TVector:
-        def __init__(
-            self, key: Letters, ptext: Letters, ctext: Letters
-        ) -> None:
+        def __init__(self, key: str, ptext: str, ctext: str) -> None:
             self.key = key
             self.ptext = ptext
             self.ctext = ctext
@@ -59,16 +56,14 @@ class TestCryptionPrintable:
     abc = vigenere.Alphabet(prebaked="printable")
 
     class TVector:
-        def __init__(
-            self, key: Letters, ptext: Letters, ctext: Letters
-        ) -> None:
+        def __init__(self, key: str, ptext: str, ctext: str) -> None:
             self.key = key
             self.ptext = ptext
             self.ctext = ctext
 
     vectors = [
         TVector(
-            [abc.alphabet[0]],
+            abc.alphabet[0],
             "ONCE UPON A MIDNIGHT DREARY",
             "ONCE UPON A MIDNIGHT DREARY",
         ),

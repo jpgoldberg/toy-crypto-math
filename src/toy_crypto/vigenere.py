@@ -4,34 +4,7 @@ Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""
 
 
-class Alphabet_meta(type):
-    def __init__(cls, *args, **kwargs) -> None:  # type: ignore[no-untyped-def]
-        cls._abc_caps_only = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-        # Printable 7 bit ASCI with space but excluding backslash. Shuffled.
-        cls._abc_shuffled_printable = r"""JDi-Km9247oBEctS%Isxz{<;=W^fL,[Y3Mgd6HV(kR8:_CF"*')>|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&ru5Q"""
-
-    @property
-    def DEFAULT(cls) -> str:
-        """CAPS_ONLY is the default."""
-        return cls.CAPS_ONLY
-
-    @property
-    def CAPS_ONLY(cls) -> str:
-        """Uppercase A through Z"""
-        return cls._abc_caps_only
-
-    @property
-    def PRINTABLE(cls) -> str:
-        """Printable 7-bit ASCII in a fixed scrambled order.
-
-        It does not include the backslash character,
-        and the scrambled order is hardcoded.
-        """
-        return cls._abc_shuffled_printable
-
-
-class Alphabet(metaclass=Alphabet_meta):
+class Alphabet:
     """An alphabet.
 
     This does not check if the alphabet is sensible. In particular, you may get
@@ -39,6 +12,21 @@ class Alphabet(metaclass=Alphabet_meta):
 
     Instances of this class are conventionally immutable.
     """
+
+    CAPS_ONLY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    """'A' through 'Z' in order."""
+
+    # Printable 7 bit ASCI with space but excluding backslash. Shuffled.
+    PRINTABLE = r"""JDi-Km9247oBEctS%Isxz{<;=W^fL,[Y3Mgd6HV(kR8:_CF"*')>|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&ru5Q"""
+    """
+    Printable 7-bit ASCII in a fixed scrambled order.
+
+    It does not include the backslash character,
+    and the scrambled order is hardcoded.
+     """
+
+    DEFAULT = CAPS_ONLY
+    """CAPS_ONLY is the default."""
 
     def __init__(
         self,
@@ -52,11 +40,11 @@ class Alphabet(metaclass=Alphabet_meta):
 
         match (alphabet, prebaked):
             case (None, None) | (None, "default"):
-                abc = Alphabet.DEFAULT
+                abc = self.DEFAULT
             case (None, "caps"):
-                abc = Alphabet.CAPS_ONLY
+                abc = self.CAPS_ONLY
             case (None, "printable"):
-                abc = Alphabet.PRINTABLE
+                abc = self.PRINTABLE
             case (None, _):
                 raise ValueError("Unknown pre-baked alphabet")
             case (_, None):

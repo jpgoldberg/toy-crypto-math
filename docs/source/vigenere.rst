@@ -92,9 +92,3 @@ The :class:`Alphebet` class
 
 .. autoclass:: Alphabet
     :members:
-
-:class:`Alphabet_meta` is not intended for direct use, but its members are available in `Alphabet`.
-
-.. autoclass:: Alphabet_meta
-    :members:
-

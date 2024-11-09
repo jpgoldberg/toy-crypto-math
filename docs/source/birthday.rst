@@ -3,9 +3,6 @@
 Birthday Paradox Computations
 ================================
 
-.. py:module:: toy_crypto.birthday
-    :synopsis: Randon number utitilities
-
 This module is imported with::
 
     import toy_crypto.birthday
@@ -48,4 +45,5 @@ The :mod:`birthday` functions
 ------------------------------
 
 .. automodule:: toy_crypto.birthday
+    :synopsis: Birthday problem computations
     :members:

@@ -3,9 +3,6 @@
 Random Numbers
 ================
 
-.. py:module:: toy_crypto.rand
-    :synopsis: Randon number utitilities
-
 This module is imported with::
 
     import toy_crypto.rand
@@ -19,4 +16,5 @@ The :mod:`rand` functions
 --------------------------
 
 .. automodule:: toy_crypto.rand
+    :synopsis: Randon number utitilities
     :members:

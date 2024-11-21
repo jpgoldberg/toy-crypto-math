@@ -71,12 +71,10 @@ def hamming_distance(a: bytes, b: bytes) -> int:
     if len(a) != len(b):
         raise ValueError("Lengths are unequal")
 
-    # hamming distance will be the number of 1 bits if a xor b
+    # hamming distance will be the number of 1 bits in a xor b
     db: bytes = xor(a, b)
     # bit_count is only defined for ints, so
-    di: int = int.from_bytes(db, signed=False)
-    hd: int = di.bit_count()
-    return hd
+    return int.from_bytes(db, signed=False).bit_count()
 
 
 class Rsa129:

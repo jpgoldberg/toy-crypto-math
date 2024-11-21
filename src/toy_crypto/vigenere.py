@@ -1,4 +1,6 @@
 from typing import Any, Optional, TypeAlias
+from itertools import combinations
+from toy_crypto.rand import shuffle
 
 Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""
@@ -191,3 +193,51 @@ class Cipher:
         """Returns plaintext."""
 
         return self.crypt(ciphertext, mode="decrypt")
+
+
+def probable_keysize(
+    ciphertext: bytes | str,
+    min_size: int = 3,
+    max_size: int = 40,
+    trial_pairs: int = 1,
+) -> list[tuple[int, float]]:
+    """Assesses likelihood for key length of ciphertext.
+
+    :param ciphertext: The ciphertext.
+    :param min_size: The minimum key length to try.
+    :param max_size: The maximum key length to try.
+    :param: trial_pairs: The number of pairs of blocks to test.
+
+    :return: Returns list sorted by scores of (keysize, score)
+
+    Scores are scaled 0 (least likely) to 1 (most likely),
+    but they do not directly represent probabilities.
+    """
+
+    scores: list[tuple[int, float]] = []
+
+    if min_size == max_size:
+        # Should this be a ValueError?
+        return [(min_size, 1.0)]
+
+    if min_size > max_size:
+        raise ValueError("min_size can't be larger than max_size")
+
+    if trial_pairs < 1:
+        raise ValueError("trial_pairs must be positive")
+
+    ctext_len = len(ciphertext)
+    for keysize in range(min_size, max_size):
+        if 2 * keysize > ctext_len:
+            continue
+        blocks = ctext_len // keysize
+        all_pairs = list(combinations(range(blocks), 2))
+        shuffle(all_pairs)
+
+        # trial_pairs may have to be reduced to
+        trial_pairs = max([trial_pairs, len(all_pairs)])
+
+        for pair in all_pairs[:trial_pairs]:
+            ...
+
+    return scores

@@ -62,6 +62,23 @@ def xor(m: bytes, pad: bytes) -> bytes:
     return b"".join(r)
 
 
+def hamming_distance(a: bytes, b: bytes) -> int:
+    """Hamming distance between byte sequences of equal length.
+
+    :raises ValueError: if len(a) != len(b).
+    """
+
+    if len(a) != len(b):
+        raise ValueError("Lengths are unequal")
+
+    # hamming distance will be the number of 1 bits if a xor b
+    db: bytes = xor(a, b)
+    # bit_count is only defined for ints, so
+    di: int = int.from_bytes(db, signed=False)
+    hd: int = di.bit_count()
+    return hd
+
+
 class Rsa129:
     """Text encoder/decoder used in RSA-129 challenge.
 

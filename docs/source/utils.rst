@@ -56,6 +56,16 @@ through side channels.
 >>> modified_message = xor(message, pad)
 >>> modified_message
 b'Attack at dusk!'
+
+.. autofunction:: toy_crypto.utils.hamming_distance
+
+Let's illustrate with an `example from Cryptopals <https://cryptopals.com/sets/1/challenges/6>`__.
+
+>>> from toy_crypto.utils import hamming_distance
+>>> s1 = b"this is a test"
+>>> s2 = b"wokka wokka!!!"
+>>> hamming_distance(s1, s2)
+37
  
 .. autoclass:: toy_crypto.utils.Rsa129
     :members:

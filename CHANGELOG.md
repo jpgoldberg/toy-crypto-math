@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vigenère behavior on input not in alphabet is less incoherent than before, though perhaps it should be considered undefined.
 
 - Sprinkled more `py.typed` files around so this really should get marked at typed now.
+
+### Added
+
+- `utils.hamming_distance()` is now a thing.
   
 ### Improved
 

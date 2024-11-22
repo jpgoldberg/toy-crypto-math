@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `utils.hamming_distance()` is now a thing.
 - `vigenere.probable_keysize()` is also now a thing.
+- `utils.ixor()` for in-place xor.
   
 ### Improved
 

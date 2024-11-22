@@ -57,6 +57,8 @@ through side channels.
 >>> modified_message
 b'Attack at dusk!'
 
+.. autofunction:: toy_crypto.utils.ixor
+
 .. autofunction:: toy_crypto.utils.hamming_distance
 
 Let's illustrate with an `example from Cryptopals <https://cryptopals.com/sets/1/challenges/6>`__.

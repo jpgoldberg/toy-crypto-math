@@ -50,16 +50,29 @@ def digit_count(n: int, base: int = 10) -> int:
     return digits
 
 
-def xor(m: bytes, pad: bytes) -> bytes:
+def xor(m: bytes | bytearray, pad: bytes | bytearray) -> bytes:
     """Returns the xor of m with a (repeated) pad.
 
     The pad is repeated if it is shorter than m.
-    This can be thought of as bytewise Vigenère
+    This can be thought of as bytewise Vigenère.
+
+    This does not mutate inputs.
     """
 
     r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]
 
     return b"".join(r)
+
+
+def ixor(m: bytearray, pad: bytes | bytearray) -> None:
+    """In place xor. Replaces m with the xor of m with a (repeated) pad.
+
+    The pad is repeated if it is shorter than m.
+    """
+
+    for i, (_, p) in enumerate(zip(m, itertools.cycle(pad))):
+        m[i] ^= p
+    return
 
 
 def hamming_distance(a: bytes, b: bytes) -> int:

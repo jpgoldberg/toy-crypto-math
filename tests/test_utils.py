@@ -53,6 +53,26 @@ class TestUtils:
             r = utils.xor(x, y)
             assert r == pad
 
+    def test_ixor(self) -> None:
+        vectors = [
+            (b"dusk", b"dawn", bytes.fromhex("00 14 04 05")),
+            (
+                b"Attack at dawn!",
+                bytes(10) + bytes.fromhex("00 14 04 05 00"),
+                b"Attack at dusk!",
+            ),
+            (
+                bytes(15),
+                bytes.fromhex("00 01 02"),
+                bytes.fromhex("00 01 02") * 5,
+            ),
+        ]
+
+        for x, y, pad in vectors:
+            x = bytearray(x)
+            utils.ixor(x, y)
+            assert x == pad
+
     def test_hamming(self) -> None:
         s1 = b"this is a test"
         s2 = b"wokka wokka!!!"

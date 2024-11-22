@@ -202,7 +202,7 @@ class TestCrack:
     cp_ciphertext: bytes = base64.b64decode(_encoded)
     cp_key = b"TerMinator X: Bring the noiSe"
 
-    @probabistic  # type: ignore[misc]
+    @probabistic
     def test_find_keysize(self) -> None:
         # We set number of trial pairs high to reduce chance random failure
         trial_pairs = 8

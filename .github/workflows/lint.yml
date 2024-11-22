@@ -19,6 +19,7 @@ jobs:
         uses: jpetrucciani/mypy-check@master
         with:
           requirements_file: "requirements.txt"
+          requirements: "pytest"
           python_version: "3.11"
           path: '.'
       - name: ruff check

@@ -1,6 +1,7 @@
+from random import sample
 from typing import Any, Optional, TypeAlias
 from itertools import combinations
-from toy_crypto.rand import shuffle
+from toy_crypto.utils import hamming_distance
 
 Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""
@@ -226,18 +227,46 @@ def probable_keysize(
     if trial_pairs < 1:
         raise ValueError("trial_pairs must be positive")
 
+    if isinstance(ciphertext, str):
+        ciphertext = bytes(ciphertext, encoding="utf8")
+
     ctext_len = len(ciphertext)
     for keysize in range(min_size, max_size):
         if 2 * keysize > ctext_len:
             continue
-        blocks = ctext_len // keysize
-        all_pairs = list(combinations(range(blocks), 2))
-        shuffle(all_pairs)
+        num_blocks = ctext_len // keysize
+        all_pairs = list(combinations(range(num_blocks), 2))
 
         # trial_pairs may have to be reduced to
-        trial_pairs = max([trial_pairs, len(all_pairs)])
+        trial_pairs = min([trial_pairs, len(all_pairs)])
 
-        for pair in all_pairs[:trial_pairs]:
-            ...
+        pairs = sample(all_pairs, trial_pairs)
 
+        raw_distance = 0
+        blocks: list[bytes] = [
+            ciphertext[idx : idx + keysize]
+            for idx in range(0, keysize * num_blocks, keysize)
+        ]
+
+        for i, j in pairs:
+            raw_distance += hamming_distance(blocks[i], blocks[j])
+
+        """
+        Now we normalize the scores.
+        1. First we will want to get the average distance per byte
+        2. We want to scale it to 0.0 to 1.0
+        3. Then we want to want smaller distances to yield higher scores
+        """
+
+        num_compared_bytes = keysize * trial_pairs
+        per_byte_distance = raw_distance / num_compared_bytes
+
+        # Maximum per_byte_distance is 8; minimum is 0
+        scaled_distance = per_byte_distance / 8.0
+
+        # And to turn distance into score we flip the directions
+        score = 1.0 - scaled_distance
+        scores.append((keysize, score))
+
+    scores.sort(key=lambda pair: pair[1], reverse=True)
     return scores

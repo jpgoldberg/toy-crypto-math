@@ -92,3 +92,15 @@ The :class:`Alphebet` class
 
 .. autoclass:: Alphabet
     :members:
+
+Cryptanalysis tools
+----------------------
+
+Some tools (currently just one, but more may be comming) to assist in breaking Vigenère.
+
+At the moment, I am choosing not to include statistical analyses, as I want to minimize package dependencies and not importing `scipy.stats <https://docs.scipy.org/doc/scipy/reference/stats.html>`__. Thus functions here are very statistically naïve.
+
+.. autofunction:: probable_keysize
+
+The algorithm has a long history, but I've lifted it from 
+`Cryptopals set 1, chalange 6 <https://cryptopals.com/sets/1/challenges/6>`__.

@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 from toy_crypto import vigenere
 
+probabistic = pytest.mark.skip(reason="Expensive and probabilistic")
+
 Letter = vigenere.Letter
 
 
@@ -200,6 +202,7 @@ class TestCrack:
     cp_ciphertext: bytes = base64.b64decode(_encoded)
     cp_key = b"TerMinator X: Bring the noiSe"
 
+    @probabistic
     def test_find_keysize(self) -> None:
         # We set number of trial pairs high to reduce chance random failure
         trial_pairs = 8

@@ -20,10 +20,10 @@ def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     return val >= 1
 
 
-Byte = NewType("Byte", int)
+Byte = int
 
 
-def is_byte(val: Any) -> TypeGuard[Byte]:
+def is_byte(val: Any) -> bool:
     """True iff val is int s.t. 0 <= val < 256."""
     if not isinstance(val, int):
         return False

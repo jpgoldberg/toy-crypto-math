@@ -104,18 +104,6 @@ def xor(
     return r
 
 
-def ixor(m: bytearray, pad: bytes | bytearray) -> None:
-    """In place xor. Replaces m with the xor of m with a (repeated) pad.
-
-    The pad is repeated if it is shorter than m.
-    """
-
-    xorIt = Xor(m, pad)
-    for i, b in enumerate(xorIt):
-        m[i] = b
-    return
-
-
 def hamming_distance(a: bytes, b: bytes) -> int:
     """Hamming distance between byte sequences of equal length.
 

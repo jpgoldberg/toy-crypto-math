@@ -2,6 +2,7 @@
 
 from collections.abc import Iterator
 from typing import Optional, Self
+from toy_crypto.types import Byte
 
 
 def lsb_to_msb(n: int) -> Iterator[int]:
@@ -52,7 +53,7 @@ def digit_count(n: int, base: int = 10) -> int:
 class Xor:
     def __init__(
         self,
-        message: Iterator[int] | bytes | bytearray,
+        message: Iterator[Byte] | bytes | bytearray,
         pad: bytes | bytearray,
     ) -> None:
         """Iterator that spits out xor of message with (repeated) pad.
@@ -77,18 +78,20 @@ class Xor:
         self._pad_index: int = 0
         self._modulus: int = len(self._pad)
 
-    def __next__(self) -> int:
+    def __next__(self) -> Byte:
         b = self._message.__next__()
         p = self._pad[self._pad_index]
 
         self._pad_index = (self._pad_index + 1) % self._modulus
-        return b ^ p
+        return Byte(b ^ p)
 
     def __iter__(self: Self) -> Self:
         return self
 
 
-def xor(m: bytes | bytearray | Iterator[int], pad: bytes | bytearray) -> bytes:
+def xor(
+    m: bytes | bytearray | Iterator[Byte], pad: bytes | bytearray
+) -> bytes:
     """Returns the xor of m with a (repeated) pad.
 
     The pad is repeated if it is shorter than m.

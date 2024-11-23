@@ -1,6 +1,5 @@
 """Utility functions"""
 
-import itertools
 from collections.abc import Iterator
 from typing import Optional, Self
 
@@ -67,7 +66,7 @@ class Xor:
         Why does it spit out ints instead of bytes?
         Because although python thinks a single element
         of a str is a str, it thinks that a single
-        element of a bytes object is an int. 
+        element of a bytes object is an int.
         """
         # Convert message to Iterator if needed
         self._message = message.__iter__()

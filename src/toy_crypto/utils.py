@@ -2,7 +2,7 @@
 
 import itertools
 from collections.abc import Iterator
-from typing import Optional
+from typing import Optional, Self
 
 
 def lsb_to_msb(n: int) -> Iterator[int]:
@@ -50,6 +50,49 @@ def digit_count(n: int, base: int = 10) -> int:
     return digits
 
 
+class Xor:
+    def __init__(
+        self,
+        message: Iterator[bytes] | bytes | bytearray,
+        pad: bytes | bytearray,
+    ) -> None:
+        """Iterator that spits out xor of message with (repeated) pad.
+
+        The iterator will run through successful bytes of message
+        xor-ing those with successive bytes of pad, repeating
+        pad if pad is shorter than message.
+
+        Each iteration returns a non-negative int less than 256.
+
+        Why does it spit out ints instead of bytes?
+        Because although python thinks a single element
+        of a str is a str, it thinks that a single
+        element of a bytes object is an int. 
+        """
+        # Convert message to Iterator if needed
+        self._message = message.__iter__()
+
+        # We don't want our pad changing on us.
+        self._pad = bytes(pad)
+
+        self._pad_index: int = 0
+        self._modulus: int = len(self._pad)
+
+    def __next__(self) -> int:
+        b = self._message.__next__()
+        if isinstance(b, int):
+            bi = b
+        else:
+            bi = int.from_bytes(b)
+
+        p = self._pad[self._pad_index]
+        self._pad_index = (self._pad_index + 1) % self._modulus
+        return bi ^ p
+
+    def __iter__(self: Self) -> Self:
+        return self
+
+
 def xor(m: bytes | bytearray, pad: bytes | bytearray) -> bytes:
     """Returns the xor of m with a (repeated) pad.
 
@@ -59,9 +102,8 @@ def xor(m: bytes | bytearray, pad: bytes | bytearray) -> bytes:
     This does not mutate inputs.
     """
 
-    r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]
-
-    return b"".join(r)
+    r = bytes([b for b in Xor(m, pad)])
+    return r
 
 
 def ixor(m: bytearray, pad: bytes | bytearray) -> None:
@@ -70,8 +112,9 @@ def ixor(m: bytearray, pad: bytes | bytearray) -> None:
     The pad is repeated if it is shorter than m.
     """
 
-    for i, (_, p) in enumerate(zip(m, itertools.cycle(pad))):
-        m[i] ^= p
+    xorIt = Xor(m, pad)
+    for i, b in enumerate(xorIt):
+        m[i] = b
     return
 
 

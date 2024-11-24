@@ -21,7 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `utils.hamming_distance()` is now a thing.
 - `vigenere.probable_keysize()` is also now a thing.
-- `utils.ixor()` for in-place xor.
+- `utils.xor()` can take an Iterator[int] has a message, so the entire message does not need to be stored
+- The `utils.Xor` class creates an Iterator of xoring a message and a pad.
   
 ### Improved
 

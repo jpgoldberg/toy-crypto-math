@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from toy_crypto import vigenere
 
-probabistic = pytest.mark.skip(reason="Expensive and probabilistic")
+probabistic = pytest.mark.skip(reason="Probabilistic")
 
 Letter = vigenere.Letter
 

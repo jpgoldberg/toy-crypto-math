@@ -1,8 +1,9 @@
 """Utility functions"""
 
-import itertools
 from collections.abc import Iterator
-from typing import Optional
+import itertools
+from typing import Optional, Self
+from toy_crypto.types import Byte
 
 
 def lsb_to_msb(n: int) -> Iterator[int]:
@@ -50,29 +51,40 @@ def digit_count(n: int, base: int = 10) -> int:
     return digits
 
 
-def xor(m: bytes | bytearray, pad: bytes | bytearray) -> bytes:
-    """Returns the xor of m with a (repeated) pad.
+class Xor:
+    """Iterator that spits out xor of message with (repeated) pad.
+
+    The iterator will run through successful bytes of message
+    xor-ing those with successive bytes of pad, repeating
+    pad if pad is shorter than message.
+
+    Each iteration returns a non-negative int less than 256.
+    """
+
+    def __init__(
+        self,
+        message: Iterator[Byte] | bytes,
+        pad: bytes,
+    ) -> None:
+        # Convert message to Iterator if needed
+        self._message: Iterator[Byte] = iter(message)
+        self._pad: Iterator[Byte] = itertools.cycle(pad)
+
+    def __next__(self) -> Byte:
+        b, p = next(zip(self._message, self._pad))
+        return Byte(b ^ p)
+
+    def __iter__(self: Self) -> Self:
+        return self
+
+
+def xor(message: bytes | Iterator[Byte], pad: bytes) -> bytes:
+    """Returns the xor of message with a (repeated) pad.
 
     The pad is repeated if it is shorter than m.
     This can be thought of as bytewise Vigenère.
-
-    This does not mutate inputs.
     """
-
-    r: list[bytes] = [bytes([a ^ b]) for a, b in zip(m, itertools.cycle(pad))]
-
-    return b"".join(r)
-
-
-def ixor(m: bytearray, pad: bytes | bytearray) -> None:
-    """In place xor. Replaces m with the xor of m with a (repeated) pad.
-
-    The pad is repeated if it is shorter than m.
-    """
-
-    for i, (_, p) in enumerate(zip(m, itertools.cycle(pad))):
-        m[i] ^= p
-    return
+    return bytes([b for b in Xor(message, pad)])
 
 
 def hamming_distance(a: bytes, b: bytes) -> int:

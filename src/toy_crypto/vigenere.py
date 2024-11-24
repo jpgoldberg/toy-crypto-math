@@ -243,13 +243,13 @@ def probable_keysize(
         pairs = sample(all_pairs, trial_pairs)
 
         raw_distance = 0
-        blocks: list[bytes] = [
-            ciphertext[idx : idx + keysize]
-            for idx in range(0, keysize * num_blocks, keysize)
-        ]
+
+        def get_block(idx: int) -> bytes:
+            idx *= keysize
+            return ciphertext[idx : idx + keysize]
 
         for i, j in pairs:
-            raw_distance += hamming_distance(blocks[i], blocks[j])
+            raw_distance += hamming_distance(get_block(i), get_block(j))
 
         """
         Now we normalize the scores.

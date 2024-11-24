@@ -67,8 +67,8 @@ class Xor:
         pad: bytes,
     ) -> None:
         # Convert message to Iterator if needed
-        self._message = iter(message)
-        self._pad = itertools.cycle(pad)
+        self._message: Iterator[Byte] = iter(message)
+        self._pad: Iterator[Byte] = itertools.cycle(pad)
 
     def __next__(self) -> Byte:
         b, p = next(zip(self._message, self._pad))
@@ -79,12 +79,11 @@ class Xor:
 
 
 def xor(message: bytes | Iterator[Byte], pad: bytes) -> bytes:
-    """Returns the xor of m with a (repeated) pad.
+    """Returns the xor of message with a (repeated) pad.
 
     The pad is repeated if it is shorter than m.
     This can be thought of as bytewise Vigenère.
     """
-
     return bytes([b for b in Xor(message, pad)])
 
 

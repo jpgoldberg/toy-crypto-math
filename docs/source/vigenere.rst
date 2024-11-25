@@ -78,10 +78,12 @@ the :meth:`Cipher.encrypt` method starts over at the 0-th element of the key.
 >>> encrypted = cipher.encrypt(zero_message)
 >>> encrypted
 'DEADBEEFDEADBEEFDEAD'
- >>> new_encrypted = cipher.encrypt("00000")
- >>> assert new_encrypted != 'BEEFD'
- >>> new_encrypted
-'DEADB'
+
+We can use `cipher` defined above to decrypt.
+
+>>> new_encrypted = cipher.decrypt("887703")
+>>> new_encrypted
+'BADA55'
 
 .. autoclass:: Cipher
     :members:

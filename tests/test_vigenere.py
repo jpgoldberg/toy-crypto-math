@@ -215,7 +215,7 @@ class TestCrack:
         )
 
         expected = len(self.cp_key)
-        best_length, _ = scores[0]
+        best_length = scores.best
         assert best_length == expected
 
 

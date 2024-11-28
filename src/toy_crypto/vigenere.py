@@ -1,3 +1,4 @@
+from collections import UserDict
 from random import sample
 from typing import Any, Optional, TypeAlias
 from itertools import combinations
@@ -196,12 +197,74 @@ class Cipher:
         return self.crypt(ciphertext, mode="decrypt")
 
 
+BitSimilarity = float
+"""A float in [-4.0, 4.0] the bit similarity per byte.
+-4 indicates that all bits are different.
++4 indicates that all bits are the same.
+"""
+
+
+class SimilarityScores(UserDict[int, list[BitSimilarity]]):
+    """A dictionary of keysize : list[BitSimilarity]."""
+
+    def __init__(self) -> None:
+        self.data: dict[int, list[BitSimilarity]] = {}
+        self._best: Optional[int] = None
+
+    @staticmethod
+    def is_keysize(k: object) -> bool:
+        if not isinstance(k, int):
+            return False
+        return k >= 0
+
+    @staticmethod
+    def is_bit_similarity(x: object) -> bool:
+        if not isinstance(x, float | int):
+            return False
+        return x >= -4.0 and x <= 4.0
+
+    def is_valid(self) -> bool:
+        if not all(SimilarityScores.is_keysize(k) for k in self.data.keys()):
+            return False
+
+        for scores in self.data.values():
+            if not all(SimilarityScores.is_bit_similarity(s) for s in scores):
+                return False
+        return True
+
+    def mean(self, k: int) -> float:
+        """The average score for keysize k.
+
+        :raises KeyError: if k triggers a KeyError.
+        """
+
+        scores = self.data[k]
+        return sum(scores) / len(scores)
+
+    @property
+    def best(self) -> int:
+        """Keysize with the best (highest average) score."""
+
+        if self._best is not None:
+            return self._best
+
+        best_so_far: tuple[int, float] = (0, -4.0)
+
+        for k in self.data.keys():
+            mean = self.mean(k)
+            if mean > best_so_far[1]:
+                best_so_far = (k, mean)
+
+        self._best = best_so_far[0]
+        return self._best
+
+
 def probable_keysize(
     ciphertext: bytes | str,
     min_size: int = 3,
     max_size: int = 40,
     trial_pairs: int = 1,
-) -> list[tuple[int, float]]:
+) -> SimilarityScores:
     """Assesses likelihood for key length of ciphertext.
 
     :param ciphertext: The ciphertext.
@@ -215,11 +278,12 @@ def probable_keysize(
     but they do not directly represent probabilities.
     """
 
-    scores: list[tuple[int, float]] = []
+    scores = SimilarityScores()
 
     if min_size == max_size:
         # Should this be a ValueError?
-        return [(min_size, 1.0)]
+        scores[min_size] = [0]
+        return scores
 
     if min_size > max_size:
         raise ValueError("min_size can't be larger than max_size")
@@ -242,31 +306,16 @@ def probable_keysize(
 
         pairs = sample(all_pairs, trial_pairs)
 
-        raw_distance = 0
-
         def get_block(idx: int) -> bytes:
             idx *= keysize
             return ciphertext[idx : idx + keysize]
 
+        s_scores: list[float] = []
         for i, j in pairs:
-            raw_distance += hamming_distance(get_block(i), get_block(j))
+            distance = hamming_distance(get_block(i), get_block(j))
+            similarity_per_byte = 4.0 - (distance / keysize)
+            s_scores.append(similarity_per_byte)
 
-        """
-        Now we normalize the scores.
-        1. First we will want to get the average distance per byte
-        2. We want to scale it to 0.0 to 1.0
-        3. Then we want to want smaller distances to yield higher scores
-        """
+        scores[keysize] = s_scores
 
-        num_compared_bytes = keysize * trial_pairs
-        per_byte_distance = raw_distance / num_compared_bytes
-
-        # Maximum per_byte_distance is 8; minimum is 0
-        scaled_distance = per_byte_distance / 8.0
-
-        # And to turn distance into score we flip the directions
-        score = 1.0 - scaled_distance
-        scores.append((keysize, score))
-
-    scores.sort(key=lambda pair: pair[1], reverse=True)
     return scores

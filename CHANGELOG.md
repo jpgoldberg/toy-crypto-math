@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Improved
 
 - `birthday` module now has a [documentation page](https://jpgoldberg.github.io/toy-crypto-math/birthday.html).
+- `types` module now has a [documentation page](https://jpgoldberg.github.io/toy-crypto-math/types.html).
 
 ## 0.1.4 2024-11-06
 

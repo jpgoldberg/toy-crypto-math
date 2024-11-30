@@ -47,18 +47,17 @@ Modules
 -------
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Modules currently documented:
+  :maxdepth: 1
+  :caption: Modules currently documented:
 
-   utils
-   nt
-   rsa
-   ec
-   rand
-   birthday
-   types
-   vigenere
-   redundent
+  utils
+  nt
+  rsa
+  ec
+  rand
+  birthday
+  types
+  vigenere
    
 
 Motiviation

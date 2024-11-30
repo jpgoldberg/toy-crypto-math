@@ -1,6 +1,15 @@
+"""
+Helpful(?) type declarations and guards.
+
+These are intended to make things easier for me, the author (jpgoldberg).
+They are not carefully thought out.
+This module is probably the least stable of any of these unstable modules.
+"""
+
 from typing import Any, NewType, TypeGuard
 
 Prob = NewType("Prob", float)
+"""Probability: A float between 0.0 and 1.0"""
 
 
 def is_prob(val: Any) -> TypeGuard[Prob]:
@@ -11,6 +20,7 @@ def is_prob(val: Any) -> TypeGuard[Prob]:
 
 
 PositiveInt = NewType("PositiveInt", int)
+"""Positive integer."""
 
 
 def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
@@ -21,6 +31,12 @@ def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
 
 
 Byte = int
+"""And int representing a single byte.
+
+Currently implemented as a type alias.
+As a consequence, type checking is not going to identify
+cases where an int out of the range of a byte is used.
+"""
 
 
 def is_byte(val: Any) -> bool:

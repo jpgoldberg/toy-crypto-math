@@ -3,9 +3,12 @@
 Utility functions
 =================
 
-This module is imported with:
+.. py:module:: toy_crypto.utils
+    :synopsis: Various utilities
 
-    import toy_crypto.utils
+    This module is imported with:
+
+        import toy_crypto.utils
 
 .. currentmodule:: toy_crypto.utils
 

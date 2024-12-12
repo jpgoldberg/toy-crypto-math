@@ -180,7 +180,7 @@ class TestBirthday:
 
     def test_wp_data(self) -> None:
         for bits, p, n in self.hash_vectors:
-            if p < 3:  # We need a differnt test in these cases
+            if p < 3:  # We need a different test in these cases
                 continue
             c = 2**bits
             my_p = birthday.P(n, c)
@@ -206,6 +206,50 @@ class TestBirthday:
         for k, expected_n in self.k_p50_c365_vectors:
             calculated_n = birthday.Q(p, c, k)
             assert math.isclose(calculated_n, expected_n, rel_tol=0.01)
+
+
+class TestSpecialCasesP:
+
+    def test_exsct_n_equal_c(self) -> None:
+        p = birthday.P(n=20, classes=20, mode="exact")
+        assert p == 1.0
+
+    def test_approx_n_equal_c(self) -> None:
+        p = birthday.P(n=20, classes=20, mode="approximate")
+        assert p == 1.0
+
+    def test_n_gt_c(self) -> None:
+        p = birthday.P(n=20, classes=19, mode="exact")
+        assert p == 1.0
+
+    def test_n_gt_ck(self) -> None:
+        p = birthday.P(n=20, classes=10, coincident=3, mode="approximate")
+        assert p == 1.0
+
+    def test_exact_k_lt_two(self) -> None:
+        p = birthday.P(n=23, classes=365, coincident=1, mode="exact")
+        assert p == 1.0
+
+    def test_approx_k_lt_two(self) -> None:
+        p = birthday.P(n=23, classes=365, coincident=1, mode="approximate")
+        assert p == 1.0
+
+
+class TestSpecialCasesQ:
+
+    def test_p_is_0(self) -> None:
+        q = birthday.Q(prob=0.0)
+        assert q == 1.0
+
+    def test_big_p(self) -> None:
+        p = birthday.MAX_QBIRTHDAY_P
+        c_vec = range(100, 5000, 100)
+        k_vec = range(2, 35, 5)
+
+        for c in c_vec:
+            for k in k_vec:
+                q = birthday.Q(prob=p, classes=c, coincident=k)
+                assert q == c * (k - 1) + 1
 
 
 if __name__ == "__main__":

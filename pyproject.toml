@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling >= 1.26.3"]
 build-backend = "hatchling.build"
 
 [project]
@@ -48,7 +48,7 @@ packages = ["src/toy_crypto"]
 
 [tool.hatch.envs.default]
 dependencies = [
-  "coverage[toml]>=6.5",
+  "coverage[toml]>=7.5",
   "pytest",
   "ruff",
   "mypy>=1.11",
@@ -56,7 +56,7 @@ dependencies = [
 
 [tool.hatch.envs.test]
 dependencies = [
-  "coverage[toml]>=6.5",
+  "coverage[toml]>=7.5",
   "pytest",
   "ruff",
   "mypy>=1.11",

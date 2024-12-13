@@ -96,7 +96,6 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     """Returns minimum number n to get a probability of p for c classes.
 
     :raises ValueError: if prop is not a probability.
-    :raises NotImplementedError: if prob is greater than MAX_QBIRTHDAY.
     """
 
     # Use DM69 notation
@@ -107,13 +106,11 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
         raise ValueError(f"p ({p}) must be a probability")
 
     if p > MAX_QBIRTHDAY_P:
-        raise NotImplementedError(f"Cannot compute for p > {MAX_QBIRTHDAY_P}")
+        return c * (k - 1) + 1
 
     # Lifted from R src/library/stats/R/birthday.R
     if p == types.Prob(0):
         return 1
-    if math.isclose(p, 1.0):
-        return c * (k - 1) + 1
 
     # First approximation
     # broken down so that I can better understand this.

@@ -162,8 +162,6 @@ class TestBirthday:
 
     def test_qbrithday(self) -> None:
         for expected_n, d, p in self.vectors:
-            if p > birthday.MAX_QBIRTHDAY_P:
-                continue
             n = birthday.Q(p, d)
             assert n == expected_n
 
@@ -209,7 +207,6 @@ class TestBirthday:
 
 
 class TestSpecialCasesP:
-
     def test_exsct_n_equal_c(self) -> None:
         p = birthday.P(n=20, classes=20, mode="exact")
         assert p == 1.0
@@ -236,13 +233,13 @@ class TestSpecialCasesP:
 
 
 class TestSpecialCasesQ:
-
     def test_p_is_0(self) -> None:
         q = birthday.Q(prob=0.0)
         assert q == 1.0
 
     def test_big_p(self) -> None:
-        p = birthday.MAX_QBIRTHDAY_P
+        p = (1.0 + birthday.MAX_QBIRTHDAY_P) / 2.0
+
         c_vec = range(100, 5000, 100)
         k_vec = range(2, 35, 5)
 

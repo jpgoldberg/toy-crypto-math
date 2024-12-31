@@ -2,8 +2,9 @@
 
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json)](https://docs.astral.sh/ruff/)
-![tested](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/pytest/badge.svg)
-[Documentation][documentation]
+![Linting status](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/lint.yml/badge.svg)
+![Tests status](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/pytest.yml/badge.svg)
+[![Documentation](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/docs.yml/badge.svg)][documentation]
 [![PyPI](https://img.shields.io/pypi/v/toycrypto?label=pypi%20package)](https://pypi.org/project/toycrypto/)
 [![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://hatch.pypa.io/latest/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/jpgoldberg/toy-crypto-math/blob/main/LICENSE.txt)

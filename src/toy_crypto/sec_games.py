@@ -1,12 +1,16 @@
 from collections.abc import Callable
 import secrets
+from typing import Generic, TypeVar
+
+K = TypeVar("K")
+"""Unbounded type variable intended for any type of key."""
 
 
-class IndCpa:
+class IndCpa(Generic[K]):
     def __init__(
         self,
-        key_gen: Callable[[], object],
-        encryptor: Callable[[object, bytes], bytes],
+        key_gen: Callable[[], K],
+        encryptor: Callable[[K, bytes], bytes],
     ) -> None:
         """
         Meta setup for IND-CPA game.
@@ -16,8 +20,10 @@ class IndCpa:
         key generation function which
         produces a randomly chosen key appropriate for the encryptor.
 
-        :param key_gen: A function that generates a random key for the encryption scheme.
-        :param encryptor: A function that takes a key and bytes and outputs bytes.
+        :param key_gen:
+            A function that generates a random key for the encryption scheme.
+        :param encryptor:
+            A function that takes a key and bytes and outputs bytes.
         """
 
         self._key_gen = key_gen

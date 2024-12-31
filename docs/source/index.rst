@@ -55,6 +55,7 @@ Modules
   rsa
   ec
   rand
+  games
   birthday
   types
   vigenere

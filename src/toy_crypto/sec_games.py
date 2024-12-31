@@ -15,6 +15,8 @@ class IndCpa(Generic[K]):
         """
         IND-CPA game for symmetric encryption.
 
+        Indistinguishability under Chosen Plaintext Attack.
+
         Takes an encryptor, which is a function that takes a key and bytes
         and outputs bytes. And takes a
         key generation function which

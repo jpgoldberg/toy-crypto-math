@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `sec_games` module with symmetric IND-CPA game
+
 ### Changed
 
 - birthday.Q uses simple approximation when p > MAX_BIRTHDAY_Q instead of raising exception

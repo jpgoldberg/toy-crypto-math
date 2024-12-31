@@ -74,6 +74,7 @@ class Curve:
 
     @property
     def order(self) -> int:
+        """The order of the group."""
         return self._order
 
     def __repr__(self) -> str:
@@ -108,7 +109,7 @@ class Curve:
 
 
 class Point:
-    """Finite Point on elliptic curve over finite field."""
+    """Point on elliptic curve over finite field."""
 
     def __init__(self, x: int, y: int, curve: Curve) -> None:
         """Create a mutable point on a curve."""
@@ -144,9 +145,11 @@ class Point:
 
     @property
     def is_zero(self) -> bool:
+        """True if point at infinity"""
         return self._is_pai
 
     def on_curve(self) -> bool:
+        """True if point is on the curve (including point at infinity)."""
         if self._is_pai:
             return True
 
@@ -318,6 +321,7 @@ class Point:
         return self
 
     def double(self: Self) -> Self:
+        """Returns self + self"""
         if self.is_zero:
             return self.cp()
 
@@ -361,7 +365,11 @@ class Point:
         return (x, y)
 
     def scaler_multiply(self, n: int) -> "Point":
-        """returns n * self"""
+        """
+        Returns n * self.
+
+        :warning: This algorithm exposes n to timing attacks.
+        """
 
         n = n % self.curve.order
         sum = self.curve.PAI.cp()  # additive identity

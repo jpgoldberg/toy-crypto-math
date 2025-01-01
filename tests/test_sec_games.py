@@ -2,7 +2,7 @@ import secrets
 import sys
 
 import pytest
-from toy_crypto.sec_games import IndCpa
+from toy_crypto.sec_games import IndEav
 
 
 class TestIndCPA:
@@ -19,7 +19,7 @@ class TestIndCPA:
         return secrets.randbelow(256)
 
     def test_cpa(self) -> None:
-        challenger = IndCpa(self.key_gen, self.encryptor)
+        challenger = IndEav(self.key_gen, self.encryptor)
 
         m0 = b"AA"
         m1 = b"AB"

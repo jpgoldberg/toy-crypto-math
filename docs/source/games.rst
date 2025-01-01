@@ -9,7 +9,7 @@ This module is imported with::
 
 .. currentmodule:: toy_crypto.sec_games
 
-The module includes a class for running the IND-CPA
+The module includes a class for running the IND-EAV
 for symmetric encryption game. Perhaps more will be added later.
 
 
@@ -22,7 +22,7 @@ be the same as each other. If they differ, then m1 was encrypted.
 .. testcode::
     
     import secrets
-    from toy_crypto.sec_games import IndCpa
+    from toy_crypto.sec_games import IndEav
 
     def encryptor(key: int, m: bytes) -> bytes:
         encrypted: bytes = bytes([(b + key) % 256 for b in m])
@@ -31,7 +31,7 @@ be the same as each other. If they differ, then m1 was encrypted.
     def key_gen() -> int:
         return secrets.randbelow(256)
 
-    game = IndCpa(key_gen, encryptor)
+    game = IndEav(key_gen, encryptor)
     game.initialize()
 
     m0 = b"AA"
@@ -43,8 +43,8 @@ be the same as each other. If they differ, then m1 was encrypted.
     assert game.finalize(guess)  # passes if guess is correct
 
         
-The :mod:`IndCpa` Module
-------------------------------
+The :mod:`~toy_crypto.sec_games` Module
+----------------------------------------
 
 .. automodule:: toy_crypto.sec_games
     :synopsis: Adversary / Challenger security games

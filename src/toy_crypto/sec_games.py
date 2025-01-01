@@ -6,16 +6,16 @@ K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
 
 
-class IndCpa(Generic[K]):
+class IndEav(Generic[K]):
     def __init__(
         self,
         key_gen: Callable[[], K],
         encryptor: Callable[[K, bytes], bytes],
     ) -> None:
         """
-        IND-CPA game for symmetric encryption.
+        IND-EAV game for symmetric encryption.
 
-        Indistinguishability under Chosen Plaintext Attack.
+        Indistinguishability in presence of an eavesdropper.
 
         Takes an encryptor, which is a function that takes a key and bytes
         and outputs bytes. And takes a

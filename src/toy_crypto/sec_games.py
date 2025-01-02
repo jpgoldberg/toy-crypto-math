@@ -8,8 +8,8 @@ K = TypeVar("K")
 type KeyGenerator[K] = Callable[[], K]
 """To describe key generation functions"""
 
-type Encryptor[K] = Callable[[K, bytes], bytes]
-"""To describe encryptor functions."""
+type Cryptor[K] = Callable[[K, bytes], bytes]
+"""To describe encryptor/decryptor functions."""
 
 
 class StateError(Exception):
@@ -32,7 +32,8 @@ class Ind(Generic[K]):
     def __init__(
         self,
         key_gen: KeyGenerator[K],
-        encryptor: Encryptor[K],
+        encryptor: Cryptor[K],
+        decryptor: Optional[Cryptor[K]] = None,
     ) -> None:
         """
         Class for some symmetric Indistinguishability games
@@ -109,7 +110,7 @@ class IndCpa(Ind[K]):
     def __init__(
         self,
         key_gen: KeyGenerator[K],
-        encryptor: Encryptor[K],
+        encryptor: Cryptor[K],
     ) -> None:
         """IND-CPA game.
 
@@ -132,7 +133,7 @@ class IndEav(Ind[K]):
     def __init__(
         self,
         key_gen: KeyGenerator[K],
-        encryptor: Encryptor[K],
+        encryptor: Cryptor[K],
     ) -> None:
         """IND-EAV game.
 

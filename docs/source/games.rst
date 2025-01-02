@@ -3,9 +3,12 @@
 Security games
 ================================
 
-This module is imported with::
+.. py:module:: toy_crypto.sec_games
+    :synopsis: Classes for running security games, including IND-CPA and IND-EAV.
 
-    import toy_crypto.sec_games
+    Imported with::
+
+        import toy_crypto.sec_games
 
 .. currentmodule:: toy_crypto.sec_games
 
@@ -70,26 +73,23 @@ Exceptions
 -----------
 .. autoclass:: StateError
 
-Types 
-------------
+Type aliases and parameters
+----------------------------
 
 Our classes have some nastly looking type parameters,
 so we define some type aliases to make things easier.
 
-As I can't seem to get automatic documenation of these,
-here is the code that defines the the types.
+.. autoclass:: K
 
-.. code-block:: python
+.. py:data:: KeyGenerator
 
-    K = TypeVar("K")
-    """Unbounded type variable intended for any type of key."""
+    A parameterized type alias to describe the key generator functions.
+    defined as :code:`Callable[[], K]`
 
-    type KeyGenerator[K] = Callable[[], K]
-    """To describe key generation functions"""
+.. py:data:: Cryptor
 
-    type Encryptor[K] = Callable[[K, bytes], bytes]
-    """To describe encryptor functions."""
-
+    A parameterized type alias to describe the encryptor/decrptor functions.
+    defined as :code:`Callable[[K, bytes], bytes]`
 
 The :mod:`~toy_crypto.sec_games` Classes
 ----------------------------------------

@@ -5,6 +5,12 @@ from typing import Generic, Optional, TypeVar
 K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
 
+type KeyGenerator[K] = Callable[[], K]
+"""To describe key generation functions"""
+
+type Encryptor[K] = Callable[[K, bytes], bytes]
+"""To describe encryptor functions."""
+
 
 class StateError(Exception):
     """When something attempted in an inappropriate state."""
@@ -25,8 +31,8 @@ _NA_FINALIZE = "finalize"
 class Ind(Generic[K]):
     def __init__(
         self,
-        key_gen: Callable[[], K],
-        encryptor: Callable[[K, bytes], bytes],
+        key_gen: KeyGenerator[K],
+        encryptor: Encryptor[K],
     ) -> None:
         """
         Class for some symmetric Indistinguishability games
@@ -102,8 +108,8 @@ class Ind(Generic[K]):
 class IndCpa(Ind[K]):
     def __init__(
         self,
-        key_gen: Callable[[], K],
-        encryptor: Callable[[K, bytes], bytes],
+        key_gen: KeyGenerator[K],
+        encryptor: Encryptor[K],
     ) -> None:
         """IND-CPA game.
 
@@ -125,8 +131,8 @@ class IndCpa(Ind[K]):
 class IndEav(Ind[K]):
     def __init__(
         self,
-        key_gen: Callable[[], K],
-        encryptor: Callable[[K, bytes], bytes],
+        key_gen: KeyGenerator[K],
+        encryptor: Encryptor[K],
     ) -> None:
         """IND-EAV game.
 

@@ -22,4 +22,4 @@ jobs:
       uses: sphinx-notes/pages@v3
       with:
         documentation_path: ./docs/source
-        python_version: 3.11
+        python_version: 3.13

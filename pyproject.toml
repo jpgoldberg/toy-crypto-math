@@ -7,7 +7,7 @@ name = "toycrypto"
 dynamic = ["version"]
 description = 'Some toy cryptographic modules and related tools that should never, ever be used for anything other than demonstation purposes.'
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = "MIT"
 keywords = []
 authors = [
@@ -16,7 +16,6 @@ authors = [
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
@@ -51,7 +50,7 @@ dependencies = [
   "coverage[toml]>=7.5",
   "pytest",
   "ruff",
-  "mypy>=1.11",
+  "mypy>=1.12",
 ]
 
 [tool.hatch.envs.test]
@@ -59,11 +58,11 @@ dependencies = [
   "coverage[toml]>=7.5",
   "pytest",
   "ruff",
-  "mypy>=1.11",
+  "mypy>=1.12",
 ]
 
 [[tool.hatch.envs.test.matrix]]
-python = ["3.11", "3.12", "3.13"]
+python = ["3.12", "3.13"]
 
 [tool.hatch.envs.test.scripts]
 types = "mypy --install-types --non-interactive {args:src/toy_crypto tests}"

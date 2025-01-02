@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Minimum Python version is now 3.12
+
 ## 0.1.7 2025-01-01
 
 ### Changed

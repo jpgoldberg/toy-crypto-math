@@ -47,6 +47,27 @@ Exceptions
 -----------
 .. autoclass:: StateError
 
+Types 
+------------
+
+Our classes have some nastly looking type parameters,
+so we define some type aliases to make things easier.
+
+As I can't seem to get automatic documenation of these,
+here is the code that defines the the types.
+
+.. code-block:: python
+
+    K = TypeVar("K")
+    """Unbounded type variable intended for any type of key."""
+
+    type KeyGenerator[K] = Callable[[], K]
+    """To describe key generation functions"""
+
+    type Encryptor[K] = Callable[[K, bytes], bytes]
+    """To describe encryptor functions."""
+
+
 The :mod:`~toy_crypto.sec_games` Classes
 ----------------------------------------
 

@@ -20,7 +20,7 @@ jobs:
         with:
           requirements_file: "requirements.txt"
           requirements: "pytest"
-          python_version: "3.11"
+          python_version: "3.13"
           path: '.'
       - name: ruff check
         uses: jpetrucciani/ruff-check@main

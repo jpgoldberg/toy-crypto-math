@@ -9,20 +9,19 @@ This module is imported with::
 
 .. currentmodule:: toy_crypto.sec_games
 
-The module includes a class for running the IND-EAV
-for symmetric encryption game. Perhaps more will be added later.
+The module includes a classes for running the IND-CPA and IND-EAV
+games for symmetric encryption game. Perhaps more will be added later.
 
+Examples
+---------
 
 For testing, it is useful to have a challenge that the adversary can always
 win, so we will use a shift ciper.
-The adversary will set :code:`m0 = "AA"` and :code:`m1 = AB`.
-If m0 is encrypted then the two bytes of the challenge ciphertext will
-be the same as each other. If they differ, then m1 was encrypted.
 
 .. testcode::
     
     import secrets
-    from toy_crypto.sec_games import IndEav
+    from toy_crypto.sec_games import IndEav, IndCpa
 
     def encryptor(key: int, m: bytes) -> bytes:
         encrypted: bytes = bytes([(b + key) % 256 for b in m])
@@ -31,6 +30,30 @@ be the same as each other. If they differ, then m1 was encrypted.
     def key_gen() -> int:
         return secrets.randbelow(256)
 
+As a shift-cipher is deterministic, the Adversary can always win the CPA game.
+
+.. testcode::
+
+    game = IndCpa(key_gen, encryptor)
+    game.initialize()
+
+    m0 = b"Attack at dawn!"
+    m1 = b"Attack at dusk!"
+    ctext1 = game.encrypt_one(m0, m1)
+    ctext2 = game.encrypt_one(m1, m1)
+    
+    guess: bool = ctext1 == ctext2
+
+    assert game.finalize(guess)  # passes if guess is correct
+
+The shift-cipher fails the even weaker IND-EAV condition
+(and thus does not provide semantic security).
+The adversary will set :code:`m0 = "AA"` and :code:`m1 = AB`.
+If m0 is encrypted then the two bytes of the challenge ciphertext will
+be the same as each other. If they differ, then m1 was encrypted.
+
+.. testcode::
+    
     game = IndEav(key_gen, encryptor)
     game.initialize()
 

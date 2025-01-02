@@ -47,6 +47,9 @@ class IndEav(Generic[K]):
         :raises Exception: if challenge isn't initialized.
         """
 
+        if self._key is None:
+            raise Exception("game is not in a state where this can be called")
+
         if len(m0) != len(m1):
             raise ValueError("Message lengths must be equal")
 
@@ -55,7 +58,12 @@ class IndEav(Generic[K]):
 
         m = m1 if self._b else m0
 
-        return self._encryptor(self._key, m)
+        encrypted = self._encryptor(self._key, m)
+
+        # prevent this from being called again with same key, b
+        self._key = None
+
+        return encrypted
 
     def finalize(self, guess: bool) -> bool:
         """

@@ -2,7 +2,7 @@ import secrets
 import sys
 
 import pytest
-from toy_crypto.sec_games import IndEav
+from toy_crypto.sec_games import IndEav, IndCpa
 
 
 class TestInd:
@@ -42,6 +42,22 @@ class TestInd:
 
         with pytest.raises(Exception):
             _ = challenger.encrypt_one(m0, m1)
+
+    def test_cpa_deterministic(self) -> None:
+        """Wins against deterministic encryption"""
+        challenger = IndCpa(self.key_gen, self.encryptor)
+
+        m0 = b"Attack at dawn!"
+        m1 = b"Attack at dusk!"
+
+        challenger.initialize()
+
+        ctext1 = challenger.encrypt_one(m0, m1)
+        ctext2 = challenger.encrypt_one(m1, m1)
+
+        guess = ctext1 == ctext2
+
+        assert challenger.finalize(guess)
 
 
 if __name__ == "__main__":

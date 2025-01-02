@@ -6,6 +6,10 @@ K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
 
 
+class StateError(Exception):
+    """When something attempted in an inappropriate state."""
+
+
 _STATE_STARTED = "started"
 _STATE_INITIALIZED = "initialized"
 _STATE_ENCRYPTED = "encrypted_one"
@@ -46,9 +50,10 @@ class Ind(Generic[K]):
         }
 
     def initialize(self) -> None:
+        """Initializes self by creating key and selecting b."""
         whoami = _NA_INITIALIZE
         if whoami not in self._state_map[self._state]:
-            raise Exception(f"{whoami} not allowed in state {self._state}")
+            raise StateError(f"{whoami} not allowed in state {self._state}")
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
@@ -63,7 +68,7 @@ class Ind(Generic[K]):
 
         whoami = _NA_ENCRYPT_ONE
         if whoami not in self._state_map[self._state]:
-            raise Exception(f"{whoami} not allowed in state {self._state}")
+            raise StateError(f"{whoami} not allowed in state {self._state}")
 
         if len(m0) != len(m1):
             raise ValueError("Message lengths must be equal")
@@ -86,7 +91,7 @@ class Ind(Generic[K]):
 
         whoami = _NA_FINALIZE
         if whoami not in self._state_map[self._state]:
-            raise Exception(f"{whoami} not allowed in state {self._state}")
+            raise StateError(f"{whoami} not allowed in state {self._state}")
         adv_wins = guess == self._b
 
         self._state = _STATE_STARTED
@@ -103,10 +108,9 @@ class IndCpa(Ind[K]):
         """IND-CPA game.
 
         :param key_gen: A key generation function appropriate for encryptor
-        :param encryptor: A function that that takes a key and message and outputs ctext
-
-        The methods `initialize()`, `encrypt_one()`, and `finalize()` must
-        be called in a sequence appropriate for the specific game.
+        :param encryptor:
+            A function that that takes a key and message and outputs ctext
+        :raises StateError: if methods called in disallowed order.
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
@@ -129,9 +133,7 @@ class IndEav(Ind[K]):
         :param key_gen: A key generation function appropriate for encryptor
         :param encryptor:
             A function that that takes a key and message and outputs ctext
-
-        The methods `initialize()`, `encrypt_one()`, and `finalize()` must
-        be called in a sequence appropriate for the specific game.
+        :raises StateError: if methods called in disallowed order.
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)

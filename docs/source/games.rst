@@ -42,10 +42,18 @@ be the same as each other. If they differ, then m1 was encrypted.
 
     assert game.finalize(guess)  # passes if guess is correct
 
-        
-The :mod:`~toy_crypto.sec_games` Module
+
+Exceptions
+-----------
+.. autoclass:: StateError
+
+The :mod:`~toy_crypto.sec_games` Classes
 ----------------------------------------
 
-.. automodule:: toy_crypto.sec_games
-    :synopsis: Adversary / Challenger security games
-    :members:
+.. autoclass:: IndEav
+    :class-doc-from: both
+    :inherited-members:
+
+.. autoclass:: toy_crypto.sec_games.IndCpa
+    :class-doc-from: both
+    :inherited-members:

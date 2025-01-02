@@ -5,9 +5,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.2.0 2025-01-02
+
 ### Changed
 
 - Minimum Python version is now 3.12
+  
+  This was needed for type aliases with type parameters.
+
+### Added
+
+- `IndCpa` is back (and distinct from `IndEav`)
 
 ## 0.1.7 2025-01-01
 

@@ -1,6 +1,7 @@
 from collections.abc import Callable, Mapping
 import secrets
 from typing import Generic, Optional, TypeVar
+from toy_crypto.types import SupportsBool
 
 K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
@@ -76,19 +77,18 @@ class Ind(Generic[K]):
         whoami = _NA_ENCRYPT_ONE
         if whoami not in self._state_map[self._state]:
             raise StateError(f"{whoami} not allowed in state {self._state}")
+        if self._b is None or self._key is None:
+            raise Exception("Shouldn't happen in this state")
 
         if len(m0) != len(m1):
             raise ValueError("Message lengths must be equal")
-
-        if self._b is None or self._key is None:
-            raise Exception("Challenge is not be properly initialized")
 
         m = m1 if self._b else m0
 
         self._state = _STATE_ENCRYPTED
         return self._encryptor(self._key, m)
 
-    def finalize(self, guess: bool) -> bool:
+    def finalize(self, guess: SupportsBool) -> bool:
         """
         True iff guess is the same as b of previously created challenger.
 

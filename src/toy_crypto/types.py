@@ -35,7 +35,7 @@ PositiveInt = NewType("PositiveInt", int)
 
 
 def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
-    """true if val is a float, s.t. 0.0 <= va <= 1.0"""
+    """true if val is a float, s.t. 0.0 <= val <= 1.0"""
     if not isinstance(val, int):
         return False
     return val >= 1
@@ -94,7 +94,8 @@ class Bit:
         return self._as_bytes
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, SupportsBool):
+        ob = self._other_bool(other)
+        if ob is None:
             return NotImplemented
         ob = other.__bool__()
 
@@ -103,7 +104,7 @@ class Bit:
     @staticmethod
     def _other_bool(other: Any) -> Optional[bool]:
         if isinstance(other, bytes):
-            ob = all([b != 0 for b in other])
+            ob = any([b != 0 for b in other])
         elif not isinstance(other, SupportsBool):
             return None
         else:
@@ -117,11 +118,8 @@ class Bit:
         Abstraction to manage type of :data:`other`
         for things like :func:`__and__` and :func:`__or__`.
         """
-        ob = self._other_bool(other)
-        if ob is None:
-            return NotImplemented
         sb = self.as_bool()
-        tvalue = expr(sb, ob)
+        tvalue = expr(sb, other)
 
         if isinstance(other, Bit):
             return Bit(tvalue)

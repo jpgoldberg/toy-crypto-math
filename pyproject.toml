@@ -35,8 +35,9 @@ dependencies = [
 
 [project.urls]
 Documentation = "https://jpgoldberg.github.io/toy-crypto-math/"
-Issues = "https://github.com/unknown/toy-crypto-math/issues"
-Source = "https://github.com/unknown/toy-crypto-math"
+Issues = "https://github.com/jpgoldberg/toy-crypto-math/issues"
+Source = "https://github.com/jpgoldberg/toy-crypto-math"
+Changelog = "https://github.com/jpgoldberg/toy-crypto-math/blob/main/CHANGELOG.md"
 
 [tool.hatch.version]
 path = "src/toy_crypto/__about__.py"

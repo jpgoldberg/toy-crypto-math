@@ -188,7 +188,7 @@ class IndEav(Ind[K]):
         self._t_table = self.T_TABLE
 
 
-class IndCCA(Ind[K]):
+class IndCca(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
         _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
         _STATE_INITIALIZED: {

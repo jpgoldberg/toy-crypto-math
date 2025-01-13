@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- IND-CCA games are now available.
+
 - Exposed challenger state transition tables for IND-{EAV,CPA} games in `T_TABLE` for each class.
 
 ## 0.2.0 2025-01-02

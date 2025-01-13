@@ -94,6 +94,10 @@ so we define some type aliases to make things easier.
 The :mod:`~toy_crypto.sec_games` Classes
 ----------------------------------------
 
+The classes only differ by the order in which methods can be called.
+And that ordiering defined by the transition tables in :data:`T_TABLE`
+with the initial stated being "started".
+
 .. autoclass:: IndEav
     :class-doc-from: both
     :inherited-members:

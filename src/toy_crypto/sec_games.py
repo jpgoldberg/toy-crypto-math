@@ -55,14 +55,14 @@ class Ind(Generic[K]):
         Transitions are the names of methods (or "start")
         """
 
-        self.T_TABLE: Mapping[str, Mapping[str, str]]
+        self._t_table: Mapping[str, Mapping[str, str]] = {}
         if transition_table:
-            self.T_TABLE = transition_table
+            self._t_table = transition_table
 
     def _handle_state(self, name: str) -> None:
-        if name not in self.T_TABLE[self._state]:
+        if name not in self._t_table[self._state]:
             raise StateError(f"{name} not allowed in state {self._state}")
-        self._state = self.T_TABLE[self._state][name]
+        self._state = self._t_table[self._state][name]
 
     def initialize(self) -> None:
         """Initializes self by creating key and selecting b."""
@@ -109,6 +109,8 @@ class Ind(Generic[K]):
 
 
 class IndCpa(Ind[K]):
+    """Transition table for CPA game."""
+
     T_TABLE: Mapping[str, Mapping[str, str]] = {
         _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
         _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
@@ -117,7 +119,6 @@ class IndCpa(Ind[K]):
             _NA_FINALIZE: _STATE_STARTED,
         },
     }
-    """Transition table for CPA game"""
 
     def __init__(
         self,
@@ -133,6 +134,7 @@ class IndCpa(Ind[K]):
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
+        self._t_table = self.T_TABLE
 
 
 class IndEav(Ind[K]):
@@ -159,3 +161,4 @@ class IndEav(Ind[K]):
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
+        self._t_table = self.T_TABLE

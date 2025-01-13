@@ -35,6 +35,7 @@ class Ind(Generic[K]):
         key_gen: KeyGenerator[K],
         encryptor: Cryptor[K],
         decryptor: Optional[Cryptor[K]] = None,
+        transition_table: Optional[Mapping[str, Mapping[str, str]]] = None,
     ) -> None:
         """
         Class for some symmetric Indistinguishability games
@@ -54,32 +55,22 @@ class Ind(Generic[K]):
         Transitions are the names of methods (or "start")
         """
 
-        # This is the IND-CPA mapping. IND-EAV will need a different state_map
-        self._state_map: Mapping[str, Mapping[str, str]] = {
-            _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-            _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
-            _STATE_ENCRYPTED: {
-                _NA_ENCRYPT_ONE: _STATE_ENCRYPTED,
-                _NA_FINALIZE: _STATE_STARTED,
-            },
-            _STATE_FINALIZED: {},
-        }
+        self.T_TABLE: Mapping[str, Mapping[str, str]]
+        if transition_table:
+            self.T_TABLE = transition_table
 
-    def _check_state(self, name: str) -> None:
-        if name not in self._state_map[self._state]:
+    def _handle_state(self, name: str) -> None:
+        if name not in self.T_TABLE[self._state]:
             raise StateError(f"{name} not allowed in state {self._state}")
-
-    def _transition_state(self, name: str) -> None:
-        self._state = self._state_map[self._state][name]
+        self._state = self.T_TABLE[self._state][name]
 
     def initialize(self) -> None:
         """Initializes self by creating key and selecting b."""
         whoami = _NA_INITIALIZE
-        self._check_state(whoami)
+        self._handle_state(whoami)
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
-        self._transition_state(whoami)
 
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
         """Challenger encrypts m0 if b is False, else encrypts m1.
@@ -89,7 +80,7 @@ class Ind(Generic[K]):
         """
 
         whoami = _NA_ENCRYPT_ONE
-        self._check_state(whoami)
+        self._handle_state(whoami)
 
         if self._b is None or self._key is None:
             raise Exception("Shouldn't happen in this state")
@@ -99,7 +90,6 @@ class Ind(Generic[K]):
 
         m = m1 if self._b else m0
 
-        self._transition_state(whoami)
         return self._encryptor(self._key, m)
 
     def finalize(self, guess: SupportsBool) -> bool:
@@ -111,16 +101,24 @@ class Ind(Generic[K]):
         """
 
         whoami = _NA_FINALIZE
-        self._check_state(whoami)
+        self._handle_state(whoami)
 
         adv_wins = guess == self._b
-
-        self._transition_state(whoami)
 
         return adv_wins
 
 
 class IndCpa(Ind[K]):
+    T_TABLE: Mapping[str, Mapping[str, str]] = {
+        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
+        _STATE_ENCRYPTED: {
+            _NA_ENCRYPT_ONE: _STATE_ENCRYPTED,
+            _NA_FINALIZE: _STATE_STARTED,
+        },
+    }
+    """Transition table for CPA game"""
+
     def __init__(
         self,
         key_gen: KeyGenerator[K],
@@ -135,18 +133,18 @@ class IndCpa(Ind[K]):
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
-        self._state_map: Mapping[str, Mapping[str, str]] = {
-            _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-            _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
-            _STATE_ENCRYPTED: {
-                _NA_ENCRYPT_ONE: _STATE_ENCRYPTED,
-                _NA_FINALIZE: _STATE_STARTED,
-            },
-            _STATE_FINALIZED: {},
-        }
 
 
 class IndEav(Ind[K]):
+    T_TABLE: Mapping[str, Mapping[str, str]] = {
+        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
+        _STATE_ENCRYPTED: {
+            _NA_FINALIZE: _STATE_STARTED,
+        },
+    }
+    """Transition table for EAV game"""
+
     def __init__(
         self,
         key_gen: KeyGenerator[K],
@@ -161,11 +159,3 @@ class IndEav(Ind[K]):
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
-        self._state_map: Mapping[str, Mapping[str, str]] = {
-            _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-            _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
-            _STATE_ENCRYPTED: {
-                _NA_FINALIZE: _STATE_STARTED,
-            },
-            _STATE_FINALIZED: {},
-        }

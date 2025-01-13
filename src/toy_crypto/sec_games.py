@@ -47,25 +47,39 @@ class Ind(Generic[K]):
 
         self._key: Optional[K] = None
         self._b: Optional[bool] = None
-        self._state = "started"
+        self._state = _STATE_STARTED
+
+        """
+        Each state is a dictionary of [Transition : State_Name]
+        Transitions are the names of methods (or "start")
+        """
 
         # This is the IND-CPA mapping. IND-EAV will need a different state_map
-        self._state_map: Mapping[str, list[str]] = {
-            _STATE_STARTED: [_NA_INITIALIZE],
-            _STATE_INITIALIZED: [_NA_ENCRYPT_ONE],
-            _STATE_ENCRYPTED: [_NA_ENCRYPT_ONE, _NA_FINALIZE],
-            _STATE_FINALIZED: [_NA_INITIALIZE],
+        self._state_map: Mapping[str, Mapping[str, str]] = {
+            _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+            _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
+            _STATE_ENCRYPTED: {
+                _NA_ENCRYPT_ONE: _STATE_ENCRYPTED,
+                _NA_FINALIZE: _STATE_STARTED,
+            },
+            _STATE_FINALIZED: {},
         }
+
+    def _check_state(self, name: str) -> None:
+        if name not in self._state_map[self._state]:
+            raise StateError(f"{name} not allowed in state {self._state}")
+
+    def _transition_state(self, name: str) -> None:
+        self._state = self._state_map[self._state][name]
 
     def initialize(self) -> None:
         """Initializes self by creating key and selecting b."""
         whoami = _NA_INITIALIZE
-        if whoami not in self._state_map[self._state]:
-            raise StateError(f"{whoami} not allowed in state {self._state}")
+        self._check_state(whoami)
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
-        self._state = _STATE_INITIALIZED
+        self._transition_state(whoami)
 
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
         """Challenger encrypts m0 if b is False, else encrypts m1.
@@ -75,8 +89,8 @@ class Ind(Generic[K]):
         """
 
         whoami = _NA_ENCRYPT_ONE
-        if whoami not in self._state_map[self._state]:
-            raise StateError(f"{whoami} not allowed in state {self._state}")
+        self._check_state(whoami)
+
         if self._b is None or self._key is None:
             raise Exception("Shouldn't happen in this state")
 
@@ -85,7 +99,7 @@ class Ind(Generic[K]):
 
         m = m1 if self._b else m0
 
-        self._state = _STATE_ENCRYPTED
+        self._transition_state(whoami)
         return self._encryptor(self._key, m)
 
     def finalize(self, guess: SupportsBool) -> bool:
@@ -97,11 +111,11 @@ class Ind(Generic[K]):
         """
 
         whoami = _NA_FINALIZE
-        if whoami not in self._state_map[self._state]:
-            raise StateError(f"{whoami} not allowed in state {self._state}")
+        self._check_state(whoami)
+
         adv_wins = guess == self._b
 
-        self._state = _STATE_STARTED
+        self._transition_state(whoami)
 
         return adv_wins
 
@@ -121,11 +135,14 @@ class IndCpa(Ind[K]):
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
-        self._state_map = {
-            _STATE_STARTED: [_NA_INITIALIZE],
-            _STATE_INITIALIZED: [_NA_ENCRYPT_ONE],
-            _STATE_ENCRYPTED: [_NA_ENCRYPT_ONE, _NA_FINALIZE],
-            _STATE_FINALIZED: [_NA_START],
+        self._state_map: Mapping[str, Mapping[str, str]] = {
+            _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+            _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
+            _STATE_ENCRYPTED: {
+                _NA_ENCRYPT_ONE: _STATE_ENCRYPTED,
+                _NA_FINALIZE: _STATE_STARTED,
+            },
+            _STATE_FINALIZED: {},
         }
 
 
@@ -144,9 +161,11 @@ class IndEav(Ind[K]):
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
-        self._state_map = {
-            _STATE_STARTED: [_NA_INITIALIZE],
-            _STATE_INITIALIZED: [_NA_ENCRYPT_ONE],
-            _STATE_ENCRYPTED: [_NA_FINALIZE],
-            _STATE_FINALIZED: [_NA_START],
+        self._state_map: Mapping[str, Mapping[str, str]] = {
+            _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+            _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
+            _STATE_ENCRYPTED: {
+                _NA_FINALIZE: _STATE_STARTED,
+            },
+            _STATE_FINALIZED: {},
         }

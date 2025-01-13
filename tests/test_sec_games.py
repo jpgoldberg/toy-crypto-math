@@ -2,7 +2,7 @@ import secrets
 import sys
 
 import pytest
-from toy_crypto.sec_games import IndEav, IndCpa, StateError, IndCca
+from toy_crypto.sec_games import IndEav, IndCpa, StateError, IndCca2
 
 
 class TestInd:
@@ -82,13 +82,13 @@ class TestInd:
 
             assert challenger.finalize(guess)
 
-    def test_cca_deterministic(self) -> None:
+    def test_cca2(self) -> None:
         """Wins against deterministic encryption.
 
         I should construct a test that distinguishes CPA and CCA,
         but this is not that test
         """
-        challenger = IndCca(
+        challenger = IndCca2(
             key_gen=self.key_gen,
             encryptor=self.encryptor,
             decrytpor=self.decryptor,
@@ -118,6 +118,50 @@ class TestInd:
                 second_guess = 1
             else:
                 second_guess = 0
+
+            assert first_guess == second_guess
+
+            assert challenger.finalize(first_guess)
+
+    def test_cca1(self) -> None:
+        """Wins against deterministic encryption.
+
+        I should construct a test that distinguishes CPA and CCA,
+        but this is not that test
+        """
+        challenger = IndCca2(
+            key_gen=self.key_gen,
+            encryptor=self.encryptor,
+            decrytpor=self.decryptor,
+        )
+
+        m0 = b"Attack at dawn!"
+        m1 = b"Defend at dusk!"
+        cct1 = b"AAAAAAA"
+
+        # chance of false pass is 2^trials
+        trials = 20
+        for _ in range(trials):
+            challenger.initialize()
+
+            # let's use a chosen ciphertext to break this
+            # even though it could be broken otherwise.
+            ptext = challenger.decrypt(cct1)
+            key_guess = cct1[0] - ptext[0] % 256
+
+            ctext = challenger.encrypt_one(m0, m1)
+
+            if (m1[0] + key_guess) % 256 == ctext[0]:
+                first_guess = 1
+            else:
+                first_guess = 0
+
+            c0 = challenger.encrypt(m0)
+
+            if c0 == ctext:
+                second_guess = 0
+            else:
+                second_guess = 1
 
             assert first_guess == second_guess
 

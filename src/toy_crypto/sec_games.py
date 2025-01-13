@@ -188,7 +188,7 @@ class IndEav(Ind[K]):
         self._t_table = self.T_TABLE
 
 
-class IndCca(Ind[K]):
+class IndCca2(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
         _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
         _STATE_INITIALIZED: {
@@ -226,7 +226,7 @@ class IndCca(Ind[K]):
         self._t_table = self.T_TABLE
 
         """
-        We will need to keep track of the challenge ctext created by 
+        We will need to keep track of the challenge ctext created by
         encrypt_one to prevent any decryption of it.
         """
 
@@ -243,3 +243,52 @@ class IndCca(Ind[K]):
                 "Adversary is not allowed to call decrypt on challenge ctext"
             )
         return super().decrypt(ctext)
+
+
+class IndCca1(Ind[K]):
+    T_TABLE: Mapping[str, Mapping[str, str]] = {
+        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_INITIALIZED: {
+            _NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
+            _NA_ENCRYPT: _STATE_INITIALIZED,
+            _NA_DECRYPT: _STATE_INITIALIZED,
+        },
+        _STATE_CHALLANGE_CREATED: {
+            _NA_FINALIZE: _STATE_STARTED,
+            _NA_ENCRYPT: _STATE_CHALLANGE_CREATED,
+        },
+    }
+    """Transition table for IND-CCA1 game"""
+
+    def __init__(
+        self,
+        key_gen: KeyGenerator[K],
+        encryptor: Cryptor[K],
+        decrytpor: Cryptor[K],
+    ) -> None:
+        """IND-CCA game.
+
+        :param key_gen: A key generation function appropriate for encryptor
+        :param encryptor:
+            A function that takes a key and message and outputs ctext
+        :param decryptor:
+            A function that takes a key and ciphertext and outputs plaintext
+        :raises StateError: if methods called in disallowed order.
+        """
+
+        super().__init__(
+            key_gen=key_gen, encryptor=encryptor, decryptor=decrytpor
+        )
+        self._t_table = self.T_TABLE
+
+        """
+        We will need to keep track of the challenge ctext created by
+        encrypt_one to prevent any decryption of it.
+        """
+
+        self._challenge_ctexts: set[str] = set()
+
+    def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
+        ctext = super().encrypt_one(m0, m1)
+        self._challenge_ctexts.add(hash_bytes(ctext))
+        return ctext

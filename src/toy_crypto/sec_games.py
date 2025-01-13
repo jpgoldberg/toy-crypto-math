@@ -109,7 +109,6 @@ class Ind(Generic[K]):
 
 
 class IndCpa(Ind[K]):
-    """Transition table for CPA game."""
 
     T_TABLE: Mapping[str, Mapping[str, str]] = {
         _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
@@ -119,6 +118,7 @@ class IndCpa(Ind[K]):
             _NA_FINALIZE: _STATE_STARTED,
         },
     }
+    """Transition table for CPA game."""
 
     def __init__(
         self,

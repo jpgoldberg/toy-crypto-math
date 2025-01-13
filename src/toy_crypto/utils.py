@@ -2,6 +2,8 @@
 
 from collections.abc import Iterator
 import itertools
+from hashlib import blake2b
+from base64 import a85encode
 from typing import Optional, Self
 from toy_crypto.types import Byte
 
@@ -141,3 +143,19 @@ class Rsa129:
             if number == 0:
                 break
         return "".join(reversed(chars))
+
+
+def hash_bytes(b: bytes) -> str:
+    """Returns a python hashable from bytes.
+
+    Primary intent is to have something that can be used
+    as dictionary keys or members of sets.
+    Collision resistance is the only security property
+    that should be assumed here.
+
+    The scheme may change from version to version
+    """
+
+    h = blake2b(b, digest_size=32).digest()
+    t = str(a85encode(h))
+    return t

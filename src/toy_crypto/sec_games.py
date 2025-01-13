@@ -1,7 +1,8 @@
 from collections.abc import Callable, Mapping
 import secrets
-from typing import Generic, Optional, TypeVar
+from typing import Any, Generic, Optional, TypeVar
 from toy_crypto.types import SupportsBool
+from toy_crypto.utils import hash_bytes
 
 K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
@@ -19,13 +20,15 @@ class StateError(Exception):
 
 _STATE_STARTED = "started"
 _STATE_INITIALIZED = "initialized"
-_STATE_ENCRYPTED = "encrypted_one"
+_STATE_CHALLANGE_CREATED = "encrypted_one"
 _STATE_FINALIZED = "finalized"
 
 # Next Allowed
 _NA_START = "start"
 _NA_INITIALIZE = "initialize"
 _NA_ENCRYPT_ONE = "encrypt_one"
+_NA_ENCRYPT = "encrypt"
+_NA_DECRYPT = "decrypt"
 _NA_FINALIZE = "finalize"
 
 
@@ -45,6 +48,7 @@ class Ind(Generic[K]):
 
         self._key_gen = key_gen
         self._encryptor = encryptor
+        self._decryptor = decryptor if decryptor else self._disallowed_method
 
         self._key: Optional[K] = None
         self._b: Optional[bool] = None
@@ -63,6 +67,9 @@ class Ind(Generic[K]):
         if name not in self._t_table[self._state]:
             raise StateError(f"{name} not allowed in state {self._state}")
         self._state = self._t_table[self._state][name]
+
+    def _disallowed_method(self, *args: Any, **kwargs: Any) -> Any:
+        raise StateError("Method not allowed in this game")
 
     def initialize(self) -> None:
         """Initializes self by creating key and selecting b."""
@@ -92,6 +99,24 @@ class Ind(Generic[K]):
 
         return self._encryptor(self._key, m)
 
+    def encrypt(self, ptext: bytes) -> bytes:
+        whoami = _NA_ENCRYPT
+        self._handle_state(whoami)
+
+        if self._key is None:
+            raise Exception("Shouldn't happen in this state")
+
+        return self._encryptor(self._key, ptext)
+
+    def decrypt(self, ctext: bytes) -> bytes:
+        whoami = _NA_DECRYPT
+        self._handle_state(whoami)
+
+        if self._key is None:
+            raise Exception("Shouldn't happen in this state")
+
+        return self._decryptor(self._key, ctext)
+
     def finalize(self, guess: SupportsBool) -> bool:
         """
         True iff guess is the same as b of previously created challenger.
@@ -109,12 +134,11 @@ class Ind(Generic[K]):
 
 
 class IndCpa(Ind[K]):
-
     T_TABLE: Mapping[str, Mapping[str, str]] = {
         _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
-        _STATE_ENCRYPTED: {
-            _NA_ENCRYPT_ONE: _STATE_ENCRYPTED,
+        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
+        _STATE_CHALLANGE_CREATED: {
+            _NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
             _NA_FINALIZE: _STATE_STARTED,
         },
     }
@@ -129,7 +153,7 @@ class IndCpa(Ind[K]):
 
         :param key_gen: A key generation function appropriate for encryptor
         :param encryptor:
-            A function that that takes a key and message and outputs ctext
+            A function that takes a key and message and outputs ctext
         :raises StateError: if methods called in disallowed order.
         """
 
@@ -140,8 +164,8 @@ class IndCpa(Ind[K]):
 class IndEav(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
         _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_ENCRYPTED},
-        _STATE_ENCRYPTED: {
+        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
+        _STATE_CHALLANGE_CREATED: {
             _NA_FINALIZE: _STATE_STARTED,
         },
     }
@@ -156,9 +180,66 @@ class IndEav(Ind[K]):
 
         :param key_gen: A key generation function appropriate for encryptor
         :param encryptor:
-            A function that that takes a key and message and outputs ctext
+            A function that takes a key and message and outputs ctext
         :raises StateError: if methods called in disallowed order.
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
         self._t_table = self.T_TABLE
+
+
+class IndCCA(Ind[K]):
+    T_TABLE: Mapping[str, Mapping[str, str]] = {
+        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_INITIALIZED: {
+            _NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
+            _NA_ENCRYPT: _STATE_INITIALIZED,
+            _NA_DECRYPT: _STATE_INITIALIZED,
+        },
+        _STATE_CHALLANGE_CREATED: {
+            _NA_FINALIZE: _STATE_STARTED,
+            _NA_ENCRYPT: _STATE_CHALLANGE_CREATED,
+            _NA_DECRYPT: _STATE_CHALLANGE_CREATED,
+        },
+    }
+    """Transition table for IND-CCA game"""
+
+    def __init__(
+        self,
+        key_gen: KeyGenerator[K],
+        encryptor: Cryptor[K],
+        decrytpor: Cryptor[K],
+    ) -> None:
+        """IND-CCA game.
+
+        :param key_gen: A key generation function appropriate for encryptor
+        :param encryptor:
+            A function that takes a key and message and outputs ctext
+        :param decryptor:
+            A function that takes a key and ciphertext and outputs plaintext
+        :raises StateError: if methods called in disallowed order.
+        """
+
+        super().__init__(
+            key_gen=key_gen, encryptor=encryptor, decryptor=decrytpor
+        )
+        self._t_table = self.T_TABLE
+
+        """
+        We will need to keep track of the challenge ctext created by 
+        encrypt_one to prevent any decryption of it.
+        """
+
+        self._challenge_ctexts: set[str] = set()
+
+    def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
+        ctext = super().encrypt_one(m0, m1)
+        self._challenge_ctexts.add(hash_bytes(ctext))
+        return ctext
+
+    def decrypt(self, ctext: bytes) -> bytes:
+        if hash_bytes(ctext) in self._challenge_ctexts:
+            raise Exception(
+                "Adversary is not allowed to call decrypt on challenge ctext"
+            )
+        return super().decrypt(ctext)

@@ -12,3 +12,4 @@ keysize
 key_gen
 whoami
 decryptor
+hashable

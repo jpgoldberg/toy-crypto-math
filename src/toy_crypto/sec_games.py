@@ -18,18 +18,16 @@ class StateError(Exception):
     """When something attempted in an inappropriate state."""
 
 
-_STATE_STARTED = "started"
-_STATE_INITIALIZED = "initialized"
-_STATE_CHALLANGE_CREATED = "encrypted_one"
-_STATE_FINALIZED = "finalized"
+_STATE_STARTED = "UN-INITIALIZED"
+_STATE_INITIALIZED = "INITIALIZED"
+_STATE_CHALLANGE_CREATED = "CHALLENGE-CREATED"
 
-# Next Allowed
-_NA_START = "start"
-_NA_INITIALIZE = "initialize"
-_NA_ENCRYPT_ONE = "encrypt_one"
-_NA_ENCRYPT = "encrypt"
-_NA_DECRYPT = "decrypt"
-_NA_FINALIZE = "finalize"
+# Adversary Action
+_AA_INITIALIZE = "initialize"
+_AA_ENCRYPT_ONE = "encrypt_one"
+_AA_ENCRYPT = "encrypt"
+_AA_DECRYPT = "decrypt"
+_AA_FINALIZE = "finalize"
 
 
 class Ind(Generic[K]):
@@ -72,25 +70,32 @@ class Ind(Generic[K]):
         raise StateError("Method not allowed in this game")
 
     def initialize(self) -> None:
-        """Initializes self by creating key and selecting b."""
-        whoami = _NA_INITIALIZE
+        """Initializes self by creating key and selecting b.
+
+        :raises StateError: if method called when disallowed.
+        """
+        whoami = _AA_INITIALIZE
         self._handle_state(whoami)
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
 
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
-        """Challenger encrypts m0 if b is False, else encrypts m1.
+        """Left-Right encryption oracle.
 
+        Challenger encrypts m0 if b is False, else encrypts m1.
+
+        :param m0: Left message
+        :param m1: Right message
         :raise ValueError: if lengths of m0 and m1 are not equal.
-        :raises Exception: if challenge isn't initialized.
+        :raises StateError: if method called when disallowed.
         """
 
-        whoami = _NA_ENCRYPT_ONE
+        whoami = _AA_ENCRYPT_ONE
         self._handle_state(whoami)
 
         if self._b is None or self._key is None:
-            raise Exception("Shouldn't happen in this state")
+            raise StateError("key should exist in this state")
 
         if len(m0) != len(m1):
             raise ValueError("Message lengths must be equal")
@@ -100,20 +105,30 @@ class Ind(Generic[K]):
         return self._encryptor(self._key, m)
 
     def encrypt(self, ptext: bytes) -> bytes:
-        whoami = _NA_ENCRYPT
+        """Encryption oracle.
+
+        :param ptext: Message to be encrypted
+        :raises StateError: if method called when disallowed.
+        """
+        whoami = _AA_ENCRYPT
         self._handle_state(whoami)
 
         if self._key is None:
-            raise Exception("Shouldn't happen in this state")
+            raise StateError("key should exist in this state")
 
         return self._encryptor(self._key, ptext)
 
     def decrypt(self, ctext: bytes) -> bytes:
-        whoami = _NA_DECRYPT
+        """Decryption oracle.
+
+        :param ctext: Ciphertext to be decrypted
+        :raises StateError: if method called when disallowed.
+        """
+        whoami = _AA_DECRYPT
         self._handle_state(whoami)
 
         if self._key is None:
-            raise Exception("Shouldn't happen in this state")
+            raise StateError("key should exist in this state")
 
         return self._decryptor(self._key, ctext)
 
@@ -123,9 +138,11 @@ class Ind(Generic[K]):
 
         Also resets the challenger, as for this game you cannot call with
         same key, b pair more than once.
+
+        :raises StateError: if method called when disallowed.
         """
 
-        whoami = _NA_FINALIZE
+        whoami = _AA_FINALIZE
         self._handle_state(whoami)
 
         adv_wins = guess == self._b
@@ -135,11 +152,11 @@ class Ind(Generic[K]):
 
 class IndCpa(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
+        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_INITIALIZED: {_AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
         _STATE_CHALLANGE_CREATED: {
-            _NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
-            _NA_FINALIZE: _STATE_STARTED,
+            _AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
+            _AA_FINALIZE: _STATE_STARTED,
         },
     }
     """Transition table for CPA game."""
@@ -154,7 +171,6 @@ class IndCpa(Ind[K]):
         :param key_gen: A key generation function appropriate for encryptor
         :param encryptor:
             A function that takes a key and message and outputs ctext
-        :raises StateError: if methods called in disallowed order.
         """
 
         super().__init__(key_gen=key_gen, encryptor=encryptor)
@@ -163,10 +179,10 @@ class IndCpa(Ind[K]):
 
 class IndEav(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {_NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
+        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_INITIALIZED: {_AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
         _STATE_CHALLANGE_CREATED: {
-            _NA_FINALIZE: _STATE_STARTED,
+            _AA_FINALIZE: _STATE_STARTED,
         },
     }
     """Transition table for EAV game"""
@@ -190,19 +206,19 @@ class IndEav(Ind[K]):
 
 class IndCca2(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
         _STATE_INITIALIZED: {
-            _NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
-            _NA_ENCRYPT: _STATE_INITIALIZED,
-            _NA_DECRYPT: _STATE_INITIALIZED,
+            _AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
+            _AA_ENCRYPT: _STATE_INITIALIZED,
+            _AA_DECRYPT: _STATE_INITIALIZED,
         },
         _STATE_CHALLANGE_CREATED: {
-            _NA_FINALIZE: _STATE_STARTED,
-            _NA_ENCRYPT: _STATE_CHALLANGE_CREATED,
-            _NA_DECRYPT: _STATE_CHALLANGE_CREATED,
+            _AA_FINALIZE: _STATE_STARTED,
+            _AA_ENCRYPT: _STATE_CHALLANGE_CREATED,
+            _AA_DECRYPT: _STATE_CHALLANGE_CREATED,
         },
     }
-    """Transition table for IND-CCA game"""
+    """Transition table for IND-CCA2 game"""
 
     def __init__(
         self,
@@ -247,15 +263,15 @@ class IndCca2(Ind[K]):
 
 class IndCca1(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_NA_INITIALIZE: _STATE_INITIALIZED},
+        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
         _STATE_INITIALIZED: {
-            _NA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
-            _NA_ENCRYPT: _STATE_INITIALIZED,
-            _NA_DECRYPT: _STATE_INITIALIZED,
+            _AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
+            _AA_ENCRYPT: _STATE_INITIALIZED,
+            _AA_DECRYPT: _STATE_INITIALIZED,
         },
         _STATE_CHALLANGE_CREATED: {
-            _NA_FINALIZE: _STATE_STARTED,
-            _NA_ENCRYPT: _STATE_CHALLANGE_CREATED,
+            _AA_FINALIZE: _STATE_STARTED,
+            _AA_ENCRYPT: _STATE_CHALLANGE_CREATED,
         },
     }
     """Transition table for IND-CCA1 game"""

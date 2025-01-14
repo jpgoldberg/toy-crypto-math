@@ -167,6 +167,48 @@ class TestInd:
 
             assert challenger.finalize(first_guess)
 
+    def test_cca2_ctext_clear(self) -> None:
+        """Previous round banned ctext allowed.
+
+        This tests a bug in which the list of banned ciphertexts that
+        can be given to decrypt() wasn't clear with re-initialization.
+        """
+        challenger = IndCca2(
+            key_gen=self.key_gen,
+            encryptor=self.encryptor,
+            decrytpor=self.decryptor,
+        )
+
+        m0 = b"Attack at dawn!"
+        m1 = b"Defend at dusk!"
+        x = b"B"
+        cct1 = b"AAAAAAA"
+
+        challenger.initialize()
+        _ = challenger.decrypt(cct1)
+        ctext = challenger.encrypt_one(m0, m1)
+
+        with pytest.raises(Exception):
+            _ = challenger.decrypt(ctext)
+
+        # check that both encrypt and decrypt can still be called
+        c_x = challenger.encrypt(x)
+        p_x = challenger.decrypt(c_x)
+        assert p_x == x
+        _ = challenger.finalize(0)
+
+        # Now the thing we really aim to test here.
+        challenger.initialize()
+        _ = challenger.decrypt(c_x)
+
+        new_ctext = challenger.encrypt_one(b"X", b"Y")
+
+        # This call should be allowed
+        _ = challenger.decrypt(ctext)
+
+        with pytest.raises(Exception):
+            _ = challenger.decrypt(new_ctext)
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

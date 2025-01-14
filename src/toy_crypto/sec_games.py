@@ -54,6 +54,10 @@ class Ind(Generic[K]):
         self._b: Optional[bool] = None
         self._state = _STATE_STARTED
 
+        # Only needed for CCA2, but having it here makes
+        # initialization method more general.
+        self._challenge_ctexts: set[str] = set()
+
         """
         Each state is a dictionary of [Transition : State_Name]
         Transitions are the names of methods (or "start")
@@ -81,6 +85,7 @@ class Ind(Generic[K]):
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
+        self._challenge_ctexts = set()
 
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
         """Left-Right encryption oracle.
@@ -248,8 +253,6 @@ class IndCca2(Ind[K]):
         encrypt_one to prevent any decryption of it.
         """
 
-        self._challenge_ctexts: set[str] = set()
-
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
         ctext = super().encrypt_one(m0, m1)
         self._challenge_ctexts.add(hash_bytes(ctext))
@@ -303,8 +306,6 @@ class IndCca1(Ind[K]):
         We will need to keep track of the challenge ctext created by
         encrypt_one to prevent any decryption of it.
         """
-
-        self._challenge_ctexts: set[str] = set()
 
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
         ctext = super().encrypt_one(m0, m1)

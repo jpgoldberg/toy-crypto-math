@@ -18,9 +18,9 @@ class StateError(Exception):
     """When something attempted in an inappropriate state."""
 
 
-_STATE_STARTED = "START"
-_STATE_INITIALIZED = "INITIALIZED"
-_STATE_CHALLANGE_CREATED = "CHALLENGED"
+STATE_STARTED = "START"
+STATE_INITIALIZED = "INITIALIZED"
+STATE_CHALLANGE_CREATED = "CHALLENGED"
 
 # Adversary Action
 _AA_INITIALIZE = "initialize"
@@ -52,7 +52,7 @@ class Ind(Generic[K]):
 
         self._key: Optional[K] = None
         self._b: Optional[bool] = None
-        self._state = _STATE_STARTED
+        self._state = STATE_STARTED
 
         # Only needed for CCA2, but having it here makes
         # initialization method more general.
@@ -159,11 +159,11 @@ class Ind(Generic[K]):
 
 class IndCpa(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {_AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
-        _STATE_CHALLANGE_CREATED: {
-            _AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
-            _AA_FINALIZE: _STATE_STARTED,
+        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
+        STATE_INITIALIZED: {_AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED},
+        STATE_CHALLANGE_CREATED: {
+            _AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED,
+            _AA_FINALIZE: STATE_STARTED,
         },
     }
     """Transition table for CPA game."""
@@ -186,10 +186,10 @@ class IndCpa(Ind[K]):
 
 class IndEav(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {_AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED},
-        _STATE_CHALLANGE_CREATED: {
-            _AA_FINALIZE: _STATE_STARTED,
+        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
+        STATE_INITIALIZED: {_AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED},
+        STATE_CHALLANGE_CREATED: {
+            _AA_FINALIZE: STATE_STARTED,
         },
     }
     """Transition table for EAV game"""
@@ -213,16 +213,16 @@ class IndEav(Ind[K]):
 
 class IndCca2(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {
-            _AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
-            _AA_ENCRYPT: _STATE_INITIALIZED,
-            _AA_DECRYPT: _STATE_INITIALIZED,
+        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
+        STATE_INITIALIZED: {
+            _AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED,
+            _AA_ENCRYPT: STATE_INITIALIZED,
+            _AA_DECRYPT: STATE_INITIALIZED,
         },
-        _STATE_CHALLANGE_CREATED: {
-            _AA_FINALIZE: _STATE_STARTED,
-            _AA_ENCRYPT: _STATE_CHALLANGE_CREATED,
-            _AA_DECRYPT: _STATE_CHALLANGE_CREATED,
+        STATE_CHALLANGE_CREATED: {
+            _AA_FINALIZE: STATE_STARTED,
+            _AA_ENCRYPT: STATE_CHALLANGE_CREATED,
+            _AA_DECRYPT: STATE_CHALLANGE_CREATED,
         },
     }
     """Transition table for IND-CCA2 game"""
@@ -268,15 +268,15 @@ class IndCca2(Ind[K]):
 
 class IndCca1(Ind[K]):
     T_TABLE: Mapping[str, Mapping[str, str]] = {
-        _STATE_STARTED: {_AA_INITIALIZE: _STATE_INITIALIZED},
-        _STATE_INITIALIZED: {
-            _AA_ENCRYPT_ONE: _STATE_CHALLANGE_CREATED,
-            _AA_ENCRYPT: _STATE_INITIALIZED,
-            _AA_DECRYPT: _STATE_INITIALIZED,
+        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
+        STATE_INITIALIZED: {
+            _AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED,
+            _AA_ENCRYPT: STATE_INITIALIZED,
+            _AA_DECRYPT: STATE_INITIALIZED,
         },
-        _STATE_CHALLANGE_CREATED: {
-            _AA_FINALIZE: _STATE_STARTED,
-            _AA_ENCRYPT: _STATE_CHALLANGE_CREATED,
+        STATE_CHALLANGE_CREATED: {
+            _AA_FINALIZE: STATE_STARTED,
+            _AA_ENCRYPT: STATE_CHALLANGE_CREATED,
         },
     }
     """Transition table for IND-CCA1 game"""

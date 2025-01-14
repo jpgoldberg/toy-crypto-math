@@ -15,11 +15,8 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
     ttable = game.T_TABLE
     states: list[str] = list(ttable.keys())
     label = f"State transitions in {name} game"
-    graph = pydot.Dot(name, graph_type="digraph", label=label)
-
-    for state in states:
-        node = pydot.Node(name=state, label=state.title())
-        graph.add_node(node)
+    graph = pydot.Dot(name, graph_type="digraph", label=label, rankdir="LR")
+    graph.set_node_defaults(shape="circle")
 
     for state in states:
         for label, destination in ttable[state].items():
@@ -30,7 +27,7 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
                 destination,
                 label=label,
                 fontname="courier",
-                fontsize=10,
+                fontsize=12,
                 labelfloat=True,
             )
             graph.add_edge(edge)

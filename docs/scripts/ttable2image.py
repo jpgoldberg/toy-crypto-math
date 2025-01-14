@@ -24,12 +24,14 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
     for state in states:
         for label, destination in ttable[state].items():
             label = label + "()"
+            label = f"  {label}  "
             edge = pydot.Edge(
                 state,
                 destination,
                 label=label,
                 fontname="courier",
                 fontsize=10,
+                labelfloat=True,
             )
             graph.add_edge(edge)
 

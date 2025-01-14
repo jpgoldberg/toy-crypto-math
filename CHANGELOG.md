@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- CCA2 game no longer rejects decryption of ctexts that were created in previous rounds
+
 ## 0.2.1 2025-01-13
 
 ### Fixed

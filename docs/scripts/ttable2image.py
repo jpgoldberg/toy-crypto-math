@@ -1,5 +1,5 @@
 from typing import Any
-import pydot
+import pydot  # types: ignore
 from toy_crypto.sec_games import Ind, IndEav, IndCpa, IndCca1, IndCca2
 
 
@@ -39,5 +39,5 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
 
 
 for name, game in games.items():
-    graph = make_graph(game, name)
+    graph = make_graph(game, name)  # type: ignore[arg-type]
     graph.write_svg(f"{name}.svg")

@@ -18,9 +18,9 @@ class StateError(Exception):
     """When something attempted in an inappropriate state."""
 
 
-_STATE_STARTED = "UN-INITIALIZED"
+_STATE_STARTED = "START"
 _STATE_INITIALIZED = "INITIALIZED"
-_STATE_CHALLANGE_CREATED = "CHALLENGE-CREATED"
+_STATE_CHALLANGE_CREATED = "CHALLENGED"
 
 # Adversary Action
 _AA_INITIALIZE = "initialize"
@@ -31,6 +31,8 @@ _AA_FINALIZE = "finalize"
 
 
 class Ind(Generic[K]):
+    T_TABLE: Mapping[str, Mapping[str, str]]
+
     def __init__(
         self,
         key_gen: KeyGenerator[K],

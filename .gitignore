@@ -159,3 +159,7 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 lcov.info
+
+# Intermediate image files
+docs/scripts/*.dot
+docs/scripts/*.png

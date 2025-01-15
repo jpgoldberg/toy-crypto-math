@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - CCA2 game no longer rejects decryption of ctexts that were created in previous rounds
+  
+### Added
+
+- State diagrams for sec_games documentation.
+  
+  Yes, they are ugly, and Graphviz makes it hard to place edge labels well,
+  but I worked on this, so you have to see them.
+
+- Expanded (perhaps excessively) sec_games documentation.
 
 ## 0.2.1 2025-01-13
 

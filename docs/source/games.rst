@@ -18,7 +18,7 @@ ciphertext indistisguishability games for symmetric encryption game.
 General Structure
 ------------------
 
-Indisitinguisibility games are set up as an Adversary
+Indisitinguisibility games are set up as an adversary
 playing against a game (or Challenger).
 The game is given an encryption scheme and a key generation function.
 So creating a game will often look like
@@ -33,9 +33,9 @@ So creating a game will often look like
     
     game = IndCpa(keygen, encrypt)
 
-Once that is done, the Adversary can interact with the game according to the rules of the particular game.
+Once that is done, the adversary can interact with the game according to the rules of the particular game.
 
-The first thing (in how I've coding things here) is that the Adversary will tell the game to initialize itself.
+The first thing (in how I've coding things here) is that the adversary will tell the game to initialize itself.
 
 .. code-block:: python
 
@@ -43,8 +43,8 @@ The first thing (in how I've coding things here) is that the Adversary will tell
     ...
     
 During that initialization the game will generate a key and randomly select 0 or 1 as the value of the bit **b**.
-The Adversary's task durig the course of the game is to figure out the value of **b**.
-At the end of a round, the Adversary will finalize the game by submitting its guess.
+The adversary's task durig the course of the game is to figure out the value of **b**.
+At the end of a round, the adversary will finalize the game by submitting its guess.
 
 .. code-block:: python
 
@@ -181,23 +181,46 @@ so we define some type aliases to make things easier.
 The :mod:`~toy_crypto.sec_games` Classes
 ----------------------------------------
 
-The classes only differ by the order in which methods can be called.
-And that ordiering defined by the transition tables in :data:`T_TABLE`
-with the initial stated being "started".
+The classes only differ which methods they offer and the sequence in which they are called. That ordiering defined by the transition tables in :data:`T_TABLE`
+with the initial stated being "START".
+
+The only difference between :class:`IndEav` and :class:`IndCpa` is that the latter allows multiple calls to :func:`~IndCpa.encrypt_one`.
 
 .. autoclass:: IndEav
     :class-doc-from: both
     :members: T_TABLE, initialize, encrypt_one, finalize
 
+    .. image:: /images/IND-EAV.png
+        :align: center
+        :alt: State transition diagram generated from T_TABLE
+
 .. autoclass:: toy_crypto.sec_games.IndCpa
     :class-doc-from: both
     :members: T_TABLE, initialize, encrypt_one, finalize
+
+    .. image:: /images/IND-CPA.png
+        :align: center
+        :alt: State transition diagram generated from T_TABLE
+
+The only difference between :class:`IndCca1` and :class:`IndCca2` is 
+the latter allows calls to :func:`~IndCca2.decrypt` the challenge ciphertext
+has been provided by :func:`~IndCca2.encrypt_one`.
+The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
+
 
 .. autoclass:: toy_crypto.sec_games.IndCca1
     :class-doc-from: both
     :members: T_TABLE, initialize, encrypt, decrypt, encrypt_one, finalize
 
+    .. image:: /images/IND-CCA1.png
+        :align: center
+        :alt: State transition diagram generated from T_TABLE
+
 .. autoclass:: toy_crypto.sec_games.IndCca2
     :class-doc-from: both
     :members: T_TABLE, initialize, encrypt, decrypt, encrypt_one, finalize
+
+    .. image:: /images/IND-CCA2.png
+        :align: center
+        :alt: State transition diagram generated from T_TABLE
 

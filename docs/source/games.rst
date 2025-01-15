@@ -15,6 +15,71 @@ Security games
 The module includes a classes for running the several 
 ciphertext indistisguishability games for symmetric encryption game.
 
+General Structure
+------------------
+
+Indisitinguisibility games are set up as an Adversary
+playing against a game (or Challenger).
+The game is given an encryption scheme and a key generation function.
+So creating a game will often look like
+
+.. code-block:: python
+
+    def keygen() -> bytes:
+        ...
+
+    def encrypt(key: by, m: bytes) -> bytes:
+        ...
+    
+    game = IndCpa(keygen, encrypt)
+
+Once that is done, the Adversary can interact with the game according to the rules of the particular game.
+
+The first thing (in how I've coding things here) is that the Adversary will tell the game to initialize itself.
+
+.. code-block:: python
+
+    game.initialize()
+    ...
+    
+During that initialization the game will generate a key and randomly select 0 or 1 as the value of the bit **b**.
+The Adversary's task durig the course of the game is to figure out the value of **b**.
+At the end of a round, the Adversary will finalize the game by submitting its guess.
+
+.. code-block:: python
+
+    ...
+    if game.finalize(guess):
+        # Yay! Guessed correctly
+        adv_score += 1
+
+The only thing the adversary can do with the game after finalizing is
+to tell it to re-initialize, which will generate a fresh key and value for the bit, **b**.
+
+Between initialization and finalization the adversary can ask the game to
+to perform certain computions, which may include encrypting or decrypting
+data of the adversaries chosing. Which are available and in what sequences depends on the specific game.
+
+The computation that is essential to all of these games is to encrypt one of 
+two messages provided by the adversary.
+The game returns a challenge ciphertext that is the encryption of one of
+the messages depending on its value of **b**.
+So the adversary is really trying to figure out if whether it is the left or right message that gets encrypted.
+
+.. code-block:: python
+
+    game.initialize()
+    ...
+    challenge_ctext = game.encrypt_one(m0, m1)
+    ...
+    if game.finalize(guess):
+        ...
+
+To save having to create many instances of a game with the same encryption 
+scheme, py:func:`initialize` can be called after a game is finalized
+to start over with a fresh key and **b** while using the same encryption scheme.
+
+
 Examples
 ---------
 

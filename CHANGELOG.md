@@ -8,10 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - CCA2 game no longer rejects decryption of ctexts that were created in previous rounds
+
+### Changed
+
+- `sec_games.<game>.T_TABLE` has had a type change, with use of enumerations.
   
 ### Added
 
 - State diagrams for sec_games documentation.
+
+- Enums for states and transitions for `sec_games`.
   
   Yes, they are ugly, and Graphviz makes it hard to place edge labels well,
   but I worked on this, so you have to see them.

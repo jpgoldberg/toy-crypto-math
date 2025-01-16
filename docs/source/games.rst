@@ -201,7 +201,7 @@ Types for state management
     Defined as :code:`Mapping[State, Mapping[Action, State]]` 
 
 The class and method organization
-----------------------------------------
+==================================
 
 All of the specific game classes are subclasses of the :class:`Ind` class.
 

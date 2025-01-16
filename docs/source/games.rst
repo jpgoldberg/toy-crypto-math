@@ -210,7 +210,7 @@ All of the specific game classes are subclasses of the :class:`Ind` class.
 
 The classes only [#only]_ differ in which methods they offer and the sequence in which they are called.
 That ordiering defined by the transition tables in :data:`T_TABLE`
-with the initial stated being "STARTED"
+with the initial stated being :data:`State.STARTED`.
 
 
 

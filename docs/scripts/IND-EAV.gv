@@ -1,0 +1,10 @@
+digraph "IND-EAV" {
+rankdir=LR;
+ranksep=1.5;
+nodesep=0.75;
+node [shape=circle];
+edge [penwidth=0.75, labelfloat=true, fontname="Anonymous Pro Bold", fontsize=12];
+S -> I [label="initialize()"];
+I -> C [label="encrypt_one()"];
+C -> S [label="finalize()"];
+}

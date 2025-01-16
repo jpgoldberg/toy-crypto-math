@@ -36,7 +36,6 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
     graph = pydot.Dot(
         name,
         graph_type="digraph",
-        label=label,
         rankdir="LR",
         ranksep=1.5,
         nodesep=0.75,
@@ -65,4 +64,4 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
 
 for name, game in games.items():
     graph: pydot.Graph = make_graph(game, name)  # type: ignore[arg-type]
-    graph.write_raw(f"{name}.dot")
+    graph.write_raw(f"{name}.gv")

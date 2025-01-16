@@ -41,14 +41,15 @@ class Ind(Generic[K]):
         transition_table: Optional[Mapping[str, Mapping[str, str]]] = None,
     ) -> None:
         """
-        Class for some symmetric Indistinguishability games
+        A super class for symmetric Indistinguishability games.
 
-        This is intended to be subclassed and not used directly.
+        Unless the user provides an appropriate transition table,
+        no methods will be allowed.
         """
 
         self._key_gen = key_gen
         self._encryptor = encryptor
-        self._decryptor = decryptor if decryptor else self._disallowed_method
+        self._decryptor = decryptor if decryptor else self._undefined_decryptor
 
         self._key: Optional[K] = None
         self._b: Optional[bool] = None
@@ -72,8 +73,13 @@ class Ind(Generic[K]):
             raise StateError(f"{name} not allowed in state {self._state}")
         self._state = self._t_table[self._state][name]
 
-    def _disallowed_method(self, *args: Any, **kwargs: Any) -> Any:
+    def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")
+        return (  # Compiler should know this is unreachable
+            b"Does this ever return?"
+            b" No, this never returns,"
+            b" And its fate is still unlearned.",
+        )
 
     def initialize(self) -> None:
         """Initializes self by creating key and selecting b.

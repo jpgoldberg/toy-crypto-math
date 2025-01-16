@@ -54,7 +54,7 @@ At the end of a round, the adversary will finalize the game by submitting its gu
         adv_score += 1
 
 The only thing the adversary can do with the game after finalizing is
-to tell it to re-initialize, which will generate a fresh key and value for the bit, **b**.
+to tell it to re-initialize [#reinit]_ , which will generate a fresh key and value for the bit, **b**.
 
 Between initialization and finalization the adversary can ask the game to
 to perform certain computions, which may include encrypting or decrypting
@@ -76,8 +76,9 @@ So the adversary is really trying to figure out if whether it is the left or rig
         ...
 
 To save having to create many instances of a game with the same encryption 
-scheme, py:func:`initialize` can be called after a game is finalized
-to start over with a fresh key and **b** while using the same encryption scheme.
+scheme, py:func:`Ind.initialize` can be called after a game is
+finalized to start over with a fresh key and **b**
+while using the same encryption scheme. [#reinit]_
 
 
 Examples
@@ -178,29 +179,57 @@ so we define some type aliases to make things easier.
     A parameterized type alias to describe the encryptor/decrptor functions.
     defined as :code:`Callable[[K, bytes], bytes]`
 
-The :mod:`~toy_crypto.sec_games` Classes
+The class and method organization
 ----------------------------------------
 
-The classes only differ which methods they offer and the sequence in which they are called. That ordiering defined by the transition tables in :data:`T_TABLE`
+All of the specific game classes are subclasses of the :class:`Ind` class.
+
+.. autoclass:: Ind
+    :class-doc-from: both
+
+The classes only [#only]_ differ in which methods they offer and the sequence in which they are called.
+That ordiering defined by the transition tables in :data:`T_TABLE`
 with the initial stated being "START".
+
+All games allow the :func:`~Ind.initialize`,
+:func:`~Ind.encrypt_one`,
+and :func:`~Ind.finalize`, methods.
+
+.. automethod:: Ind.initialize
+
+.. automethod:: Ind.encrypt_one
+
+.. automethod:: Ind.finalize
+
+Some of the games allow the :func:`~Ind.encrypt`
+and :func:`~Ind.decrypt`, methods.
+
+.. automethod:: Ind.encrypt
+
+.. automethod:: Ind.decrypt
+
 
 The only difference between :class:`IndEav` and :class:`IndCpa` is that the latter allows multiple calls to :func:`~IndCpa.encrypt_one`.
 
 .. autoclass:: IndEav
     :class-doc-from: both
-    :members: T_TABLE, initialize, encrypt_one, finalize
+    :members: T_TABLE
 
-    .. image:: /images/IND-EAV.png
+    .. figure:: /images/IND-EAV.png
         :align: center
         :alt: State transition diagram generated from T_TABLE
+
+        IND-EAV game states and transitions
 
 .. autoclass:: toy_crypto.sec_games.IndCpa
     :class-doc-from: both
-    :members: T_TABLE, initialize, encrypt_one, finalize
+    :members: T_TABLE
 
-    .. image:: /images/IND-CPA.png
+    .. figure:: /images/IND-CPA.png
         :align: center
         :alt: State transition diagram generated from T_TABLE
+
+        IND-CPA game states and transitions
 
 The only difference between :class:`IndCca1` and :class:`IndCca2` is 
 the latter allows calls to :func:`~IndCca2.decrypt` the challenge ciphertext
@@ -210,17 +239,35 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
 
 .. autoclass:: toy_crypto.sec_games.IndCca1
     :class-doc-from: both
-    :members: T_TABLE, initialize, encrypt, decrypt, encrypt_one, finalize
+    :members: T_TABLE
 
-    .. image:: /images/IND-CCA1.png
+    .. figure:: /images/IND-CCA1.png
         :align: center
         :alt: State transition diagram generated from T_TABLE
+
+        IND-CCA1 game states and transitions
 
 .. autoclass:: toy_crypto.sec_games.IndCca2
     :class-doc-from: both
-    :members: T_TABLE, initialize, encrypt, decrypt, encrypt_one, finalize
+    :members: T_TABLE
 
-    .. image:: /images/IND-CCA2.png
+    .. figure:: /images/IND-CCA2.png
         :align: center
         :alt: State transition diagram generated from T_TABLE
+
+        IND-CCA1 game states and transitions
+
+.. rubric:: Footnotes
+
+.. [#reinit] The reason I separated game initialization from game creation is 
+    because the user may wish to rerun a game many times.
+    After all, the adversary doesn't need to win every time to win overall.
+    It only needs to win meaningfully more than half the time.
+    And so I didn't want to user to have to create a large number of
+    instances of a game class and have to
+    rely on the Python garbage collector to free up memory.
+
+.. [#only] Well, *almost* only.
+   Specific games may introduce specifc checks on input,
+   and so will wrap the ``Ind`` class methods.
 

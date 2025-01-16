@@ -1,7 +1,8 @@
 .. include:: ../common/unsafe.rst
 
+*****************
 Security games
-================================
+*****************
 
 .. py:module:: toy_crypto.sec_games
     :synopsis: Classes for running security games, including IND-CPA and IND-EAV.
@@ -16,7 +17,7 @@ The module includes a classes for running the several
 ciphertext indistisguishability games for symmetric encryption game.
 
 General Structure
-------------------
+==================
 
 Indisitinguisibility games are set up as an adversary
 playing against a game (or Challenger).
@@ -82,7 +83,7 @@ while using the same encryption scheme. [#reinit]_
 
 
 Examples
----------
+==========
 
 For testing, it is useful to have a challenge that the adversary can always
 win, so we will use a shift ciper for testing IND-EAV
@@ -158,14 +159,21 @@ But because the NTP is deterministic it will fail IND-CPA security.
 
 
 Exceptions
------------
+============
 .. autoclass:: StateError
 
 Type aliases and parameters
-----------------------------
+===========================
 
-Our classes have some nastly looking type parameters,
-so we define some type aliases to make things easier.
+There are a number of types, type aliases [#alias[_,
+and type parameters
+defined in this module. Some are used to describe the functions
+that are passed to the various game classes.
+Others are used for what passes for the state management within
+the games.
+
+Types for setup functions
+--------------------------
 
 .. autoclass:: K
 
@@ -179,6 +187,19 @@ so we define some type aliases to make things easier.
     A parameterized type alias to describe the encryptor/decrptor functions.
     defined as :code:`Callable[[K, bytes], bytes]`
 
+Types for state management
+---------------------------
+
+.. autoclass:: State
+    :members:
+
+.. autoclass:: Action
+    :members:
+
+.. py:data:: TransitionTable
+
+    Defined as :code:`Mapping[State, Mapping[Action, State]]` 
+
 The class and method organization
 ----------------------------------------
 
@@ -189,7 +210,9 @@ All of the specific game classes are subclasses of the :class:`Ind` class.
 
 The classes only [#only]_ differ in which methods they offer and the sequence in which they are called.
 That ordiering defined by the transition tables in :data:`T_TABLE`
-with the initial stated being "START".
+with the initial stated being "STARTED"
+
+
 
 All games allow the :func:`~Ind.initialize`,
 :func:`~Ind.encrypt_one`,
@@ -266,6 +289,9 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
     And so I didn't want to user to have to create a large number of
     instances of a game class and have to
     rely on the Python garbage collector to free up memory.
+
+.. [#alias] I am open to recommendations on how to document type aliases
+   with Sphinx.
 
 .. [#only] Well, *almost* only.
    Specific games may introduce specifc checks on input,

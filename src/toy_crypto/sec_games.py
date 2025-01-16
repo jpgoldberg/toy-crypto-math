@@ -1,6 +1,7 @@
 from collections.abc import Callable, Mapping
+from enum import StrEnum
 import secrets
-from typing import Any, Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
 from toy_crypto.types import SupportsBool
 from toy_crypto.utils import hash_bytes
 
@@ -18,27 +19,51 @@ class StateError(Exception):
     """When something attempted in an inappropriate state."""
 
 
-STATE_STARTED = "START"
-STATE_INITIALIZED = "INITIALIZED"
-STATE_CHALLANGE_CREATED = "CHALLENGED"
+class State(StrEnum):
+    """The state a game."""
 
-# Adversary Action
-_AA_INITIALIZE = "initialize"
-_AA_ENCRYPT_ONE = "encrypt_one"
-_AA_ENCRYPT = "encrypt"
-_AA_DECRYPT = "decrypt"
-_AA_FINALIZE = "finalize"
+    STARTED = "S"
+    """Game has not been initialized."""
+
+    INITIALIZED = "I"
+    """Game is initialized"""
+
+    CHALLENGED = "C"
+    """Challenge text created."""
+
+
+class Action(StrEnum):
+    """Adversary actions (Methods called by A)."""
+
+    INITIALIZE = "initialize"
+    """initialize() called."""
+
+    ENCRYPT_ONE = "encrypt_one"
+    """encrypt_one() called."""
+
+    ENCRYPT = "encrypt"
+    """encrypt() called."""
+
+    DECRYPT = "decrypt"
+    """decrypt() called"""
+
+    FINALIZE = "finalize"
+    """finalize() called."""
+
+
+type TransitionTable = Mapping[State, Mapping[Action, State]]
+"""Transition Table to manage state of a game."""
 
 
 class Ind(Generic[K]):
-    T_TABLE: Mapping[str, Mapping[str, str]]
+    T_TABLE: Mapping[State, Mapping[Action, State]]
 
     def __init__(
         self,
         key_gen: KeyGenerator[K],
         encryptor: Cryptor[K],
         decryptor: Optional[Cryptor[K]] = None,
-        transition_table: Optional[Mapping[str, Mapping[str, str]]] = None,
+        transition_table: Optional[TransitionTable] = None,
     ) -> None:
         """
         A super class for symmetric Indistinguishability games.
@@ -53,7 +78,7 @@ class Ind(Generic[K]):
 
         self._key: Optional[K] = None
         self._b: Optional[bool] = None
-        self._state = STATE_STARTED
+        self._state = State.STARTED
 
         # Only needed for CCA2, but having it here makes
         # initialization method more general.
@@ -64,14 +89,14 @@ class Ind(Generic[K]):
         Transitions are the names of methods (or "start")
         """
 
-        self._t_table: Mapping[str, Mapping[str, str]] = {}
+        self._t_table: TransitionTable = {}
         if transition_table:
             self._t_table = transition_table
 
-    def _handle_state(self, name: str) -> None:
+    def _handle_state(self, name: Action) -> None:
         if name not in self._t_table[self._state]:
             raise StateError(f"{name} not allowed in state {self._state}")
-        self._state = self._t_table[self._state][name]
+        self._state = (self._t_table[self._state])[name]
 
     def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")
@@ -86,7 +111,7 @@ class Ind(Generic[K]):
 
         :raises StateError: if method called when disallowed.
         """
-        whoami = _AA_INITIALIZE
+        whoami = Action.INITIALIZE
         self._handle_state(whoami)
         """Challenger picks key and a b."""
         self._key = self._key_gen()
@@ -104,7 +129,7 @@ class Ind(Generic[K]):
         :raises StateError: if method called when disallowed.
         """
 
-        whoami = _AA_ENCRYPT_ONE
+        whoami = Action.ENCRYPT_ONE
         self._handle_state(whoami)
 
         if self._b is None or self._key is None:
@@ -123,7 +148,7 @@ class Ind(Generic[K]):
         :param ptext: Message to be encrypted
         :raises StateError: if method called when disallowed.
         """
-        whoami = _AA_ENCRYPT
+        whoami = Action.ENCRYPT
         self._handle_state(whoami)
 
         if self._key is None:
@@ -137,7 +162,7 @@ class Ind(Generic[K]):
         :param ctext: Ciphertext to be decrypted
         :raises StateError: if method called when disallowed.
         """
-        whoami = _AA_DECRYPT
+        whoami = Action.DECRYPT
         self._handle_state(whoami)
 
         if self._key is None:
@@ -155,7 +180,7 @@ class Ind(Generic[K]):
         :raises StateError: if method called when disallowed.
         """
 
-        whoami = _AA_FINALIZE
+        whoami = Action.FINALIZE
         self._handle_state(whoami)
 
         adv_wins = guess == self._b
@@ -164,12 +189,12 @@ class Ind(Generic[K]):
 
 
 class IndCpa(Ind[K]):
-    T_TABLE: Mapping[str, Mapping[str, str]] = {
-        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
-        STATE_INITIALIZED: {_AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED},
-        STATE_CHALLANGE_CREATED: {
-            _AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED,
-            _AA_FINALIZE: STATE_STARTED,
+    T_TABLE: TransitionTable = {
+        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+        State.INITIALIZED: {Action.ENCRYPT_ONE: State.CHALLENGED},
+        State.CHALLENGED: {
+            Action.ENCRYPT_ONE: State.CHALLENGED,
+            Action.FINALIZE: State.STARTED,
         },
     }
     """Transition table for CPA game."""
@@ -191,11 +216,11 @@ class IndCpa(Ind[K]):
 
 
 class IndEav(Ind[K]):
-    T_TABLE: Mapping[str, Mapping[str, str]] = {
-        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
-        STATE_INITIALIZED: {_AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED},
-        STATE_CHALLANGE_CREATED: {
-            _AA_FINALIZE: STATE_STARTED,
+    T_TABLE: TransitionTable = {
+        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+        State.INITIALIZED: {Action.ENCRYPT_ONE: State.CHALLENGED},
+        State.CHALLENGED: {
+            Action.FINALIZE: State.STARTED,
         },
     }
     """Transition table for EAV game"""
@@ -218,17 +243,17 @@ class IndEav(Ind[K]):
 
 
 class IndCca2(Ind[K]):
-    T_TABLE: Mapping[str, Mapping[str, str]] = {
-        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
-        STATE_INITIALIZED: {
-            _AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED,
-            _AA_ENCRYPT: STATE_INITIALIZED,
-            _AA_DECRYPT: STATE_INITIALIZED,
+    T_TABLE: TransitionTable = {
+        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+        State.INITIALIZED: {
+            Action.ENCRYPT_ONE: State.CHALLENGED,
+            Action.ENCRYPT: State.INITIALIZED,
+            Action.DECRYPT: State.INITIALIZED,
         },
-        STATE_CHALLANGE_CREATED: {
-            _AA_FINALIZE: STATE_STARTED,
-            _AA_ENCRYPT: STATE_CHALLANGE_CREATED,
-            _AA_DECRYPT: STATE_CHALLANGE_CREATED,
+        State.CHALLENGED: {
+            Action.FINALIZE: State.STARTED,
+            Action.ENCRYPT: State.CHALLENGED,
+            Action.DECRYPT: State.CHALLENGED,
         },
     }
     """Transition table for IND-CCA2 game"""
@@ -273,16 +298,16 @@ class IndCca2(Ind[K]):
 
 
 class IndCca1(Ind[K]):
-    T_TABLE: Mapping[str, Mapping[str, str]] = {
-        STATE_STARTED: {_AA_INITIALIZE: STATE_INITIALIZED},
-        STATE_INITIALIZED: {
-            _AA_ENCRYPT_ONE: STATE_CHALLANGE_CREATED,
-            _AA_ENCRYPT: STATE_INITIALIZED,
-            _AA_DECRYPT: STATE_INITIALIZED,
+    T_TABLE: TransitionTable = {
+        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+        State.INITIALIZED: {
+            Action.ENCRYPT_ONE: State.CHALLENGED,
+            Action.ENCRYPT: State.INITIALIZED,
+            Action.DECRYPT: State.INITIALIZED,
         },
-        STATE_CHALLANGE_CREATED: {
-            _AA_FINALIZE: STATE_STARTED,
-            _AA_ENCRYPT: STATE_CHALLANGE_CREATED,
+        State.CHALLENGED: {
+            Action.FINALIZE: State.STARTED,
+            Action.ENCRYPT: State.CHALLENGED,
         },
     }
     """Transition table for IND-CCA1 game"""

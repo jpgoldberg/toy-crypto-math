@@ -18,9 +18,8 @@ jobs:
       - name: mypy check
         uses: jpetrucciani/mypy-check@master
         with:
-          mypy_flags: "--install-types"
           requirements_file: "requirements.txt"
-          requirements: "pytest"
+          requirements: "pytest types-docutils "
           python_version: "3.13"
           path: '.'
       - name: ruff check

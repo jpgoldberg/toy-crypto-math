@@ -190,15 +190,17 @@ Types for setup functions
 Types for state management
 ---------------------------
 
-.. autoclass:: State
+.. autoenum:: State
     :members:
 
-.. autoclass:: Action
+.. autoenum:: Action
     :members:
 
-.. py:data:: TransitionTable
+.. autoclass:: TransitionTable
+    :class-doc-from: class
+    :members: keys, __getitem__
 
-    Defined as :code:`Mapping[State, Mapping[Action, State]]` 
+
 
 The class and method organization
 ==================================
@@ -215,7 +217,7 @@ with the initial stated being :data:`State.STARTED`.
 
 
 All games allow the :func:`~Ind.initialize`,
-:func:`~Ind.encrypt_one`,
+:func:`~Ind.encrypt_one`
 and :func:`~Ind.finalize`, methods.
 
 .. automethod:: Ind.initialize

@@ -37,6 +37,7 @@ copyright = f"2024 {author}"
 extensions: list[str] = [
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
+    "enum_tools.autoenum",
 ]
 
 autodoc_typehints = "both"

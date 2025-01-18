@@ -34,7 +34,7 @@ class State(StrEnum):
 
 
 class Action(StrEnum):
-    """Adversary actions (Methods called by A)."""
+    """Adversary actions (Methods called)."""
 
     INITIALIZE = "initialize"
     """initialize() called."""
@@ -54,15 +54,33 @@ class Action(StrEnum):
 
 @dataclass
 class TransitionTable:
-    """Transition Table to manage state of a game."""
+    """Transition Table to manage state of a game.
+
+    It can be treated like a mapping.
+    """
 
     table: Mapping[State, Mapping[Action, State]]
 
     def keys(self) -> KeysView[State]:
+        """Just like ``keys`` for a real dict."""
         return self.table.keys()
 
     def __getitem__(self, item: State) -> Mapping[Action, State]:
+        """So that items can be looked up with ``[key]`` as in a real dict."""
         return self.table[item]
+
+    def __str__(self) -> str:
+        pad = "  "
+        if len(self.table) == 0:
+            return "{ }"
+        result = "{\n"
+        for key in self.keys():
+            result += f"{pad}{key.name}:\n"
+            for act in self.table[key].keys():
+                result += f"{pad * 2}{act.name}"
+                result += f" -> {self.table[key][act].name}\n"
+        result += "}"
+        return result
 
 
 class Ind(Generic[K]):

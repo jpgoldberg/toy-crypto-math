@@ -18,6 +18,7 @@ jobs:
       - name: mypy check
         uses: jpetrucciani/mypy-check@master
         with:
+          mypy_flags: "--install-types"
           requirements_file: "requirements.txt"
           requirements: "pytest"
           python_version: "3.13"

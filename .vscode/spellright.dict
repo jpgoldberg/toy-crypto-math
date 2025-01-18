@@ -13,3 +13,4 @@ key_gen
 whoami
 decryptor
 hashable
+pprint

@@ -238,7 +238,11 @@ The only difference between :class:`IndEav` and :class:`IndCpa` is that the latt
 
 .. autoclass:: IndEav
     :class-doc-from: both
-    :members: T_TABLE
+
+     .. autodata:: toy_crypto.sec_games.IndCEav.T_TABLE
+        :annotation:
+
+    .. pprint:: toy_crypto.sec_games.IndEav.T_TABLE
 
     .. figure:: /images/IND-EAV.png
         :align: center
@@ -248,7 +252,12 @@ The only difference between :class:`IndEav` and :class:`IndCpa` is that the latt
 
 .. autoclass:: toy_crypto.sec_games.IndCpa
     :class-doc-from: both
-    :members: T_TABLE
+
+    .. autodata:: toy_crypto.sec_games.IndCpa.T_TABLE
+        :annotation:
+
+    .. pprint:: toy_crypto.sec_games.IndCpa.T_TABLE
+    
 
     .. figure:: /images/IND-CPA.png
         :align: center
@@ -264,7 +273,11 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
 
 .. autoclass:: toy_crypto.sec_games.IndCca1
     :class-doc-from: both
-    :members: T_TABLE
+
+     .. autodata:: toy_crypto.sec_games.IndCca1.T_TABLE
+        :annotation:
+
+    .. pprint:: toy_crypto.sec_games.IndCca1.T_TABLE
 
     .. figure:: /images/IND-CCA1.png
         :align: center
@@ -274,8 +287,12 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
 
 .. autoclass:: toy_crypto.sec_games.IndCca2
     :class-doc-from: both
-    :members: T_TABLE
 
+     .. autodata:: toy_crypto.sec_games.IndCca2.T_TABLE
+        :annotation:
+
+    .. pprint:: toy_crypto.sec_games.IndCca2.T_TABLE
+        
     .. figure:: /images/IND-CCA2.png
         :align: center
         :alt: State transition diagram generated from T_TABLE

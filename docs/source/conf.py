@@ -9,6 +9,12 @@
 import os
 import sys
 import tomllib
+from docutils.parsers.rst import Directive
+
+from pprint import pformat
+from importlib import import_module
+from docutils import nodes
+from sphinx import addnodes
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../../src"))
@@ -29,7 +35,42 @@ pyproject = toml["project"]
 project = pyproject["name"]
 release = version
 author = ",".join([author["name"] for author in pyproject["authors"]])
-copyright = f"2024 {author}"
+copyright = f"2024–2025 {author}"
+
+
+# From https://github.com/sphinx-doc/sphinx/issues/11548#issuecomment-1693689611
+
+class PrettyPrintIterable(Directive):
+    """
+    Definition of a custom directive to pretty-print an iterable object.
+
+    This is used in place of the automatic API documentation
+    only for module variables which would just print a long signature.
+    """
+
+    required_arguments = 1
+
+    def run(self):  # type: ignore
+        paths = self.arguments[0].rsplit(".", 2)
+        module_path = paths[0]
+        module = import_module(module_path)
+        member = getattr(module, paths[1])
+        if len(paths) == 3:
+            member = getattr(member, paths[2])
+
+        code = pformat(
+            member,
+            indent=2,
+            width=80,
+            depth=3,
+            compact=False,
+            sort_dicts=False,
+        )
+
+        literal = nodes.literal_block(code, code)
+        literal["language"] = "python"
+
+        return [addnodes.desc_content("", literal)]
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -47,6 +88,14 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
+
+def setup(app):
+    """Set up the final Sphinx application.
+
+    This function loads any other customization that was added in this
+    configuration file, thus making it itself a Sphinx extension.
+    """
+    app.add_directive("pprint", PrettyPrintIterable)
 
 rst_prolog = f"""
 .. |project| replace:: **{project}**

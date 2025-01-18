@@ -15,6 +15,7 @@ from pprint import pformat
 from importlib import import_module
 from docutils import nodes
 from sphinx import addnodes
+from sphinx.application import Sphinx
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath("../../src"))
@@ -39,6 +40,7 @@ copyright = f"2024–2025 {author}"
 
 
 # From https://github.com/sphinx-doc/sphinx/issues/11548#issuecomment-1693689611
+
 
 class PrettyPrintIterable(Directive):
     """
@@ -72,6 +74,7 @@ class PrettyPrintIterable(Directive):
 
         return [addnodes.desc_content("", literal)]
 
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -89,13 +92,15 @@ intersphinx_mapping = {
     "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
 
-def setup(app):
+
+def setup(app: Sphinx) -> None:
     """Set up the final Sphinx application.
 
     This function loads any other customization that was added in this
     configuration file, thus making it itself a Sphinx extension.
     """
     app.add_directive("pprint", PrettyPrintIterable)
+
 
 rst_prolog = f"""
 .. |project| replace:: **{project}**

@@ -75,10 +75,10 @@ class TransitionTable:
             return "{ }"
         result = "{\n"
         for key in self.keys():
-            result += f"{pad}{key.name}:\n"
+            result += f"{pad}State.{key.name}:\n"
             for act in self.table[key].keys():
-                result += f"{pad * 2}{act.name}"
-                result += f" -> {self.table[key][act].name}\n"
+                result += f"{pad * 2}Action.{act.name}"
+                result += f" -> State.{self.table[key][act].name}\n"
         result += "}"
         return result
 

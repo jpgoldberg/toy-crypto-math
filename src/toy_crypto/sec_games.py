@@ -1,4 +1,5 @@
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, KeysView, Mapping
+from dataclasses import dataclass
 from enum import StrEnum
 import secrets
 from typing import Generic, Optional, TypeVar
@@ -51,12 +52,21 @@ class Action(StrEnum):
     """finalize() called."""
 
 
-type TransitionTable = Mapping[State, Mapping[Action, State]]
-"""Transition Table to manage state of a game."""
+@dataclass
+class TransitionTable:
+    """Transition Table to manage state of a game."""
+
+    table: Mapping[State, Mapping[Action, State]]
+
+    def keys(self) -> KeysView[State]:
+        return self.table.keys()
+
+    def __getitem__(self, item: State) -> Mapping[Action, State]:
+        return self.table[item]
 
 
 class Ind(Generic[K]):
-    T_TABLE: Mapping[State, Mapping[Action, State]]
+    T_TABLE: TransitionTable
 
     def __init__(
         self,
@@ -89,7 +99,7 @@ class Ind(Generic[K]):
         Transitions are the names of methods (or "start")
         """
 
-        self._t_table: TransitionTable = {}
+        self._t_table = TransitionTable({})
         if transition_table:
             self._t_table = transition_table
 
@@ -189,14 +199,16 @@ class Ind(Generic[K]):
 
 
 class IndCpa(Ind[K]):
-    T_TABLE: TransitionTable = {
-        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
-        State.INITIALIZED: {Action.ENCRYPT_ONE: State.CHALLENGED},
-        State.CHALLENGED: {
-            Action.ENCRYPT_ONE: State.CHALLENGED,
-            Action.FINALIZE: State.STARTED,
-        },
-    }
+    T_TABLE = TransitionTable(
+        {
+            State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+            State.INITIALIZED: {Action.ENCRYPT_ONE: State.CHALLENGED},
+            State.CHALLENGED: {
+                Action.ENCRYPT_ONE: State.CHALLENGED,
+                Action.FINALIZE: State.STARTED,
+            },
+        }
+    )
     """Transition table for CPA game."""
 
     def __init__(
@@ -216,13 +228,15 @@ class IndCpa(Ind[K]):
 
 
 class IndEav(Ind[K]):
-    T_TABLE: TransitionTable = {
-        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
-        State.INITIALIZED: {Action.ENCRYPT_ONE: State.CHALLENGED},
-        State.CHALLENGED: {
-            Action.FINALIZE: State.STARTED,
-        },
-    }
+    T_TABLE = TransitionTable(
+        {
+            State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+            State.INITIALIZED: {Action.ENCRYPT_ONE: State.CHALLENGED},
+            State.CHALLENGED: {
+                Action.FINALIZE: State.STARTED,
+            },
+        }
+    )
     """Transition table for EAV game"""
 
     def __init__(
@@ -243,19 +257,21 @@ class IndEav(Ind[K]):
 
 
 class IndCca2(Ind[K]):
-    T_TABLE: TransitionTable = {
-        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
-        State.INITIALIZED: {
-            Action.ENCRYPT_ONE: State.CHALLENGED,
-            Action.ENCRYPT: State.INITIALIZED,
-            Action.DECRYPT: State.INITIALIZED,
-        },
-        State.CHALLENGED: {
-            Action.FINALIZE: State.STARTED,
-            Action.ENCRYPT: State.CHALLENGED,
-            Action.DECRYPT: State.CHALLENGED,
-        },
-    }
+    T_TABLE = TransitionTable(
+        {
+            State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+            State.INITIALIZED: {
+                Action.ENCRYPT_ONE: State.CHALLENGED,
+                Action.ENCRYPT: State.INITIALIZED,
+                Action.DECRYPT: State.INITIALIZED,
+            },
+            State.CHALLENGED: {
+                Action.FINALIZE: State.STARTED,
+                Action.ENCRYPT: State.CHALLENGED,
+                Action.DECRYPT: State.CHALLENGED,
+            },
+        }
+    )
     """Transition table for IND-CCA2 game"""
 
     def __init__(
@@ -298,18 +314,20 @@ class IndCca2(Ind[K]):
 
 
 class IndCca1(Ind[K]):
-    T_TABLE: TransitionTable = {
-        State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
-        State.INITIALIZED: {
-            Action.ENCRYPT_ONE: State.CHALLENGED,
-            Action.ENCRYPT: State.INITIALIZED,
-            Action.DECRYPT: State.INITIALIZED,
-        },
-        State.CHALLENGED: {
-            Action.FINALIZE: State.STARTED,
-            Action.ENCRYPT: State.CHALLENGED,
-        },
-    }
+    T_TABLE = TransitionTable(
+        {
+            State.STARTED: {Action.INITIALIZE: State.INITIALIZED},
+            State.INITIALIZED: {
+                Action.ENCRYPT_ONE: State.CHALLENGED,
+                Action.ENCRYPT: State.INITIALIZED,
+                Action.DECRYPT: State.INITIALIZED,
+            },
+            State.CHALLENGED: {
+                Action.FINALIZE: State.STARTED,
+                Action.ENCRYPT: State.CHALLENGED,
+            },
+        }
+    )
     """Transition table for IND-CCA1 game"""
 
     def __init__(

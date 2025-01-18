@@ -1,8 +1,7 @@
-from collections import defaultdict
 from typing import Any
 import pydot  # types: ignore
 from toy_crypto.sec_games import Ind, IndEav, IndCpa, IndCca1, IndCca2
-from toy_crypto.sec_games import TransitionTable, State, Action
+from toy_crypto.sec_games import State
 
 
 games: dict[str, object] = {

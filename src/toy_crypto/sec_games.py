@@ -86,6 +86,9 @@ class TransitionTable:
 class Ind(Generic[K]):
     T_TABLE: TransitionTable
 
+    #: Game does not track which challenge texts have been created
+    TRACK_CHALLENGE_CTEXTS: bool = False
+
     def __init__(
         self,
         key_gen: KeyGenerator[K],
@@ -108,8 +111,6 @@ class Ind(Generic[K]):
         self._b: Optional[bool] = None
         self._state = State.STARTED
 
-        # Only needed for CCA2, but having it here makes
-        # initialization method more general.
         self._challenge_ctexts: set[str] = set()
 
         """
@@ -168,7 +169,10 @@ class Ind(Generic[K]):
 
         m = m1 if self._b else m0
 
-        return self._encryptor(self._key, m)
+        ctext = self._encryptor(self._key, m)
+        if self.TRACK_CHALLENGE_CTEXTS:
+            self._challenge_ctexts.add(hash_bytes(ctext))
+        return ctext
 
     def encrypt(self, ptext: bytes) -> bytes:
         """Encryption oracle.
@@ -195,6 +199,11 @@ class Ind(Generic[K]):
 
         if self._key is None:
             raise StateError("key should exist in this state")
+
+        if hash_bytes(ctext) in self._challenge_ctexts:
+            raise Exception(
+                "Adversary is not allowed to call decrypt on challenge ctext"
+            )
 
         return self._decryptor(self._key, ctext)
 
@@ -292,6 +301,9 @@ class IndCca2(Ind[K]):
     )
     """Transition table for IND-CCA2 game"""
 
+    TRACK_CHALLENGE_CTEXTS = True
+    """CCA2 needs to prevent decrypt() from decrypting challenge ctexts."""
+
     def __init__(
         self,
         key_gen: KeyGenerator[K],
@@ -317,11 +329,6 @@ class IndCca2(Ind[K]):
         We will need to keep track of the challenge ctext created by
         encrypt_one to prevent any decryption of it.
         """
-
-    def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
-        ctext = super().encrypt_one(m0, m1)
-        self._challenge_ctexts.add(hash_bytes(ctext))
-        return ctext
 
     def decrypt(self, ctext: bytes) -> bytes:
         if hash_bytes(ctext) in self._challenge_ctexts:
@@ -373,8 +380,3 @@ class IndCca1(Ind[K]):
         We will need to keep track of the challenge ctext created by
         encrypt_one to prevent any decryption of it.
         """
-
-    def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
-        ctext = super().encrypt_one(m0, m1)
-        self._challenge_ctexts.add(hash_bytes(ctext))
-        return ctext

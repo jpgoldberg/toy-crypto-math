@@ -190,6 +190,9 @@ Types for setup functions
 Types for state management
 ---------------------------
 
+There are a number of type-like things used for managing state
+and what can be done in each state.
+
 .. autoenum:: State
     :members:
 
@@ -209,6 +212,7 @@ All of the specific game classes are subclasses of the :class:`Ind` class.
 
 .. autoclass:: Ind
     :class-doc-from: both
+    :members: TRACK_CHALLENGE_CTEXTS
 
 The classes only [#only]_ differ in which methods they offer and the sequence in which they are called.
 That ordiering defined by the transition tables in :data:`T_TABLE`
@@ -239,7 +243,7 @@ The only difference between :class:`IndEav` and :class:`IndCpa` is that the latt
 .. autoclass:: IndEav
     :class-doc-from: both
 
-     .. autodata:: toy_crypto.sec_games.IndEav.T_TABLE
+    .. autodata:: toy_crypto.sec_games.IndEav.T_TABLE
         :annotation:
 
     .. pprint:: toy_crypto.sec_games.IndEav.T_TABLE
@@ -249,6 +253,8 @@ The only difference between :class:`IndEav` and :class:`IndCpa` is that the latt
         :alt: State transition diagram generated from T_TABLE
 
         IND-EAV game states and transitions
+
+    .. autoattribute:: toy_crypto.sec_games.IndEav.TRACK_CHALLENGE_CTEXTS
 
 .. autoclass:: toy_crypto.sec_games.IndCpa
     :class-doc-from: both
@@ -264,6 +270,8 @@ The only difference between :class:`IndEav` and :class:`IndCpa` is that the latt
         :alt: State transition diagram generated from T_TABLE
 
         IND-CPA game states and transitions
+
+    .. autoattribute:: toy_crypto.sec_games.IndCpa.TRACK_CHALLENGE_CTEXTS
 
 The only difference between :class:`IndCca1` and :class:`IndCca2` is 
 the latter allows calls to :func:`~IndCca2.decrypt` the challenge ciphertext
@@ -285,10 +293,12 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
 
         IND-CCA1 game states and transitions
 
+    .. autoattribute:: toy_crypto.sec_games.IndCca1.TRACK_CHALLENGE_CTEXTS
+
 .. autoclass:: toy_crypto.sec_games.IndCca2
     :class-doc-from: both
 
-     .. autodata:: toy_crypto.sec_games.IndCca2.T_TABLE
+    .. autodata:: toy_crypto.sec_games.IndCca2.T_TABLE
         :annotation:
 
     .. pprint:: toy_crypto.sec_games.IndCca2.T_TABLE
@@ -297,7 +307,10 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
         :align: center
         :alt: State transition diagram generated from T_TABLE
 
-        IND-CCA1 game states and transitions
+        IND-CCA2 game states and transitions
+
+    .. autoattribute:: toy_crypto.sec_games.IndCca2.TRACK_CHALLENGE_CTEXTS
+    
 
 .. rubric:: Footnotes
 

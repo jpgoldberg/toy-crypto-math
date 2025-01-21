@@ -127,6 +127,23 @@ class Ind(Generic[K]):
             raise StateError(f"{name} not allowed in state {self._state}")
         self._state = (self._t_table[self._state])[name]
 
+    # This abomination is inspired by
+    #    https://stackoverflow.com/a/38286176/1304076
+    @staticmethod
+    def _state_wrap(fn):  # type: ignore
+        f_name = fn.__name__
+
+        def decorator(self, *args, **kwargs):  # type: ignore
+            if f_name not in self._t_table[self._state]:
+                raise StateError(
+                    f"{f_name} not allowed in state {self._state}"
+                )
+            retvalue = fn(self, *args, **kwargs)
+            self._state = (self._t_table[self._state])[f_name]
+            return retvalue
+
+        return decorator
+
     def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")
         return (  # Compiler should know this is unreachable

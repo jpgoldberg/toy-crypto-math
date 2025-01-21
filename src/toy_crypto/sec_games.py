@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 import secrets
 from typing import Any, Generic, Optional, TypeVar, cast, Protocol
+from functools import wraps
 from toy_crypto.types import SupportsBool
 from toy_crypto.utils import hash_bytes
 
@@ -86,7 +87,8 @@ class TransitionTable:
 class SupportsTTable(Protocol):
     """Has what it takes to be decorated by :func:`manage_state`."""
 
-    _t_table: TransitionTable
+    t_table: TransitionTable
+    current_state: State
     _state: State
 
 
@@ -98,11 +100,14 @@ def manage_state[F: Callable[..., Any]](fn: F) -> F:
     """Decorator to check/transition state for Ind method calls."""
     action = Action(fn.__name__)
 
+    @wraps(fn)
     def decorator(self: SupportsTTable, *args, **kwargs):  # type: ignore
-        if action not in self._t_table[self._state]:
-            raise StateError(f"{action} not allowed in state {self._state}")
+        if action not in self.t_table[self.current_state]:
+            raise StateError(
+                f"{action} not allowed in state {self.current_state}"
+            )
         retvalue = fn(self, *args, **kwargs)
-        self._state = (self._t_table[self._state])[action]
+        self._state = (self.t_table[self._state])[action]
         return retvalue
 
     return cast(F, decorator)
@@ -146,6 +151,14 @@ class Ind(Generic[K]):
         self._t_table = TransitionTable({})
         if transition_table:
             self._t_table = transition_table
+
+    @property
+    def t_table(self) -> TransitionTable:
+        return self._t_table
+
+    @property
+    def current_state(self) -> State:
+        return self._state
 
     def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")

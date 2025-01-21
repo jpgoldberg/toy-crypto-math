@@ -162,18 +162,15 @@ Exceptions
 ============
 .. autoclass:: StateError
 
-Type aliases and parameters
-===========================
+Types for encryption scheme
+============================
 
-There are a number of types, type aliases [#alias[_,
-and type parameters
-defined in this module. Some are used to describe the functions
-that are passed to the various game classes.
-Others are used for what passes for the state management within
-the games.
+When a game is set up, it must be given an encryption scheme,
+which will include a key generation function, an encryption function,
+and optionally a decryption function.
 
-Types for setup functions
---------------------------
+Spinx doesn't seem to have good ways of documenting these,
+but hopefully what I list here makes some sense.
 
 .. autoclass:: K
 
@@ -186,24 +183,6 @@ Types for setup functions
 
     A parameterized type alias to describe the encryptor/decrptor functions.
     defined as :code:`Callable[[K, bytes], bytes]`
-
-Types for state management
----------------------------
-
-There are a number of type-like things used for managing state
-and what can be done in each state.
-
-.. autoenum:: State
-    :members:
-
-.. autoenum:: Action
-    :members:
-
-.. autoclass:: TransitionTable
-    :class-doc-from: class
-    :members: keys, __getitem__
-
-
 
 The class and method organization
 ==================================
@@ -310,7 +289,34 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
         IND-CCA2 game states and transitions
 
     .. autoattribute:: toy_crypto.sec_games.IndCca2.TRACK_CHALLENGE_CTEXTS
+
+
+State management tools
+==============================
+
+As described above, the difference between the particular gaves is defined
+by what action the adversary can take when.
+This is specified within the :class:`TransitionTable` for each.
+
+.. autoenum:: State
+    :members:
+
+.. autoenum:: Action
+    :members:
+
+.. autoclass:: TransitionTable
+    :class-doc-from: class
+    :members: keys, __getitem__
+
+.. autoprotocol:: SupportsTTable
     
+    This protocol also depends on a private member. See source if you need to 
+    make this work for something other than an :class:`Ind`.
+
+Each method that the adversary can call is wrapped by the :deco:`manage_state` decorator
+
+.. autodecorator:: manage_state
+
 
 .. rubric:: Footnotes
 

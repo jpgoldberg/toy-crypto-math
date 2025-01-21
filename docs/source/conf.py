@@ -38,6 +38,9 @@ release = version
 author = ",".join([author["name"] for author in pyproject["authors"]])
 copyright = f"2024–2025 {author}"
 
+github_username = "jpgoldberg"
+github_repository = "https://github.com/jpgoldberg/toy-crypto-math"
+
 
 # From https://github.com/sphinx-doc/sphinx/issues/11548#issuecomment-1693689611
 
@@ -79,9 +82,12 @@ class PrettyPrintIterable(Directive):
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions: list[str] = [
+    "sphinx_toolbox.more_autodoc.augment_defaults",
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
     "enum_tools.autoenum",
+    "sphinx_toolbox.decorators",
+    "sphinx_toolbox.more_autodoc",
 ]
 
 autodoc_typehints = "both"

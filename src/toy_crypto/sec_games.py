@@ -2,7 +2,7 @@ from collections.abc import Callable, KeysView, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 import secrets
-from typing import Generic, Optional, TypeVar
+from typing import Any, Generic, Optional, TypeVar, cast, Protocol
 from toy_crypto.types import SupportsBool
 from toy_crypto.utils import hash_bytes
 
@@ -83,6 +83,31 @@ class TransitionTable:
         return result
 
 
+class SupportsTTable(Protocol):
+    """Has what it takes to be decorated by :func:`manage_state`."""
+
+    _t_table: TransitionTable
+    _state: State
+
+
+# This lexical scoping trickery is based on
+#    https://stackoverflow.com/a/38286176/1304076
+# with a hat tip to https://www.reddit.com/user/GeorgeFranklyMathnet/
+#  https://www.reddit.com/r/learnpython/comments/1i34vgh/comment/m7k6hgn/
+def manage_state[F: Callable[..., Any]](fn: F) -> F:
+    """Decorator to check/transition state for Ind method calls."""
+    action = Action(fn.__name__)
+
+    def decorator(self: SupportsTTable, *args, **kwargs):  # type: ignore
+        if action not in self._t_table[self._state]:
+            raise StateError(f"{action} not allowed in state {self._state}")
+        retvalue = fn(self, *args, **kwargs)
+        self._state = (self._t_table[self._state])[action]
+        return retvalue
+
+    return cast(F, decorator)
+
+
 class Ind(Generic[K]):
     T_TABLE: TransitionTable
 
@@ -122,28 +147,6 @@ class Ind(Generic[K]):
         if transition_table:
             self._t_table = transition_table
 
-    def _handle_state(self, name: Action) -> None:
-        if name not in self._t_table[self._state]:
-            raise StateError(f"{name} not allowed in state {self._state}")
-        self._state = (self._t_table[self._state])[name]
-
-    # This abomination is inspired by
-    #    https://stackoverflow.com/a/38286176/1304076
-    @staticmethod
-    def _state_wrap(fn):  # type: ignore
-        f_name = fn.__name__
-
-        def decorator(self, *args, **kwargs):  # type: ignore
-            if f_name not in self._t_table[self._state]:
-                raise StateError(
-                    f"{f_name} not allowed in state {self._state}"
-                )
-            retvalue = fn(self, *args, **kwargs)
-            self._state = (self._t_table[self._state])[f_name]
-            return retvalue
-
-        return decorator
-
     def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")
         return (  # Compiler should know this is unreachable
@@ -152,18 +155,21 @@ class Ind(Generic[K]):
             b" And its fate is still unlearned.",
         )
 
+    @manage_state
     def initialize(self) -> None:
         """Initializes self by creating key and selecting b.
 
+        Also clears an saved challenge ciphertexts.
+
         :raises StateError: if method called when disallowed.
         """
-        whoami = Action.INITIALIZE
-        self._handle_state(whoami)
+
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
         self._challenge_ctexts = set()
 
+    @manage_state
     def encrypt_one(self, m0: bytes, m1: bytes) -> bytes:
         """Left-Right encryption oracle.
 
@@ -174,9 +180,6 @@ class Ind(Generic[K]):
         :raise ValueError: if lengths of m0 and m1 are not equal.
         :raises StateError: if method called when disallowed.
         """
-
-        whoami = Action.ENCRYPT_ONE
-        self._handle_state(whoami)
 
         if self._b is None or self._key is None:
             raise StateError("key should exist in this state")
@@ -191,28 +194,26 @@ class Ind(Generic[K]):
             self._challenge_ctexts.add(hash_bytes(ctext))
         return ctext
 
+    @manage_state
     def encrypt(self, ptext: bytes) -> bytes:
         """Encryption oracle.
 
         :param ptext: Message to be encrypted
         :raises StateError: if method called when disallowed.
         """
-        whoami = Action.ENCRYPT
-        self._handle_state(whoami)
 
         if self._key is None:
             raise StateError("key should exist in this state")
 
         return self._encryptor(self._key, ptext)
 
+    @manage_state
     def decrypt(self, ctext: bytes) -> bytes:
         """Decryption oracle.
 
         :param ctext: Ciphertext to be decrypted
         :raises StateError: if method called when disallowed.
         """
-        whoami = Action.DECRYPT
-        self._handle_state(whoami)
 
         if self._key is None:
             raise StateError("key should exist in this state")
@@ -224,22 +225,15 @@ class Ind(Generic[K]):
 
         return self._decryptor(self._key, ctext)
 
+    @manage_state
     def finalize(self, guess: SupportsBool) -> bool:
         """
         True iff guess is the same as b of previously created challenger.
 
-        Also resets the challenger, as for this game you cannot call with
-        same key, b pair more than once.
-
         :raises StateError: if method called when disallowed.
         """
 
-        whoami = Action.FINALIZE
-        self._handle_state(whoami)
-
-        adv_wins = guess == self._b
-
-        return adv_wins
+        return guess == self._b
 
 
 class IndCpa(Ind[K]):

@@ -194,7 +194,7 @@ All of the specific game classes are subclasses of the :class:`Ind` class.
     :class-doc-from: both
     :members: TRACK_CHALLENGE_CTEXTS
 
-The classes only [#only]_ differ in which methods they offer and the sequence in which they are called.
+The classes optionally differ in which methods they offer and the sequence in which they are called.
 That ordiering defined by the transition tables in :data:`T_TABLE`
 with the initial stated being :data:`State.STARTED`.
 
@@ -328,8 +328,4 @@ Each method that the adversary can call is wrapped by the :deco:`manage_state` d
     And so I didn't want to user to have to create a large number of
     instances of a game class and have to
     rely on the Python garbage collector to free up memory.
-
-.. [#only] Well, *almost* only.
-   Specific games may introduce specifc checks on input,
-   and so will wrap the ``Ind`` class methods.
 

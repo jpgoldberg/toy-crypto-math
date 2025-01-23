@@ -196,9 +196,9 @@ class Ind(Generic[K]):
 
         # If these are None at this point, you've got a bad TransitionTable.
         cast(bool, self._b)
+        cast(K, self._key)
 
-        # Apparently cast to type parameter doesn't seem to work
-        # cast(K, self._key)
+        # Hmm, casts aren't working for me.
         assert self._key is not None
 
         if len(m0) != len(m1):

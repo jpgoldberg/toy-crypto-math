@@ -89,7 +89,7 @@ extensions: list[str] = [
     "enum_tools.autoenum",
     "sphinx_toolbox.decorators",
     "sphinx_toolbox.more_autodoc",
-    'sphinx_toolbox.more_autodoc.genericalias',
+    "sphinx_toolbox.more_autodoc.genericalias",
 ]
 
 autodoc_typehints = "both"

@@ -194,8 +194,12 @@ class Ind(Generic[K]):
         :raises StateError: if method called when disallowed.
         """
 
-        if self._b is None or self._key is None:
-            raise StateError("key should exist in this state")
+        # If these are None at this point, you've got a bad TransitionTable.
+        cast(bool, self._b)
+
+        # Apparently cast to type parameter doesn't seem to work
+        # cast(K, self._key)
+        assert self._key is not None
 
         if len(m0) != len(m1):
             raise ValueError("Message lengths must be equal")
@@ -215,9 +219,7 @@ class Ind(Generic[K]):
         :raises StateError: if method called when disallowed.
         """
 
-        if self._key is None:
-            raise StateError("key should exist in this state")
-
+        assert self._key is not None
         return self._encryptor(self._key, ptext)
 
     @manage_state
@@ -228,8 +230,7 @@ class Ind(Generic[K]):
         :raises StateError: if method called when disallowed.
         """
 
-        if self._key is None:
-            raise StateError("key should exist in this state")
+        assert self._key is not None
 
         if hash_bytes(ctext) in self._challenge_ctexts:
             raise Exception(
@@ -334,7 +335,7 @@ class IndCca2(Ind[K]):
         encryptor: Cryptor[K],
         decrytpor: Cryptor[K],
     ) -> None:
-        """IND-CCA game.
+        """IND-CCA2 game.
 
         :param key_gen: A key generation function appropriate for encryptor
         :param encryptor:
@@ -348,18 +349,6 @@ class IndCca2(Ind[K]):
             key_gen=key_gen, encryptor=encryptor, decryptor=decrytpor
         )
         self._t_table = self.T_TABLE
-
-        """
-        We will need to keep track of the challenge ctext created by
-        encrypt_one to prevent any decryption of it.
-        """
-
-    def decrypt(self, ctext: bytes) -> bytes:
-        if hash_bytes(ctext) in self._challenge_ctexts:
-            raise Exception(
-                "Adversary is not allowed to call decrypt on challenge ctext"
-            )
-        return super().decrypt(ctext)
 
 
 class IndCca1(Ind[K]):
@@ -385,7 +374,7 @@ class IndCca1(Ind[K]):
         encryptor: Cryptor[K],
         decrytpor: Cryptor[K],
     ) -> None:
-        """IND-CCA game.
+        """IND-CCA1 game.
 
         :param key_gen: A key generation function appropriate for encryptor
         :param encryptor:
@@ -399,8 +388,3 @@ class IndCca1(Ind[K]):
             key_gen=key_gen, encryptor=encryptor, decryptor=decrytpor
         )
         self._t_table = self.T_TABLE
-
-        """
-        We will need to keep track of the challenge ctext created by
-        encrypt_one to prevent any decryption of it.
-        """

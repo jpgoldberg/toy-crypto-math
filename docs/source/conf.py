@@ -85,12 +85,15 @@ extensions: list[str] = [
     "sphinx_toolbox.more_autodoc.augment_defaults",
     "sphinx.ext.autodoc",
     "sphinx.ext.doctest",
+    "sphinx.ext.viewcode",
     "enum_tools.autoenum",
     "sphinx_toolbox.decorators",
     "sphinx_toolbox.more_autodoc",
+    'sphinx_toolbox.more_autodoc.genericalias',
 ]
 
 autodoc_typehints = "both"
+autodoc_show_sourcelink = True
 
 extensions.append("sphinx.ext.intersphinx")
 intersphinx_mapping = {

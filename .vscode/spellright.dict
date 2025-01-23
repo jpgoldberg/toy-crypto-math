@@ -14,3 +14,9 @@ whoami
 decryptor
 hashable
 pprint
+autodoc
+doctest
+viewcode
+autoenum
+genericalias
+intersphinx

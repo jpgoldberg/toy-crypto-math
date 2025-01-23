@@ -172,17 +172,18 @@ and optionally a decryption function.
 Spinx doesn't seem to have good ways of documenting these,
 but hopefully what I list here makes some sense.
 
-.. autoclass:: K
+.. autotypevar:: K
 
-.. py:data:: KeyGenerator
+.. type:: KeyGenerator
+    :canonical: Callable[[], K]
 
-    A parameterized type alias to describe the key generator functions.
-    defined as :code:`Callable[[], K]`
+    A parameterized type alias for the key generation function.
 
-.. py:data:: Cryptor
+.. type:: Cryptor
+    :canonical: Callable[[K, bytes], bytes]
 
     A parameterized type alias to describe the encryptor/decrptor functions.
-    defined as :code:`Callable[[K, bytes], bytes]`
+
 
 The class and method organization
 ==================================

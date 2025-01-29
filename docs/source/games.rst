@@ -14,7 +14,8 @@ Security games
 .. currentmodule:: toy_crypto.sec_games
 
 The module includes a classes for running the several 
-ciphertext indistisguishability games for symmetric encryption game.
+:wikipedia:`ciphertext indistisguishability <Ciphertext indistinguishability>` 
+games for symmetric encryption game.
 
 General Structure
 ==================

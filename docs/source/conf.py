@@ -88,6 +88,8 @@ extensions: list[str] = [
     "sphinx.ext.viewcode",
     "enum_tools.autoenum",
     "sphinx_toolbox.decorators",
+    "sphinx_toolbox.wikipedia",
+    "sphinx_toolbox.installation",
     "sphinx_toolbox.more_autodoc",
     "sphinx_toolbox.more_autodoc.genericalias",
 ]

@@ -9,10 +9,16 @@ This module is imported with::
 
 .. currentmodule:: toy_crypto.birthday
 
-The classic Birthday Paradox example is to estimate the number of individuals (whose birthdays are uniformly distributed among 365 days of the year) for there to be at least a 0.5 probability of there being at least one pair of individuals who share the same birthday.
+The classic :wikipedia:`Birthday problem` example is
+to estimate the number of individuals
+(whose birthdays are uniformly distributed among 365 days of the year)
+for there to be at least a 0.5 probability of there being at least one pair of individuals who share the same birthday.
 
-The function that returns a propbably is named :func:`P`, and the one that returns a quantile is named :func:`Q`.
-This follows the pattern of R's ``qbirthday`` and ``pbirthday``.
+The function that returns a propbably is named :func:`P`,
+and the one that returns a quantile is named :func:`Q`.
+This follows the R conventions
+[:cite:label:`RProject`]
+as reflected in R's ``qbirthday`` and ``pbirthday`` functions.
 
 .. testcode::
 

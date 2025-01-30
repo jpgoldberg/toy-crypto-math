@@ -92,13 +92,15 @@ b'Attack at dusk!'
 Encodings for the RSA 129 challenge
 -------------------------------------
 
-When the 
-:wikipedia:`RSA 129 challenge <The Magic Words are Squeamish Ossifrage>`
-was first published :cite:p:`Gardner77:RSA`
-it used its own encoding scheme between text and integers.
+Martin :cite:authors:`Gardner77:RSA` first reported the Rivest, Shamir, and Adleman (RSA) in :cite:year:`Gardner77:RSA`.
+The examples and challenge described in it used an encoding scheme
+between text and (large) integers.
 This class provides an encoder and decoder for that scheme.
 
-We will take the plaintext, decrypted in 1994 :cite:p:`AtkinsETAL1995:squeamish`,
+We will take the magic words, decrypted in
+:cite:year:`AtkinsETAL1995:squeamish` by
+:cite:authors:`AtkinsETAL1995:squeamish`
+with the help of a large number of volunteers,
 from that challenge for our example:
 
 
@@ -118,7 +120,3 @@ And we will use an example from :cite:p:`Gardner77:RSA`.
 
 .. autoclass:: Rsa129
     :members:
-
-.. rubric:: References
-
-.. bibliography::

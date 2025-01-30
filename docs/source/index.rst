@@ -57,4 +57,5 @@ Table of Contents
   birthday
   types
   vigenere
+  bibliography
    

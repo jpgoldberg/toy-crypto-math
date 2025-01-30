@@ -84,5 +84,25 @@ class TestXor:
         assert m_idx == s_modulus * 10
 
 
+class TestRsa29Encoding:
+    vectors: list[tuple[str, int]] = [
+        ("ITS ALL GREEK TO ME", 9201900011212000718050511002015001305),
+        (
+            "THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE",
+            200805001301070903002315180419000118050019172105011309190800151919090618010705,
+        ),
+    ]
+
+    def test_encode(self) -> None:
+        for s, n in self.vectors:
+            encoded = utils.Rsa129.encode(s)
+            assert encoded == n
+
+    def test_decode(self) -> None:
+        for s, n in self.vectors:
+            decoded = utils.Rsa129.decode(n)
+            assert decoded == s
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

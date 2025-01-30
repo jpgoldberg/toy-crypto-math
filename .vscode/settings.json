@@ -12,5 +12,6 @@
         "latex",
         "plaintext",
         "python"
-    ]
+    ],
+    "python.analysis.typeEvaluation.disableBytesTypePromotions": true
 }

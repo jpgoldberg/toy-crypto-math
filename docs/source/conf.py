@@ -103,6 +103,10 @@ intersphinx_mapping = {
     "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
 
+extensions.append('sphinxcontrib.bibtex')
+bibtex_bibfiles = ['refs.bib']
+bibtex_reference_style = "author_year"
+
 
 def setup(app: Sphinx) -> None:
     """Set up the final Sphinx application.

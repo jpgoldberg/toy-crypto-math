@@ -22,6 +22,8 @@ Idetally the solution would be to use
 
 but that leads to erroneous results due to the precision limitations
 of :py:func:`math.log`.
+So a different approach is taken which correctly handles cases that
+would otherwise fail.
 
 >>> from toy_crypto.utils import digit_count
 >>> digit_count(999)
@@ -44,9 +46,8 @@ of :py:func:`math.log`.
 .. autofunction:: lsb_to_msb
 
 :func:`~toy_crypto.utils.lsb_to_msb` is used by
-:func:`~toy_crypto.ec.Point.scaler_multiply` and would be used by modular exponentiation
-for implementations of those that leak the bits of the scalar (or exponent)
-through side channels. 
+:func:`~toy_crypto.ec.Point.scaler_multiply`
+and would be used by modular exponentiation if I had included that.
 
 >>> from toy_crypto.utils import lsb_to_msb
 >>> list(lsb_to_msb(13))
@@ -91,9 +92,33 @@ b'Attack at dusk!'
 Encodings for the RSA 129 challenge
 -------------------------------------
 
-When the RSA 129 challenge was first published in *Scientific American* in 1979
+When the 
+:wikipedia:`RSA 129 challenge <The Magic Words are Squeamish Ossifrage>`
+was first published :cite:p:`Gardner77:RSA`
 it used its own encoding scheme between text and integers.
 This class provides an encoder and decoder for that scheme.
 
+We will take the plaintext, decrypted in 1994 :cite:p:`AtkinsETAL1995:squeamish`,
+from that challenge for our example:
+
+
+>>> from toy_crypto.utils import Rsa129
+>>> decrypted = 200805001301070903002315180419000118050019172105011309190800151919090618010705
+>>> Rsa129.decode(decrypted)
+'THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE'
+
+And we will use an example from :cite:p:`Gardner77:RSA`.
+
+>>> latin_text = "ITS ALL GREEK TO ME"
+>>> encoded = Rsa129.encode(latin_text)
+>>> encoded
+9201900011212000718050511002015001305
+>>> assert Rsa129.decode(encoded) == latin_text
+
+
 .. autoclass:: Rsa129
     :members:
+
+.. rubric:: References
+
+.. bibliography::

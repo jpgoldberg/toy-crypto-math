@@ -87,14 +87,23 @@ extensions: list[str] = [
     "sphinx.ext.doctest",
     "sphinx.ext.viewcode",
     "enum_tools.autoenum",
+    "sphinx_toolbox.github",
     "sphinx_toolbox.decorators",
     "sphinx_toolbox.wikipedia",
     "sphinx_toolbox.installation",
-    "sphinx_toolbox.more_autodoc",
+ #   "sphinx_toolbox.more_autodoc",
+    "sphinx_autodoc_typehints",
+    "sphinx_toolbox.more_autodoc.autoprotocol",
     "sphinx_toolbox.more_autodoc.genericalias",
 ]
 
 autodoc_typehints = "both"
+typehints_use_signature = True
+typehints_use_signature_return = True
+always_document_param_types = True
+typehints_defaults = "comma"
+
+
 autodoc_show_sourcelink = True
 
 extensions.append("sphinx.ext.intersphinx")

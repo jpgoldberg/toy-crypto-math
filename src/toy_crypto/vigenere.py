@@ -270,7 +270,7 @@ def probable_keysize(
     :param ciphertext: The ciphertext.
     :param min_size: The minimum key length to try.
     :param max_size: The maximum key length to try.
-    :param: trial_pairs: The number of pairs of blocks to test.
+    :param trial_pairs: The number of pairs of blocks to test.
 
     :return: Returns list sorted by scores of (keysize, score)
 

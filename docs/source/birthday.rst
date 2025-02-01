@@ -53,3 +53,17 @@ The :mod:`birthday` functions
 .. automodule:: toy_crypto.birthday
     :synopsis: Birthday problem computations
     :members:
+
+Implementation proted from R
+------------------------------
+
+It was not a simple matter for me to find or construct an algorithm that 
+produces reasonable approximations in a reasonably efficient way for the
+ranges of numbers I wished to consider.
+Eventually I found the solution used by :cite:t:`RProject`
+in `R's birthday.R source <https://github.com/wch/r-source/blob/trunk/src/library/stats/R/birthday.R>`__, which credits :cite:t:`DiaconisMosteller1989`.
+
+My port of that implementation to Python only changes the conditions underwhich 
+the approximate method is used along with some internal variable naming and c
+ommenting to help me better understand the algorithm and its implementation.
+

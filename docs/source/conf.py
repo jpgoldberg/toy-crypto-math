@@ -91,7 +91,7 @@ extensions: list[str] = [
     "sphinx_toolbox.decorators",
     "sphinx_toolbox.wikipedia",
     "sphinx_toolbox.installation",
- #   "sphinx_toolbox.more_autodoc",
+    #   "sphinx_toolbox.more_autodoc",
     "sphinx_autodoc_typehints",
     "sphinx_toolbox.more_autodoc.autoprotocol",
     "sphinx_toolbox.more_autodoc.genericalias",
@@ -112,8 +112,8 @@ intersphinx_mapping = {
     "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
 
-extensions.append('sphinxcontrib.bibtex')
-bibtex_bibfiles = ['refs.bib']
+extensions.append("sphinxcontrib.bibtex")
+bibtex_bibfiles = ["refs.bib"]
 bibtex_reference_style = "author_year"
 
 

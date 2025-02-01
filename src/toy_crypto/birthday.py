@@ -66,7 +66,8 @@ def P(
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
 
-    :raises ValueError: if not all arguments are positive integers.
+    :raises ValueError: if any of :data:`n`, :data:`classes`,
+        or :data:`coincident` are less than 1.
     """
     c = classes
     k = coincident
@@ -95,15 +96,23 @@ def P(
 def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     """Returns minimum number n to get a probability of p for c classes.
 
-    :raises ValueError: if prop is not a probability.
+    :raises ValueError: if :data:`prob` is less than 0 or greater than 1.
+    :raises ValueError: if :data:`classes` is less than 1.
+    :raises ValueError: if :data:`coincident` is less than 1.
     """
 
-    # Use DM69 notation
+    if not types.is_prob(prob):
+        raise ValueError(f"{prob} is not a valid probability")
+
+    if classes < 1:
+        raise ValueError("classes must be positive")
+    if coincident < 1:
+        raise ValueError("coincident must be positive")
+
+    # Use DM69 notation so I can better connect code to published method.
     p = prob
     c = classes
     k = coincident
-    if not types.is_prob(p):
-        raise ValueError(f"p ({p}) must be a probability")
 
     if p > MAX_QBIRTHDAY_P:
         return c * (k - 1) + 1

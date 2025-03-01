@@ -1,7 +1,9 @@
 import math
 import secrets
-from collections.abc import MutableSequence
-from typing import Any
+from bisect import bisect
+from collections.abc import MutableSequence, Sequence
+from itertools import accumulate, repeat
+from typing import Any, Optional
 
 
 def randrange(*args: int) -> int:
@@ -74,3 +76,53 @@ def random() -> float:
         x = secrets.randbits(32)
         exponent += x.bit_length() - 32
     return math.ldexp(mantissa, exponent)
+
+
+def choices[T](
+    population: Sequence[T],
+    weights: Optional[Sequence[float]] = None,
+    *,
+    cum_weights: Optional[Sequence[float]] = None,
+    k: int = 1,
+) -> Sequence[T]:
+    """Return a k sized list of population elements chosen with replacement.
+
+    If the relative weights or cumulative weights are not specified,
+    the selections are made with equal probability.
+
+    This is the same as :py:func:`random.choices` except that it uses the
+    the random number generator from :py:mod:1secrets`.
+    Indeed, the implementation is just copied from that source.
+    """
+
+    # copied from https://github.com/python/cpython/blob/3.13/Lib/random.py#L458
+    # except with static typing
+    # and less abstract naming conventions for imported things
+    n = len(population)
+    if cum_weights is None:
+        if weights is None:
+            floor = math.floor
+            return [population[floor(random() * n)] for i in repeat(None, k)]
+        try:
+            cum_weights = list(accumulate(weights))
+        except TypeError:
+            if not isinstance(weights, int):
+                raise
+            k = weights
+            raise TypeError(
+                f"The number of choices must be a keyword argument: {k=}"
+            ) from None
+    elif weights is not None:
+        raise TypeError("Cannot specify both weights and cumulative weights")
+    if len(cum_weights) != n:
+        raise ValueError("The number of weights does not match the population")
+    total = float(cum_weights[-1])
+    if total <= 0.0:
+        raise ValueError("Total of weights must be greater than zero")
+    if not math.isfinite(total):
+        raise ValueError("Total of weights must be finite")
+    hi = n - 1
+    return [
+        population[bisect(cum_weights, random() * total, 0, hi)]
+        for i in repeat(None, k)
+    ]

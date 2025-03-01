@@ -393,3 +393,39 @@ class Sieve:
             raise ValueError("n cannot exceed count")
 
         return count_n(self._cached_array, n)
+
+
+def python_sieve(n: int) -> list[int]:
+    """Returns sorted list of primes +< n.
+
+    A pure Python (memory hogging) Sieve of Eratosthenes.
+    This consumes lots of memory, and is here only to
+    illustrate the algorithm.
+    """
+
+    if n < 2:
+        return []
+
+    # This is where the heavy memory consumption comes in.
+    # Use numpy or bitarray for vast improvements in space
+    # and time.
+    sieve: set[int] = set(range(2, n + 1))
+
+    # We go through what remains in the sieve in numeric order,
+    # eliminating multiples of what we find.
+    #
+    # We only need to go up to and including the square root of n,
+    # remove all non-primes above that square-root =< n.
+    for p in range(2, math.isqrt(n) + 1):
+        if p in sieve:
+            top_multiplier = n // p
+
+            # Because we are going through sieve in numeric order
+            # we know that multiples of anything less than p have
+            # already been removed, so p is prime.
+            # Our job is to now remove multiples of p
+            # higher up in the sieve.
+            for m in range(p * p, top_multiplier + 1, p):
+                sieve.discard(m)
+
+    return sorted(sieve)

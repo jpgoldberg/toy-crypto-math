@@ -278,6 +278,17 @@ class TestSieve:
         # large underlying sieve leaves s30's behavior unchanged
         assert s30.to01() == expected
 
+    def test_py_sieve(self) -> None:
+        p_below_100: list[int] = [
+            2, 3, 5, 7, 11, 13, 17, 19,
+            23, 29, 31, 37, 41, 43, 47,
+            53, 59, 61, 67, 71, 73,
+            79, 83, 89, 97,
+        ]  # fmt: skip
+
+        result = nt.python_sieve(100)
+        assert result == p_below_100
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

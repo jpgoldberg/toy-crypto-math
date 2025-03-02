@@ -2,10 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
+import itertools
 import math
 from collections import UserList
 from collections.abc import Iterator, Iterable
 import gc
+import operator
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 import primefac
@@ -396,13 +398,6 @@ class Sieve:
         return count_n(self._cached_array, n)
 
 
-def _exp_gen(base: int = 10) -> Generator[int]:
-    prod = base
-    while True:
-        yield prod
-        prod *= base
-
-
 def python_sieve(n: int) -> list[int]:
     """Returns sorted list primes n =< n
 
@@ -423,7 +418,7 @@ def python_sieve(n: int) -> list[int]:
     # so if we periodically call the garbage collector we should
     # be able to reduce how long the holds on to the memory.
     # So we set up iterator of trash removal times
-    trash_days = _exp_gen()
+    trash_days = itertools.accumulate(itertools.repeat(10), func=operator.mul)
     next_trash_day = next(trash_days)
 
     # We go through what remains in the sieve in numeric order,
@@ -431,7 +426,7 @@ def python_sieve(n: int) -> list[int]:
     #
     # We only need to go up to and including the square root of n,
     # remove all non-primes above that square-root =< n.
-    for p in range(2, n + 1):
+    for p in range(2, math.isqrt(n) + 1):
         if p > next_trash_day:
             gc.collect()
             next_trash_day = next(trash_days)

@@ -259,35 +259,57 @@ class TestMath:
 
 
 class TestSieve:
+    expected30 = "001101010001010001010001000001"
+    """stringy bitarray for primes below 30"""
+
+    primes100: list[int] = [
+        2, 3, 5, 7, 11, 13, 17, 19,
+        23, 29, 31, 37, 41, 43, 47,
+        53, 59, 61, 67, 71, 73,
+        79, 83, 89, 97,
+    ]  # fmt: skip
+    """primes below 100"""
+
     def test_sieve_30(self) -> None:
+        nt.Sieve.clear()
         s30 = nt.Sieve(30)
-        expected = "001101010001010001010001000001"
         s30_count = 10
 
-        assert s30.to01() == expected
+        assert s30.to01() == self.expected30
         assert s30_count == s30.count
 
+    def test_cache(self) -> None:
         # test that s30 still behaves as if it is 30 even if we create
         # a larger internal sieve
+
+        nt.Sieve.clear()
+        s30 = nt.Sieve(30)
         s200 = nt.Sieve(200)
 
         # test that the larger sieve was indeed created
         s200_count = 46  # primes below 200
         assert s200.count == s200_count
 
-        # large underlying sieve leaves s30's behavior unchanged
-        assert s30.to01() == expected
+        # larger underlying sieve leaves s30's behavior unchanged
+        assert s30.to01() == self.expected30
+
+    def test_clear(self) -> None:
+        s30 = nt.Sieve(30)
+        nt.Sieve.clear()
+        s = s30.to01()
+        assert s == "0011"
+
+    def test_primes(self) -> None:
+        nt.Sieve.clear()
+        s30 = nt.Sieve(30)
+        expected = [p for p in self.primes100 if p < 30]
+
+        primes = list(s30.primes())
+        assert primes == expected
 
     def test_py_sieve(self) -> None:
-        p_below_100: list[int] = [
-            2, 3, 5, 7, 11, 13, 17, 19,
-            23, 29, 31, 37, 41, 43, 47,
-            53, 59, 61, 67, 71, 73,
-            79, 83, 89, 97,
-        ]  # fmt: skip
-
         result = nt.python_sieve(100)
-        assert result == p_below_100
+        assert result == self.primes100
 
 
 if __name__ == "__main__":

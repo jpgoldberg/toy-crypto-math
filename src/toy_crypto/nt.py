@@ -2,13 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-import itertools
 import math
 from collections import UserList
 from collections.abc import Iterator, Iterable
 import gc
-import operator
-from typing import Any, Generator, NewType, Optional, Self, TypeGuard
+import threading
+from typing import Any, NewType, Optional, Self, TypeGuard
 
 import primefac
 from bitarray import bitarray
@@ -319,21 +318,24 @@ class Sieve:
     We keep the largest sieve created, which will be shared
     among all instances
     """
-    _cached_array = bitarray("0011")
+
+    _lock = threading.RLock()
+    _largest_sieve = bitarray("0011")
 
     def _make_array(self, n: int) -> None:
-        len_c = len(self._cached_array)
+        len_c = len(self._largest_sieve)
         if n <= len_c:
             return
 
         len_e = n - len_c
-        # Not thread safe. Need to make this atomic
-        self._cached_array.extend([True] * len_e)
 
-        for i in range(2, isqrt(n) + 1):
-            if self._cached_array[i] is False:
-                continue
-            self._cached_array[i * i :: i] = False
+        with self._lock:
+            self._largest_sieve.extend([True] * len_e)
+
+            for i in range(2, isqrt(n) + 1):
+                if self._largest_sieve[i] is False:
+                    continue
+                self._largest_sieve[i * i :: i] = False
 
     @classmethod
     def clear(cls) -> None:
@@ -341,24 +343,21 @@ class Sieve:
 
         There is no reason to ever use this outside of performance testing.
         """
-        cls._cached_array = bitarray("0011")
+        cls._largest_sieve = bitarray("0011")
 
     def __init__(self, n: int) -> None:
         """Creates sieve covering the first n integers.
 
-        :raises TypeError: if n in not an int.
         :raises ValueError: if n < 2.
         """
 
-        if not isinstance(n, int):
-            raise TypeError
         if n < 2:
             raise ValueError("n must be greater than 2")
 
         self._make_array(n)
         self._n = n
 
-        self._count: int = self._cached_array[:n].count()
+        self._count: int = self._largest_sieve[:n].count()
         self._bitstring: Optional[str] = None
 
     @property
@@ -368,7 +367,7 @@ class Sieve:
     @property
     def array(self) -> bitarray:
         """The sieve as a bitarray."""
-        return self._cached_array[: self._n]
+        return self._largest_sieve[: self._n]
 
     @property
     def count(self) -> int:
@@ -383,7 +382,7 @@ class Sieve:
         """
 
         if self._bitstring is None:
-            self._bitstring = self._cached_array[: self._n].to01()
+            self._bitstring = self._largest_sieve[: self._n].to01()
         return self._bitstring
 
     def nth_prime(self, n: int) -> int:
@@ -395,7 +394,19 @@ class Sieve:
         if n > self._count:
             raise ValueError("n cannot exceed count")
 
-        return count_n(self._cached_array, n)
+        return count_n(self._largest_sieve, n)
+
+    def primes(self, start: int = 1) -> Iterator[int]:
+        """Iterator of primes starting at start-th prime.
+
+        The 1st prime is 2. There is no zeroth prime.
+
+        :raises ValueError: if start < 1
+        """
+        if start < 1:
+            raise ValueError("Start must be >= 1")
+        for n in range(start, self._count + 1):
+            yield count_n(self._largest_sieve, n) - 1
 
 
 def python_sieve(n: int) -> list[int]:
@@ -417,9 +428,8 @@ def python_sieve(n: int) -> list[int]:
     # Members are rapidly deleted from the sieve at first
     # so if we periodically call the garbage collector we should
     # be able to reduce how long the holds on to the memory.
-    # So we set up iterator of trash removal times
-    trash_days = itertools.accumulate(itertools.repeat(10), func=operator.mul)
-    next_trash_day = next(trash_days)
+    # So let's trigger the garbage collector faster than the default
+    gc.set_threshold(max(1000, gc.get_threshold()[0]))
 
     # We go through what remains in the sieve in numeric order,
     # eliminating multiples of what we find.
@@ -427,9 +437,6 @@ def python_sieve(n: int) -> list[int]:
     # We only need to go up to and including the square root of n,
     # remove all non-primes above that square-root =< n.
     for p in range(2, math.isqrt(n) + 1):
-        if p > next_trash_day:
-            gc.collect()
-            next_trash_day = next(trash_days)
         if p in sieve:
             # Because we are going through sieve in numeric order
             # we know that multiples of anything less than p have

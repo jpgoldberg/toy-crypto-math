@@ -117,7 +117,7 @@ class Ind(Generic[K]):
     T_TABLE: TransitionTable
 
     #: Game does not track which challenge texts have been created
-    TRACK_CHALLENGE_CTEXTS: bool = False
+    TRACK_CHALLENGE_CTEXTS: bool
 
     def __init__(
         self,
@@ -263,6 +263,9 @@ class IndCpa(Ind[K]):
     )
     """Transition table for CPA game."""
 
+    TRACK_CHALLENGE_CTEXTS = False
+    """This game does not need to record challenge ctexts."""
+
     def __init__(
         self,
         key_gen: KeyGenerator[K],
@@ -290,6 +293,9 @@ class IndEav(Ind[K]):
         }
     )
     """Transition table for EAV game"""
+
+    TRACK_CHALLENGE_CTEXTS = False
+    """This game does not need to record challenge ctexts."""
 
     def __init__(
         self,
@@ -367,6 +373,9 @@ class IndCca1(Ind[K]):
         }
     )
     """Transition table for IND-CCA1 game"""
+
+    TRACK_CHALLENGE_CTEXTS = False
+    """This game does not need to record challenge ctexts."""
 
     def __init__(
         self,

@@ -10,8 +10,18 @@ import threading
 from typing import Any, NewType, Optional, Self, TypeGuard
 
 import primefac
-from bitarray import bitarray
-from bitarray.util import count_n
+
+try:
+    from bitarray import bitarray
+    from bitarray.util import count_n
+except ImportError:
+
+    def bitarray(*args, **kwargs) -> Any:  # type: ignore
+        raise NotImplementedError("bitarray is not installed")
+
+    def count_n(*args, **kwargs) -> Any:  # type: ignore
+        raise NotImplementedError("bitarray is not installed")
+
 
 from . import types
 
@@ -312,6 +322,8 @@ class Sieve:
 
     The good parts of this implementation are lifted from the example provided
     with the `bitarray package <https://pypi.org/project/bitarray/>`_ source.
+
+    This depends on `bitarray package <https://pypi.org/project/bitarray/>`_.
     """
 
     """

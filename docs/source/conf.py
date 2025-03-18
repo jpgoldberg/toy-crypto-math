@@ -39,7 +39,7 @@ author = ",".join([author["name"] for author in pyproject["authors"]])
 copyright = f"2024–2025 {author}"
 
 github_username = "jpgoldberg"
-github_repository = "https://github.com/jpgoldberg/toy-crypto-math"
+github_repository = "toy-crypto-math"
 
 
 # From https://github.com/sphinx-doc/sphinx/issues/11548#issuecomment-1693689611

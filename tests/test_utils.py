@@ -104,5 +104,36 @@ class TestRsa29Encoding:
             assert decoded == s
 
 
+class TestSetBit:
+
+    vectors: list[tuple[int, tuple[int, bool], int]] = [
+        (0, (0, True), 1),
+        (1, (0, True), 1),
+        (1, (0, False), 0),
+        (5, (1, True), 7),
+        (5, (3, True), 13),
+        (16, (4, False), 0),
+        (16, (4, True), 16),
+        (15, (2, False), 11),
+        (15, (3, False), 7),
+    ]
+
+    def test_set_true(self) -> None:
+        for left, (bit, value), right in self.vectors:
+            if not value:
+                left, right = right, left
+            result = utils.set_bit(left, bit, True)
+            assert result == right
+
+    def test_set_false(self) -> None:
+        for left, (bit, value), right in self.vectors:
+            if value:
+                # left, right = right, left
+                continue
+            result = utils.set_bit(left, bit, False)
+            assert result == right
+
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

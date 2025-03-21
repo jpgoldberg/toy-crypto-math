@@ -159,3 +159,23 @@ def hash_bytes(b: bytes) -> str:
     h = blake2b(b, digest_size=32).digest()
     t = str(a85encode(h))
     return t
+
+
+# Returns a number that
+# has all bits same as n
+# except the k'th bit
+# which is made 0
+
+
+def set_bit(n: int, k: int, value: bool | int = True) -> int:
+    """Returns n with k-th bit set to value."""
+
+    # k must be greater than 0
+    if k < 0:
+        raise ValueError("k cannot be negative")
+
+    if not value:
+        # setting to 0
+        return n & ~(1 << k)
+
+    return (1 << k) | n

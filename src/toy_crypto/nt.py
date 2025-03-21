@@ -24,6 +24,7 @@ except ImportError:
 
 
 from . import types
+from . import utils
 
 
 Modulus = NewType("Modulus", int)
@@ -459,3 +460,29 @@ def python_sieve(n: int) -> list[int]:
                 sieve.discard(m)
 
     return sorted(sieve)
+
+
+class IntSieve:
+    """A pure Python (using a large int) Sieve of Eratosthenes."""
+
+    def __init__(self, n: int) -> None:
+        """Creates sieve of primes <= n"""
+
+        self._n = n
+        if n < 2:
+            raise ValueError
+
+        self.sieve: int = (2 ** (n + 1)) - 1
+        self.sieve -= 3  # unset 0th and 1st bit.
+
+        # We only need to go up to and including the square root of n,
+        # remove all non-primes above that square-root =< n.
+        for p in range(2, math.isqrt(n) + 1):
+            if utils.get_bit(self.sieve, p):
+                # Because we are going through sieve in numeric order
+                # we know that multiples of anything less than p have
+                # already been removed, so p is prime.
+                # Our job is to now remove multiples of p
+                # higher up in the sieve.
+                for m in range(p + p, n + 1, p):
+                    utils.set_bit(self.sieve, m, False)

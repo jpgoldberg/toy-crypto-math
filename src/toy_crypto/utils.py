@@ -161,10 +161,12 @@ def hash_bytes(b: bytes) -> str:
     return t
 
 
-# Returns a number that
-# has all bits same as n
-# except the k'th bit
-# which is made 0
+def get_bit(n: int, k: int) -> int:
+    """returns k-th bit of n."""
+
+    if k < 0:
+        raise ValueError("k cannot be negative")
+    return (n & (1 << (k - 1))) >> (k - 1)
 
 
 def set_bit(n: int, k: int, value: bool | int = True) -> int:

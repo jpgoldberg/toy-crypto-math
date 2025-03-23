@@ -472,55 +472,63 @@ class IntSieve:
         if n < 2:
             raise ValueError
 
-        self.sieve: int = (2 ** (n + 1)) - 1
-        self.sieve -= 3  # unset 0th and 1st bit.
+        self._sieve: int = (2 ** (n + 1)) - 1
+        self._sieve -= 3  # unset 0th and 1st bit.
 
         # We only need to go up to and including the square root of n,
         # remove all non-primes above that square-root =< n.
         for p in range(2, math.isqrt(n) + 1):
-            if utils.get_bit(self.sieve, p):
+            if utils.get_bit(self._sieve, p):
                 # Because we are going through sieve in numeric order
                 # we know that multiples of anything less than p have
                 # already been removed, so p is prime.
                 # Our job is to now remove multiples of p
                 # higher up in the sieve.
                 for m in range(p + p, n + 1, p):
-                    utils.set_bit(self.sieve, m, False)
+                    utils.set_bit(self._sieve, m, False)
 
-        self._count: int | None = None
+        self._count = self._sieve.bit_count()
 
-    def _count_n(self, n: int) -> int:
-        """Returns which bit is the n-th 1 bit in sieve.
+    def to01(self) -> str:
+        """The sieve as a string of 0s and 1s.
 
-        This is to mimic bitarray.utils.count_n, but for working with our
-        native integer sieve.
+        The output is to be read left to right. That is, it should begin with
+        ``001101010001`` corresponding to primes [2, 3, 5, 7, 11]
         """
 
-        if n < 1:
-            raise ValueError("n must be positive")
+        return format(self._sieve, "b")
+
+    def nth_prime(self, n: int) -> int:
+        """Returns n-th prime.
+
+        :raises ValueError: if n exceeds count.
+        """
 
         if n > self.count:
-            raise ValueError(
-                f"There are only {self.count} primes in this sieve"
-            )
+            raise ValueError("n cannot exceed count")
 
-        # naive code that just does a linear search through a copy of the sieve
-        sc: int = self.sieve
-        count = 0
-        for i in range(self._length):
-            sc, r = divmod(sc, 2)
-            if r == 1:
-                count += 1
-                if count >= n:
-                    return i
-        raise Exception("This should not be reached.")
+        result = utils.bit_index(self._sieve, n)
+        assert result is not None  # because we checked n earlier
+        return result
 
     @property
     def count(self) -> int:
-        if self._count is None:
-            self._count = self.sieve.bit_count()
         return self._count
 
     @property
     def n(self) -> int:
         return self._length
+
+    def primes(self, start: int = 1) -> Iterator[int]:
+        """Iterator of primes starting at start-th prime.
+
+        The 1st prime is 2. There is no zeroth prime.
+
+        :raises ValueError: if start < 1
+        """
+        if start < 1:
+            raise ValueError("Start must be >= 1")
+        for n in range(start, self.count + 1):
+            pm = utils.bit_index(self._sieve, n)
+            assert pm is not None
+            yield pm - 1

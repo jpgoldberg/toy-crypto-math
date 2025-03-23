@@ -19,7 +19,7 @@ except ImportError:
     def bitarray(*args, **kwargs) -> Any:  # type: ignore
         raise NotImplementedError("bitarray is not installed")
 
-    def count_n(*args, **kwargs) -> Any:  # type: ignore
+    def count_n(*args, **kwargs) -> int:  # type: ignore
         raise NotImplementedError("bitarray is not installed")
 
 
@@ -468,7 +468,7 @@ class IntSieve:
     def __init__(self, n: int) -> None:
         """Creates sieve of primes <= n"""
 
-        self._n = n
+        self._length = n
         if n < 2:
             raise ValueError
 
@@ -486,3 +486,41 @@ class IntSieve:
                 # higher up in the sieve.
                 for m in range(p + p, n + 1, p):
                     utils.set_bit(self.sieve, m, False)
+
+        self._count: int | None = None
+
+    def _count_n(self, n: int) -> int:
+        """Returns which bit is the n-th 1 bit in sieve.
+
+        This is to mimic bitarray.utils.count_n, but for working with our
+        native integer sieve.
+        """
+
+        if n < 1:
+            raise ValueError("n must be positive")
+
+        if n > self.count:
+            raise ValueError(
+                f"There are only {self.count} primes in this sieve"
+            )
+
+        # naive code that just does a linear search through a copy of the sieve
+        sc: int = self.sieve
+        count = 0
+        for i in range(self._length):
+            sc, r = divmod(sc, 2)
+            if r == 1:
+                count += 1
+                if count >= n:
+                    return i
+        raise Exception("This should not be reached.")
+
+    @property
+    def count(self) -> int:
+        if self._count is None:
+            self._count = self.sieve.bit_count()
+        return self._count
+
+    @property
+    def n(self) -> int:
+        return self._length

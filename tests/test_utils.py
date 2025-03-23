@@ -104,7 +104,8 @@ class TestRsa29Encoding:
             assert decoded == s
 
 
-class TestSetBit:
+class TestIntBits:
+    """Tests for the bit manipulation of ints"""
 
     vectors: list[tuple[int, tuple[int, bool], int]] = [
         (0, (0, True), 1),
@@ -133,6 +134,21 @@ class TestSetBit:
             result = utils.set_bit(left, bit, False)
             assert result == right
 
+    def test_index(self) -> None:
+        vectors: list[tuple[int | str, dict[int, int | None]]] = [
+            ("11010", {1: 1, 2: 3, 3: 4, 4: None}),
+            (
+                0b100010100010100010101100,
+                {1: 2, 2: 3, 3: 5, 4: 7, 5: 11, 6: 13, 7: 17, 8: 19, 9: 23},
+            ),
+        ]
+
+        for n, d in vectors:
+            if isinstance(n, str):
+                n = int(n, 2)
+            for k, expected in d.items():
+                result = utils.bit_index(n, k, 1)
+                assert result == expected
 
 
 if __name__ == "__main__":

@@ -181,3 +181,30 @@ def set_bit(n: int, k: int, value: bool | int = True) -> int:
         return n & ~(1 << k)
 
     return (1 << k) | n
+
+
+def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
+    """Returns which bit is the k-th b bit in n.
+
+    This is to mimic bitarray.utils.count_n, but for working with python
+    built-in int
+    """
+
+    if k < 1:
+        raise ValueError("n must be positive")
+
+    bc = n.bit_count() if b else (~n).bit_count()
+
+    if k > bc:
+        return None
+    b = 1 if b else 0
+
+    # naive code that just does a linear search count through bits of n
+    count = 0
+    for i in range(n.bit_length()):
+        n, r = divmod(n, 2)
+        if r == b:
+            count += 1
+            if count >= k:
+                return i
+    return None  # This really shouldn't ever be reached.

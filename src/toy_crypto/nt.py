@@ -478,14 +478,16 @@ class IntSieve:
         # We only need to go up to and including the square root of n,
         # remove all non-primes above that square-root =< n.
         for p in range(2, math.isqrt(n) + 1):
-            if utils.get_bit(self._sieve, p):
+            # if utils.get_bit(self._sieve, p):
+            if (self._sieve & (1 << p)) >> p:
                 # Because we are going through sieve in numeric order
                 # we know that multiples of anything less than p have
                 # already been removed, so p is prime.
                 # Our job is to now remove multiples of p
                 # higher up in the sieve.
                 for m in range(p + p, n + 1, p):
-                    self._sieve = utils.set_bit(self._sieve, m, False)
+                    # self._sieve = utils.set_bit(self._sieve, m, False)
+                    self._sieve = self._sieve & ~(1 << m)
 
         self._count = self._sieve.bit_count()
 

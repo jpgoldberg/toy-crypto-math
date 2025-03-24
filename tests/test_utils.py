@@ -134,6 +134,16 @@ class TestIntBits:
             result = utils.set_bit(left, bit, False)
             assert result == right
 
+    def test_get_bit(self) -> None:
+        vectors: list[tuple[str, dict[int, int]]] = [
+            ("10101100", {0: 0, 1: 0, 2: 1, 3: 1, 4: 0}),
+        ]
+        for s, d in vectors:
+            n = int(s, 2)
+            for idx, expected in d.items():
+                b = utils.get_bit(n, idx)
+                assert b == expected
+
     def test_index(self) -> None:
         vectors: list[tuple[int | str, dict[int, int | None]]] = [
             ("11010", {1: 1, 2: 3, 3: 4, 4: None}),

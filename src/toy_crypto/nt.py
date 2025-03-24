@@ -485,7 +485,7 @@ class IntSieve:
                 # Our job is to now remove multiples of p
                 # higher up in the sieve.
                 for m in range(p + p, n + 1, p):
-                    utils.set_bit(self._sieve, m, False)
+                    self._sieve = utils.set_bit(self._sieve, m, False)
 
         self._count = self._sieve.bit_count()
 
@@ -496,7 +496,7 @@ class IntSieve:
         ``001101010001`` corresponding to primes [2, 3, 5, 7, 11]
         """
 
-        return format(self._sieve, "b")
+        return format(self._sieve, "b")[::-1]
 
     def nth_prime(self, n: int) -> int:
         """Returns n-th prime.
@@ -531,4 +531,4 @@ class IntSieve:
         for n in range(start, self.count + 1):
             pm = utils.bit_index(self._sieve, n)
             assert pm is not None
-            yield pm - 1
+            yield pm

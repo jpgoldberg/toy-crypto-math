@@ -166,7 +166,7 @@ def get_bit(n: int, k: int) -> int:
 
     if k < 0:
         raise ValueError("k cannot be negative")
-    return (n & (1 << (k - 1))) >> (k - 1)
+    return (n & (1 << (k))) >> (k)
 
 
 def set_bit(n: int, k: int, value: bool | int = True) -> int:

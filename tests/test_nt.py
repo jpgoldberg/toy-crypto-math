@@ -270,9 +270,17 @@ class TestSieve:
     ]  # fmt: skip
     """primes below 100"""
 
-    def test_sieve_30(self) -> None:
+    def test_ba_sieve_30(self) -> None:
         nt.Sieve.clear()
         s30 = nt.Sieve(30)
+        s30_count = 10
+
+        assert s30.to01() == self.expected30
+        assert s30_count == s30.count
+
+    def test_int_sieve_30(self) -> None:
+        nt.Sieve.clear()
+        s30 = nt.IntSieve(30)
         s30_count = 10
 
         assert s30.to01() == self.expected30
@@ -299,9 +307,17 @@ class TestSieve:
         s = s30.to01()
         assert s == "0011"
 
-    def test_primes(self) -> None:
+    def test_ba_primes(self) -> None:
         nt.Sieve.clear()
         s30 = nt.Sieve(30)
+        expected = [p for p in self.primes100 if p < 30]
+
+        primes = list(s30.primes())
+        assert primes == expected
+
+    def test_int_primes(self) -> None:
+        nt.Sieve.clear()
+        s30 = nt.IntSieve(30)
         expected = [p for p in self.primes100 if p < 30]
 
         primes = list(s30.primes())

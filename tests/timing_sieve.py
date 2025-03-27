@@ -21,15 +21,15 @@ LEN = 100_000
 
 
 def f1() -> None:
-    Sieve.clear()
+    Sieve.reset()
     Sieve(FIRST_SIZE)
     Sieve(FINAL_SIZE)
 
 
 def f2() -> None:
-    Sieve.clear()
+    Sieve.reset()
     Sieve(FIRST_SIZE)
-    Sieve.clear()
+    Sieve.reset()
     Sieve(FINAL_SIZE)
 
 

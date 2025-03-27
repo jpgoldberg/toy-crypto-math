@@ -1,25 +1,28 @@
 import timeit
+from typing import Protocol, Self
 from toy_crypto import nt
 
 repetitions = 5
 sieve_size = 500_000
 
 
-def ba_sieve() -> int:
-    nt.Sieve.clear()
-    s = nt.Sieve(sieve_size)
+class SieveLike(Protocol):
+    @classmethod
+    def reset(cls) -> None: ...
+
+    count: int  # implemented as @property in most instances
+
+    def __call__(self: Self, size: int) -> Self: ...  # this is new/init
+
+
+def sieve_count(s_class: SieveLike, size: int) -> int:
+    s_class.reset()
+    s = s_class(size)
     return s.count
 
 
-def int_sieve() -> int:
-    s = nt.IntSieve(sieve_size)
-    return s.count
-
-
-statements = [
-    "ba_sieve()",
-    "int_sieve()",
-]
+s_classes = [f"nt.{c.__name__}" for c in (nt.Sieve, nt.IntSieve, nt.SetSieve)]
+statements = [f"sieve_count({c}, {sieve_size})" for c in s_classes]
 
 for stmt in statements:
     print(f"Timing '{stmt}")

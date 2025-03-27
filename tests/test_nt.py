@@ -271,7 +271,7 @@ class TestSieve:
     """primes below 100"""
 
     def test_ba_sieve_30(self) -> None:
-        nt.Sieve.clear()
+        nt.Sieve.reset()
         s30 = nt.Sieve(30)
         s30_count = 10
 
@@ -279,7 +279,7 @@ class TestSieve:
         assert s30_count == s30.count
 
     def test_int_sieve_30(self) -> None:
-        nt.Sieve.clear()
+        nt.Sieve.reset()
         s30 = nt.IntSieve(30)
         s30_count = 10
 
@@ -290,7 +290,7 @@ class TestSieve:
         # test that s30 still behaves as if it is 30 even if we create
         # a larger internal sieve
 
-        nt.Sieve.clear()
+        nt.Sieve.reset()
         s30 = nt.Sieve(30)
         s200 = nt.Sieve(200)
 
@@ -303,12 +303,22 @@ class TestSieve:
 
     def test_clear(self) -> None:
         s30 = nt.Sieve(30)
-        nt.Sieve.clear()
+        nt.Sieve.reset()
         s = s30.to01()
         assert s == "0011"
 
+    def test_ba_count(self) -> None:
+        s100 = nt.Sieve(100)
+        result = s100.count
+        assert result == len(self.primes100)
+
+    def test_set_count(self) -> None:
+        s100 = nt.SetSieve(100)
+        result = s100.count
+        assert result == len(self.primes100)
+
     def test_ba_primes(self) -> None:
-        nt.Sieve.clear()
+        nt.Sieve.reset()
         s30 = nt.Sieve(30)
         expected = [p for p in self.primes100 if p < 30]
 
@@ -316,15 +326,17 @@ class TestSieve:
         assert primes == expected
 
     def test_int_primes(self) -> None:
-        nt.Sieve.clear()
+        nt.Sieve.reset()
         s30 = nt.IntSieve(30)
         expected = [p for p in self.primes100 if p < 30]
 
         primes = list(s30.primes())
         assert primes == expected
 
-    def test_py_sieve(self) -> None:
-        result = nt.python_sieve(100)
+    def test_set_primes(self) -> None:
+        nt.SetSieve.reset()
+        s = nt.SetSieve(100)
+        result = list(s.primes())
         assert result == self.primes100
 
 

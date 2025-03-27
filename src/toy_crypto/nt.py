@@ -351,7 +351,7 @@ class Sieve:
                 self._largest_sieve[i * i :: i] = False
 
     @classmethod
-    def clear(cls) -> None:
+    def reset(cls) -> None:
         """Resets the cached array.
 
         There is no reason to ever use this outside of performance testing.
@@ -422,48 +422,125 @@ class Sieve:
             yield count_n(self._largest_sieve, n) - 1
 
 
-def python_sieve(n: int) -> list[int]:
-    """Returns sorted list primes n =< n
+class SetSieve:
+    """Sieve of Eratosthenes using a native python set
 
-    A pure Python (memory hogging) Sieve of Eratosthenes.
-    This consumes lots of memory, and is here only to
-    illustrate the algorithm.
+    This consumes an enormous amount of early in initialization,
+    and a SetSieve object will contain a list of prime integers,
+    so even after initialization is requires more memory than the
+    the integer or bitarray sieves.
+
     """
 
-    if n < 2:
-        return []
+    """
+    I may add some code to make the largest sieve created a class variable
+    that can be shared by all instances.
 
-    # This is where the heavy memory consumption comes in.
-    # Use numpy or bitarray for vast improvements in space
-    # and time.
-    sieve: set[int] = set(range(2, n + 1))
+    This means that instance methods need to be aware of the fact that the
+    shared sieve may be larger than the concept within the instances.
+    """
 
-    # Members are rapidly deleted from the sieve at first
-    # so if we periodically call the garbage collector we should
-    # be able to reduce how long the holds on to the memory.
-    # So let's trigger the garbage collector faster than the default
-    gc.set_threshold(max(1000, gc.get_threshold()[0]))
+    @classmethod
+    def reset(cls) -> None:
+        """Reset the cached sieve.
 
-    # We go through what remains in the sieve in numeric order,
-    # eliminating multiples of what we find.
-    #
-    # We only need to go up to and including the square root of n,
-    # remove all non-primes above that square-root =< n.
-    for p in range(2, math.isqrt(n) + 1):
-        if p in sieve:
-            # Because we are going through sieve in numeric order
-            # we know that multiples of anything less than p have
-            # already been removed, so p is prime.
-            # Our job is to now remove multiples of p
-            # higher up in the sieve.
-            for m in range(p + p, n + 1, p):
-                sieve.discard(m)
+        This is a no-op if the class doesn't
+        actually cache the largest sieve created.
+        """
 
-    return sorted(sieve)
+        pass
+
+    def __init__(self, n: int) -> None:
+        """Returns sorted list primes n =< n
+
+        A pure Python (memory hogging) Sieve of Eratosthenes.
+        This consumes lots of memory, and is here only to
+        illustrate the algorithm.
+        """
+
+        self._int_value: int | None = None
+
+        self._n = n
+        self._sieve: list[int] = [2, 3]
+        if n < 4:
+            return
+        self._count: int | None = None
+        # This is where the heavy memory consumption comes in.
+        # Use numpy or bitarray for vast improvements in space
+        # and time.
+        sieve: set[int] = set(range(2, n + 1))
+
+        # Members are rapidly deleted from the sieve at first
+        # so if we periodically call the garbage collector we should
+        # be able to reduce how long the holds on to the memory.
+        # So let's trigger the garbage collector faster than the default
+        gc.set_threshold(max(1000, gc.get_threshold()[0]))
+
+        # We go through what remains in the sieve in numeric order,
+        # eliminating multiples of what we find.
+        #
+        # We only need to go up to and including the square root of n,
+        # remove all non-primes above that square-root =< n.
+        for p in range(2, math.isqrt(n) + 1):
+            if p in sieve:
+                # Because we are going through sieve in numeric order
+                # we know that multiples of anything less than p have
+                # already been removed, so p is prime.
+                # Our job is to now remove multiples of p
+                # higher up in the sieve.
+                for m in range(p + p, n + 1, p):
+                    sieve.discard(m)
+
+        self._sieve = sorted(sieve)
+
+    @property
+    def count(self) -> int:
+        if self._count is not None:
+            return self._count
+        if self._n <= self._sieve[-1]:
+            self._count = len(
+                list((None for p in self._sieve if p <= self._n))
+            )
+        else:
+            self._count = len(self._sieve)
+        return len(self._sieve)
+
+    def primes(self, start: int = 1) -> Iterator[int]:
+        """Iterator of primes starting at start-th prime.
+
+        The 1st prime is 2. There is no zeroth prime.
+
+        :raises ValueError: if start < 1
+        """
+        if start < 1:
+            raise ValueError("Start must be >= 1")
+
+        for n in range(start, self.count + 1):
+            yield self._sieve[n - 1]
+
+    def inv_value(self) -> int:
+        if self._int_value is not None:
+            return self._int_value
+        result = 0
+        for i in range(self._n, -1, -1):
+            if i in self._sieve:
+                result += 1
+            result <<= 1
+        return result
 
 
 class IntSieve:
     """A pure Python (using a large int) Sieve of Eratosthenes."""
+
+    @classmethod
+    def reset(cls) -> None:
+        """Reset the cached sieve.
+
+        This is a no-op if the class doesn't
+        actually cache the largest sieve created.
+        """
+
+        pass
 
     def __init__(self, n: int) -> None:
         """Creates sieve of primes <= n"""

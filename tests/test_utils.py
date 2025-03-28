@@ -144,8 +144,28 @@ class TestIntBits:
                 b = utils.get_bit(n, idx)
                 assert b == expected
 
+    def test_index_linerar(self) -> None:
+        vectors: list[tuple[int | str, dict[int, int | None]]] = [
+            ("11010", {1: 1, 2: 3, 3: 4, 4: None}),
+            (
+                0b100010100010100010101100,
+                {1: 2, 2: 3, 3: 5, 4: 7, 5: 11, 6: 13, 7: 17, 8: 19, 9: 23},
+            ),
+        ]
+
+        for n, d in vectors:
+            if isinstance(n, str):
+                n = int(n, 2)
+            for k, expected in d.items():
+                result = utils.bit_index_linear(n, k, 1)
+                assert result == expected
+
     def test_index(self) -> None:
         vectors: list[tuple[int | str, dict[int, int | None]]] = [
+            (
+                pow(2, 300) - 1,
+                {b: b - 1 for b in range(1, 300, 17)},
+            ),
             ("11010", {1: 1, 2: 3, 3: 4, 4: None}),
             (
                 0b100010100010100010101100,

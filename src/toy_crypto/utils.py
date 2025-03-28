@@ -183,7 +183,7 @@ def set_bit(n: int, k: int, value: bool | int = True) -> int:
     return (1 << k) | n
 
 
-def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
+def bit_index_linear(n: int, k: int, b: bool | int = 1) -> int | None:
     """Returns which bit is the k-th b bit in n.
 
     This is to mimic bitarray.utils.count_n, but for working with python
@@ -208,3 +208,46 @@ def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
             if count >= k:
                 return i
     return None  # This really shouldn't ever be reached.
+
+
+def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
+    """Returns which bit is the k-th b bit in n.
+
+    This is to mimic bitarray.utils.count_n, but for working with python
+    built-in int
+    """
+
+    if k < 1:
+        raise ValueError("k must be positive")
+
+    bc = n.bit_count() if b else (~n).bit_count()
+    bl = n.bit_length()
+
+    if k > bc:
+        return None
+    b = 1 if b else 0
+
+    linear_theshold = 31
+    if bc <= linear_theshold:
+        return bit_index_linear(n, k, b)
+
+    mid_index = bl // 2
+    midpoint = int(2**mid_index)
+    upper, lower = divmod(n, midpoint)
+
+    # Debugging check against alternative way to compute upper and lower
+    assert upper == n >> mid_index
+    assert lower == n & ((1 << mid_index) - 1)
+
+    bcl = lower.bit_count()
+    if bcl == k:
+        return mid_index - 1
+    if bcl > k:
+        ret_val = bit_index(lower, k, b)
+        return ret_val
+
+    u_count = bit_index(upper, k - bcl, b)
+    if u_count is not None:
+        return bcl + u_count
+
+    return None

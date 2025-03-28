@@ -586,7 +586,7 @@ class IntSieve:
         if n > self.count:
             raise ValueError("n cannot exceed count")
 
-        result = utils.bit_index_linear(self._sieve, n)
+        result = utils.bit_index(self._sieve, n)
         assert result is not None  # because we checked n earlier
         return result
 
@@ -608,6 +608,6 @@ class IntSieve:
         if start < 1:
             raise ValueError("Start must be >= 1")
         for n in range(start, self.count + 1):
-            pm = utils.bit_index_linear(self._sieve, n)
+            pm = utils.bit_index(self._sieve, n)
             assert pm is not None
             yield pm

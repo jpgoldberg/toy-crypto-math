@@ -5,21 +5,22 @@
 import math
 from collections import UserList
 from collections.abc import Iterator, Iterable
-import gc
-import threading
 from typing import Any, NewType, Optional, Self, TypeGuard
 
 import primefac
 
 try:
     from bitarray import bitarray
-    from bitarray.util import count_n
+    from bitarray.util import count_n, ba2int
 except ImportError:
 
     def bitarray(*args, **kwargs) -> Any:  # type: ignore
         raise NotImplementedError("bitarray is not installed")
 
     def count_n(*args, **kwargs) -> int:  # type: ignore
+        raise NotImplementedError("bitarray is not installed")
+
+    def ba2int(*args, **kwargs) -> int:  # type: ignore
         raise NotImplementedError("bitarray is not installed")
 
 
@@ -50,7 +51,7 @@ def isqrt(n: int) -> int:
     """returns the greatest r such that r * r =< n"""
     if n < 0:
         raise ValueError("n cannot be negative")
-    return primefac.introot(n)
+    return math.isqrt(n)
 
 
 def modinv(a: int, m: int) -> int:
@@ -249,7 +250,7 @@ def factor(n: int, ith: int = 0) -> FactorList:
 
 
 def gcd(*integers: int) -> int:
-    """Returns greatest common denomenator of arguments."""
+    """Returns greatest common denominator of arguments."""
     return math.gcd(*integers)
 
 
@@ -332,31 +333,26 @@ class Sieve:
     among all instances
     """
 
-    _lock = threading.RLock()
-    _largest_sieve = bitarray("0011")
+    _base_sieve = bitarray("0011")
 
-    def _make_array(self, n: int) -> None:
-        len_c = len(self._largest_sieve)
+    def extend(self, n: int) -> None:
+        """Extends the the current sieve"""
+        len_c = len(self._sieve)
         if n <= len_c:
             return
 
         len_e = n - len_c
+        self._sieve.extend([True] * len_e)
 
-        with self._lock:
-            self._largest_sieve.extend([True] * len_e)
-
-            for i in range(2, isqrt(n) + 1):
-                if self._largest_sieve[i] is False:
-                    continue
-                self._largest_sieve[i * i :: i] = False
+        for i in range(2, isqrt(n) + 1):
+            if self._sieve[i] is False:
+                continue
+            self._sieve[i * i :: i] = False
 
     @classmethod
     def reset(cls) -> None:
-        """Resets the cached array.
-
-        There is no reason to ever use this outside of performance testing.
-        """
-        cls._largest_sieve = bitarray("0011")
+        """No-op until I rethink the whole cashing thing."""
+        pass
 
     def __init__(self, n: int) -> None:
         """Creates sieve covering the first n integers.
@@ -367,10 +363,11 @@ class Sieve:
         if n < 2:
             raise ValueError("n must be greater than 2")
 
-        self._make_array(n)
+        self._sieve = self._base_sieve
+        self.extend(n)
         self._n = n
 
-        self._count: int = self._largest_sieve[:n].count()
+        self._count: int = self._sieve[:n].count()
         self._bitstring: Optional[str] = None
 
     @property
@@ -380,7 +377,7 @@ class Sieve:
     @property
     def array(self) -> bitarray:
         """The sieve as a bitarray."""
-        return self._largest_sieve[: self._n]
+        return self._sieve[: self._n]
 
     @property
     def count(self) -> int:
@@ -395,7 +392,7 @@ class Sieve:
         """
 
         if self._bitstring is None:
-            self._bitstring = self._largest_sieve[: self._n].to01()
+            self._bitstring = self._sieve[: self._n].to01()
         return self._bitstring
 
     def nth_prime(self, n: int) -> int:
@@ -407,7 +404,7 @@ class Sieve:
         if n > self._count:
             raise ValueError("n cannot exceed count")
 
-        return count_n(self._largest_sieve, n)
+        return count_n(self._sieve, n)
 
     def primes(self, start: int = 1) -> Iterator[int]:
         """Iterator of primes starting at start-th prime.
@@ -419,7 +416,12 @@ class Sieve:
         if start < 1:
             raise ValueError("Start must be >= 1")
         for n in range(start, self._count + 1):
-            yield count_n(self._largest_sieve, n) - 1
+            yield count_n(self._sieve, n) - 1
+
+    def to_int(self) -> int:
+        reversed = self._sieve.copy()
+        reversed.reverse()
+        return ba2int(reversed)
 
 
 class SetSieve:
@@ -429,16 +431,42 @@ class SetSieve:
     and a SetSieve object will contain a list of prime integers,
     so even after initialization is requires more memory than the
     the integer or bitarray sieves.
-
     """
 
-    """
-    I may add some code to make the largest sieve created a class variable
-    that can be shared by all instances.
+    _base_sieve: list[int] = [2, 3]
 
-    This means that instance methods need to be aware of the fact that the
-    shared sieve may be larger than the concept within the instances.
-    """
+    def extend(self, n: int) -> None:
+        """Extends the the current sieve"""
+        self._sieve: list[int]
+        if n <= self.count:
+            return
+
+        largest_p = self._sieve[-1]
+        if n <= largest_p:
+            return
+
+        # This is where the heavy memory consumption comes in.
+        # Use numpy or bitarray for vast improvements in space
+        # and time.
+        sieve = set(p for p in self._sieve)
+        sieve = sieve.union(set(range(largest_p + 1, n + 1)))
+
+        # We go through what remains in the sieve in numeric order,
+        # eliminating multiples of what we find.
+        #
+        # We only need to go up to and including the square root of n,
+        # remove all non-primes above that square-root =< n.
+        for p in range(2, math.isqrt(n) + 1):
+            if p in sieve:
+                # Because we are going through sieve in numeric order
+                # we know that multiples of anything less than p have
+                # already been removed, so p is prime.
+                # Our job is to now remove multiples of p
+                # higher up in the sieve.
+                for m in range(p + p, n + 1, p):
+                    sieve.discard(m)
+
+        self._sieve = sorted(sieve)
 
     @classmethod
     def reset(cls) -> None:
@@ -461,48 +489,11 @@ class SetSieve:
         self._int_value: int | None = None
 
         self._n = n
-        self._sieve: list[int] = [2, 3]
-        if n < 4:
-            return
-        self._count: int | None = None
-        # This is where the heavy memory consumption comes in.
-        # Use numpy or bitarray for vast improvements in space
-        # and time.
-        sieve: set[int] = set(range(2, n + 1))
-
-        # Members are rapidly deleted from the sieve at first
-        # so if we periodically call the garbage collector we should
-        # be able to reduce how long the holds on to the memory.
-        # So let's trigger the garbage collector faster than the default
-        gc.set_threshold(max(1000, gc.get_threshold()[0]))
-
-        # We go through what remains in the sieve in numeric order,
-        # eliminating multiples of what we find.
-        #
-        # We only need to go up to and including the square root of n,
-        # remove all non-primes above that square-root =< n.
-        for p in range(2, math.isqrt(n) + 1):
-            if p in sieve:
-                # Because we are going through sieve in numeric order
-                # we know that multiples of anything less than p have
-                # already been removed, so p is prime.
-                # Our job is to now remove multiples of p
-                # higher up in the sieve.
-                for m in range(p + p, n + 1, p):
-                    sieve.discard(m)
-
-        self._sieve = sorted(sieve)
+        self._sieve = self._base_sieve.copy()
+        self.extend(n)
 
     @property
     def count(self) -> int:
-        if self._count is not None:
-            return self._count
-        if self._n <= self._sieve[-1]:
-            self._count = len(
-                list((None for p in self._sieve if p <= self._n))
-            )
-        else:
-            self._count = len(self._sieve)
         return len(self._sieve)
 
     def primes(self, start: int = 1) -> Iterator[int]:
@@ -526,6 +517,10 @@ class SetSieve:
             if i in self._sieve:
                 result += 1
             result <<= 1
+        return result
+    
+    def to_int(self) -> int:
+        result = sum((2 ** n for n in range(self._sieve[-1] + 1)))
         return result
 
 
@@ -611,3 +606,6 @@ class IntSieve:
             pm = utils.bit_index(self._sieve, n)
             assert pm is not None
             yield pm
+
+    def to_int(self) -> int:
+        return self._sieve

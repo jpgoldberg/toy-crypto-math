@@ -301,12 +301,6 @@ class TestSieve:
         # larger underlying sieve leaves s30's behavior unchanged
         assert s30.to01() == self.expected30
 
-    def test_clear(self) -> None:
-        s30 = nt.Sieve(30)
-        nt.Sieve.reset()
-        s = s30.to01()
-        assert s == "0011"
-
     def test_ba_count(self) -> None:
         s100 = nt.Sieve(100)
         result = s100.count

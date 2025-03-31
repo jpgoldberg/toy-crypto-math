@@ -419,7 +419,7 @@ class Sieve:
             yield count_n(self._sieve, n) - 1
 
     def __int__(self) -> int:
-        reversed = self._sieve.copy()
+        reversed = self._sieve.copy()[: self._n]
         reversed.reverse()
         return ba2int(reversed)
 

@@ -262,6 +262,10 @@ class TestSieve:
     expected30 = "001101010001010001010001000001"
     """stringy bitarray for primes below 30"""
 
+    ints: list[tuple[int, int]] = [
+        (30, int("100000100010100010100010101100", 2)),  # 545925292
+        (100, 159085582874019712269820766380),
+    ]
     primes100: list[int] = [
         2, 3, 5, 7, 11, 13, 17, 19,
         23, 29, 31, 37, 41, 43, 47,
@@ -332,6 +336,24 @@ class TestSieve:
         s = nt.SetSieve(100)
         result = list(s.primes())
         assert result == self.primes100
+
+    def test_ba_2int(self) -> None:
+        for size, expected in self.ints:
+            s = nt.Sieve(size)
+            i = s.to_int()
+            assert i == expected
+
+    def test_set_2int(self) -> None:
+        for size, expected in self.ints:
+            s = nt.SetSieve(size)
+            i = s.to_int()
+            assert i == expected
+
+    def test_int_2int(self) -> None:
+        for size, expected in self.ints:
+            s = nt.IntSieve(size)
+            i = s.to_int()
+            assert i == expected
 
 
 if __name__ == "__main__":

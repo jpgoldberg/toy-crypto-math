@@ -518,9 +518,9 @@ class SetSieve:
                 result += 1
             result <<= 1
         return result
-    
+
     def to_int(self) -> int:
-        result = sum((2 ** n for n in range(self._sieve[-1] + 1)))
+        result = sum((int(2**p) for p in self._sieve))
         return result
 
 

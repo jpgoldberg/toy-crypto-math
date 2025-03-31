@@ -340,19 +340,19 @@ class TestSieve:
     def test_ba_2int(self) -> None:
         for size, expected in self.ints:
             s = nt.Sieve(size)
-            i = s.to_int()
+            i = int(s)
             assert i == expected
 
     def test_set_2int(self) -> None:
         for size, expected in self.ints:
             s = nt.SetSieve(size)
-            i = s.to_int()
+            i = int(s)
             assert i == expected
 
     def test_int_2int(self) -> None:
         for size, expected in self.ints:
             s = nt.IntSieve(size)
-            i = s.to_int()
+            i = int(s)
             assert i == expected
 
 

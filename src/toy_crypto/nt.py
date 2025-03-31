@@ -418,7 +418,7 @@ class Sieve:
         for n in range(start, self._count + 1):
             yield count_n(self._sieve, n) - 1
 
-    def to_int(self) -> int:
+    def __int__(self) -> int:
         reversed = self._sieve.copy()
         reversed.reverse()
         return ba2int(reversed)
@@ -519,7 +519,7 @@ class SetSieve:
             result <<= 1
         return result
 
-    def to_int(self) -> int:
+    def __int__(self) -> int:
         result = sum((int(2**p) for p in self._sieve))
         return result
 
@@ -607,5 +607,5 @@ class IntSieve:
             assert pm is not None
             yield pm
 
-    def to_int(self) -> int:
+    def __int__(self) -> int:
         return self._sieve

@@ -1,6 +1,6 @@
 import timeit
 from typing import Protocol, Self
-from toy_crypto import nt
+from toy_crypto import sieve
 
 repetitions = 5
 sieve_size = 500_000
@@ -21,7 +21,10 @@ def sieve_count(s_class: SieveLike, size: int) -> int:
     return s.count
 
 
-s_classes = [f"nt.{c.__name__}" for c in (nt.Sieve, nt.IntSieve, nt.SetSieve)]
+s_classes = [
+    f"sieve.{c.__name__}"
+    for c in (sieve.Sieve, sieve.IntSieve, sieve.SetSieve)
+]
 statements = [f"sieve_count({c}, {sieve_size})" for c in s_classes]
 
 for stmt in statements:

@@ -23,7 +23,7 @@ def sieve_count(s_class: SieveLike, size: int) -> int:
 
 s_classes = [
     f"sieve.{c.__name__}"
-    for c in (sieve.Sieve, sieve.IntSieve, sieve.SetSieve)
+    for c in (sieve.BASieve, sieve.IntSieve, sieve.SetSieve)
 ]
 statements = [f"sieve_count({c}, {sieve_size})" for c in s_classes]
 

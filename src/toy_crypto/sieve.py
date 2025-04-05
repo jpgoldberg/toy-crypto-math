@@ -1,4 +1,5 @@
-from typing import Any, Iterator, Optional, Protocol, runtime_checkable, Self
+from typing import Any, Iterator, Optional
+from abc import ABC, abstractmethod
 
 from . import utils
 from math import isqrt
@@ -18,29 +19,35 @@ except ImportError:
         raise NotImplementedError("bitarray is not installed")
 
 
-@runtime_checkable
-class SieveLike(Protocol):
+class Sieve(ABC):
+
+    @abstractmethod
     @classmethod
     def reset(cls) -> None: ...
 
     @property
+    @abstractmethod
     def count(self) -> int: ...
 
     @property
+    @abstractmethod
     def n(self) -> int: ...
 
+    @abstractmethod
     def primes(self, start: int = 1) -> Iterator[int]: ...
 
+    @abstractmethod
     def to01(self) -> str: ...
 
     # def extend(self, n: int) -> None: ...
-
+    @abstractmethod
     def __int__(self) -> int: ...
 
-    def __call__(self: Self, size: int) -> Self: ...
+    @abstractmethod
+    def __call__[T](self: T, size: int) -> T: ...
 
 
-class Sieve:
+class BASieve(Sieve):
     """Sieve of Eratosthenes.
 
     The good parts of this implementation are lifted from the example provided
@@ -140,7 +147,7 @@ class Sieve:
         return ba2int(reversed)
 
 
-class SetSieve:
+class SetSieve(Sieve):
     """Sieve of Eratosthenes using a native python set
 
     This consumes an enormous amount of early in initialization,
@@ -243,7 +250,7 @@ class SetSieve:
         return format(self.__int__(), "b")[::-1]
 
 
-class IntSieve:
+class IntSieve(Sieve):
     """A pure Python (using a large int) Sieve of Eratosthenes."""
 
     @classmethod

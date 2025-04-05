@@ -22,10 +22,10 @@ class Fixed:
     ]  # fmt: skip
     """primes below 100"""
 
-    sc: sieve.SieveLike
+    # sc: sieve.SieveLike
 
     @classmethod
-    def t_30(cls, sc: sieve.SieveLike) -> None:
+    def t_30(cls, sc: sieve.Sieve) -> None:
         sc.reset()
         s30 = sc(30)
         s30_count = 10
@@ -34,13 +34,13 @@ class Fixed:
         assert s30_count == s30.count
 
     @classmethod
-    def t_count(cls, sc: sieve.SieveLike) -> None:
+    def t_count(cls, sc: sieve.Sieve) -> None:
         s100 = sc(100)
         result = s100.count
         assert result == len(cls.primes100)
 
     @classmethod
-    def t_primes(cls, sc: sieve.SieveLike) -> None:
+    def t_primes(cls, sc: sieve.Sieve) -> None:
         sc.reset()
         s30 = sc(30)
         expected = [p for p in cls.primes100 if p < 30]
@@ -49,7 +49,7 @@ class Fixed:
         assert primes == expected
 
     @classmethod
-    def t_2int(cls, sc: sieve.SieveLike) -> None:
+    def t_2int(cls, sc: sieve.Sieve) -> None:
         for size, expected in cls.ints:
             s = sc(size)
             i = int(s)
@@ -57,24 +57,24 @@ class Fixed:
 
 
 class TestBaSieve:
-    s_class = sieve.Sieve
+    s_class = sieve.BASieve
+    assert isinstance(s_class, sieve.Sieve)
 
     def test_30(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
         Fixed.t_30(self.s_class)
 
     def test_count(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_count(self.s_class)
 
     def test_primes(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_primes(self.s_class)
 
     def test_2int(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_2int(self.s_class)
 
@@ -83,22 +83,22 @@ class TestSetSieve:
     s_class = sieve.SetSieve
 
     def test_30(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_30(self.s_class)
 
     def test_count(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_count(self.s_class)
 
     def test_primes(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_primes(self.s_class)
 
     def test_2int(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_2int(self.s_class)
 
@@ -107,22 +107,22 @@ class TestIntSieve:
     s_class = sieve.IntSieve
 
     def test_30(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_30(self.s_class)
 
     def test_count(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_count(self.s_class)
 
     def test_primes(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_primes(self.s_class)
 
     def test_2int(self) -> None:
-        assert isinstance(self.s_class, sieve.SieveLike)
+        assert isinstance(self.s_class, sieve.Sieve)
 
         Fixed.t_2int(self.s_class)
 

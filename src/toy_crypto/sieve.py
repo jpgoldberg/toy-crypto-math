@@ -37,10 +37,11 @@ class SieveLike(Protocol):
 
     def __int__(self) -> int: ...
 
-    def __call__(self: Self, size: int) -> Self: ...
+    @classmethod
+    def from_size[S](cls: type[S], size: int) -> S: ...
 
 
-class Sieve:
+class Sieve(SieveLike):
     """Sieve of Eratosthenes.
 
     The good parts of this implementation are lifted from the example provided
@@ -50,6 +51,11 @@ class Sieve:
     """
 
     _base_sieve = bitarray("0011")
+
+    @classmethod
+    def from_size[S](cls, size: int) -> "Sieve":
+        s: Sieve = Sieve(size)
+        return s
 
     def extend(self, n: int) -> None:
         """Extends the the current sieve"""
@@ -208,6 +214,10 @@ class SetSieve:
         self._sieve = self._base_sieve.copy()
         self.extend(n)
 
+    @classmethod
+    def from_size[S](cls, size: int) -> "SetSieve":
+        return SetSieve(size)
+
     @property
     def count(self) -> int:
         return len(self._sieve)
@@ -281,6 +291,10 @@ class IntSieve:
                     self._sieve = self._sieve & ~(1 << m)
 
         self._count = self._sieve.bit_count()
+
+    @classmethod
+    def from_size[S](cls, size: int) -> "IntSieve":
+        return IntSieve(size)
 
     def to01(self) -> str:
         """The sieve as a string of 0s and 1s.

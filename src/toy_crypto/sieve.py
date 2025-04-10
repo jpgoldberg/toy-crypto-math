@@ -40,6 +40,9 @@ class SieveLike(Protocol):
     @classmethod
     def from_size[S](cls: type[S], size: int) -> S: ...
 
+    # @classmethod
+    # def __call__[S](cls: S, size: int) -> S: ...
+
 
 class Sieve(SieveLike):
     """Sieve of Eratosthenes.

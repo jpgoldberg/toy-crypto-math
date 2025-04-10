@@ -52,7 +52,6 @@ class Fixed:
     def t_2int(cls, sc: type[sieve.SieveLike]) -> None:
         for size, expected in cls.ints:
             s = sc.from_size(size)
-            # s = sc(size)  # We get 'expected zero positional arguments
             i = int(s)
             assert i == expected
 

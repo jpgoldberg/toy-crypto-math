@@ -1,4 +1,4 @@
-from typing import Any, Iterator, Optional, Protocol, runtime_checkable, Self
+from typing import Any, Iterator, Optional, Protocol, runtime_checkable
 
 from . import utils
 from math import isqrt
@@ -33,15 +33,12 @@ class SieveLike(Protocol):
 
     def to01(self) -> str: ...
 
-    # def extend(self, n: int) -> None: ...
+    def extend(self, n: int) -> None: ...
 
     def __int__(self) -> int: ...
 
     @classmethod
     def from_size[S](cls: type[S], size: int) -> S: ...
-
-    # @classmethod
-    # def __call__[S](cls: S, size: int) -> S: ...
 
 
 class Sieve(SieveLike):
@@ -259,6 +256,8 @@ class SetSieve:
 class IntSieve:
     """A pure Python (using a large int) Sieve of Eratosthenes."""
 
+    _BASE_SIEVE: int = int("1100", 2)
+
     @classmethod
     def reset(cls) -> None:
         """Reset the cached sieve.
@@ -272,13 +271,21 @@ class IntSieve:
     def __init__(self, n: int) -> None:
         """Creates sieve of primes <= n"""
 
-        self._length = n
-        if n < 2:
-            raise ValueError
+        self._sieve: int = self._BASE_SIEVE
+        self._n = self._BASE_SIEVE.bit_length()
+        self.extend(n)
 
-        self._sieve: int = (2 ** (n + 1)) - 1
-        self._sieve -= 3  # unset 0th and 1st bit.
+        self._count = self._sieve.bit_count()
 
+    def extend(self, n: int) -> None:
+        """Extends the the current sieve"""
+        if n <= self._sieve.bit_length():
+            return
+        ones = (2 ** ((n - self._n) + 1)) - 1
+        ones = ones << self._n
+        self._sieve |= ones
+
+        self._n = n
         # We only need to go up to and including the square root of n,
         # remove all non-primes above that square-root =< n.
         for p in range(2, isqrt(n) + 1):
@@ -292,8 +299,6 @@ class IntSieve:
                 for m in range(p + p, n + 1, p):
                     # self._sieve = utils.set_bit(self._sieve, m, False)
                     self._sieve = self._sieve & ~(1 << m)
-
-        self._count = self._sieve.bit_count()
 
     @classmethod
     def from_size[S](cls, size: int) -> "IntSieve":
@@ -327,7 +332,7 @@ class IntSieve:
 
     @property
     def n(self) -> int:
-        return self._length
+        return self._n
 
     def primes(self, start: int = 1) -> Iterator[int]:
         """Iterator of primes starting at start-th prime.

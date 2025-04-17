@@ -33,7 +33,14 @@ class PublicKey:
 
         if message < 0:
             raise ValueError("Positive messages only")
-        if not message < self._N:
+        
+        """
+        There is a reason for the explicit conversion to int in the
+        comparison below. If message was created as a member of a SageMath
+        finite group mod N, self._N would be converted to that before 
+        comparison and self._N ≡ 0 (mod self._N).
+        """
+        if not int(message) < self._N:
             raise ValueError("Message too big")
 
         return pow(base=message, exp=self._e, mod=self._N)
@@ -115,6 +122,8 @@ class PrivateKey:
 
     def decrypt(self, ciphertext: int) -> int:
         """Primitive decryption."""
+
+        ciphertext = int(ciphertext)  # See comment in PublicKey.encrypt()
 
         if ciphertext < 1 or ciphertext >= self.pub_key.N:
             raise ValueError("ciphertext is out of range")

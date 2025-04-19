@@ -13,7 +13,7 @@ Some toy (unsafe for actual use) cryptography related utilites.
 Installation
 -------------
 
-Remember that nothing here is build to be used for security purposes,
+Remember that nothing here is built to be used for security purposes,
 but if you must:
 
 .. installation:: toycrypto
@@ -50,6 +50,7 @@ Table of Contents
   motivation
   utils
   nt
+  sieve
   rsa
   ec
   rand

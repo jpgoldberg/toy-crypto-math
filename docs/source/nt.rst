@@ -10,7 +10,7 @@ This module is imported with::
 
     import toy_crypto.nt
 
-The module contains classes for the factorization of numbers and for creating a sieve of Eratosthenes.
+The module contains classes for the factorization of numbers along this some utility functions.
 
 The :class:`FactorList` class
 ------------------------------
@@ -22,6 +22,7 @@ If you need something as reliable and
 general and fast as SageMath's Factorization tools,
 use SageMath_.
 
+The actual factoring is done by the primefac_ package.
 
 
 .. autoclass:: FactorList
@@ -30,13 +31,6 @@ use SageMath_.
 
 .. autofunction:: factor
     :no-index:
-
-The :class:`Sieve` class
----------------------------
-
-.. autoclass:: Sieve
-    :class-doc-from: both
-    :members:
 
 Functions
 ----------

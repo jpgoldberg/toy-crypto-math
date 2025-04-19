@@ -22,10 +22,10 @@ class Fixed:
     ]  # fmt: skip
     """primes below 100"""
 
-    sc: sieve.SieveLike
+    sc: sieve.Sievish
 
     @classmethod
-    def t_30(cls, sc: type[sieve.SieveLike]) -> None:
+    def t_30(cls, sc: type[sieve.Sievish]) -> None:
         sc.reset()
         s30 = sc.from_size(30)
         s30_count = 10
@@ -34,13 +34,13 @@ class Fixed:
         assert s30_count == s30.count
 
     @classmethod
-    def t_count(cls, sc: type[sieve.SieveLike]) -> None:
+    def t_count(cls, sc: type[sieve.Sievish]) -> None:
         s100 = sc.from_size(100)
         result = s100.count
         assert result == len(cls.primes100)
 
     @classmethod
-    def t_primes(cls, sc: type[sieve.SieveLike]) -> None:
+    def t_primes(cls, sc: type[sieve.Sievish]) -> None:
         sc.reset()
         s30 = sc.from_size(30)
         expected = [p for p in cls.primes100 if p < 30]
@@ -49,7 +49,7 @@ class Fixed:
         assert primes == expected
 
     @classmethod
-    def t_2int(cls, sc: type[sieve.SieveLike]) -> None:
+    def t_2int(cls, sc: type[sieve.Sievish]) -> None:
         for size, expected in cls.ints:
             s = sc.from_size(size)
             i = int(s)

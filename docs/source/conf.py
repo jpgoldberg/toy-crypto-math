@@ -132,6 +132,7 @@ rst_prolog = f"""
 .. _pyca: https://cryptography.io/en/latest/
 .. _SageMath: https://www.sagemath.org
 .. _primefac: https://pypi.org/project/primefac/
+.. _bitarray: https://github.com/ilanschnell/bitarray
 """
 
 

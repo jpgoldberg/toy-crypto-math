@@ -20,6 +20,12 @@ but if you must:
     :pypi:
     :github:
 
+Note that that due to an issue,
+:github:issue:`184 <sphinx-toolbox/sphinx-toolbox>`,
+in the generation of this document,
+github instructions incorrectly list the branch as ``master``.
+It really is ``main``.
+
 Import names
 ------------
 

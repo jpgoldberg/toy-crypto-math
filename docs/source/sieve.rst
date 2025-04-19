@@ -25,9 +25,6 @@ There are reasons, but first let me give an overview of the major differences.
     The bitarray_ package is written in C,
     and as a consequence it cannot be installed in certain environments.
 
-The concrete classes
------------------------
-
 - The :class:`SetSieve` class
 
    This is a pure Python implementation that uses :py:class:`set` when creating the sieve.
@@ -40,10 +37,13 @@ The concrete classes
 
     This is also a pure Python implementation that uses a Python integer as the sieve and uses bit twidling when creating the sieve. This makes it memory efficient, but it is excruciatingly slow.
 
-
 The :protocol:`Sievish` Protocol
 ----------------------------------
 .. autoprotocol:: Sievish
+
+The concrete classes
+-----------------------
+
 
 The :class:`Sieve` class
 ---------------------------

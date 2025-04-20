@@ -72,6 +72,13 @@ class Sievish(Protocol):
         :raises ValueError: if start < 1
         """
         ...
+    def nth_prime(self, n: int) -> int:
+        """Returns n-th prime.
+
+        :raises ValueError: if n exceeds count.
+        :raises ValueError: n < 1
+        """
+        ...
 
     def to01(self) -> str:
         """The sieve as a string of 0s and 1s.
@@ -173,11 +180,10 @@ class Sieve(Sievish):
         return self._bitstring
 
     def nth_prime(self, n: int) -> int:
-        """Returns n-th prime.
 
-        :raises ValueError: if n exceeds count.
-        """
-
+        if n < 1:
+            raise ValueError("n must be greater than zero")
+         
         if n > self._count:
             raise ValueError("n cannot exceed count")
 
@@ -202,6 +208,7 @@ class Sieve(Sievish):
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
+    nth_prime.__doc__ = Sievish.nth_prime.__doc__
 
 
 class SetSieve(Sievish):
@@ -280,6 +287,21 @@ class SetSieve(Sievish):
         for n in range(start, self.count + 1):
             yield self._sieve[n - 1]
 
+    def nth_prime(self, n: int) -> int:
+        """Returns n-th prime. ``nth_prime(1) == 2``. There is no zeroth prime.
+
+        :raises ValueError: if n exceeds count.
+        :raises ValueError: n < 1
+        """
+
+        if n < 1:
+            raise ValueError("n must be greater than zero")
+
+        if n > self.count:
+            raise ValueError("n cannot exceed count")
+
+        return self._sieve[n - 1]
+
     def __int__(self) -> int:
         result = sum((int(2**p) for p in self._sieve))
         return result
@@ -298,6 +320,7 @@ class SetSieve(Sievish):
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
+    nth_prime.__doc__ = Sievish.nth_prime.__doc__
 
 
 class IntSieve(Sievish):
@@ -348,10 +371,8 @@ class IntSieve(Sievish):
         return format(self._sieve, "b")[::-1]
 
     def nth_prime(self, n: int) -> int:
-        """Returns n-th prime.
-
-        :raises ValueError: if n exceeds count.
-        """
+        if n < 1:
+            raise ValueError("n must be greater than zero")
 
         if n > self.count:
             raise ValueError("n cannot exceed count")
@@ -387,3 +408,4 @@ class IntSieve(Sievish):
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
+    nth_prime.__doc__ = Sievish.nth_prime.__doc__

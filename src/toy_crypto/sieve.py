@@ -72,6 +72,7 @@ class Sievish(Protocol):
         :raises ValueError: if start < 1
         """
         ...
+
     def nth_prime(self, n: int) -> int:
         """Returns n-th prime.
 
@@ -180,10 +181,9 @@ class Sieve(Sievish):
         return self._bitstring
 
     def nth_prime(self, n: int) -> int:
-
         if n < 1:
             raise ValueError("n must be greater than zero")
-         
+
         if n > self._count:
             raise ValueError("n cannot exceed count")
 

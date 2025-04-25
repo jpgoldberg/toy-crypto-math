@@ -33,7 +33,7 @@ class PublicKey:
 
         if message < 0:
             raise ValueError("Positive messages only")
-        
+
         """
         There is a reason for the explicit conversion to int in the
         comparison below. If message was created as a member of a SageMath

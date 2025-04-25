@@ -7,16 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- rsa encrypt and decrypt better handle int-like parameters.
 - Installation option `c-deps` to include dependencies that are not pure Python.
-  The `bitarray` dependency will not be installed without this. 
+  The `bitarray` dependency will not be installed without this.
 - Indistinguishability games each have a constant boolean `TRACK_CHALLENGE_CTEXTS`.
 - A pure python Sieve of Eratosthenes using sets
 - A pure python Sieve of Eratosthenes using ints
-- sieve is its own module.
-- `rand.choices()` behaves like [random.choices()](https://docs.python.org/3/library/random.html#random.choices), except that it uses the random number generator from the standard libary `secrets` module.
+- A Protocol for all of the sieve classes
+- `rand.choices()` behaves like [random.choices()](https://docs.python.org/3/library/random.html#random.choices), except that it uses the random number generator from the standard library `secrets` module.
 
 ### Changed
 
+- `sieve` is no longer in the `nt` module, but it is in the new `sieve` module.
 - `bitarray` package is optional. At the moment, `nt.Sieve` will raise `NotImplementedError` if bitarray is not available.
 - Attempt to improve `sec_games` documentation. At least to make the transition tables more legible.
 - Improved `birthday` module documentation.

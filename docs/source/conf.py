@@ -42,7 +42,8 @@ github_username = "jpgoldberg"
 github_repository = "toy-crypto-math"
 
 
-# From https://github.com/sphinx-doc/sphinx/issues/11548#issuecomment-1693689611
+# From
+# https://github.com/sphinx-doc/sphinx/issues/11548#issuecomment-1693689611
 
 
 class PrettyPrintIterable(Directive):

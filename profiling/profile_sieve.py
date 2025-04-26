@@ -1,33 +1,45 @@
 import timeit
-from typing import Protocol, Self
-from toy_crypto import sieve
+import json
+import polars as pl
 
-repetitions = 5
-sieve_size = 500_000
+# import cProfile
+from toy_crypto.sieve import Sieve, IntSieve, SetSieve, Sievish
 
-
-class SieveLike(Protocol):
-    @classmethod
-    def reset(cls) -> None: ...
-
-    count: int  # implemented as @property in most instances
-
-    def __call__(self: Self, size: int) -> Self: ...  # this is new/init
+repetitions = 1
 
 
-def sieve_count(s_class: SieveLike, size: int) -> int:
+def sieve_count(s_class: Sievish, size: int) -> int:
     s_class.reset()
-    s = s_class(size)
+    s = s_class.from_size(size)
     return s.count
 
 
-s_classes = [
-    f"sieve.{c.__name__}"
-    for c in (sieve.Sieve, sieve.IntSieve, sieve.SetSieve)
-]
-statements = [f"sieve_count({c}, {sieve_size})" for c in s_classes]
+sizes: list[int] = [10**n for n in range(2, 7)]
 
-for stmt in statements:
-    print(f"Timing '{stmt}")
-    t = timeit.timeit(stmt=stmt, number=repetitions, globals=globals())
-    print(t)
+s_classes: list[str] = [
+    f"{c.__name__}"
+    for c in (Sieve, IntSieve, SetSieve)
+]
+
+results: dict[str, list[float] | list[int]] = {"size": sizes}
+
+for sieve_type in s_classes:
+    times: list[float] = []
+    for size in sizes:
+        stmt = f"sieve_count({sieve_type}, {size})"
+        t = timeit.timeit(stmt=stmt, number=repetitions, globals=globals())
+        times.append(t)
+    results[sieve_type] = times
+
+j = json.dumps(results, indent="\t")
+
+jfilename = "timings.json"
+with open(jfilename, "w", encoding="utf-8") as f:
+    f.write(j)
+print(j)
+
+df = pl.DataFrame(results)
+print(df)
+
+cfilename = "timings.csv"
+df.write_csv(cfilename)

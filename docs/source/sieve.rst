@@ -37,6 +37,13 @@ There are reasons, but first let me give an overview of the major differences.
 
     This is also a pure Python implementation that uses a Python integer as the sieve and uses bit twidling when creating the sieve. This makes it memory efficient, but it is excruciatingly slow.
 
+
+.. figure:: images/all_data.png
+    :alt: Graph showing that IntSieve creation time is really slow
+
+    Time it takes in seconds for sieves of various sizes from 100 to 100000
+    to be created by the different classes.
+
 The algorithm
 ---------------
 

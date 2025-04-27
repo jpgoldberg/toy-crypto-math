@@ -1,43 +1,45 @@
+import io
 import polars as pl
+from polars.datatypes import UInt32, Float32
 from polars.dataframe.frame import DataFrame as PolarsDF
 import seaborn as sns
 import matplotlib.pyplot as plt
-from seaborn import FacetGrid
 from matplotlib.figure import Figure
 
 
 def load_data() -> PolarsDF:
     """Idiosyncratic things for building our specific dataframe."""
 
-    """
-    size,Sieve,IntSieve,SetSieve
-    100,0.0002202501054853201,0.00001795799471437931,0.000032499898225069046
-    1000,0.000016040867194533348,0.0002026669681072235,0.00008208304643630981
-    10000,0.00011612498201429844,0.007421791087836027,0.0008759999182075262
-    100000,0.0010569170117378235,0.5530140828341246,0.010142415994778275
-    1000000,0.011054749833419919,60.09357604198158,0.1988552080001682
-    """
+    cvs_data = b"""
+        size,Sieve,IntSieve,SetSieve
+        100,0.0002202501054853201,0.00001795799471437931,0.000032499898225069046
+        1000,0.000016040867194533348,0.0002026669681072235,0.00008208304643630981
+        10000,0.00011612498201429844,0.007421791087836027,0.0008759999182075262
+        100000,0.0010569170117378235,0.5530140828341246,0.010142415994778275
+        1000000,0.011054749833419919,60.09357604198158,0.1988552080001682
+    """.replace(b" ", b"")
 
-    CVS_FILE = "timings.csv"
+    # We don't need 64 bit precision
+    schema = {
+        "size": UInt32,
+        "bitarray": Float32,
+        "int": Float32,
+        "set": Float32,
+        }
+
+    CVS_DATA = io.BytesIO(cvs_data)
+    # CVS_FILE = "timings.csv"
     df_wide = pl.read_csv(
-        CVS_FILE, new_columns=["size", "bitarray", "py_int", "py_set"]
+        CVS_DATA,
+        schema=schema,
+        # skip_lines=1,
+        # has_header=False,
     )
+
     df = df_wide.unpivot(
         index="size", variable_name="sieve_type", value_name="time"
     )
     return df
-
-
-CVS_FILE = "timings.csv"
-
-"""
-size,Sieve,IntSieve,SetSieve
-100,0.0002202501054853201,0.00001795799471437931,0.000032499898225069046
-1000,0.000016040867194533348,0.0002026669681072235,0.00008208304643630981
-10000,0.00011612498201429844,0.007421791087836027,0.0008759999182075262
-100000,0.0010569170117378235,0.5530140828341246,0.010142415994778275
-1000000,0.011054749833419919,60.09357604198158,0.1988552080001682
-"""
 
 
 def base_g(data: PolarsDF, title: str | None = None) -> Figure:
@@ -50,9 +52,9 @@ def base_g(data: PolarsDF, title: str | None = None) -> Figure:
 
     # We want to keep colors constant even for graph that
     # doesn't have "py_int"
-    hue_order = ["bitarray", "py_set"]
-    if "py_int" in data["sieve_type"]:
-        hue_order.append("py_int")
+    hue_order = ["bitarray", "set"]
+    if "int" in data["sieve_type"]:
+        hue_order.append("int")
 
     g = sns.relplot(
         data=data,
@@ -75,9 +77,7 @@ def base_g(data: PolarsDF, title: str | None = None) -> Figure:
         g.figure.subplots_adjust(top=0.95)
         g.set(title=title)
 
-    f = g.figure
-
-    return f
+    return g.figure
 
 
 def main() -> None:
@@ -100,7 +100,7 @@ def main() -> None:
     fig.savefig("to_10_000.png")
     plt.show()
 
-    df_sans_int = df.filter(pl.col("sieve_type") != "py_int")
+    df_sans_int = df.filter(pl.col("sieve_type") != "int")
     _ = base_g(
         df_sans_int, title="Sieve creation times for bitarray and set only"
     )

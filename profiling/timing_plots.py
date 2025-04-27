@@ -3,6 +3,7 @@ from polars.dataframe.frame import DataFrame as PolarsDF
 import seaborn as sns
 import matplotlib.pyplot as plt
 from seaborn import FacetGrid
+from matplotlib.figure import Figure
 
 
 def load_data() -> PolarsDF:
@@ -39,7 +40,7 @@ size,Sieve,IntSieve,SetSieve
 """
 
 
-def base_g(data: PolarsDF, title: str | None = None) -> FacetGrid:
+def base_g(data: PolarsDF, title: str | None = None) -> Figure:
     """Returns a FacetGrid which can be the base for several plots.
 
     For reasons I don't understand, it appears that once a plot is shown
@@ -69,9 +70,14 @@ def base_g(data: PolarsDF, title: str | None = None) -> FacetGrid:
     )
     # This does not feel cool, but is the best I can do for now
     g._legend.set_title("Sieve type")
+
     if title:
+        g.figure.subplots_adjust(top=0.95)
         g.set(title=title)
-    return g
+
+    f = g.figure
+
+    return f
 
 
 def main() -> None:
@@ -84,18 +90,21 @@ def main() -> None:
     )
 
     # Whole plot
-    _ = base_g(df, title="Sieve creation timings for size up to 1 million")
+    fig = base_g(df, title="Sieve creation timings for size up to 1 million")
+    fig.savefig("all_data.png")
     plt.show()
 
     xmax = 10**4
     df_e4 = df.filter(pl.col("size") <= xmax)
-    _ = base_g(df_e4, title="Sieve creation timings for size up to 10000")
+    fig = base_g(df_e4, title="Sieve creation timings for size up to 10000")
+    fig.savefig("to_10_000.png")
     plt.show()
 
     df_sans_int = df.filter(pl.col("sieve_type") != "py_int")
     _ = base_g(
         df_sans_int, title="Sieve creation times for bitarray and set only"
     )
+    fig.savefig("sans_int.png")
     plt.show()
 
 

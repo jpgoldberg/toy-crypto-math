@@ -37,12 +37,32 @@ There are reasons, but first let me give an overview of the major differences.
 
     This is also a pure Python implementation that uses a Python integer as the sieve and uses bit twidling when creating the sieve. This makes it memory efficient, but it is excruciatingly slow.
 
+.. _all_figure:
 
 .. figure:: images/all_data.png
     :alt: Graph showing that IntSieve creation time is really slow
 
+    Seconds to create sieves
+
     Time it takes in seconds for sieves of various sizes from 100 to 100000
     to be created by the different classes.
+
+The very real time differences between the creating a :class:`Sieve` and a :class:`SetSieve` is obscured in figure :ref:`all_figure` by the enormous amount
+of time it takes to construct an :class:`IntSieve`.
+So here is a graph showing the times just for :class:`Sieve` and a :class:`SetSieve`.
+
+.. _sans_int_figure: 
+
+.. figure:: images/sans_int.png
+    :alt: Graph showing that Sieve is more efficient than SetSeive
+
+    Seconds to create sieves (without IntSieve).
+
+Specifically on my system it took approximately 0.011 seconds to create a sieve of all numbers less than or equal to 1 million using the bitarray-based :class:`Sieve`,
+0.198 seconds with :class:`SetSeive`,
+and a minute (59.796 seconds) with :class:`IntSieve`.
+So bitaray was nearly 20 times faster than the set-based sieve construction
+and more than 5000 times faster than the integer-based construction for a sieve size of one million.
 
 The algorithm
 ---------------

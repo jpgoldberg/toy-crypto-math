@@ -106,7 +106,7 @@ def main() -> None:
     plt.show()
 
     df_sans_int = df.filter(pl.col("sieve_type") != "int")
-    _ = base_g(
+    fig = base_g(
         df_sans_int, title="Sieve creation times for bitarray and set only"
     )
     fig.savefig("sans_int.png")

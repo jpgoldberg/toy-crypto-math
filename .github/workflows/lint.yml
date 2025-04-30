@@ -21,6 +21,6 @@ jobs:
           requirements_file: "dev-requirements.txt"
           python_version: "3.13"
           path: '.'
-          mypy_flags: "--exclude '/profiling/'"
+          mypy_flags: "--exclude 'profiling/'"
       - name: ruff check
         uses: jpetrucciani/ruff-check@main

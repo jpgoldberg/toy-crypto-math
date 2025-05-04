@@ -163,3 +163,5 @@ lcov.info
 # Intermediate image files
 docs/scripts/*.dot
 docs/scripts/*.png
+timings.csv
+timings.json

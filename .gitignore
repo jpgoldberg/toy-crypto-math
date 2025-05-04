@@ -163,5 +163,7 @@ lcov.info
 # Intermediate image files
 docs/scripts/*.dot
 docs/scripts/*.png
+
+# profiling data
 timings.csv
 timings.json

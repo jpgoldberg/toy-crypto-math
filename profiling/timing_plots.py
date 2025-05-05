@@ -76,7 +76,7 @@ def base_g(data: PolarsDF, title: str | None = None) -> Figure:
         ylabel="Time (seconds)",
     )
     # This does not feel cool, but is the best I can do for now
-    g._legend.set_title("Sieve type")
+    g._legend.set_title("Sieve type")  # type: ignore
 
     if title:
         g.figure.subplots_adjust(top=0.95)

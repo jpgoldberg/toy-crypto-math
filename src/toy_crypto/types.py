@@ -231,13 +231,10 @@ class PyBitArray:
         if value:
             byte |= 1 << bit_index
         else:
-            mask = ~(1 << bit_index)
-            # two's complement fix
-            if mask < 0:
-                mask += 256
-            byte &= mask
+            byte &= ~(1 << bit_index)
 
-        self._data[byte_index] = byte
+        # The % 256 is 2's complement correction.
+        self._data[byte_index] = byte % 256
 
     def byte_len(self) -> int:
         """Length in bytes"""

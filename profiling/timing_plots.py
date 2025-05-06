@@ -30,7 +30,7 @@ def load_data() -> PolarsDF:
         "bitarray": Float32,
         "int": Float32,
         "set": Float32,
-        }
+    }
 
     CVS_DATA = io.BytesIO(cvs_data)
     # CVS_FILE = "timings.csv"

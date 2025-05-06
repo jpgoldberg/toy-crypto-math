@@ -190,19 +190,20 @@ class PyBitArray:
             result += b * (2 ** (8 - p))
         return result
 
-    def __init__(self, bit_length: int, fill_bit: int = 0) -> None:
+    def __init__(self, bit_length: int, fill_bit: SupportsBool = 0) -> None:
+        # Instance attributes that should always exist
+        self._data: bytearray
+        self._length: int
+
         if isinstance(bit_length, int):
             if bit_length < 0:
                 raise ValueError("bit_length cannot be negative")
 
             fill_byte: int
-            match fill_bit:
-                case 0:
-                    fill_byte = 0
-                case 1:
-                    fill_byte = 255
-                case _:
-                    raise ValueError("fill_bit must be 0 or 1")
+            if not fill_bit:
+                fill_byte = 0
+            else:
+                fill_byte = 255
 
             self._length = bit_length
             byte_len, self._remainder = divmod(self._length, 8)
@@ -218,28 +219,24 @@ class PyBitArray:
             )
 
     def __getitem__(self, index: int) -> int:
-        byte_index, remainder = divmod(index, 8)
-        bit_index = self._inv8(remainder)
+        byte_index, bit_index = divmod(index, 8)
         byte = self._data[byte_index]
-        value = byte & 1 << bit_index
+        value = byte & (1 << bit_index)
         return 1 if value != 0 else 0
 
-    def __setitem__(self, index: int, value: int) -> None:
-        byte_index, remainder = divmod(index, 8)
-        bit_index = self._inv8(remainder)
+    def __setitem__(self, index: int, value: SupportsBool) -> None:
+        byte_index, bit_index = divmod(index, 8)
         byte = self._data[byte_index]
 
-        mask: int
-        match value:
-            case 0:
-                mask = ~(1 << bit_index)
+        if value:
+            byte |= 1 << bit_index
+        else:
+            mask = ~(1 << bit_index)
+            # two's complement fix
+            if mask < 0:
+                mask += 256
+            byte &= mask
 
-            case 1:
-                mask = 1 << bit_index
-
-            case _:
-                raise ValueError("Value must be 1 or 0")
-        byte |= mask
         self._data[byte_index] = byte
 
     def byte_len(self) -> int:

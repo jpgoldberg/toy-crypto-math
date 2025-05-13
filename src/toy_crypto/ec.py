@@ -16,7 +16,7 @@ https://github.com/python/mypy/labels/topic-self-types
 
 from toy_crypto.nt import Modulus as Modulus  # noqa: E402
 from toy_crypto.nt import is_modulus, mod_sqrt  # noqa: E402
-from toy_crypto.utils import lsb_to_msb  # noqa: E402
+from toy_crypto.bit_utils import lsb_to_msb  # noqa: E402
 
 
 """

@@ -24,18 +24,6 @@ class TestUtils:
             d = utils.digit_count(n)
             assert d == expected
 
-    def test_bits(self) -> None:
-        vectors = [
-            (0b1101, [1, 0, 1, 1]),
-            (1, [1]),
-            (0, []),
-            (0o644, [0, 0, 1, 0, 0, 1, 0, 1, 1]),
-            (65537, [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
-        ]
-        for n, expected in vectors:
-            bits = [bit for bit in utils.lsb_to_msb(n)]
-            assert bits == expected
-
     def test_hamming(self) -> None:
         s1 = b"this is a test"
         s2 = b"wokka wokka!!!"

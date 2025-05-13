@@ -1,7 +1,7 @@
 import sys
 
 import pytest
-from toy_crypto import types
+from toy_crypto import bit_utils
 
 
 @pytest.fixture
@@ -26,14 +26,14 @@ def sets() -> dict[str, set[int]]:
 class TestPyBitArray:
     def test_zeros(self) -> None:
         length = 50
-        ba = types.PyBitArray(length, fill_bit=0)
+        ba = bit_utils.PyBitArray(length, fill_bit=0)
 
         for idx in range(length):
             assert ba[idx] == 0
 
     def test_ones(self) -> None:
         length = 50
-        ba = types.PyBitArray(length, fill_bit=1)
+        ba = bit_utils.PyBitArray(length, fill_bit=1)
 
         for idx in range(length):
             assert ba[idx] == 1
@@ -43,7 +43,7 @@ class TestPyBitArray:
         size = len(universe)
 
         for name, test_set in sets.items():
-            ba = types.PyBitArray(size, fill_bit=0)
+            ba = bit_utils.PyBitArray(size, fill_bit=0)
             for p in test_set:
                 ba[p] = 1
 
@@ -58,7 +58,7 @@ class TestPyBitArray:
         size = len(universe)
 
         for name, test_set in sets.items():
-            ba = types.PyBitArray(size, fill_bit=1)
+            ba = bit_utils.PyBitArray(size, fill_bit=1)
 
             complement = universe - test_set
             for c in complement:
@@ -69,6 +69,20 @@ class TestPyBitArray:
                     assert ba[i] == 1, f"set: {name}; i: {i}"
                 else:
                     assert ba[i] == 0, f"set: {name}; i: {i}"
+
+
+class TestOtherBits:
+    def test_lsb_to_msb(self) -> None:
+        vectors = [
+            (0b1101, [1, 0, 1, 1]),
+            (1, [1]),
+            (0, []),
+            (0o644, [0, 0, 1, 0, 0, 1, 0, 1, 1]),
+            (65537, [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]),
+        ]
+        for n, expected in vectors:
+            bits = [bit for bit in bit_utils.lsb_to_msb(n)]
+            assert bits == expected
 
 
 if __name__ == "__main__":

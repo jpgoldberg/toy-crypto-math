@@ -7,7 +7,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from . import utils
+from . import bit_utils
 from math import isqrt
 
 if TYPE_CHECKING:
@@ -377,7 +377,7 @@ class IntSieve(Sievish):
         if n > self.count:
             raise ValueError("n cannot exceed count")
 
-        result = utils.bit_index(self._sieve, n)
+        result = bit_utils.bit_index(self._sieve, n)
         assert result is not None  # because we checked n earlier
         return result
 
@@ -393,7 +393,7 @@ class IntSieve(Sievish):
         if start < 1:
             raise ValueError("Start must be >= 1")
         for n in range(start, self.count + 1):
-            pm = utils.bit_index(self._sieve, n)
+            pm = bit_utils.bit_index(self._sieve, n)
             assert pm is not None
             yield pm
 

@@ -4,21 +4,112 @@ import operator
 from .types import SupportsBool
 
 
-def lsb_to_msb(n: int) -> Iterator[int]:
+def bits(n: int) -> Iterator[int]:
     """
     0s and 1s representing bits of n, starting with the least significant bit.
 
-    :raises TypeError: if n is not an integer.
     :raises ValueError: if n is negative.
     """
-    if not isinstance(n, int):
-        raise TypeError("n must be an integer")
+
+    n = int(n)
     if n < 0:
         raise ValueError("n cannot be negative")
 
     while n > 0:
         yield n & 1
         n >>= 1
+
+
+def get_bit(n: int, k: int) -> int:
+    """returns k-th bit of n."""
+
+    if k < 0:
+        raise ValueError("k cannot be negative")
+    return (n & (1 << (k))) >> (k)
+
+
+def set_bit(n: int, k: int, value: bool | int = True) -> int:
+    """Returns n with k-th bit set to value."""
+
+    # k must be greater than 0
+    if k < 0:
+        raise ValueError("k cannot be negative")
+
+    if not value:
+        # setting to 0
+        return n & ~(1 << k)
+
+    return (1 << k) | n
+
+
+def bit_index_linear(n: int, k: int, b: bool | int = 1) -> int | None:
+    """Returns which bit is the k-th b bit in n.
+
+    This is to mimic bitarray.utils.count_n, but for working with python
+    built-in int
+    """
+
+    if k < 1:
+        raise ValueError("n must be positive")
+
+    bc = n.bit_count() if b else (~n).bit_count()
+
+    if k > bc:
+        return None
+    b = 1 if b else 0
+
+    # naive code that just does a linear search count through bits of n
+    count = 0
+    for i in range(n.bit_length()):
+        n, r = divmod(n, 2)
+        if r == b:
+            count += 1
+            if count >= k:
+                return i
+    return None  # This really shouldn't ever be reached.
+
+
+def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
+    """Returns which bit is the k-th b bit in n.
+
+    This is to mimic bitarray.utils.count_n, but for working with python
+    built-in int
+    """
+
+    if k < 1:
+        raise ValueError("k must be positive")
+
+    bc = n.bit_count() if b else (~n).bit_count()
+    bl = n.bit_length()
+
+    if k > bc:
+        return None
+    b = 1 if b else 0
+
+    linear_theshold = 31
+    if bc <= linear_theshold:
+        return bit_index_linear(n, k, b)
+
+    mid_index = bl // 2
+    midpoint = int(2**mid_index)
+    upper, lower = divmod(n, midpoint)
+
+    # Debugging check against alternative way to compute upper and lower
+    assert upper == n >> mid_index
+    assert lower == n & ((1 << mid_index) - 1)
+
+    bcl = lower.bit_count()
+    if bcl == k:
+        return mid_index - 1
+    if bcl > k:
+        ret_val = bit_index(lower, k, b)
+        return ret_val
+
+    u_count = bit_index(upper, k - bcl, b)
+    if u_count is not None:
+        return bcl + u_count
+
+    return None
 
 
 class Bit:
@@ -130,6 +221,17 @@ def set_bit_in_byte(byte: int, bit: int, value: SupportsBool) -> int:
     return byte % 256
 
 
+def flip_end(byte: int) -> int:
+    """Return int with reversed bit sequence"""
+    if byte < 0 or byte > 255:
+        raise ValueError("byte is not representable as byte")
+    result = 0
+    for p in range(8):
+        byte, b = divmod(byte, 2)
+        result += b * (2 ** (8 - p))
+    return result
+
+
 class PyBitArray:
     """A pure Python bitarray-like object.
 
@@ -144,16 +246,6 @@ class PyBitArray:
     So the bit at index 0 will be the right-most bit of the left-most byte.
     If I do this right, users will never have to know or deal with that.
     """
-
-    @staticmethod
-    def _flip_end(byte: int) -> int:
-        if byte < 0 or byte > 255:
-            raise ValueError("byte is not representable as byte")
-        result = 0
-        for p in range(8):
-            byte, b = divmod(byte, 2)
-            result += b * (2 ** (8 - p))
-        return result
 
     def __init__(self, bit_length: int, fill_bit: SupportsBool = 0) -> None:
         # Instance attributes that should always exist
@@ -225,6 +317,10 @@ class PyBitArray:
 
     def __len__(self) -> int:
         return self._length
+
+    def count(self) -> int:
+        """Returns number of 1 bits"""
+        return int.from_bytes(self._data).bit_count()
 
     @classmethod
     def from_bytes(cls, byte_data: bytes, endian: str = "big") -> Self:

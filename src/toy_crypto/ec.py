@@ -16,7 +16,7 @@ https://github.com/python/mypy/labels/topic-self-types
 
 from toy_crypto.nt import Modulus as Modulus  # noqa: E402
 from toy_crypto.nt import is_modulus, mod_sqrt  # noqa: E402
-from toy_crypto.bit_utils import lsb_to_msb  # noqa: E402
+from toy_crypto.bit_utils import bits  # noqa: E402
 
 
 """
@@ -374,7 +374,7 @@ class Point:
         n = n % self.curve.order
         sum = self.curve.PAI.cp()  # additive identity
         doubled = self
-        for bit in lsb_to_msb(n):
+        for bit in bits(n):
             if bit == 1:
                 sum += doubled
             doubled = doubled.double()  # toil and trouble

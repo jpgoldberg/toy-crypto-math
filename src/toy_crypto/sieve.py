@@ -21,7 +21,6 @@ else:
         from bitarray import bitarray
         from bitarray.util import count_n, ba2int
     except ImportError:
-
         _has_bitarry = False
 
         def bitarray(*args, **kwargs) -> Any:  # type: ignore
@@ -118,7 +117,6 @@ class Sievish(Protocol):
     def from_int[S](cls: type[S], n: int) -> S:
         """Returns a new sieve of primes from the bits of n."""
         ...
-
 
 
 class Sieve(Sievish):
@@ -231,6 +229,7 @@ class Sieve(Sievish):
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
+    from_int.__doc__ = Sievish.from_size.__doc__
 
 
 class SetSieve(Sievish):
@@ -354,6 +353,7 @@ class SetSieve(Sievish):
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
+    from_int.__doc__ = Sievish.from_size.__doc__
 
 
 class IntSieve(Sievish):
@@ -450,3 +450,4 @@ class IntSieve(Sievish):
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
+    from_int.__doc__ = Sievish.from_size.__doc__

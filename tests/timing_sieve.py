@@ -9,7 +9,7 @@ sys.path.append(SOURCE_PATH)
 from toy_crypto.sieve import Sieve  # noqa: E402
 
 setup = """
-from toy_crypto.nt import Sieve
+from toy_crypto.sieve import Sieve
 """
 
 FIRST_SIZE = 10_000_000

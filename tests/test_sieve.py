@@ -55,6 +55,13 @@ class Fixed:
             i = int(s)
             assert i == expected
 
+    @classmethod
+    def t_from_int(cls, sc: type[sieve.Sievish]) -> None:
+        for _, t_int in cls.ints:
+            s = sc.from_int(t_int)
+            i = int(s)
+            assert i == t_int
+
 
 class TestBaSieve:
     s_class = sieve.Sieve
@@ -69,6 +76,9 @@ class TestBaSieve:
         Fixed.t_primes(self.s_class)
 
     def test_2int(self) -> None:
+        Fixed.t_2int(self.s_class)
+
+    def test_from_int(self) -> None:
         Fixed.t_2int(self.s_class)
 
 
@@ -87,6 +97,9 @@ class TestSetSieve:
     def test_2int(self) -> None:
         Fixed.t_2int(self.s_class)
 
+    def test_from_int(self) -> None:
+        Fixed.t_2int(self.s_class)
+
 
 class TestIntSieve:
     s_class = sieve.IntSieve
@@ -101,6 +114,9 @@ class TestIntSieve:
         Fixed.t_primes(self.s_class)
 
     def test_2int(self) -> None:
+        Fixed.t_2int(self.s_class)
+
+    def test_from_int(self) -> None:
         Fixed.t_2int(self.s_class)
 
 

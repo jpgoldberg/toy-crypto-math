@@ -1,7 +1,6 @@
 from typing import (
     Any,
     Iterator,
-    Optional,
     Protocol,
     Self,
     runtime_checkable,
@@ -130,11 +129,6 @@ class Sieve(Sievish):
 
     _base_sieve = bitarray("0011")
 
-    @classmethod
-    def from_size[S](cls, size: int) -> "Sieve":
-        s: Sieve = Sieve(size)
-        return s
-
     def extend(self, n: int) -> None:
         len_c = len(self._sieve)
         if n <= len_c:
@@ -154,32 +148,38 @@ class Sieve(Sievish):
 
     @classmethod
     def from_int(cls, n: int) -> Self:
-        sieve = super().__new__(cls)
+        sieve = cls.__new__(cls)
         sieve._n = n.bit_length()
         byte_length = (sieve._n + 7) // 8
         b = n.to_bytes(byte_length, byteorder="big", signed=False)
         sieve._sieve = bitarray(b, endian="big")
 
         sieve._count = sieve._sieve[:n].count()
-        sieve._bitstring = None
 
         return sieve
 
-    def __init__(self, n: int) -> None:
-        """Creates sieve covering the first n integers.
-
-        :raises ValueError: if n < 2.
-        """
-
-        if n < 2:
+    @classmethod
+    def from_size[S](cls, size: int) -> "Sieve":
+        if size < 2:
             raise ValueError("n must be greater than 2")
 
-        self._sieve = self._base_sieve
-        self.extend(n)
-        self._n = n
+        instance = cls.__new__(cls)
 
-        self._count: int = self._sieve[:n].count()
-        self._bitstring: Optional[str] = None
+        instance._sieve = instance._base_sieve
+        instance.extend(size)
+        instance._n = size
+
+        instance._count = instance._sieve[:size].count()
+
+        return instance
+
+    def __init__(self, data: bitarray) -> None:
+        """Sieve from bitarray"""
+
+        self._sieve = data
+        self._n = len(self._sieve)
+
+        self._count: int = self._sieve.count()
 
     @property
     def n(self) -> int:
@@ -196,10 +196,9 @@ class Sieve(Sievish):
         return self._count
 
     def to01(self) -> str:
-        if self._bitstring is None:
-            self._bitstring = self._sieve[: self._n].to01()
-            assert isinstance(self._bitstring, str)
-        return self._bitstring
+        result = self._sieve[: self._n].to01()
+        assert isinstance(result, str)
+        return result
 
     def nth_prime(self, n: int) -> int:
         if n < 1:
@@ -229,7 +228,7 @@ class Sieve(Sievish):
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
-    from_int.__doc__ = Sievish.from_size.__doc__
+    from_int.__doc__ = Sievish.from_int.__doc__
 
 
 class SetSieve(Sievish):
@@ -281,7 +280,7 @@ class SetSieve(Sievish):
 
     @classmethod
     def from_int(cls, n: int) -> Self:
-        sieve = super().__new__(cls)
+        sieve = cls.__new__(cls)
         sieve._n = n.bit_length()
         sieve._sieve = list()
 
@@ -291,7 +290,7 @@ class SetSieve(Sievish):
 
         return sieve
 
-    def __init__(self, n: int) -> None:
+    def __init__(self, data: list[int]) -> None:
         """Returns sorted list primes n =< n
 
         A pure Python (memory hogging) Sieve of Eratosthenes.
@@ -299,15 +298,25 @@ class SetSieve(Sievish):
         illustrate the algorithm.
         """
 
-        self._int_value: int | None = None
-
-        self._n = n
-        self._sieve = self._base_sieve.copy()
-        self.extend(n)
+        self._n = max(data)
+        self._sieve = data
 
     @classmethod
     def from_size[S](cls, size: int) -> "SetSieve":
-        return SetSieve(size)
+        """Returns sorted list primes n =< n
+
+        A pure Python (memory hogging) Sieve of Eratosthenes.
+        This consumes lots of memory, and is here only to
+        illustrate the algorithm.
+        """
+
+        instance = cls.__new__(cls)
+
+        instance._n = size
+        instance._sieve = instance._base_sieve.copy()
+        instance.extend(size)
+
+        return instance
 
     @property
     def count(self) -> int:
@@ -353,7 +362,7 @@ class SetSieve(Sievish):
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
-    from_int.__doc__ = Sievish.from_size.__doc__
+    from_int.__doc__ = Sievish.from_int.__doc__
 
 
 class IntSieve(Sievish):
@@ -367,20 +376,16 @@ class IntSieve(Sievish):
 
     @classmethod
     def from_int(cls, n: int) -> Self:
-        sieve = super().__new__(cls)
+        sieve = cls.__new__(cls)
         sieve._n = n.bit_length()
         sieve._sieve = n
         sieve._count = sieve._sieve.bit_count()
 
         return sieve
 
-    def __init__(self, n: int) -> None:
-        """Creates sieve of primes <= n"""
-
-        self._sieve: int = self._BASE_SIEVE
-        self._n = self._BASE_SIEVE.bit_length()
-        self.extend(n)
-
+    def __init__(self, data: int) -> None:
+        self._sieve: int = data
+        self._n = self._sieve.bit_length()
         self._count = self._sieve.bit_count()
 
     def extend(self, n: int) -> None:
@@ -407,7 +412,13 @@ class IntSieve(Sievish):
 
     @classmethod
     def from_size[S](cls, size: int) -> "IntSieve":
-        return IntSieve(size)
+        instance = cls.__new__(cls)
+
+        instance._sieve = instance._BASE_SIEVE
+        instance._n = instance._BASE_SIEVE.bit_length()
+        instance.extend(size)
+        instance._count = instance._sieve.bit_count()
+        return instance
 
     def to01(self) -> str:
         return format(self._sieve, "b")[::-1]
@@ -450,4 +461,4 @@ class IntSieve(Sievish):
     reset.__doc__ = Sievish.reset.__doc__
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
-    from_int.__doc__ = Sievish.from_size.__doc__
+    from_int.__doc__ = Sievish.from_int.__doc__

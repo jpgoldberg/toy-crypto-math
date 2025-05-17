@@ -3,6 +3,7 @@ from typing import (
     Iterator,
     Optional,
     Protocol,
+    Self,
     runtime_checkable,
     TYPE_CHECKING,
 )
@@ -10,6 +11,7 @@ from typing import (
 from . import bit_utils
 from math import isqrt
 
+_has_bitarry = True
 if TYPE_CHECKING:
     from bitarray import bitarray
     from bitarray.util import count_n, ba2int
@@ -19,6 +21,8 @@ else:
         from bitarray import bitarray
         from bitarray.util import count_n, ba2int
     except ImportError:
+
+        _has_bitarry = False
 
         def bitarray(*args, **kwargs) -> Any:  # type: ignore
             raise NotImplementedError("bitarray is not installed")
@@ -110,6 +114,12 @@ class Sievish(Protocol):
         """Returns a new sieve of primes less than or equal to size."""
         ...
 
+    @classmethod
+    def from_int[S](cls: type[S], n: int) -> S:
+        """Returns a new sieve of primes from the bits of n."""
+        ...
+
+
 
 class Sieve(Sievish):
     """Sieve of Eratosthenes.
@@ -143,6 +153,19 @@ class Sieve(Sievish):
     @classmethod
     def reset(cls) -> None:
         pass
+
+    @classmethod
+    def from_int(cls, n: int) -> Self:
+        sieve = super().__new__(cls)
+        sieve._n = n.bit_length()
+        byte_length = (sieve._n + 7) // 8
+        b = n.to_bytes(byte_length, byteorder="big", signed=False)
+        sieve._sieve = bitarray(b, endian="big")
+
+        sieve._count = sieve._sieve[:n].count()
+        sieve._bitstring = None
+
+        return sieve
 
     def __init__(self, n: int) -> None:
         """Creates sieve covering the first n integers.
@@ -203,7 +226,6 @@ class Sieve(Sievish):
     # "Inherit" docstrings. Can't do properties
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
-    from_size.__doc__ = Sievish.from_size.__doc__
     extend.__doc__ = Sievish.extend.__doc__
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
@@ -257,6 +279,18 @@ class SetSieve(Sievish):
     @classmethod
     def reset(cls) -> None:
         pass
+
+    @classmethod
+    def from_int(cls, n: int) -> Self:
+        sieve = super().__new__(cls)
+        sieve._n = n.bit_length()
+        sieve._sieve = list()
+
+        for idx, bit in enumerate(bit_utils.bits(n)):
+            if bit:
+                sieve._sieve.append(idx)
+
+        return sieve
 
     def __init__(self, n: int) -> None:
         """Returns sorted list primes n =< n
@@ -315,7 +349,6 @@ class SetSieve(Sievish):
 
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
-    from_size.__doc__ = Sievish.from_size.__doc__
     extend.__doc__ = Sievish.extend.__doc__
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
@@ -331,6 +364,15 @@ class IntSieve(Sievish):
     @classmethod
     def reset(cls) -> None:
         pass
+
+    @classmethod
+    def from_int(cls, n: int) -> Self:
+        sieve = super().__new__(cls)
+        sieve._n = n.bit_length()
+        sieve._sieve = n
+        sieve._count = sieve._sieve.bit_count()
+
+        return sieve
 
     def __init__(self, n: int) -> None:
         """Creates sieve of primes <= n"""
@@ -403,7 +445,6 @@ class IntSieve(Sievish):
     # 'Inherit' docstrings
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
-    from_size.__doc__ = Sievish.from_size.__doc__
     extend.__doc__ = Sievish.extend.__doc__
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__

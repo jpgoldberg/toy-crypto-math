@@ -1,7 +1,7 @@
 .. include:: ../common/unsafe.rst
 
-Utility functions
-=================
+Bit Utility functions
+======================
 
 .. py:module:: toy_crypto.bit_utils
     :synopsis: Various utilities for manipulationg bit-like things

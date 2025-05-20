@@ -2,7 +2,7 @@ from collections import UserDict
 from random import sample
 from typing import Any, Optional, TypeAlias
 from itertools import combinations
-from toy_crypto.utils import hamming_distance
+from toy_crypto.bit_utils import hamming_distance
 
 Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""

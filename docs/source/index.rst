@@ -18,13 +18,8 @@ but if you must:
 
 .. installation:: toycrypto
     :pypi:
-    :github:
+    :github: main
 
-Note that that due to an issue,
-:github:issue:`184 <sphinx-toolbox/sphinx-toolbox>`,
-in the generation of this document,
-github instructions incorrectly list the branch as ``master``.
-It really is ``main``.
 
 Import names
 ------------
@@ -55,6 +50,7 @@ Table of Contents
 
   motivation
   utils
+  bit_utils
   nt
   sieve
   rsa

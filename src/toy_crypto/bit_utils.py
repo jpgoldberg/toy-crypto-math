@@ -1,6 +1,7 @@
 from typing import Optional, Any, Union, Callable, Self
 from collections.abc import Iterator
 import operator
+from .utils import xor
 from .types import SupportsBool
 
 
@@ -230,6 +231,21 @@ def flip_end(byte: int) -> int:
         byte, b = divmod(byte, 2)
         result += b * (2 ** (8 - p))
     return result
+
+
+def hamming_distance(a: bytes, b: bytes) -> int:
+    """Hamming distance between byte sequences of equal length.
+
+    :raises ValueError: if len(a) != len(b).
+    """
+
+    if len(a) != len(b):
+        raise ValueError("Lengths are unequal")
+
+    # hamming distance will be the number of 1 bits in a xor b
+    db: bytes = xor(a, b)
+    # bit_count is only defined for ints, so
+    return int.from_bytes(db, signed=False).bit_count()
 
 
 class PyBitArray:

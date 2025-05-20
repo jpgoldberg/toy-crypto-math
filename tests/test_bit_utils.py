@@ -72,7 +72,7 @@ class TestPyBitArray:
 
 
 class TestOtherBits:
-    def test_lsb_to_msb(self) -> None:
+    def bits(self) -> None:
         vectors = [
             (0b1101, [1, 0, 1, 1]),
             (1, [1]),
@@ -83,6 +83,13 @@ class TestOtherBits:
         for n, expected in vectors:
             bits = [bit for bit in bit_utils.bits(n)]
             assert bits == expected
+
+    def test_hamming(self) -> None:
+        s1 = b"this is a test"
+        s2 = b"wokka wokka!!!"
+
+        hd = bit_utils.hamming_distance(s1, s2)
+        assert hd == 37
 
 
 class TestIntBits:

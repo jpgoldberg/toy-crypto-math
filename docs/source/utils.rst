@@ -43,27 +43,6 @@ would otherwise fail.
 >>> digit_count(-10_000)
 5
 
-.. autofunction:: lsb_to_msb
-
-:func:`~toy_crypto.utils.lsb_to_msb` is used by
-:func:`~toy_crypto.ec.Point.scaler_multiply`
-and would be used by modular exponentiation if I had included that.
-
->>> from toy_crypto.utils import lsb_to_msb
->>> list(lsb_to_msb(13))
-[1, 0, 1, 1]
-
-
-.. autofunction:: hamming_distance
-
-Let's illustrate with an `example from Cryptopals <https://cryptopals.com/sets/1/challenges/6>`__.
-
->>> from toy_crypto.utils import hamming_distance
->>> s1 = b"this is a test"
->>> s2 = b"wokka wokka!!!"
->>> hamming_distance(s1, s2)
-37
-
 
 xor
 -----

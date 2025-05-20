@@ -24,13 +24,6 @@ class TestUtils:
             d = utils.digit_count(n)
             assert d == expected
 
-    def test_hamming(self) -> None:
-        s1 = b"this is a test"
-        s2 = b"wokka wokka!!!"
-
-        hd = utils.hamming_distance(s1, s2)
-        assert hd == 37
-
 
 class TestXor:
     def test_xor(self) -> None:

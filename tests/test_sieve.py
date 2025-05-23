@@ -62,6 +62,13 @@ class Fixed:
             i = int(s)
             assert i == t_int
 
+    @classmethod
+    def t_from_list(cls, sc: type[sieve.Sievish]) -> None:
+        for liszt in [cls.primes100]:
+            s = sc.from_list(liszt, size=100)
+            assert s.n == 100
+            assert liszt == list(s.primes())
+
 
 class TestBaSieve:
     s_class = sieve.Sieve
@@ -79,7 +86,10 @@ class TestBaSieve:
         Fixed.t_2int(self.s_class)
 
     def test_from_int(self) -> None:
-        Fixed.t_2int(self.s_class)
+        Fixed.t_from_int(self.s_class)
+
+    def test_from_list(self) -> None:
+        Fixed.t_from_list(self.s_class)
 
 
 class TestSetSieve:
@@ -98,7 +108,10 @@ class TestSetSieve:
         Fixed.t_2int(self.s_class)
 
     def test_from_int(self) -> None:
-        Fixed.t_2int(self.s_class)
+        Fixed.t_from_int(self.s_class)
+
+    def test_from_list(self) -> None:
+        Fixed.t_from_list(self.s_class)
 
 
 class TestIntSieve:
@@ -117,7 +130,10 @@ class TestIntSieve:
         Fixed.t_2int(self.s_class)
 
     def test_from_int(self) -> None:
-        Fixed.t_2int(self.s_class)
+        Fixed.t_from_int(self.s_class)
+
+    def test_from_list(self) -> None:
+        Fixed.t_from_list(self.s_class)
 
 
 if __name__ == "__main__":

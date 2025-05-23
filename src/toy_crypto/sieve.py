@@ -113,6 +113,18 @@ class Sievish(Protocol):
         ...
 
     @classmethod
+    def from_list[S](
+        cls: type[S], primes: list[int], size: int | None = None
+    ) -> S:
+        """Returns a new sieve of primes from list.
+
+        If size is not specified it will be set to the largest value in primes
+
+        :raises ValueError: if primes is empty
+        """
+        ...
+
+    @classmethod
     def from_sieve[S: Sievish](cls: type[S], sieve: S, size: int | None) -> S:
         """New instance using already computed data in sieve.
 
@@ -165,11 +177,14 @@ class Sieve(Sievish):
     def from_int(cls, n: int) -> Self:
         instance = cls.__new__(cls)
         instance._n = n.bit_length()
-        byte_length = (instance._n + 7) // 8
-        b = n.to_bytes(byte_length, byteorder="big", signed=False)
-        instance._data = bitarray(b, endian="big")
+        instance._data = bitarray(instance._n + 1)
+        idx = 0
+        while n:
+            n, r = divmod(n, 2)
+            instance._data[idx] = r
+            idx += 1
 
-        instance._count = instance._data[:n].count()
+        instance._count = instance._data.count()
 
         return instance
 
@@ -185,6 +200,25 @@ class Sieve(Sievish):
         instance._n = size
 
         instance._count = instance._data[:size].count()
+
+        return instance
+
+    @classmethod
+    def from_list(cls, primes: list[int], size: int | None = None) -> Self:
+        if not primes:
+            raise ValueError("primes cannot be empty")
+        max_prime = max(primes)
+        assert isinstance(max_prime, int)
+
+        if size is None:
+            size = max_prime
+
+        instance = cls.__new__(cls)
+        instance._data = bitarray(size)
+        for p in primes:
+            instance._data[p] = 1
+        instance._n = size
+        instance._count = instance._data.count()
 
         return instance
 
@@ -259,6 +293,7 @@ class Sieve(Sievish):
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
+    from_list.__doc__ = Sievish.from_list.__doc__
 
 
 class SetSieve(Sievish):
@@ -319,6 +354,22 @@ class SetSieve(Sievish):
                 sieve._data.append(idx)
 
         return sieve
+
+    @classmethod
+    def from_list(cls, primes: list[int], size: int | None = None) -> Self:
+        if not primes:
+            raise ValueError("primes cannot be empty")
+        max_prime = max(primes)
+        assert isinstance(max_prime, int)
+
+        if size is None:
+            size = max_prime
+
+        instance = cls.__new__(cls)
+        instance._data = sorted(primes)
+        instance._n = size
+
+        return instance
 
     def __init__(self, data: list[int]) -> None:
         """Returns sorted list primes n =< n
@@ -388,6 +439,7 @@ class SetSieve(Sievish):
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
+    from_list.__doc__ = Sievish.from_list.__doc__
 
 
 class IntSieve(Sievish):
@@ -407,6 +459,21 @@ class IntSieve(Sievish):
         sieve._count = sieve._data.bit_count()
 
         return sieve
+
+    @classmethod
+    def from_list(cls, primes: list[int], size: int | None = None) -> Self:
+        if not primes:
+            raise ValueError("primes cannot be empty")
+        max_prime = max(primes)
+        assert isinstance(max_prime, int)
+        if size is None:
+            size = max_prime
+
+        instance = cls.__new__(cls)
+        instance._data = sum((int(2**p) for p in primes))
+        instance._n = size
+        instance._count = instance._data.bit_count()
+        return instance
 
     def __init__(self, data: int) -> None:
         self._data: int = data
@@ -489,3 +556,4 @@ class IntSieve(Sievish):
     to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
+    from_list.__doc__ = Sievish.from_list.__doc__

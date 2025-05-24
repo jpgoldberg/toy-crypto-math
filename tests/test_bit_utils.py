@@ -70,6 +70,27 @@ class TestPyBitArray:
                 else:
                     assert ba[i] == 0, f"set: {name}; i: {i}"
 
+    def test_to_int(self, sets: dict[str, set[int]]) -> None:
+        p100_int = 159085582874019712269820766380
+        primes100 = sets["primes"]
+        size = len(sets["universe"])
+        ba = bit_utils.PyBitArray(size, fill_bit=0)
+        for p in primes100:
+            ba[p] = 1
+        result = int(ba)
+        assert result == p100_int
+
+    def test_from_int(self, sets: dict[str, set[int]]) -> None:
+        p100_int = 159085582874019712269820766380
+        primes100 = sets["primes"]
+        ba = bit_utils.PyBitArray.from_int(p100_int)
+
+        for idx, bit in enumerate(ba):
+            if bit:
+                assert idx in primes100
+            else:
+                assert idx not in primes100
+
 
 class TestOtherBits:
     def bits(self) -> None:

@@ -266,31 +266,37 @@ class PyBitArray:
     def __init__(self, bit_length: int, fill_bit: SupportsBool = 0) -> None:
         # Instance attributes that should always exist
         self._data: bytearray
-        self._length: int  #  length in used bits
+        self._length: int  # length in used bits
         self._free_bits: int  # number of unused bits in last byte
 
-        if isinstance(bit_length, int):
-            if bit_length < 0:
-                raise ValueError("bit_length cannot be negative")
+        if bit_length < 0:
+            raise ValueError("bit_length cannot be negative")
 
-            fill_byte: int
-            if not fill_bit:
-                fill_byte = 0
-            else:
-                fill_byte = 255
-
-            self._length = bit_length
-            byte_len, self._free_bits = divmod(self._length, 8)
-            if self._free_bits > 0:
-                byte_len += 1
-            self._data = bytearray([fill_byte] * byte_len)
-            self._data[-1] >>= self._free_bits
-
-        # elif:  # Other types will be added later. Perhaps
+        fill_byte: int
+        if not fill_bit:
+            fill_byte = 0
         else:
-            raise NotImplementedError(
-                f"Not implemented for {type(bit_length)}"
-            )
+            fill_byte = 255
+
+        self._length = bit_length
+        byte_len, self._free_bits = divmod(self._length, 8)
+        if self._free_bits > 0:
+            byte_len += 1
+        self._data = bytearray([fill_byte] * byte_len)
+        self._data[-1] >>= self._free_bits
+
+    @classmethod
+    def from_int(cls, n: int) -> Self:
+        instance = cls(n.bit_length())
+
+        idx = 0
+        while n:
+            n, r = divmod(n, 2)
+            if r:
+                instance[idx] = 1
+            idx += 1
+
+        return instance
 
     def append(self, b: SupportsBool) -> None:
         b = 1 if b else 0
@@ -327,12 +333,47 @@ class PyBitArray:
         new_byte = set_bit_in_byte(byte, bit_index, value)
         self._data[byte_index] = new_byte
 
-    def byte_len(self) -> int:
+    @property
+    def nbytes(self) -> int:
         """Length in bytes"""
         return len(self._data)
 
+    @property
+    def padbits(self) -> int:
+        """Number of pad bits"""
+        return self._free_bits
+
     def __len__(self) -> int:
         return self._length
+
+    def bits(
+        self, start: int = 0, stop: int | None = None, step: int = 1
+    ) -> Iterator[int]:
+        if step == 0:
+            raise ValueError("step cannot be 0")
+        step_sign = 1 if step > 0 else -1
+
+        match (stop, step_sign):
+            case None, 1:
+                stop = self._length
+            case None, _:  # sign is negative
+                stop = 0
+            case _, _:
+                stop = stop
+
+        # I know this, you know this. Now the type checker will know this
+        assert stop is not None
+        indices = range(start, stop, step)
+
+        for idx in indices:
+            yield self[idx]
+
+    def __iter__(self) -> Iterator[int]:
+        return self.bits()
+
+    def __int__(self) -> int:
+        """Integer with first element as least significant bit"""
+        return sum(b * (2**i) for i, b in enumerate(self))
 
     def count(self) -> int:
         """Returns number of 1 bits"""
@@ -340,20 +381,19 @@ class PyBitArray:
 
     @classmethod
     def from_bytes(cls, byte_data: bytes, endian: str = "big") -> Self:
-        if endian not in ["big", "little"]:
-            raise ValueError('endian must be "big" or "little"')
+        ints: list[int]
+        match endian.lower():
+            case "big":
+                ints = [int(b) for b in byte_data]
+            case "little":
+                ints = [int(b) for b in reversed(byte_data)]
+            case _:
+                raise ValueError('endian must be "big" or "little"')
 
-        ints: list[int] = [int(b) for b in byte_data]
+        instance = cls(8 * len(ints))
+        instance._data = bytearray(ints)
 
-        result = super().__new__(cls)
-
-        if endian == "big":
-            result._data = bytearray(ints)
-        else:
-            result._data = bytearray(ints[::-1])
-        result._length = 8 * len(result._data)
-
-        return result
+        return instance
 
     def to_bytes(self, endian: str = "big") -> bytes:
         if endian not in ["big", "little"]:
@@ -362,3 +402,11 @@ class PyBitArray:
         if endian == "big":
             return bytes(self._data)
         return bytes(self._data[::-1])
+
+    def bit_index(self, k: int, b: int = 1) -> int | None:
+        """The index of the n-th 1 or 0 bit."""
+
+        # For the moment I will just use bit_index for int
+        # TODO: Write b-search for bit index using native data
+        as_int = int(self)
+        return bit_index(as_int, k, b)

@@ -1,3 +1,4 @@
+# mypy: disable-error-code="type-abstract"
 import sys
 
 import pytest
@@ -7,7 +8,7 @@ from toy_crypto import sieve
 class Fixed:
     """Perhaps better done with fixtures"""
 
-    expected30 = "001101010001010001010001000001"
+    expected30_int = 545925292
     """stringy bitarray for primes below 30"""
 
     ints: list[tuple[int, int]] = [
@@ -30,7 +31,7 @@ class Fixed:
         s30 = sc.from_size(30)
         s30_count = 10
 
-        assert s30.to01() == cls.expected30
+        assert int(s30) == cls.expected30_int
         assert s30_count == s30.count
 
     @classmethod
@@ -74,6 +75,7 @@ class TestBaSieve:
     s_class = sieve.Sieve
 
     def test_30(self) -> None:
+        assert issubclass(self.s_class, sieve.Sieve)
         Fixed.t_30(self.s_class)
 
     def test_count(self) -> None:

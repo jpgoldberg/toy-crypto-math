@@ -1,3 +1,5 @@
+from functools import cache
+import threading
 from typing import (
     Any,
     Iterator,
@@ -85,14 +87,6 @@ class Sievish(Protocol):
         """
         ...
 
-    def to01(self) -> str:
-        """The sieve as a string of 0s and 1s.
-
-        The output is to be read left to right. That is, it should begin with
-        ``001101010001`` corresponding to primes [2, 3, 5, 7, 11]
-        """
-        ...
-
     def __int__(self) -> int:
         """Sieve as an integer with 1 bits representing primes.
 
@@ -155,19 +149,39 @@ class Sieve(Sievish):
 
     _base_sieve = bitarray("0011")
 
-    def _extend(self, n: int) -> None:
-        assert isinstance(self._data, bitarray)  # pyright needed this.
-        len_c = len(self._data)
-        if n <= len_c:
+    _common_data = bitarray("0011")
+    _largest_n: int = 2
+    """These will be shared by all instances."""
+
+    lock = threading.Lock()
+
+    @classmethod
+    def _extend(cls, n: int) -> None:
+        if n <= cls._largest_n:
             return
 
-        len_e = n - len_c
-        self._data.extend([True] * len_e)
+        with cls.lock:
+            len_e = n - cls._largest_n
+            cls._common_data.extend([True] * len_e)
 
-        for i in range(2, isqrt(n) + 1):
-            if self._data[i] is False:
-                continue
-            self._data[i * i :: i] = False
+            """start is the muliple of the prime we start zeroing the
+            array from. Typically that would be 2p, but we want to consider
+            cases where the common_data is larger than n. All composites 
+            through largest largest_n have already been set to 0 in the array.
+
+            So ``start`` must meet four conditions
+            1. It must be a multiple of p
+            2. It must be larger than p
+            3. It must be larger than largest_n
+            4. It must be the smallest number meeting the above conditions
+            """
+
+            start: int
+            for p in range(2, isqrt(n) + 1):
+                if cls._common_data[p]:
+                    start = max(p + p, p * (p // cls._largest_n + 1))
+                    cls._common_data[start::p] = 0
+            cls._largest_n = n
 
     @classmethod
     def reset(cls) -> None:
@@ -195,11 +209,10 @@ class Sieve(Sievish):
 
         instance = cls.__new__(cls)
 
-        instance._data = instance._base_sieve
         instance._extend(size)
         instance._n = size
 
-        instance._count = instance._data[:size].count()
+        instance._count = instance._common_data[:size].count()
 
         return instance
 
@@ -214,11 +227,17 @@ class Sieve(Sievish):
             size = max_prime
 
         instance = cls.__new__(cls)
-        instance._data = bitarray(size)
-        for p in primes:
-            instance._data[p] = 1
+        if max_prime > cls._largest_n:
+            with cls.lock:
+                extend_by = max_prime - cls._largest_n
+                cls._common_data.extend([0] * extend_by)
+
+                for p in primes:
+                    if p > cls._largest_n:
+                        instance._common_data[p] = 1
+                cls._largest_n = max(size, max_prime)
         instance._n = size
-        instance._count = instance._data.count()
+        instance._count = instance._common_data[:size].count()
 
         return instance
 
@@ -235,53 +254,43 @@ class Sieve(Sievish):
             raise ValueError(
                 "size cannot be larger than the length of the data"
             )
+        if size > self._largest_n:
+            with self.lock:
+                self._largest_n = len(data)
+                self._common_data = data
 
-        self._data = data.copy()
         self._n = size
 
-        self._count: int = self._data[: self._n].count()
+        self._count: int = self._common_data[: self._n].count()
 
     @property
     def n(self) -> int:
         return self._n
 
     @property
-    def array(self) -> bitarray:
-        """The sieve as a bitarray."""
-        assert isinstance(self._data, bitarray)
-        return self._data[: self._n]
-
-    @property
     def count(self) -> int:
         """The number of primes in the sieve."""
         return self._count
 
-    def to01(self) -> str:
-        assert isinstance(self._data, bitarray)
-        result = self._data[: self._n].to01()
-        assert isinstance(result, str)
-        return result
-
+    @cache
     def nth_prime(self, n: int) -> int:
-        assert isinstance(self._data, bitarray)
+        assert isinstance(self._common_data, bitarray)
         if n < 1:
             raise ValueError("n must be greater than zero")
 
         if n > self._count:
             raise ValueError("n cannot exceed count")
 
-        return count_n(self._data, n)
+        return count_n(self._common_data, n)
 
     def primes(self, start: int = 1) -> Iterator[int]:
-        assert isinstance(self._data, bitarray)
         if start < 1:
             raise ValueError("Start must be >= 1")
         for n in range(start, self._count + 1):
-            yield count_n(self._data, n) - 1
+            yield count_n(self._common_data, n) - 1
 
     def __int__(self) -> int:
-        assert isinstance(self._data, bitarray)
-        reversed = self._data.copy()[: self._n]
+        reversed = self._common_data.copy()[: self._n]
         reversed.reverse()
         return ba2int(reversed)
 
@@ -290,7 +299,6 @@ class Sieve(Sievish):
     __int__.__doc__ = Sievish.__int__.__doc__
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
-    to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__
@@ -309,9 +317,6 @@ class SetSieve(Sievish):
 
     def _extend(self, n: int) -> None:
         self._data: list[int]
-        if n <= self.count:
-            return
-
         largest_p = self._data[-1]
         if n <= largest_p:
             return
@@ -337,6 +342,7 @@ class SetSieve(Sievish):
                 for m in range(p + p, n + 1, p):
                     sieve.discard(m)
 
+        # sets, unlike dicts, are not guaranteed to preserve insertion order
         self._data = sorted(sieve)
 
     @classmethod
@@ -429,14 +435,10 @@ class SetSieve(Sievish):
     def n(self) -> int:
         return self._n
 
-    def to01(self) -> str:
-        return format(self.__int__(), "b")[::-1]
-
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
-    to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__
@@ -515,9 +517,6 @@ class IntSieve(Sievish):
         instance._count = instance._data.bit_count()
         return instance
 
-    def to01(self) -> str:
-        return format(self._data, "b")[::-1]
-
     def nth_prime(self, n: int) -> int:
         if n < 1:
             raise ValueError("n must be greater than zero")
@@ -553,7 +552,6 @@ class IntSieve(Sievish):
     __int__.__doc__ = Sievish.__int__.__doc__
     primes.__doc__ = Sievish.primes.__doc__
     reset.__doc__ = Sievish.reset.__doc__
-    to01.__doc__ = Sievish.to01.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__

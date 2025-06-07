@@ -148,7 +148,7 @@ class Bit:
         ob = self._other_bool(other)
         if ob is None:
             return NotImplemented
-        ob = other.__bool__()
+        ob = bool(other)
 
         return self._value == ob
 

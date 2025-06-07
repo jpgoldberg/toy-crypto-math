@@ -1,6 +1,6 @@
 import os
 import sys
-import timeit
+import time
 
 PROJECT_PATH = os.getcwd()
 SOURCE_PATH = os.path.join(PROJECT_PATH, "src")
@@ -22,26 +22,60 @@ LEN = 100_000
 
 def f1() -> None:
     Sieve.reset()
-    Sieve.from_size(FIRST_SIZE)
-    Sieve.from_size(FINAL_SIZE)
+    s1 = Sieve.from_size(FIRST_SIZE)
+    # assert s1.count == 664579
+    s2 = Sieve.from_size(FINAL_SIZE)
+    # assert s2.count == 5761455
 
 
 def f2() -> None:
     Sieve.reset()
-    Sieve.from_size(FIRST_SIZE)
+    s1 = Sieve.from_size(FIRST_SIZE)
+    # assert s1.count == 664579
     Sieve.reset()
-    Sieve.from_size(FINAL_SIZE)
+    s2 = Sieve.from_size(FINAL_SIZE)
+    # assert s2.count == 5761455
+
+def f3() -> None:
+    Sieve.reset()
+    s1 = Sieve.from_size(FIRST_SIZE)
+    s2 = Sieve.from_size(FIRST_SIZE)
+    assert s1.count == s2.count
+
+def f4() -> None:
+    Sieve.reset()
+    s1 = Sieve.from_size(FIRST_SIZE)
+    Sieve.reset()
+    s2 = Sieve.from_size(FIRST_SIZE)
+    assert s1.count == s2.count
+
+def main() -> None:
+    trials = 5
+
+    t_f2_start = time.time()
+    for _ in range(trials):
+        f2()
+    delta_f2 = time.time() - t_f2_start
+
+    t_f1_start = time.time()
+    for _ in range(trials):
+        f1()
+    delta_f1 = time.time() - t_f1_start
+
+    print(f"For {FIRST_SIZE}, {FINAL_SIZE}\n\t{delta_f1}/{delta_f2} = {delta_f1 / delta_f2:.2f}")
+
+    t_f3_start = time.time()
+    for _ in range(trials):
+        f3()
+    delta_f3 = time.time() - t_f3_start
+
+    t_f4_start = time.time()
+    for _ in range(trials):
+        f4()
+    delta_f4 = time.time() - t_f4_start
+
+    print(f"For {FIRST_SIZE}, {FIRST_SIZE}\n\t{delta_f3}/{delta_f4} = {delta_f3 / delta_f4:.2f}")
 
 
-def f_mod() -> int:
-    r = LEN % PRIME
-    if r == 0:
-        return LEN
-    return LEN + (PRIME - r)
-
-
-t1 = timeit.Timer(stmt=f1).timeit(number=10)
-print(f"time with cache: {t1}")
-
-t2 = timeit.Timer(stmt=f2).timeit(number=10)
-print(f"time with cache cleared: {t2}")
+if __name__ == "__main__":
+    main()

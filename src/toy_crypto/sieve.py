@@ -164,9 +164,9 @@ class Sieve(Sievish):
             len_e = n - cls._largest_n
             cls._common_data.extend([True] * len_e)
 
-            """start is the muliple of the prime we start zeroing the
+            """start is the multiple of the prime we start zeroing the
             array from. Typically that would be 2p, but we want to consider
-            cases where the common_data is larger than n. All composites 
+            cases where the common_data is larger than n. All composites
             through largest largest_n have already been set to 0 in the array.
 
             So ``start`` must meet four conditions
@@ -185,7 +185,8 @@ class Sieve(Sievish):
 
     @classmethod
     def reset(cls) -> None:
-        pass
+        cls._common_data = cls._base_sieve.copy()
+        cls._largest_n = 2
 
     @classmethod
     def from_int(cls, n: int) -> Self:

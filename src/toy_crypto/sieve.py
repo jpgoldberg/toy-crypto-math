@@ -120,25 +120,6 @@ class Sievish(Protocol):
         """
         ...
 
-    @classmethod
-    def from_sieve[S: Sievish](cls: type[S], sieve: S, size: int | None) -> S:
-        """New instance using already computed data in sieve.
-
-        If size is not specified, new instance will be the same size as sieve.
-        """
-        if size is None:
-            size = sieve.n
-
-        if size < 2:
-            raise ValueError("size must be greater than 2")
-
-        instance = cls.__init__(sieve._data)  # type: ignore
-        assert isinstance(instance, Sievish)
-        instance._extend(size)
-        instance._n = size
-
-        return instance
-
 
 class BaSieve(Sievish):
     """Sieve of Eratosthenes.

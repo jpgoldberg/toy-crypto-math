@@ -72,10 +72,10 @@ class Fixed:
 
 
 class TestBaSieve:
-    s_class = sieve.Sieve
+    s_class = sieve.BaSieve
 
     def test_30(self) -> None:
-        assert issubclass(self.s_class, sieve.Sieve)
+        assert issubclass(self.s_class, sieve.BaSieve)
         Fixed.t_30(self.s_class)
 
     def test_count(self) -> None:

@@ -18,7 +18,7 @@ Why three separate implementations?
 It is reasonable to wonder why I have three distinct implementations.
 There are reasons, but first let me give an overview of the major differences.
 
-- The :class:`Sieve` class
+- The :class:`BaSieve` class
 
     This uses the bitarray_ package underlyingly.
     It is by far the most time and memory efficient of the implemenations here.
@@ -47,9 +47,9 @@ There are reasons, but first let me give an overview of the major differences.
     Time it takes in seconds for sieves of various sizes from 100 to 100000
     to be created by the different classes.
 
-The very real time differences between the creating a :class:`Sieve` and a :class:`SetSieve` is obscured in figure :ref:`all_figure` by the enormous amount
+The very real time differences between the creating a :class:`BaSieve` and a :class:`SetSieve` is obscured in figure :ref:`all_figure` by the enormous amount
 of time it takes to construct an :class:`IntSieve`.
-So here is a graph showing the times just for :class:`Sieve` and a :class:`SetSieve`.
+So here is a graph showing the times just for :class:`BaSieve` and a :class:`SetSieve`.
 
 .. _sans_int_figure: 
 
@@ -58,7 +58,7 @@ So here is a graph showing the times just for :class:`Sieve` and a :class:`SetSi
 
     Seconds to create sieves (without IntSieve).
 
-Specifically on my system it took approximately 0.011 seconds to create a sieve of all numbers less than or equal to 1 million using the bitarray-based :class:`Sieve`,
+Specifically on my system it took approximately 0.011 seconds to create a sieve of all numbers less than or equal to 1 million using the bitarray-based :class:`BaSieve`,
 0.198 seconds with :class:`SetSeive`,
 and a minute (59.796 seconds) with :class:`IntSieve`.
 So bitaray was nearly 20 times faster than the set-based sieve construction
@@ -112,14 +112,20 @@ The :protocol:`Sievish` Protocol
 ----------------------------------
 .. autoprotocol:: Sievish
 
+The :class:`Sieve` alias
+-------------------------
+.. class:: Sieve
+    
+    Sieve will be an alias for :class:`BaSieve` if bitarray_ is available, otherwise it will be assigned to some other sieve class.
+
 The concrete classes
------------------------
+======================
 
 
-The :class:`Sieve` class
+The :class:`BaSieve` class
 ---------------------------
 
-.. autoclass:: Sieve
+.. autoclass:: BaSieve
     :class-doc-from: both
     :members:
 

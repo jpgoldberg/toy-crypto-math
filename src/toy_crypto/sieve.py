@@ -12,6 +12,7 @@ from typing import (
 from . import bit_utils
 from math import isqrt
 
+
 _has_bitarry = True
 if TYPE_CHECKING:
     from bitarray import bitarray
@@ -138,7 +139,7 @@ class Sievish(Protocol):
         return instance
 
 
-class Sieve(Sievish):
+class BaSieve(Sievish):
     """Sieve of Eratosthenes.
 
     The good parts of this implementation are lifted from the example provided
@@ -556,3 +557,14 @@ class IntSieve(Sievish):
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__
+
+
+# https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
+Sieve: type[object]
+"""Sieve will be an alias for BaSieve if bitarray is available,
+otherwise it will be assigned to some other sieve class."""
+
+if _has_bitarry:
+    Sieve = BaSieve
+else:
+    Sieve = SetSieve

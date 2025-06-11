@@ -3,7 +3,7 @@ import json
 import polars as pl
 
 # import cProfile
-from toy_crypto.sieve import Sieve, IntSieve, SetSieve, Sievish
+from toy_crypto.sieve import BaSieve, IntSieve, SetSieve, Sievish
 
 repetitions = 1
 
@@ -17,7 +17,7 @@ def sieve_count(s_class: Sievish, size: int) -> int:
 sizes: list[int] = [10**n for n in range(2, 7)]
 sizes += [5 * (10**n) for n in range(1, 6)]
 
-s_classes: list[str] = [f"{c.__name__}" for c in (Sieve, IntSieve, SetSieve)]
+s_classes: list[str] = [f"{c.__name__}" for c in (BaSieve, IntSieve, SetSieve)]
 
 results: dict[str, list[float] | list[int]] = {"size": sizes}
 

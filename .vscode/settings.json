@@ -13,5 +13,6 @@
         "plaintext",
         "python"
     ],
-    "python.analysis.typeEvaluation.disableBytesTypePromotions": true
+    "python.analysis.typeEvaluation.disableBytesTypePromotions": true,
+    "dependi.python.silenceVersionOverflows": false
 }

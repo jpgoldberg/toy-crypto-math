@@ -27,7 +27,7 @@ class Fixed:
 
     @classmethod
     def t_30(cls, sc: type[sieve.Sievish]) -> None:
-        sc.reset()
+        sc._reset()
         s30 = sc.from_size(30)
         s30_count = 10
 
@@ -42,7 +42,7 @@ class Fixed:
 
     @classmethod
     def t_primes(cls, sc: type[sieve.Sievish]) -> None:
-        sc.reset()
+        sc._reset()
         s30 = sc.from_size(30)
         expected = [p for p in cls.primes100 if p < 30]
 

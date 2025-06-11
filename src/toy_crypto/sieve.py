@@ -1,4 +1,5 @@
 from functools import cache
+from bisect import bisect_right
 import threading
 from typing import (
     Any,
@@ -46,13 +47,13 @@ class Sievish(Protocol):
     """
 
     @classmethod
-    def reset(cls) -> None:
+    def _reset(cls) -> None:
         """Resets the class largest sieve created if such a thing exists.
 
-        This is a no-op for classes that do not cache the largest sieve they
-        have created.
-        Even for classes for which this does something, this class method is
-        useful only for testing and profiling.
+        This exists only for running tests on caching.
+
+        For classes that internally share data among instances, this is likely
+        to leave instances in an inconsistent state. This is a no-op for classes that do not cache the largest sieve they
         """
         ...
 
@@ -185,9 +186,10 @@ class BaSieve(Sievish):
             cls._largest_n = n
 
     @classmethod
-    def reset(cls) -> None:
-        cls._common_data = cls._base_sieve.copy()
-        cls._largest_n = 2
+    def _reset(cls) -> None:
+        with cls.lock:
+            cls._common_data = cls._base_sieve.copy()
+            cls._largest_n = 2
 
     @classmethod
     def from_int(cls, n: int) -> Self:
@@ -275,7 +277,7 @@ class BaSieve(Sievish):
         return self._count
 
     @cache
-    def nth_prime(self, n: int) -> int:
+    def nth_prime(self, n: int) -> int:  # pyright: ignore
         assert isinstance(self._common_data, bitarray)
         if n < 1:
             raise ValueError("n must be greater than zero")
@@ -300,7 +302,7 @@ class BaSieve(Sievish):
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
     primes.__doc__ = Sievish.primes.__doc__
-    reset.__doc__ = Sievish.reset.__doc__
+    _reset.__doc__ = Sievish._reset.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__
@@ -316,70 +318,86 @@ class SetSieve(Sievish):
     """
 
     _base_sieve: list[int] = [2, 3]
+    _common_data = _base_sieve.copy()
+    _largest_n: int = 3
 
-    def _extend(self, n: int) -> None:
-        self._data: list[int]
-        largest_p = self._data[-1]
-        if n <= largest_p:
-            return
-
-        # This is where the heavy memory consumption comes in.
-        # Use numpy or bitarray for vast improvements in space
-        # and time.
-        sieve = set(p for p in self._data)
-        sieve = sieve.union(set(range(largest_p + 1, n + 1)))
-
-        # We go through what remains in the sieve in numeric order,
-        # eliminating multiples of what we find.
-        #
-        # We only need to go up to and including the square root of n,
-        # remove all non-primes above that square-root =< n.
-        for p in range(2, isqrt(n) + 1):
-            if p in sieve:
-                # Because we are going through sieve in numeric order
-                # we know that multiples of anything less than p have
-                # already been removed, so p is prime.
-                # Our job is to now remove multiples of p
-                # higher up in the sieve.
-                for m in range(p + p, n + 1, p):
-                    sieve.discard(m)
-
-        # sets, unlike dicts, are not guaranteed to preserve insertion order
-        self._data = sorted(sieve)
+    lock = threading.Lock()
 
     @classmethod
-    def reset(cls) -> None:
+    def _extend(cls, n: int) -> None:
+        if n <= cls._largest_n:
+            return
+
+        with cls.lock:
+            largest_p = cls._common_data[-1]
+            upper_set: set[int] = {c for c in range(largest_p + 1, n + 1)}
+
+            # first we sieve out products of the primes we
+            # already have from the upper set.
+            #
+            # See comments about ``start`` in BaSieve
+            start: int
+            for p in range(2, isqrt(n) + 1):
+                if p in cls._common_data:
+                    start = max(p + p, p * (p // cls._largest_n + 1))
+                    p_products = range(start, n + 1, p)
+                    for c in p_products:
+                        upper_set.discard(c)
+
+            # Now we sieve out products of things remaining in the upper set
+            for p in range(largest_p, isqrt(n) + 1):
+                if p in upper_set:
+                    for c in range(2 * p, n + 1, p):
+                        upper_set.discard(c)
+
+            cls._common_data.extend(sorted(upper_set))
+            cls._largest_n = n
+
+    @classmethod
+    def _reset(cls) -> None:
         pass
 
     @classmethod
     def from_int(cls, n: int) -> Self:
-        sieve = cls.__new__(cls)
-        sieve._n = n.bit_length()
-        sieve._data = list()
+        instance = cls.__new__(cls)
+        instance._n = n.bit_length()
+        if n.bit_length() > cls._largest_n:
+            with cls.lock:
+                new_primes = (
+                    p
+                    for p, b in enumerate(bit_utils.bits(n))
+                    if p > cls._largest_n and b
+                )
+                cls._common_data.extend(new_primes)
+                cls._largest_n = n.bit_length()
 
-        for idx, bit in enumerate(bit_utils.bits(n)):
-            if bit:
-                sieve._data.append(idx)
-
-        return sieve
+        return instance
 
     @classmethod
     def from_list(cls, primes: list[int], size: int | None = None) -> Self:
         if not primes:
             raise ValueError("primes cannot be empty")
-        max_prime = max(primes)
-        assert isinstance(max_prime, int)
+
+        # not only sorts, but gives us a copy
+        primes = sorted(primes)
 
         if size is None:
-            size = max_prime
+            size = primes[-1]
+        elif size < 2:
+            raise ValueError("size must be greater than 2")
 
         instance = cls.__new__(cls)
-        instance._data = sorted(primes)
         instance._n = size
+        if len(primes) > len(cls._common_data):
+            with cls.lock:
+                ip = bisect_right(primes, cls._largest_n)
+                new_primes = primes[ip:]
+                cls._common_data.extend(new_primes)
+                cls._largest_n = size
 
         return instance
 
-    def __init__(self, data: list[int]) -> None:
+    def __init__(self, data: list[int], size: int | None = None) -> None:
         """Returns sorted list primes n =< n
 
         A pure Python (memory hogging) Sieve of Eratosthenes.
@@ -387,8 +405,17 @@ class SetSieve(Sievish):
         illustrate the algorithm.
         """
 
-        self._n = max(data)
-        self._data = data  # type: ignore
+        # not only sorts, but gives us a copy
+        data = sorted(data)
+
+        if size is None:
+            size = data[-1]
+
+        with self.lock:
+            if size > self._largest_n:
+                self._largest_n = size
+                self._common_data = data
+        self._n = size
 
     @classmethod
     def from_size[S](cls, size: int) -> "SetSieve":
@@ -398,21 +425,23 @@ class SetSieve(Sievish):
         instance = cls.__new__(cls)
 
         instance._n = size
-        instance._data = instance._base_sieve.copy()
         instance._extend(size)
 
         return instance
 
     @property
     def count(self) -> int:
-        return len(self._data)
+        if self._n < self._largest_n:
+            ip = bisect_right(self._common_data, self._n)
+            return len(self._common_data[:ip])
+        return len(self._common_data)
 
     def primes(self, start: int = 1) -> Iterator[int]:
         if start < 1:
             raise ValueError("Start must be >= 1")
 
         for n in range(start, self.count + 1):
-            yield self._data[n - 1]
+            yield self._common_data[n - 1]
 
     def nth_prime(self, n: int) -> int:
         """Returns n-th prime. ``nth_prime(1) == 2``. There is no zeroth prime.
@@ -427,10 +456,11 @@ class SetSieve(Sievish):
         if n > self.count:
             raise ValueError("n cannot exceed count")
 
-        return self._data[n - 1]
+        return self._common_data[n - 1]
 
     def __int__(self) -> int:
-        result = sum((int(2**p) for p in self._data))
+        ip = bisect_right(self._common_data, self._n)
+        result = sum((int(2**p) for p in self._common_data[:ip]))
         return result
 
     @property
@@ -440,7 +470,7 @@ class SetSieve(Sievish):
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
     primes.__doc__ = Sievish.primes.__doc__
-    reset.__doc__ = Sievish.reset.__doc__
+    _reset.__doc__ = Sievish._reset.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__
@@ -452,7 +482,7 @@ class IntSieve(Sievish):
     _BASE_SIEVE: int = int("1100", 2)
 
     @classmethod
-    def reset(cls) -> None:
+    def _reset(cls) -> None:
         pass
 
     @classmethod
@@ -553,7 +583,7 @@ class IntSieve(Sievish):
     from_size.__doc__ = Sievish.from_size.__doc__
     __int__.__doc__ = Sievish.__int__.__doc__
     primes.__doc__ = Sievish.primes.__doc__
-    reset.__doc__ = Sievish.reset.__doc__
+    _reset.__doc__ = Sievish._reset.__doc__
     nth_prime.__doc__ = Sievish.nth_prime.__doc__
     from_int.__doc__ = Sievish.from_int.__doc__
     from_list.__doc__ = Sievish.from_list.__doc__

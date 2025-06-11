@@ -9,7 +9,7 @@ repetitions = 1
 
 
 def sieve_count(s_class: Sievish, size: int) -> int:
-    s_class.reset()
+    s_class._reset()
     s = s_class.from_size(size)
     return s.count
 

@@ -21,7 +21,7 @@ LEN = 100_000
 
 
 def f1() -> None:
-    BaSieve.reset()
+    BaSieve._reset()
     s1 = BaSieve.from_size(FIRST_SIZE)
     assert s1.count == 664579
     s2 = BaSieve.from_size(FINAL_SIZE)
@@ -29,25 +29,25 @@ def f1() -> None:
 
 
 def f2() -> None:
-    BaSieve.reset()
+    BaSieve._reset()
     s1 = BaSieve.from_size(FIRST_SIZE)
     assert s1.count == 664579
-    BaSieve.reset()
+    BaSieve._reset()
     s2 = BaSieve.from_size(FINAL_SIZE)
     assert s2.count == 5761455
 
 
 def f3() -> None:
-    BaSieve.reset()
+    BaSieve._reset()
     s1 = BaSieve.from_size(FIRST_SIZE)
     s2 = BaSieve.from_size(FIRST_SIZE)
     assert s1.count == s2.count
 
 
 def f4() -> None:
-    BaSieve.reset()
+    BaSieve._reset()
     s1 = BaSieve.from_size(FIRST_SIZE)
-    BaSieve.reset()
+    BaSieve._reset()
     s2 = BaSieve.from_size(FIRST_SIZE)
     assert s1.count == s2.count
 

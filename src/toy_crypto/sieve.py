@@ -205,7 +205,8 @@ class BaSieve(Sievish):
     def from_list(cls, primes: list[int], size: int | None = None) -> Self:
         if not primes:
             raise ValueError("primes cannot be empty")
-        max_prime = max(primes)
+        primes = sorted(primes)
+        max_prime = primes[-1]
         assert isinstance(max_prime, int)
 
         if size is None:

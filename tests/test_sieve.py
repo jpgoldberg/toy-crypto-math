@@ -23,6 +23,12 @@ class Fixed:
     ]  # fmt: skip
     """primes below 100"""
 
+    primes30: list[int] = [
+        2, 3, 5, 7, 11, 13, 17, 19,
+        23, 29,
+    ]  # fmt: skip
+    """primes below 30"""
+
     sc: sieve.Sievish
 
     @classmethod
@@ -44,7 +50,7 @@ class Fixed:
     def t_primes(cls, sc: type[sieve.Sievish]) -> None:
         sc._reset()
         s30 = sc.from_size(30)
-        expected = [p for p in cls.primes100 if p < 30]
+        expected = cls.primes30
 
         primes = list(s30.primes())
         assert primes == expected
@@ -65,10 +71,23 @@ class Fixed:
 
     @classmethod
     def t_from_list(cls, sc: type[sieve.Sievish]) -> None:
-        for liszt in [cls.primes100]:
-            s = sc.from_list(liszt, size=100)
-            assert s.n == 100
+        vectors: list[tuple[list[int], int]] = [
+            (cls.primes100, 100),
+            (cls.primes30, 30),
+        ]
+        for liszt, n in vectors:
+            s = sc.from_list(liszt, size=n)
+            assert s.n == n
             assert liszt == list(s.primes())
+
+    @classmethod
+    def t_nomut(cls, sc: type[sieve.Sievish]) -> None:
+        p30_in = cls.primes30.copy()
+        p100_in = cls.primes100.copy()
+        _ = sc.from_list(cls.primes30)
+        _ = sc.from_list(cls.primes100)
+        assert cls.primes100 == p100_in
+        assert cls.primes30 == p30_in
 
 
 class TestBaSieve:
@@ -93,6 +112,9 @@ class TestBaSieve:
     def test_from_list(self) -> None:
         Fixed.t_from_list(self.s_class)
 
+    def test_test_nomut(self) -> None:
+        Fixed.t_nomut(self.s_class)
+
 
 class TestSetSieve:
     s_class = sieve.SetSieve
@@ -115,6 +137,9 @@ class TestSetSieve:
     def test_from_list(self) -> None:
         Fixed.t_from_list(self.s_class)
 
+    def test_test_nomut(self) -> None:
+        Fixed.t_nomut(self.s_class)
+
 
 class TestIntSieve:
     s_class = sieve.IntSieve
@@ -136,6 +161,9 @@ class TestIntSieve:
 
     def test_from_list(self) -> None:
         Fixed.t_from_list(self.s_class)
+
+    def test_test_nomut(self) -> None:
+        Fixed.t_nomut(self.s_class)
 
 
 if __name__ == "__main__":

@@ -96,6 +96,7 @@ extensions: list[str] = [
     "sphinx_autodoc_typehints",
     "sphinx_toolbox.more_autodoc.autoprotocol",
     "sphinx_toolbox.more_autodoc.genericalias",
+    'sphinx_toolbox.more_autodoc.typevars'
 ]
 
 autodoc_typehints = "both"

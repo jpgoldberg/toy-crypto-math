@@ -1,3 +1,11 @@
+"""
+Various utilities for manipulationg bit-like things.
+
+The utilities here are most subject to change
+as many where just quick things I needed.
+This is more of a trash heap than a well-thought-out module.
+"""
+
 from typing import Optional, Any, Union, Callable, Self
 from collections.abc import Iterator
 import operator
@@ -30,7 +38,7 @@ def get_bit(n: int, k: int) -> int:
 
 
 def set_bit(n: int, k: int, value: bool | int = True) -> int:
-    """Returns n with k-th bit set to value."""
+    """Returns copy of n with k-th bit set to value."""
 
     # k must be greater than 0
     if k < 0:
@@ -125,17 +133,17 @@ class Bit:
         self._as_bytes: Optional[bytes] = None
 
     def __bool__(self) -> bool:
-        return self._value
-
-    def as_bool(self) -> bool:
+        """Every Bit should be Truthy."""
         return self._value
 
     def as_int(self) -> int:
+        """Returns 0 or 1."""
         if not self._as_int:
             self._as_int = 1 if self._value else 0
         return self._as_int
 
     def as_bytes(self) -> bytes:
+        """Returns a big-endian byte. Either 0x00 or 0x01."""
         if not self._as_bytes:
             self._as_bytes = (
                 (1).to_bytes(1, "big")
@@ -145,6 +153,7 @@ class Bit:
         return self._as_bytes
 
     def __eq__(self, other: Any) -> bool:
+        """Equality with other."""
         ob = self._other_bool(other)
         if ob is None:
             return NotImplemented
@@ -169,7 +178,7 @@ class Bit:
         Abstraction to manage type of :data:`other`
         for things like :func:`__and__` and :func:`__or__`.
         """
-        sb = self.as_bool()
+        sb = bool(self)
         tvalue = expr(sb, other)
 
         if isinstance(other, Bit):
@@ -183,6 +192,7 @@ class Bit:
         return tvalue
 
     def __and__(self, other: Any) -> Union["Bit", int, bool, bytes]:
+        """For the "&" operator."""
         ob = self._other_bool(other)
         if ob is None:
             return NotImplemented
@@ -190,6 +200,7 @@ class Bit:
         return self._logic(other=ob, expr=lambda s, o: s and o)
 
     def __xor__(self, other: Any) -> Union["Bit", int, bool, bytes]:
+        """For the "^" operator."""
         ob = self._other_bool(other)
         if ob is None:
             return NotImplemented
@@ -197,6 +208,7 @@ class Bit:
         return self._logic(other=ob, expr=lambda s, o: operator.xor(s, o))
 
     def __or__(self, other: Any) -> Union["Bit", int, bool, bytes]:
+        """For the "|" operator."""
         ob = self._other_bool(other)
         if ob is None:
             return NotImplemented
@@ -204,7 +216,7 @@ class Bit:
         return self._logic(other=ob, expr=lambda s, o: s or o)
 
     def inv(self) -> "Bit":
-        inv_b = not self.as_bool()
+        inv_b = not self
         return Bit(inv_b)
 
     def __inv__(self) -> "Bit":
@@ -212,6 +224,8 @@ class Bit:
 
 
 def set_bit_in_byte(byte: int, bit: int, value: SupportsBool) -> int:
+    """Sets the bit-most significant bit to value in byte.
+    """
     byte %= 256
     bit %= 8
 
@@ -253,6 +267,8 @@ class PyBitArray:
 
     This does not implement all methods of bitarray,
     nor does it fully follow the bitarray API.
+
+    This is very much a work in progress.
     """
 
     """
@@ -287,6 +303,7 @@ class PyBitArray:
 
     @classmethod
     def from_int(cls, n: int) -> Self:
+        """New instance from int."""
         instance = cls(n.bit_length())
 
         idx = 0
@@ -299,6 +316,7 @@ class PyBitArray:
         return instance
 
     def append(self, b: SupportsBool) -> None:
+        """appends bit b."""
         b = 1 if b else 0
 
         self._length += 1
@@ -319,11 +337,13 @@ class PyBitArray:
         return 1 if value != 0 else 0
 
     def __getitem__(self, index: int) -> int:
+        """Retrieve a bit using [] notation."""
         if not index < self._length:
             raise IndexError
         return self._inner_getitem(index)
 
     def __setitem__(self, index: int, value: SupportsBool) -> None:
+        """Set a bit using [] notation."""
         while index < 0:
             index += self._length
 
@@ -344,11 +364,13 @@ class PyBitArray:
         return self._free_bits
 
     def __len__(self) -> int:
+        """len() is defined."""
         return self._length
 
     def bits(
         self, start: int = 0, stop: int | None = None, step: int = 1
     ) -> Iterator[int]:
+        """Iterator of bits, from least significant."""
         if step == 0:
             raise ValueError("step cannot be 0")
         step_sign = 1 if step > 0 else -1

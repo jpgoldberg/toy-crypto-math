@@ -53,7 +53,9 @@ class Sievish(Protocol):
         This exists only for running tests on caching.
 
         For classes that internally share data among instances, this is likely
-        to leave instances in an inconsistent state. This is a no-op for classes that do not cache the largest sieve they
+        to leave instances in an inconsistent state.
+        This is a no-op for classes that do not cache the largest sieve they
+        created.
         """
         ...
 
@@ -516,7 +518,7 @@ class IntSieve(Sievish):
                 # higher up in the sieve.
                 for m in range(p + p, n + 1, p):
                     # self._data = utils.set_bit(self._data, m, False)
-                    self._data = self._data & ~(1 << m)
+                    self._data = self._data & ~(1 << m)  # pyright: ignore
 
     @classmethod
     def from_size[S](cls, size: int) -> "IntSieve":

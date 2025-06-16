@@ -1,5 +1,6 @@
 import hashlib
 import math
+from typing import Callable
 from toy_crypto.nt import lcm, modinv
 
 _DEFAULT_E = 65537
@@ -8,6 +9,71 @@ _DEFAULT_E = 65537
 def default_e() -> int:
     """Returns the default public exponent, 65537"""
     return _DEFAULT_E
+
+
+# Some helper functions needed for OAEP
+
+type HashFunc = Callable[[bytes], hashlib._Hash]
+
+
+type MgfFunc = Callable[[bytes, int], bytes]
+
+
+def mgf1(seed: bytes, length: int) -> bytes:
+    """Mask generation function.
+
+    From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
+    """
+
+    """
+    I am using Pythonic variable naming instead of what is in the RFC
+
+    RFC Name | My name | Description
+    --------------------------------
+    mfgSeed | seed      | seed from which mask is generated, an octet string
+    maskLen | length    | Intended length of mask
+    mask    | mask      | Output
+    T       | t         | Internal array for building mask
+    C       | counter   | Counter, four octets
+    Hash    | HASHER    | CS hash function
+    """
+
+    if length > 2**32:
+        raise ValueError("mask too long")
+
+    HASHER = hashlib.sha256
+    digest_size = HASHER(b"").digest_size
+
+    t = bytearray()
+
+    for c in range(math.ceil(length / digest_size) - 1):
+        counter = i2osp(c, 4)
+        t += HASHER(seed + counter).digest()
+
+    mask = bytes(t[:length])
+    return mask
+
+
+def i2osp(x: int, length: int) -> bytes:
+    """converts a nonnegative integer to an octet string length.
+
+    https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
+    """
+
+    if x >= 256**length:
+        raise ValueError("integer too large")
+
+    x_bytes = bytearray()
+
+    while length:
+        length -= 1
+        x, r = divmod(x, 256)
+        x_bytes.append(r)
+
+    # We need most significant byte to be leftmost (at index[0])
+    x_bytes.reverse()
+
+    return bytes(x_bytes)
 
 
 class PublicKey:
@@ -46,6 +112,26 @@ class PublicKey:
             raise ValueError("Message too big")
 
         return pow(base=message, exp=self._e, mod=self._N)
+    
+    def oaep_encrypt(self,
+                     message: bytes,
+                     label: str,
+                     hash: HashFunc = hashlib.sha256,
+                     mgf: MgfFunc = mgf1) -> bytes:
+        """
+        RSA OAEP encryption.
+
+        https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.1
+        """
+
+        h_digest_size = hash(b"").digest_size
+
+        k = self.N.bit_length // 8
+        m_length = len(message)
+
+        
+        return(bytes())
+
 
     def __eq__(self, other: object) -> bool:
         """True when each has the same modulus and public exponent.
@@ -142,59 +228,3 @@ class PrivateKey:
 
         m = m_2 + self._q * h
         return m
-
-
-def mgf1(seed: bytes, length: int) -> bytes:
-    """Mask generation function.
-
-    From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
-    """
-
-    """
-    I am using Pythonic variable naming instead of what is in the RFC
-    RFC Name | My name | Description
-    --------------------------------
-    mfgSeed | seed      | seed from which mask is generated, an octet string
-    maskLen | length    | Intended length of mask
-    mask    | mask      | Output
-    T       | t         | Internal array for building mask
-    C       | counter   | Counter, four octets
-    Hash    | HASHER    | CS hash function
-    """
-
-    if length > 2**32:
-        raise ValueError("mask too long")
-
-    HASHER = hashlib.sha256
-    digest_size = HASHER(b"").digest_size
-
-    t = bytearray()
-
-    for c in range(math.ceil(length / digest_size) - 1):
-        counter = i2osp(c, 4)
-        t += HASHER(seed + counter).digest()
-
-    mask = bytes(t[:length])
-    return mask
-
-
-def i2osp(x: int, length: int) -> bytes:
-    """converts a nonnegative integer to an octet string length.
-
-    https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
-    """
-
-    if x >= 256**length:
-        raise ValueError("integer too large")
-
-    x_bytes = bytearray()
-
-    while length:
-        length -= 1
-        x, r = divmod(x, 256)
-        x_bytes.append(r)
-
-    # We need most significant byte to be leftmost (at index[0])
-    x_bytes.reverse()
-
-    return bytes(x_bytes)

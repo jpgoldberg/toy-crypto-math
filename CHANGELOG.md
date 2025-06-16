@@ -5,6 +5,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Some utilities have been moved from the `types` and `utils` modules to the new `bit_utils` module.
+- The interface to the various Sieve classes has changed. It is more stable now.
+- The sieve class previously known as `sieve.Sieve` is now called `sieve.BaSieve`
+- There is a `sieve.Sieve` class which is an alias for one of the other sieve classes.
+- Substantial optimizations in some of the sieve classes.
+- [`sieve` module documentation](https://jpgoldberg.github.io/toy-crypto-math/sieve.html) includes some comparative speed charts.
+- Installation instructions from git are now correct (thank you [domdfcoding](https://github.com/domdfcoding) for [this sphinx-toolbox feature](https://github.com/sphinx-toolbox/sphinx-toolbox/pull/185).
+
+### Added
+
+- `bit_utils` module. Note that some of its members have been from the `types` and `utils` modules to this.
+- Various scripts used for benchmarking some Sieve methods.
+
+### Internal
+
+- Dependency management has largely moved to `uv`.
+
 ## 0.3.0 2025-04-25
 
 ### Added

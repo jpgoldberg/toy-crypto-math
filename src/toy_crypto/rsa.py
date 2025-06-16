@@ -1,3 +1,5 @@
+import hashlib
+import math
 from toy_crypto.nt import lcm, modinv
 
 _DEFAULT_E = 65537
@@ -37,7 +39,7 @@ class PublicKey:
         """
         There is a reason for the explicit conversion to int in the
         comparison below. If message was created as a member of a SageMath
-        finite group mod N, self._N would be converted to that before 
+        finite group mod N, self._N would be converted to that before
         comparison and self._N ≡ 0 (mod self._N).
         """
         if not int(message) < self._N:
@@ -140,3 +142,59 @@ class PrivateKey:
 
         m = m_2 + self._q * h
         return m
+
+
+def mgf1(seed: bytes, length: int) -> bytes:
+    """Mask generation function.
+
+    From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
+    """
+
+    """
+    I am using Pythonic variable naming instead of what is in the RFC
+    RFC Name | My name | Description
+    --------------------------------
+    mfgSeed | seed      | seed from which mask is generated, an octet string
+    maskLen | length    | Intended length of mask
+    mask    | mask      | Output
+    T       | t         | Internal array for building mask
+    C       | counter   | Counter, four octets
+    Hash    | HASHER    | CS hash function
+    """
+
+    if length > 2**32:
+        raise ValueError("mask too long")
+
+    HASHER = hashlib.sha256
+    digest_size = HASHER(b"").digest_size
+
+    t = bytearray()
+
+    for c in range(math.ceil(length / digest_size) - 1):
+        counter = i2osp(c, 4)
+        t += HASHER(seed + counter).digest()
+
+    mask = bytes(t[:length])
+    return mask
+
+
+def i2osp(x: int, length: int) -> bytes:
+    """converts a nonnegative integer to an octet string length.
+
+    https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
+    """
+
+    if x >= 256**length:
+        raise ValueError("integer too large")
+
+    x_bytes = bytearray()
+
+    while length:
+        length -= 1
+        x, r = divmod(x, 256)
+        x_bytes.append(r)
+
+    # We need most significant byte to be leftmost (at index[0])
+    x_bytes.reverse()
+
+    return bytes(x_bytes)

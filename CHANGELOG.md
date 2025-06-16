@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.4.0 2025-06-16
+
 ### Changed
 
 - Some utilities have been moved from the `types` and `utils` modules to the new `bit_utils` module.

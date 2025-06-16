@@ -224,8 +224,7 @@ class Bit:
 
 
 def set_bit_in_byte(byte: int, bit: int, value: SupportsBool) -> int:
-    """Sets the bit-most significant bit to value in byte.
-    """
+    """Sets the bit-most significant bit to value in byte."""
     byte %= 256
     bit %= 8
 

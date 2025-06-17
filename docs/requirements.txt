@@ -1,6 +1,6 @@
-sphinx>=3.4.0
+sphinx>=8.2.3
 sphinx-autodoc-typehints
-sphinx-jinja2-compat>=0.1.1
-sphinx-toolbox>=2.16.0
-enum-tools[sphinx]
-sphinxcontrib-bibtex>=2.6
+sphinx-jinja2-compat>=0.3.0
+sphinx-toolbox>=4.0.0
+enum-tools[sphinx] >=0.13.0
+sphinxcontrib-bibtex>=2.6.4

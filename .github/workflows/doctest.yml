@@ -15,7 +15,10 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
       
       - name: sphinx
-        run: uv run --group docs sphinx-build -c docs/conf.py -M doctest "source" "build"
+        run:  uv run --group docs sphinx-build -M doctest  "docs/source" "docs/build"
+
     

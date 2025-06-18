@@ -4,8 +4,6 @@ on:
     workflow_dispatch:
     push:
       branches: [ "main" ]
-      paths:
-        - 'src/toy_crypto/__about__.py'
 
 jobs:
   pages:

@@ -14,6 +14,7 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     permissions:
       contents: write
+      pages: write
    
     steps:
       - uses: actions/checkout@v4

@@ -1,4 +1,4 @@
-sphinx>=8.2.3
+sphinx@git+https://github.com/sphinx-doc/sphinx
 sphinx-autodoc-typehints
 sphinx-jinja2-compat>=0.3.0
 sphinx-toolbox>=4.0.0

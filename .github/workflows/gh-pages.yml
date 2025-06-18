@@ -1,0 +1,33 @@
+name: Github Pages
+
+on:
+    workflow_dispatch:
+    push:
+      branches: [ "main" ]
+      paths:
+        - 'src/toy_crypto/__about__.py'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    permissions:
+      contents: write
+   
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sphinx build
+        run: uv run --group docs sphinx-build -M html "docs/source" "docs/build"
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build/html

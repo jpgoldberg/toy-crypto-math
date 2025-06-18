@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Toy cryptographic functions and utilities &#8212; toycrypto 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sphinx-toolbox.css" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_toolbox_installation.css" />
+    <script src="_static/documentation_options.js?v=6c02275b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=5572e0a9"></script>
+    <script src="_static/tabs.js?v=3030b3cb"></script>
+    <script src="_static/sphinx_toolbox_installation.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Motiviation" href="motivation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="motivation.html" title="Motiviation"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">toycrypto 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Toy cryptographic functions and utilities</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Nothing here should be used for any security purposes.</p>
+<ul class="simple">
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.</p></li>
+<li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
+</ul>
+</div>
+<section id="toy-cryptographic-functions-and-utilities">
+<h1>Toy cryptographic functions and utilities<a class="headerlink" href="#toy-cryptographic-functions-and-utilities" title="Link to this heading">¶</a></h1>
+<p>Some toy (unsafe for actual use) cryptography related utilites.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>Remember that nothing here is built to be used for security purposes,
+but if you must:</p>
+<p id="installation-0"><div class="st-installation docutils container">
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">from PyPI</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">from GitHub</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
+span.prompt1:before {
+  content: "$ ";
+}
+</style><span class="prompt1">python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>toycrypto<span class="w"> </span>--user</span>
+</pre></div></div></div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/jpgoldberg/toy-crypto-math@main<span class="w"> </span>--user</span>
+</pre></div></div></div></div>
+</div>
+</p>
+</section>
+<section id="import-names">
+<h2>Import names<a class="headerlink" href="#import-names" title="Link to this heading">¶</a></h2>
+<p>Once installed, the modules are imported under <code class="docutils literal notranslate"><span class="pre">toy_crypto</span></code>.
+For example, Number Theory module would be imported with <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">toy_crypto.nt</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.nt</span><span class="w"> </span><span class="kn">import</span> <span class="n">factor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">69159288649</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factorization</span> <span class="o">=</span> <span class="n">factor</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factorization</span><span class="o">.</span><span class="n">data</span>
+<span class="go">[(11, 2), (5483, 1), (104243, 1)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">factorization</span><span class="p">)</span>
+<span class="go">&#39;11^2 * 5483 * 104243&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factorization</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="n">n</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">factorization</span><span class="o">.</span><span class="n">phi</span>
+<span class="go">62860010840</span>
+</pre></div>
+</div>
+<p>Note again that the <a class="reference external" href="https://doc.sagemath.org/html/en/reference/structure/sage/structure/factorization.html">SageMath Factorization class</a> is far more efficient and general than what exists in this toy cryptography module.</p>
+</section>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="motivation.html">Motiviation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#toy_crypto.utils.digit_count"><code class="docutils literal notranslate"><span class="pre">digit_count()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#xor">xor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#toy_crypto.utils.Xor"><code class="docutils literal notranslate"><span class="pre">Xor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#toy_crypto.utils.xor"><code class="docutils literal notranslate"><span class="pre">xor()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#encodings-for-the-rsa-129-challenge">Encodings for the RSA 129 challenge</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="utils.html#toy_crypto.utils.Rsa129"><code class="docutils literal notranslate"><span class="pre">Rsa129</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utiltieis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bit_utils.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bit_utils.html#the-publically-available-parts">The publically available parts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.Bit"><code class="docutils literal notranslate"><span class="pre">Bit</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.bit_index"><code class="docutils literal notranslate"><span class="pre">bit_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.bit_index_linear"><code class="docutils literal notranslate"><span class="pre">bit_index_linear()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.bits"><code class="docutils literal notranslate"><span class="pre">bits()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.flip_end"><code class="docutils literal notranslate"><span class="pre">flip_end()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.get_bit"><code class="docutils literal notranslate"><span class="pre">get_bit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.hamming_distance"><code class="docutils literal notranslate"><span class="pre">hamming_distance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.set_bit"><code class="docutils literal notranslate"><span class="pre">set_bit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="bit_utils.html#toy_crypto.bit_utils.set_bit_in_byte"><code class="docutils literal notranslate"><span class="pre">set_bit_in_byte()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nt.html">Number Theory</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nt.html#the-factorlist-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">FactorList</span></code> class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nt.html#toy_crypto.nt.FactorList"><code class="docutils literal notranslate"><span class="pre">FactorList</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nt.html#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nt.html#toy_crypto.nt.egcd"><code class="docutils literal notranslate"><span class="pre">egcd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nt.html#toy_crypto.nt.Modulus"><code class="docutils literal notranslate"><span class="pre">Modulus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nt.html#toy_crypto.nt.is_modulus"><code class="docutils literal notranslate"><span class="pre">is_modulus()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nt.html#wrapping-some-math">Wrapping some <code class="xref py py-mod docutils literal notranslate"><span class="pre">math</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="nt.html#wrapping-from-primefac">Wrapping from primefac</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sieve.html">Sieve of Eratosthenes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#why-three-separate-implementations">Why three separate implementations?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-algorithm">The algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-sievish-protocol">The <code class="xref py py-protocol docutils literal notranslate"><span class="pre">Sievish</span></code> Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-sieve-alias">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sieve</span></code> alias</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sieve.html#toy_crypto.sieve.Sieve"><code class="docutils literal notranslate"><span class="pre">Sieve</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sieve.html#the-concrete-classes">The concrete classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-basieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-setsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-intsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code> class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rsa.html">RSA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PublicKey"><code class="docutils literal notranslate"><span class="pre">PublicKey</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PublicKey.N"><code class="docutils literal notranslate"><span class="pre">PublicKey.N</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PublicKey.e"><code class="docutils literal notranslate"><span class="pre">PublicKey.e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PublicKey.encrypt"><code class="docutils literal notranslate"><span class="pre">PublicKey.encrypt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PrivateKey"><code class="docutils literal notranslate"><span class="pre">PrivateKey</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PrivateKey.decrypt"><code class="docutils literal notranslate"><span class="pre">PrivateKey.decrypt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PrivateKey.e"><code class="docutils literal notranslate"><span class="pre">PrivateKey.e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rsa.html#toy_crypto.rsa.PrivateKey.pub_key"><code class="docutils literal notranslate"><span class="pre">PrivateKey.pub_key</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rsa.html#toy_crypto.rsa.default_e"><code class="docutils literal notranslate"><span class="pre">default_e()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ec.html">Elliptic curves</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ec.html#the-ec-classes">The <code class="xref py py-mod docutils literal notranslate"><span class="pre">ec</span></code> classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ec.html#toy_crypto.ec.Curve"><code class="docutils literal notranslate"><span class="pre">Curve</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ec.html#toy_crypto.ec.Point"><code class="docutils literal notranslate"><span class="pre">Point</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rand.html#module-toy_crypto.rand">The <code class="xref py py-mod docutils literal notranslate"><span class="pre">rand</span></code> functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rand.html#toy_crypto.rand.choices"><code class="docutils literal notranslate"><span class="pre">choices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rand.html#toy_crypto.rand.random"><code class="docutils literal notranslate"><span class="pre">random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rand.html#toy_crypto.rand.randrange"><code class="docutils literal notranslate"><span class="pre">randrange()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rand.html#toy_crypto.rand.shuffle"><code class="docutils literal notranslate"><span class="pre">shuffle()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="games.html">Security games</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="games.html#general-structure">General Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="games.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="games.html#exceptions">Exceptions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.StateError"><code class="docutils literal notranslate"><span class="pre">StateError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="games.html#types-for-encryption-scheme">Types for encryption scheme</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.K"><code class="docutils literal notranslate"><span class="pre">K</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.KeyGenerator"><code class="docutils literal notranslate"><span class="pre">KeyGenerator</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Cryptor"><code class="docutils literal notranslate"><span class="pre">Cryptor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="games.html#the-class-and-method-organization">The class and method organization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Ind"><code class="docutils literal notranslate"><span class="pre">Ind</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Ind.initialize"><code class="docutils literal notranslate"><span class="pre">Ind.initialize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Ind.encrypt_one"><code class="docutils literal notranslate"><span class="pre">Ind.encrypt_one()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Ind.finalize"><code class="docutils literal notranslate"><span class="pre">Ind.finalize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Ind.encrypt"><code class="docutils literal notranslate"><span class="pre">Ind.encrypt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Ind.decrypt"><code class="docutils literal notranslate"><span class="pre">Ind.decrypt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.IndEav"><code class="docutils literal notranslate"><span class="pre">IndEav</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.IndCpa"><code class="docutils literal notranslate"><span class="pre">IndCpa</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.IndCca1"><code class="docutils literal notranslate"><span class="pre">IndCca1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.IndCca2"><code class="docutils literal notranslate"><span class="pre">IndCca2</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="games.html#state-management-tools">State management tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.State"><code class="docutils literal notranslate"><span class="pre">State</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.Action"><code class="docutils literal notranslate"><span class="pre">Action</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.TransitionTable"><code class="docutils literal notranslate"><span class="pre">TransitionTable</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.SupportsTTable"><code class="docutils literal notranslate"><span class="pre">SupportsTTable</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="games.html#toy_crypto.sec_games.manage_state"><code class="docutils literal notranslate"><span class="pre">manage_state()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="birthday.html">Birthday Paradox Computations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="birthday.html#module-toy_crypto.birthday">The <code class="xref py py-mod docutils literal notranslate"><span class="pre">birthday</span></code> functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="birthday.html#toy_crypto.birthday.EXACT_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">EXACT_THRESHOLD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="birthday.html#toy_crypto.birthday.MAX_QBIRTHDAY_P"><code class="docutils literal notranslate"><span class="pre">MAX_QBIRTHDAY_P</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="birthday.html#toy_crypto.birthday.P"><code class="docutils literal notranslate"><span class="pre">P()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="birthday.html#toy_crypto.birthday.Q"><code class="docutils literal notranslate"><span class="pre">Q()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="birthday.html#implementation-ported-from-r">Implementation ported from R</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="types.html">Types</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.Byte"><code class="docutils literal notranslate"><span class="pre">Byte</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.PositiveInt"><code class="docutils literal notranslate"><span class="pre">PositiveInt</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.Prob"><code class="docutils literal notranslate"><span class="pre">Prob</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.SupportsBool"><code class="docutils literal notranslate"><span class="pre">SupportsBool</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="types.html#toy_crypto.types.SupportsBool.__bool__"><code class="docutils literal notranslate"><span class="pre">SupportsBool.__bool__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.is_byte"><code class="docutils literal notranslate"><span class="pre">is_byte()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.is_positive_int"><code class="docutils literal notranslate"><span class="pre">is_positive_int()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types.html#toy_crypto.types.is_prob"><code class="docutils literal notranslate"><span class="pre">is_prob()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vigenere.html">Vigenère cipher</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vigenere.html#the-cipher-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Cipher</span></code> class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="vigenere.html#toy_crypto.vigenere.Cipher"><code class="docutils literal notranslate"><span class="pre">Cipher</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vigenere.html#the-alphebet-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Alphebet</span></code> class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="vigenere.html#toy_crypto.vigenere.Alphabet"><code class="docutils literal notranslate"><span class="pre">Alphabet</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vigenere.html#cryptanalysis-tools">Cryptanalysis tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="vigenere.html#toy_crypto.vigenere.probable_keysize"><code class="docutils literal notranslate"><span class="pre">probable_keysize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">bibliography</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="#">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Toy cryptographic functions and utilities</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#import-names">Import names</a></li>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="motivation.html"
+                          title="next chapter">Motiviation</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="motivation.html" title="Motiviation"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">toycrypto 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Toy cryptographic functions and utilities</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024–2025 Jeffrey Goldberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/e4b5fc5.
+    </div>
+  </body>
+</html>

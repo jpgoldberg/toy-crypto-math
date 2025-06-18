@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Motiviation &#8212; toycrypto 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sphinx-toolbox.css" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_toolbox_installation.css" />
+    <script src="_static/documentation_options.js?v=6c02275b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=5572e0a9"></script>
+    <script src="_static/sphinx_toolbox_installation.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utility functions" href="utils.html" />
+    <link rel="prev" title="Toy cryptographic functions and utilities" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="Utility functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Toy cryptographic functions and utilities"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Motiviation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Nothing here should be used for any security purposes.</p>
+<ul class="simple">
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.</p></li>
+<li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
+</ul>
+</div>
+<section id="motiviation">
+<h1>Motiviation<a class="headerlink" href="#motiviation" title="Link to this heading">¶</a></h1>
+<p>This package is almost certainly not the package you are looking for.
+Instead, <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://www.sagemath.org">SageMath</a> will better suite your needs.
+I created it to meet a number of my own idiosyncratic  needs.</p>
+<ul>
+<li><p>I don’t have the flexibility of Python version that I may want when using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p>
+<p>For example, I want to have access to something that behaves a bit like SageMath’s <code class="docutils literal notranslate"><span class="pre">factor()</span></code>
+or the ability to play with elliptic curves without having do everything in Sage.
+Perhaps when <a class="reference external" href="https://pypi.org/project/sagemath-standard/">sagemath-standard</a> quickly becomes available for the latest Python versions, I won’t need to have my own (failable and incomplete) pure Python substitutes for some things I need.</p>
+</li>
+<li><p>I sometimes talk about these algorithms for teaching purposes. Having pure Python versions allows me to present these.</p>
+<p>Proper cryptographic packages, like <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>,</p>
+<ul class="simple">
+<li><p>Correctly obscure the lower level primitives I may wish to exhibit;</p></li>
+<li><p>Correctly prevent use of unsafe parameters such as small keys;</p></li>
+<li><p>Correctly involve a lot of abstractions in the calls to the concealed primitives.</p></li>
+</ul>
+<p>Those features, essential for something to be used, are not great for expository discussion.</p>
+</li>
+<li><p>Some of these I created or copied for my own learning purposes.</p></li>
+<li><p>I have a number of “good enough” (for my purposes) implementations of things that I want to reuse.</p>
+<p>For example, Birthday collision calculations are things I occasionally want, and I don’t want to hunt for wherever I have something like that written or rewrite it yet again.
+Likewise, I wouldn’t be surprised if I’m written the extended GCD algorithm more than a dozen times
+(not all in Python), and so would like to have at least the Python version in one place</p>
+</li>
+<li><p>I want to use cryptographic examples in Jupyter Notebooks.</p>
+<p>I also want them to be <em>reproducible</em>, which is why I am making this public.</p>
+</li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Toy cryptographic functions and utilities</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="utils.html"
+                          title="next chapter">Utility functions</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/motivation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="Utility functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Toy cryptographic functions and utilities"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Motiviation</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024–2025 Jeffrey Goldberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/e4b5fc5.
+    </div>
+  </body>
+</html>

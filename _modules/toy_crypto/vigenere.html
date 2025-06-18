@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>toy_crypto.vigenere &#8212; toycrypto 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=279e0f84" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/sphinx-toolbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_toolbox_installation.css" />
+    <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=5572e0a9"></script>
+    <script src="../../_static/tabs.js?v=3030b3cb"></script>
+    <script src="../../_static/sphinx_toolbox_installation.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">toy_crypto.vigenere</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for toy_crypto.vigenere</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">sample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.bit_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">hamming_distance</span>
+
+<span class="n">Letter</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="sd">&quot;&quot;&quot;Intended to indicate a str of length 1&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Alphabet">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Alphabet">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Alphabet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An alphabet.</span>
+
+<span class="sd">    This does not check if the alphabet is sensible. In particular, you may get</span>
+<span class="sd">    very peculiar results if the alphabet contains duplicate elements.</span>
+
+<span class="sd">    Instances of this class are conventionally immutable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CAPS_ONLY</span> <span class="o">=</span> <span class="s2">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&#39;A&#39; through &#39;Z&#39; in order.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Printable 7 bit ASCI with space but excluding backslash. Shuffled.</span>
+    <span class="n">PRINTABLE</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;JDi-Km9247oBEctS%Isxz{&lt;;=W^fL,[Y3Mgd6HV(kR8:_CF&quot;*&#39;)&gt;|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&amp;ru5Q&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Printable 7-bit ASCII in a fixed scrambled order.</span>
+
+<span class="sd">    It does not include the backslash character,</span>
+<span class="sd">    and the scrambled order is hardcoded.</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+
+    <span class="n">DEFAULT</span> <span class="o">=</span> <span class="n">CAPS_ONLY</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CAPS_ONLY is the default.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">alphabet</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prebaked</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This does not check if the alphabet is sensible. In particular, you</span>
+<span class="sd">        may get  very peculiar results if the alphabet contains duplicate</span>
+<span class="sd">        elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">match</span> <span class="p">(</span><span class="n">alphabet</span><span class="p">,</span> <span class="n">prebaked</span><span class="p">):</span>
+            <span class="k">case</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">):</span>
+                <span class="n">abc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT</span>
+            <span class="k">case</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;caps&quot;</span><span class="p">):</span>
+                <span class="n">abc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CAPS_ONLY</span>
+            <span class="k">case</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;printable&quot;</span><span class="p">):</span>
+                <span class="n">abc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PRINTABLE</span>
+            <span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="k">_</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown pre-baked alphabet&quot;</span><span class="p">)</span>
+            <span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="k">_</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alphabet</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;alphabet must be a string&quot;</span><span class="p">)</span>
+                <span class="n">abc</span> <span class="o">=</span> <span class="n">alphabet</span>
+            <span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="k">_</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t use both explicit and pre-baked alphabet&quot;</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span> <span class="o">=</span> <span class="n">abc</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_modulus</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span><span class="p">)</span>
+
+        <span class="c1"># Set up char to index table</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_abc2idx</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Letter</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">c</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alphabet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The underlying alphabet.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modulus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The modulus.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modulus</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">abc2idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Letter</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dictionary of letter to position in the alphabet.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_abc2idx</span>
+
+    <span class="c1"># We will want to use &#39;in&#39; for Alphabet instances</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allows the &#39;in&#39; and &#39;not in&#39; operators.</span>
+
+<span class="sd">        So if `abc` is an Alphabet, ``&#39;Z&#39; in abc`` is well defined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">slice</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allows retrieving bits of the Alphabet through [index] notation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="c1"># annoyingly, the type str is also used for single character strings</span>
+    <span class="c1"># add, inverse, subtract all deal with single characters</span>
+<div class="viewcode-block" id="Alphabet.add">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Alphabet.add">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Letter</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Letter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Letter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the modular sum of two characters.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;argument not an element&quot;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abc2idx</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">abc2idx</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulus</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Alphabet.inverse">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Alphabet.inverse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">Letter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Letter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the additive inverse of character c&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;argument not an element&quot;</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modulus</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">abc2idx</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">modulus</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Alphabet.subtract">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Alphabet.subtract">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">Letter</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Letter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Letter</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the character corresponding to a - b.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">b</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Cipher">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Cipher">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cipher</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Vigenère Cipher is a key and an alphabet.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alphabet</span><span class="p">:</span> <span class="n">Alphabet</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">alphabet</span><span class="p">,</span> <span class="n">Alphabet</span><span class="p">):</span>
+            <span class="n">abc</span> <span class="o">=</span> <span class="n">alphabet</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">abc</span> <span class="o">=</span> <span class="n">Alphabet</span><span class="p">(</span><span class="n">alphabet</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span> <span class="o">=</span> <span class="n">abc</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;key must not be empty&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;key must be comprised of characters in the alphabet&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alphabet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Alphabet</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Alphabet for this cipher.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Shhh! This is the key. Keep it secret.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">modulus</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The modulus.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet</span><span class="o">.</span><span class="n">modulus</span>
+
+<div class="viewcode-block" id="Cipher.crypt">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Cipher.crypt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;{en,de}crypts text depending on mode&quot;&quot;&quot;</span>
+
+        <span class="k">match</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="k">case</span> <span class="s2">&quot;encrypt&quot;</span><span class="p">:</span>
+                <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="o">.</span><span class="n">add</span>
+            <span class="k">case</span> <span class="s2">&quot;decrypt&quot;</span><span class="p">:</span>
+                <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="o">.</span><span class="n">subtract</span>
+            <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mode must be &#39;encrypt&#39; or &#39;decrypt&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Generalize this for streaming input and output</span>
+        <span class="n">output</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Letter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        I would love to use zip and cycle, but I need to handle input</span>
+<span class="sd">        characters that are not in the alphabet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">key_idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">alphabet</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">c</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">[</span><span class="n">key_idx</span><span class="p">]</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                <span class="n">key_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">key_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_length</span>
+
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Cipher.encrypt">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Cipher.encrypt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns ciphertext.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;encrypt&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Cipher.decrypt">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.Cipher.decrypt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns plaintext.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;decrypt&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="n">BitSimilarity</span> <span class="o">=</span> <span class="nb">float</span>
+<span class="sd">&quot;&quot;&quot;A float in [-4.0, 4.0] the bit similarity per byte.</span>
+<span class="sd">-4 indicates that all bits are different.</span>
+<span class="sd">+4 indicates that all bits are the same.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SimilarityScores</span><span class="p">(</span><span class="n">UserDict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">BitSimilarity</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dictionary of keysize : list[BitSimilarity].&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">BitSimilarity</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_keysize</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">k</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_bit_similarity</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">4.0</span> <span class="ow">and</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mf">4.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">SimilarityScores</span><span class="o">.</span><span class="n">is_keysize</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">scores</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">SimilarityScores</span><span class="o">.</span><span class="n">is_bit_similarity</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The average score for keysize k.</span>
+
+<span class="sd">        :raises KeyError: if k triggers a KeyError.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">best</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keysize with the best (highest average) score.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best</span>
+
+        <span class="n">best_so_far</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mean</span> <span class="o">&gt;</span> <span class="n">best_so_far</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">best_so_far</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_best</span> <span class="o">=</span> <span class="n">best_so_far</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_best</span>
+
+
+<div class="viewcode-block" id="probable_keysize">
+<a class="viewcode-back" href="../../vigenere.html#toy_crypto.vigenere.probable_keysize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">probable_keysize</span><span class="p">(</span>
+    <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="n">trial_pairs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimilarityScores</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assesses likelihood for key length of ciphertext.</span>
+
+<span class="sd">    :param ciphertext: The ciphertext.</span>
+<span class="sd">    :param min_size: The minimum key length to try.</span>
+<span class="sd">    :param max_size: The maximum key length to try.</span>
+<span class="sd">    :param trial_pairs: The number of pairs of blocks to test.</span>
+
+<span class="sd">    :return: Returns list sorted by scores of (keysize, score)</span>
+
+<span class="sd">    Scores are scaled 0 (least likely) to 1 (most likely),</span>
+<span class="sd">    but they do not directly represent probabilities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">SimilarityScores</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">min_size</span> <span class="o">==</span> <span class="n">max_size</span><span class="p">:</span>
+        <span class="c1"># Should this be a ValueError?</span>
+        <span class="n">scores</span><span class="p">[</span><span class="n">min_size</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">scores</span>
+
+    <span class="k">if</span> <span class="n">min_size</span> <span class="o">&gt;</span> <span class="n">max_size</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min_size can&#39;t be larger than max_size&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">trial_pairs</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;trial_pairs must be positive&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ciphertext</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span>
+
+    <span class="n">ctext_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">keysize</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_size</span><span class="p">,</span> <span class="n">max_size</span><span class="p">):</span>
+        <span class="k">if</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">keysize</span> <span class="o">&gt;</span> <span class="n">ctext_len</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">num_blocks</span> <span class="o">=</span> <span class="n">ctext_len</span> <span class="o">//</span> <span class="n">keysize</span>
+        <span class="n">all_pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_blocks</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="c1"># trial_pairs may have to be reduced to</span>
+        <span class="n">trial_pairs</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">trial_pairs</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_pairs</span><span class="p">)])</span>
+
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">all_pairs</span><span class="p">,</span> <span class="n">trial_pairs</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_block</span><span class="p">(</span><span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">*=</span> <span class="n">keysize</span>
+            <span class="k">return</span> <span class="n">ciphertext</span><span class="p">[</span><span class="n">idx</span> <span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">keysize</span><span class="p">]</span>
+
+        <span class="n">s_scores</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">hamming_distance</span><span class="p">(</span><span class="n">get_block</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">get_block</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="n">similarity_per_byte</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">distance</span> <span class="o">/</span> <span class="n">keysize</span><span class="p">)</span>
+            <span class="n">s_scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">similarity_per_byte</span><span class="p">)</span>
+
+        <span class="n">scores</span><span class="p">[</span><span class="n">keysize</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_scores</span>
+
+    <span class="k">return</span> <span class="n">scores</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">toy_crypto.vigenere</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024–2025 Jeffrey Goldberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/e4b5fc5.
+    </div>
+  </body>
+</html>

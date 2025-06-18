@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Utility functions &#8212; toycrypto 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css?v=279e0f84" />
+    <link rel="stylesheet" type="text/css" href="_static/css/sphinx-toolbox.css" />
+    <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_toolbox_installation.css" />
+    <script src="_static/documentation_options.js?v=6c02275b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=5572e0a9"></script>
+    <script src="_static/sphinx_toolbox_installation.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bit manipulation utiltieis" href="bit_utils.html" />
+    <link rel="prev" title="Motiviation" href="motivation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bit_utils.html" title="Bit manipulation utiltieis"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="motivation.html" title="Motiviation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Utility functions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Nothing here should be used for any security purposes.</p>
+<ul class="simple">
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.</p></li>
+<li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
+</ul>
+</div>
+<section id="module-toy_crypto.utils">
+<span id="utility-functions"></span><h1>Utility functions<a class="headerlink" href="#module-toy_crypto.utils" title="Link to this heading">¶</a></h1>
+<p>This module is imported with:</p>
+<blockquote>
+<div><p>import toy_crypto.utils</p>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="toy_crypto.utils.digit_count">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.utils.</span></span><span class="sig-name descname"><span class="pre">digit_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="_modules/toy_crypto/utils.html#digit_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.digit_count" title="Link to this definition">¶</a></dt>
+<dd><p>returns the number of digits (base b) of integer n.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if base &lt; 2</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – if n is not an integer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p></li>
+<li><p><strong>base</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">10</span></code>)</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Coding this is a math problem, not a string representation problem.
+Idetally the solution would be to use</p>
+<div class="math notranslate nohighlight">
+\[d = \lfloor\log_b \| x \| + 1\rfloor\]</div>
+<p>but that leads to erroneous results due to the precision limitations
+of <a class="reference external" href="https://docs.python.org/3/library/math.html#math.log" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">math.log()</span></code></a>.
+So a different approach is taken which correctly handles cases that
+would otherwise fail.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">digit_count</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">1001</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">9999999999999998779999999999999999999999999999999999999999999</span><span class="p">)</span>
+<span class="go">61</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">9999999999999999999999999999999999999999999999999999999999999</span><span class="p">)</span>
+<span class="go">61</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">10000000000000000000000000000000000000000000000000000000000000</span><span class="p">)</span>
+<span class="go">62</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">digit_count</span><span class="p">(</span><span class="o">-</span><span class="mi">10_000</span><span class="p">)</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+<section id="xor">
+<h2>xor<a class="headerlink" href="#xor" title="Link to this heading">¶</a></h2>
+<p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.xor()</span></code> and the class <code class="xref py py-class docutils literal notranslate"><span class="pre">utils.Xor</span></code> provide utilities for xoring strings of bytes together. There is some assymetry between the two arguments. The <code class="docutils literal notranslate"><span class="pre">message</span></code> can be an <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterator</span></code></a> as well as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>. The <code class="docutils literal notranslate"><span class="pre">pad</span></code> arguement on the other hand, is expected to be <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> only (in this version.) The <code class="docutils literal notranslate"><span class="pre">pad</span></code> argument is will be repeated if it is shorter than the message.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <a class="reference internal" href="types.html#toy_crypto.types.Byte" title="toy_crypto.types.Byte"><code class="xref py py-type docutils literal notranslate"><span class="pre">Byte</span></code></a> type is just a type alias for <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>. There is no run time nor type checking mechanism that prevents you from passing an <code class="docutils literal notranslate"><span class="pre">Iterator[Byte]</span></code> message that contains integers outside of the range that would be expected for a byte.
+If you do so, bad things will happen. If you are lucky some exception from the bowels of Python will be raised in a way that will help you identify the error. If you are unlucky, you will silently get garbage results.</p>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="toy_crypto.utils.Xor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.utils.</span></span><span class="sig-name descname"><span class="pre">Xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/toy_crypto/utils.html#Xor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.Xor" title="Link to this definition">¶</a></dt>
+<dd><p>Iterator that spits out xor of message with (repeated) pad.</p>
+<p>The iterator will run through successful bytes of message
+xor-ing those with successive bytes of pad, repeating
+pad if pad is shorter than message.</p>
+<p>Each iteration returns a non-negative int less than 256.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>)</p></li>
+<li><p><strong>pad</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="toy_crypto.utils.xor">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.utils.</span></span><span class="sig-name descname"><span class="pre">xor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="_modules/toy_crypto/utils.html#xor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.xor" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the xor of message with a (repeated) pad.</p>
+<p>The pad is repeated if it is shorter than m.
+This can be thought of as bytewise Vigenère.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
+<li><p><strong>pad</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">xor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">message</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;Attack at dawn!&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pad</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="s2">&quot;00 14 04 05 00&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modified_message</span> <span class="o">=</span> <span class="n">xor</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">pad</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modified_message</span>
+<span class="go">b&#39;Attack at dusk!&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="encodings-for-the-rsa-129-challenge">
+<h2>Encodings for the RSA 129 challenge<a class="headerlink" href="#encodings-for-the-rsa-129-challenge" title="Link to this heading">¶</a></h2>
+<p>Martin <span id="id1"><a class="reference internal" href="bibliography.html#id2" title="Martin Gardner. Mathematical games a new kind of cipher that would take millions of years to break. Scientific American, pages 120-124, August 1977.">Gardner</a></span> first reported the Rivest, Shamir, and Adleman (RSA) in <span id="id2"><a class="reference internal" href="bibliography.html#id2" title="Martin Gardner. Mathematical games a new kind of cipher that would take millions of years to break. Scientific American, pages 120-124, August 1977.">1977</a></span>.
+The examples and challenge described in it used an encoding scheme
+between text and (large) integers.
+This class provides an encoder and decoder for that scheme.</p>
+<p>We will take the magic words, decrypted in
+<span id="id3"><a class="reference internal" href="bibliography.html#id3" title="Derek Atkins, Michael Graff, Arjen K. Lenstra, and Paul C. Leyland. The magic words are squeamish ossifrage. In Josef Pieprzyk and Reihanah Safavi-Naini, editors, Advances in Cryptology — ASIACRYPT'94, 261–277. Berlin, Heidelberg, 1995. Springer Berlin Heidelberg.">1995</a></span> by
+<span id="id4"><a class="reference internal" href="bibliography.html#id3" title="Derek Atkins, Michael Graff, Arjen K. Lenstra, and Paul C. Leyland. The magic words are squeamish ossifrage. In Josef Pieprzyk and Reihanah Safavi-Naini, editors, Advances in Cryptology — ASIACRYPT'94, 261–277. Berlin, Heidelberg, 1995. Springer Berlin Heidelberg.">Atkins, Graff, Lenstra, and Leyland</a></span>
+with the help of a large number of volunteers,
+from that challenge for our example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rsa129</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decrypted</span> <span class="o">=</span> <span class="mi">200805001301070903002315180419000118050019172105011309190800151919090618010705</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Rsa129</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">decrypted</span><span class="p">)</span>
+<span class="go">&#39;THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE&#39;</span>
+</pre></div>
+</div>
+<p>And we will use an example from <span id="id5">[<a class="reference internal" href="bibliography.html#id2" title="Martin Gardner. Mathematical games a new kind of cipher that would take millions of years to break. Scientific American, pages 120-124, August 1977.">Gardner, 1977</a>]</span>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">latin_text</span> <span class="o">=</span> <span class="s2">&quot;ITS ALL GREEK TO ME&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span> <span class="o">=</span> <span class="n">Rsa129</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">latin_text</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encoded</span>
+<span class="go">9201900011212000718050511002015001305</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">Rsa129</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span> <span class="o">==</span> <span class="n">latin_text</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="toy_crypto.utils.Rsa129">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.utils.</span></span><span class="sig-name descname"><span class="pre">Rsa129</span></span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/toy_crypto/utils.html#Rsa129"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.Rsa129" title="Link to this definition">¶</a></dt>
+<dd><p>Text encoder/decoder used in RSA-129 challenge.</p>
+<p>Encoding scheme from Martin Gardner’s 1977 article.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.utils.Rsa129.decode">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/toy_crypto/utils.html#Rsa129.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.Rsa129.decode" title="Link to this definition">¶</a></dt>
+<dd><p>Decode text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>number</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.utils.Rsa129.encode">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="_modules/toy_crypto/utils.html#Rsa129.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.Rsa129.encode" title="Link to this definition">¶</a></dt>
+<dd><p>Encode text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Utility functions</a><ul>
+<li><a class="reference internal" href="#toy_crypto.utils.digit_count"><code class="docutils literal notranslate"><span class="pre">digit_count()</span></code></a></li>
+<li><a class="reference internal" href="#xor">xor</a><ul>
+<li><a class="reference internal" href="#toy_crypto.utils.Xor"><code class="docutils literal notranslate"><span class="pre">Xor</span></code></a></li>
+<li><a class="reference internal" href="#toy_crypto.utils.xor"><code class="docutils literal notranslate"><span class="pre">xor()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#encodings-for-the-rsa-129-challenge">Encodings for the RSA 129 challenge</a><ul>
+<li><a class="reference internal" href="#toy_crypto.utils.Rsa129"><code class="docutils literal notranslate"><span class="pre">Rsa129</span></code></a><ul>
+<li><a class="reference internal" href="#toy_crypto.utils.Rsa129.decode"><code class="docutils literal notranslate"><span class="pre">Rsa129.decode()</span></code></a></li>
+<li><a class="reference internal" href="#toy_crypto.utils.Rsa129.encode"><code class="docutils literal notranslate"><span class="pre">Rsa129.encode()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="motivation.html"
+                          title="previous chapter">Motiviation</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="bit_utils.html"
+                          title="next chapter">Bit manipulation utiltieis</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bit_utils.html" title="Bit manipulation utiltieis"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="motivation.html" title="Motiviation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Utility functions</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024–2025 Jeffrey Goldberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/e4b5fc5.
+    </div>
+  </body>
+</html>

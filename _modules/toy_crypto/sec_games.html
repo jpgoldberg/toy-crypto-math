@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>toy_crypto.sec_games &#8212; toycrypto 0.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=279e0f84" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/sphinx-toolbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_toolbox_installation.css" />
+    <script src="../../_static/documentation_options.js?v=6c02275b"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=5572e0a9"></script>
+    <script src="../../_static/tabs.js?v=3030b3cb"></script>
+    <script src="../../_static/sphinx_toolbox_installation.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">toy_crypto.sec_games</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for toy_crypto.sec_games</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">KeysView</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrEnum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">Protocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupportsBool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">hash_bytes</span>
+
+<span class="n">K</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Unbounded type variable intended for any type of key.&quot;&quot;&quot;</span>
+
+<span class="nb">type</span> <span class="n">KeyGenerator</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">K</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;To describe key generation functions&quot;&quot;&quot;</span>
+
+<span class="nb">type</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">K</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;To describe encryptor/decryptor functions.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="StateError">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.StateError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StateError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;When something attempted in an inappropriate state.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="State">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.State">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The state a game.&quot;&quot;&quot;</span>
+
+    <span class="n">STARTED</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Game has not been initialized.&quot;&quot;&quot;</span>
+
+    <span class="n">INITIALIZED</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Game is initialized&quot;&quot;&quot;</span>
+
+    <span class="n">CHALLENGED</span> <span class="o">=</span> <span class="s2">&quot;C&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Challenge text created.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="Action">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Action">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Action</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adversary actions (Methods called).&quot;&quot;&quot;</span>
+
+    <span class="n">INITIALIZE</span> <span class="o">=</span> <span class="s2">&quot;initialize&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;initialize() called.&quot;&quot;&quot;</span>
+
+    <span class="n">ENCRYPT_ONE</span> <span class="o">=</span> <span class="s2">&quot;encrypt_one&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;encrypt_one() called.&quot;&quot;&quot;</span>
+
+    <span class="n">ENCRYPT</span> <span class="o">=</span> <span class="s2">&quot;encrypt&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;encrypt() called.&quot;&quot;&quot;</span>
+
+    <span class="n">DECRYPT</span> <span class="o">=</span> <span class="s2">&quot;decrypt&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;decrypt() called&quot;&quot;&quot;</span>
+
+    <span class="n">FINALIZE</span> <span class="o">=</span> <span class="s2">&quot;finalize&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;finalize() called.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TransitionTable">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.TransitionTable">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransitionTable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transition Table to manage state of a game.</span>
+
+<span class="sd">    It can be treated like a mapping.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">table</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">State</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">State</span><span class="p">]]</span>
+
+<div class="viewcode-block" id="TransitionTable.keys">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.TransitionTable.keys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="n">State</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Just like ``keys`` for a real dict.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TransitionTable.__getitem__">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.TransitionTable.__getitem__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">Action</span><span class="p">,</span> <span class="n">State</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;So that items can be looked up with ``[key]`` as in a real dict.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">item</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">pad</span> <span class="o">=</span> <span class="s2">&quot;  &quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;{ }&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;{</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pad</span><span class="si">}</span><span class="s2">State.</span><span class="si">{</span><span class="n">key</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">act</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pad</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">Action.</span><span class="si">{</span><span class="n">act</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -&gt; State.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">act</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;}&quot;</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="SupportsTTable">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.SupportsTTable">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SupportsTTable</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Has what it takes to be decorated by :func:`manage_state`.&quot;&quot;&quot;</span>
+
+    <span class="n">t_table</span><span class="p">:</span> <span class="n">TransitionTable</span>
+    <span class="n">current_state</span><span class="p">:</span> <span class="n">State</span>
+    <span class="n">_state</span><span class="p">:</span> <span class="n">State</span></div>
+
+
+
+<span class="c1"># This lexical scoping trickery is based on</span>
+<span class="c1">#    https://stackoverflow.com/a/38286176/1304076</span>
+<span class="c1"># with a hat tip to https://www.reddit.com/user/GeorgeFranklyMathnet/</span>
+<span class="c1">#  https://www.reddit.com/r/learnpython/comments/1i34vgh/comment/m7k6hgn/</span>
+<div class="viewcode-block" id="manage_state">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.manage_state">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">manage_state</span><span class="p">[</span><span class="n">F</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]](</span><span class="n">fn</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to check/transition state for Ind method calls.&quot;&quot;&quot;</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">Action</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">SupportsTTable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_table</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">StateError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2"> not allowed in state </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_state</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="n">retvalue</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_table</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="p">])[</span><span class="n">action</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">retvalue</span>
+
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">decorator</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Ind">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Ind">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ind</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">K</span><span class="p">]):</span>
+    <span class="n">T_TABLE</span><span class="p">:</span> <span class="n">TransitionTable</span>
+
+    <span class="c1">#: Game does not track which challenge texts have been created</span>
+    <span class="n">TRACK_CHALLENGE_CTEXTS</span><span class="p">:</span> <span class="nb">bool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key_gen</span><span class="p">:</span> <span class="n">KeyGenerator</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">encryptor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">decryptor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transition_table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TransitionTable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A super class for symmetric Indistinguishability games.</span>
+
+<span class="sd">        Unless the user provides an appropriate transition table,</span>
+<span class="sd">        no methods will be allowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key_gen</span> <span class="o">=</span> <span class="n">key_gen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_encryptor</span> <span class="o">=</span> <span class="n">encryptor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_decryptor</span> <span class="o">=</span> <span class="n">decryptor</span> <span class="k">if</span> <span class="n">decryptor</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_undefined_decryptor</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_challenge_ctexts</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Each state is a dictionary of [Transition : State_Name]</span>
+<span class="sd">        Transitions are the names of methods (or &quot;start&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span> <span class="o">=</span> <span class="n">TransitionTable</span><span class="p">({})</span>
+        <span class="k">if</span> <span class="n">transition_table</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span> <span class="o">=</span> <span class="n">transition_table</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">t_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransitionTable</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_undefined_decryptor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">K</span><span class="p">,</span> <span class="n">ctext</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">StateError</span><span class="p">(</span><span class="s2">&quot;Method not allowed in this game&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>  <span class="c1"># Compiler should know this is unreachable</span>
+            <span class="sa">b</span><span class="s2">&quot;Does this ever return?&quot;</span>
+            <span class="sa">b</span><span class="s2">&quot; No, this never returns,&quot;</span>
+            <span class="sa">b</span><span class="s2">&quot; And its fate is still unlearned.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Ind.initialize">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Ind.initialize">[docs]</a>
+    <span class="nd">@manage_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes self by creating key and selecting b.</span>
+
+<span class="sd">        Also clears an saved challenge ciphertexts.</span>
+
+<span class="sd">        :raises StateError: if method called when disallowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Challenger picks key and a b.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_gen</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_b</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_challenge_ctexts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Ind.encrypt_one">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Ind.encrypt_one">[docs]</a>
+    <span class="nd">@manage_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m0</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Left-Right encryption oracle.</span>
+
+<span class="sd">        Challenger encrypts m0 if b is False, else encrypts m1.</span>
+
+<span class="sd">        :param m0: Left message</span>
+<span class="sd">        :param m1: Right message</span>
+<span class="sd">        :raise ValueError: if lengths of m0 and m1 are not equal.</span>
+<span class="sd">        :raises StateError: if method called when disallowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># If these are None at this point, you&#39;ve got a bad TransitionTable.</span>
+        <span class="n">cast</span><span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="p">)</span>
+        <span class="n">cast</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">)</span>
+
+        <span class="c1"># Hmm, casts aren&#39;t working for me.</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">m0</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Message lengths must be equal&quot;</span><span class="p">)</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">m1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span> <span class="k">else</span> <span class="n">m0</span>
+
+        <span class="n">ctext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encryptor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TRACK_CHALLENGE_CTEXTS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_challenge_ctexts</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hash_bytes</span><span class="p">(</span><span class="n">ctext</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ctext</span></div>
+
+
+<div class="viewcode-block" id="Ind.encrypt">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Ind.encrypt">[docs]</a>
+    <span class="nd">@manage_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptext</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encryption oracle.</span>
+
+<span class="sd">        :param ptext: Message to be encrypted</span>
+<span class="sd">        :raises StateError: if method called when disallowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encryptor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">,</span> <span class="n">ptext</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ind.decrypt">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Ind.decrypt">[docs]</a>
+    <span class="nd">@manage_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctext</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decryption oracle.</span>
+
+<span class="sd">        :param ctext: Ciphertext to be decrypted</span>
+<span class="sd">        :raises StateError: if method called when disallowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">hash_bytes</span><span class="p">(</span><span class="n">ctext</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_challenge_ctexts</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Adversary is not allowed to call decrypt on challenge ctext&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decryptor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">,</span> <span class="n">ctext</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Ind.finalize">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.Ind.finalize">[docs]</a>
+    <span class="nd">@manage_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">guess</span><span class="p">:</span> <span class="n">SupportsBool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True iff guess is the same as b of previously created challenger.</span>
+
+<span class="sd">        :raises StateError: if method called when disallowed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">guess</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_b</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="IndCpa">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.IndCpa">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IndCpa</span><span class="p">(</span><span class="n">Ind</span><span class="p">[</span><span class="n">K</span><span class="p">]):</span>
+    <span class="n">T_TABLE</span> <span class="o">=</span> <span class="n">TransitionTable</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">:</span> <span class="p">{</span><span class="n">Action</span><span class="o">.</span><span class="n">INITIALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">:</span> <span class="p">{</span><span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT_ONE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT_ONE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">FINALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transition table for CPA game.&quot;&quot;&quot;</span>
+
+    <span class="n">TRACK_CHALLENGE_CTEXTS</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This game does not need to record challenge ctexts.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key_gen</span><span class="p">:</span> <span class="n">KeyGenerator</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">encryptor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;IND-CPA game.</span>
+
+<span class="sd">        :param key_gen: A key generation function appropriate for encryptor</span>
+<span class="sd">        :param encryptor:</span>
+<span class="sd">            A function that takes a key and message and outputs ctext</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key_gen</span><span class="o">=</span><span class="n">key_gen</span><span class="p">,</span> <span class="n">encryptor</span><span class="o">=</span><span class="n">encryptor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_TABLE</span></div>
+
+
+
+<div class="viewcode-block" id="IndEav">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.IndEav">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IndEav</span><span class="p">(</span><span class="n">Ind</span><span class="p">[</span><span class="n">K</span><span class="p">]):</span>
+    <span class="n">T_TABLE</span> <span class="o">=</span> <span class="n">TransitionTable</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">:</span> <span class="p">{</span><span class="n">Action</span><span class="o">.</span><span class="n">INITIALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">:</span> <span class="p">{</span><span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT_ONE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">FINALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transition table for EAV game&quot;&quot;&quot;</span>
+
+    <span class="n">TRACK_CHALLENGE_CTEXTS</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This game does not need to record challenge ctexts.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key_gen</span><span class="p">:</span> <span class="n">KeyGenerator</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">encryptor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;IND-EAV game.</span>
+
+<span class="sd">        :param key_gen: A key generation function appropriate for encryptor</span>
+<span class="sd">        :param encryptor:</span>
+<span class="sd">            A function that takes a key and message and outputs ctext</span>
+<span class="sd">        :raises StateError: if methods called in disallowed order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key_gen</span><span class="o">=</span><span class="n">key_gen</span><span class="p">,</span> <span class="n">encryptor</span><span class="o">=</span><span class="n">encryptor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_TABLE</span></div>
+
+
+
+<div class="viewcode-block" id="IndCca2">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.IndCca2">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IndCca2</span><span class="p">(</span><span class="n">Ind</span><span class="p">[</span><span class="n">K</span><span class="p">]):</span>
+    <span class="n">T_TABLE</span> <span class="o">=</span> <span class="n">TransitionTable</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">:</span> <span class="p">{</span><span class="n">Action</span><span class="o">.</span><span class="n">INITIALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT_ONE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">DECRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">FINALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">DECRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transition table for IND-CCA2 game&quot;&quot;&quot;</span>
+
+    <span class="n">TRACK_CHALLENGE_CTEXTS</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CCA2 needs to prevent decrypt() from decrypting challenge ctexts.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key_gen</span><span class="p">:</span> <span class="n">KeyGenerator</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">encryptor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">decrytpor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;IND-CCA2 game.</span>
+
+<span class="sd">        :param key_gen: A key generation function appropriate for encryptor</span>
+<span class="sd">        :param encryptor:</span>
+<span class="sd">            A function that takes a key and message and outputs ctext</span>
+<span class="sd">        :param decryptor:</span>
+<span class="sd">            A function that takes a key and ciphertext and outputs plaintext</span>
+<span class="sd">        :raises StateError: if methods called in disallowed order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">key_gen</span><span class="o">=</span><span class="n">key_gen</span><span class="p">,</span> <span class="n">encryptor</span><span class="o">=</span><span class="n">encryptor</span><span class="p">,</span> <span class="n">decryptor</span><span class="o">=</span><span class="n">decrytpor</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_TABLE</span></div>
+
+
+
+<div class="viewcode-block" id="IndCca1">
+<a class="viewcode-back" href="../../games.html#toy_crypto.sec_games.IndCca1">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IndCca1</span><span class="p">(</span><span class="n">Ind</span><span class="p">[</span><span class="n">K</span><span class="p">]):</span>
+    <span class="n">T_TABLE</span> <span class="o">=</span> <span class="n">TransitionTable</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">:</span> <span class="p">{</span><span class="n">Action</span><span class="o">.</span><span class="n">INITIALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT_ONE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">DECRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">INITIALIZED</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">FINALIZE</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">STARTED</span><span class="p">,</span>
+                <span class="n">Action</span><span class="o">.</span><span class="n">ENCRYPT</span><span class="p">:</span> <span class="n">State</span><span class="o">.</span><span class="n">CHALLENGED</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transition table for IND-CCA1 game&quot;&quot;&quot;</span>
+
+    <span class="n">TRACK_CHALLENGE_CTEXTS</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This game does not need to record challenge ctexts.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">key_gen</span><span class="p">:</span> <span class="n">KeyGenerator</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">encryptor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+        <span class="n">decrytpor</span><span class="p">:</span> <span class="n">Cryptor</span><span class="p">[</span><span class="n">K</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;IND-CCA1 game.</span>
+
+<span class="sd">        :param key_gen: A key generation function appropriate for encryptor</span>
+<span class="sd">        :param encryptor:</span>
+<span class="sd">            A function that takes a key and message and outputs ctext</span>
+<span class="sd">        :param decryptor:</span>
+<span class="sd">            A function that takes a key and ciphertext and outputs plaintext</span>
+<span class="sd">        :raises StateError: if methods called in disallowed order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">key_gen</span><span class="o">=</span><span class="n">key_gen</span><span class="p">,</span> <span class="n">encryptor</span><span class="o">=</span><span class="n">encryptor</span><span class="p">,</span> <span class="n">decryptor</span><span class="o">=</span><span class="n">decrytpor</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_TABLE</span></div>
+
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">toy_crypto.sec_games</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2024–2025 Jeffrey Goldberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/e4b5fc5.
+    </div>
+  </body>
+</html>

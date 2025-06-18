@@ -75,6 +75,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="games.html#toy_crypto.sec_games.TransitionTable.__getitem__">__getitem__() (toy_crypto.sec_games.TransitionTable method)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.Sievish.__int__">__int__() (toy_crypto.sieve.Sievish method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -113,12 +115,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ec.html#toy_crypto.ec.Curve.b">b (toy_crypto.ec.Curve property)</a>
 </li>
-      <li><a href="bit_utils.html#toy_crypto.bit_utils.Bit">Bit (class in toy_crypto.bit_utils)</a>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve">BaSieve (class in toy_crypto.sieve)</a>
 </li>
-      <li><a href="bit_utils.html#toy_crypto.bit_utils.bit_index">bit_index() (in module toy_crypto.bit_utils)</a>
+      <li><a href="bit_utils.html#toy_crypto.bit_utils.Bit">Bit (class in toy_crypto.bit_utils)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="bit_utils.html#toy_crypto.bit_utils.bit_index">bit_index() (in module toy_crypto.bit_utils)</a>
+</li>
       <li><a href="bit_utils.html#toy_crypto.bit_utils.bit_index_linear">bit_index_linear() (in module toy_crypto.bit_utils)</a>
 </li>
       <li><a href="bit_utils.html#toy_crypto.bit_utils.bits">bits() (in module toy_crypto.bit_utils)</a>
@@ -141,10 +145,20 @@
 </li>
       <li><a href="ec.html#toy_crypto.ec.Curve.compute_y">compute_y() (toy_crypto.ec.Curve method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nt.html#toy_crypto.nt.FactorList.coprimes">coprimes() (toy_crypto.nt.FactorList method)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.count">count (toy_crypto.sieve.BaSieve property)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.count">(toy_crypto.sieve.IntSieve property)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.count">(toy_crypto.sieve.SetSieve property)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.count">(toy_crypto.sieve.Sievish property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ec.html#toy_crypto.ec.Point.cp">cp() (toy_crypto.ec.Point method)</a>
 </li>
       <li><a href="vigenere.html#toy_crypto.vigenere.Cipher.crypt">crypt() (toy_crypto.vigenere.Cipher method)</a>
@@ -229,14 +243,44 @@
 </li>
       <li><a href="nt.html#toy_crypto.nt.FactorList.factors_are_prime">factors_are_prime (toy_crypto.nt.FactorList property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="games.html#toy_crypto.sec_games.Action.FINALIZE">FINALIZE (toy_crypto.sec_games.Action attribute)</a>
 </li>
       <li><a href="games.html#toy_crypto.sec_games.Ind.finalize">finalize() (toy_crypto.sec_games.Ind method)</a>
 </li>
       <li><a href="bit_utils.html#toy_crypto.bit_utils.flip_end">flip_end() (in module toy_crypto.bit_utils)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.from_int">from_int() (toy_crypto.sieve.BaSieve class method)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.from_int">(toy_crypto.sieve.IntSieve class method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.from_int">(toy_crypto.sieve.SetSieve class method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.from_int">(toy_crypto.sieve.Sievish class method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.from_list">from_list() (toy_crypto.sieve.BaSieve class method)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.from_list">(toy_crypto.sieve.IntSieve class method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.from_list">(toy_crypto.sieve.SetSieve class method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.from_list">(toy_crypto.sieve.Sievish class method)</a>
+</li>
+      </ul></li>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.from_size">from_size() (toy_crypto.sieve.BaSieve class method)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.from_size">(toy_crypto.sieve.IntSieve class method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.from_size">(toy_crypto.sieve.SetSieve class method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.from_size">(toy_crypto.sieve.Sievish class method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -292,6 +336,8 @@
       <li><a href="games.html#toy_crypto.sec_games.Ind.initialize">initialize() (toy_crypto.sec_games.Ind method)</a>
 </li>
       <li><a href="games.html#toy_crypto.sec_games.State.INITIALIZED">INITIALIZED (toy_crypto.sec_games.State attribute)</a>
+</li>
+      <li><a href="sieve.html#toy_crypto.sieve.IntSieve">IntSieve (class in toy_crypto.sieve)</a>
 </li>
       <li><a href="vigenere.html#toy_crypto.vigenere.Alphabet.inverse">inverse() (toy_crypto.vigenere.Alphabet method)</a>
 </li>
@@ -398,12 +444,32 @@
 </li>
       <li><a href="rsa.html#toy_crypto.rsa.PublicKey.N">N (toy_crypto.rsa.PublicKey property)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.n">n (toy_crypto.sieve.BaSieve property)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.n">(toy_crypto.sieve.IntSieve property)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.n">(toy_crypto.sieve.SetSieve property)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.n">(toy_crypto.sieve.Sievish property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ec.html#toy_crypto.ec.Point.neg">neg() (toy_crypto.ec.Point method)</a>
 </li>
       <li><a href="nt.html#toy_crypto.nt.FactorList.normalize">normalize() (toy_crypto.nt.FactorList method)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.nth_prime">nth_prime() (toy_crypto.sieve.BaSieve method)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.nth_prime">(toy_crypto.sieve.IntSieve method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.nth_prime">(toy_crypto.sieve.SetSieve method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.nth_prime">(toy_crypto.sieve.Sievish method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -434,10 +500,20 @@
 </li>
       <li><a href="types.html#toy_crypto.types.PositiveInt">PositiveInt (class in toy_crypto.types)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nt.html#toy_crypto.nt.FactorList.pow">pow() (toy_crypto.nt.FactorList method)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.BaSieve.primes">primes() (toy_crypto.sieve.BaSieve method)</a>
+
+      <ul>
+        <li><a href="sieve.html#toy_crypto.sieve.IntSieve.primes">(toy_crypto.sieve.IntSieve method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.SetSieve.primes">(toy_crypto.sieve.SetSieve method)</a>
+</li>
+        <li><a href="sieve.html#toy_crypto.sieve.Sievish.primes">(toy_crypto.sieve.Sievish method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="vigenere.html#toy_crypto.vigenere.Alphabet.PRINTABLE">PRINTABLE (toy_crypto.vigenere.Alphabet attribute)</a>
 </li>
       <li><a href="rsa.html#toy_crypto.rsa.PrivateKey">PrivateKey (class in toy_crypto.rsa)</a>
@@ -488,12 +564,16 @@
 </li>
       <li><a href="bit_utils.html#toy_crypto.bit_utils.set_bit_in_byte">set_bit_in_byte() (in module toy_crypto.bit_utils)</a>
 </li>
+      <li><a href="sieve.html#toy_crypto.sieve.SetSieve">SetSieve (class in toy_crypto.sieve)</a>
+</li>
       <li><a href="rand.html#toy_crypto.rand.shuffle">shuffle() (in module toy_crypto.rand)</a>
 </li>
       <li><a href="sieve.html#toy_crypto.sieve.Sieve">Sieve (class in toy_crypto.sieve)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="sieve.html#toy_crypto.sieve.Sievish">Sievish (protocol in toy_crypto.sieve)</a>
+</li>
       <li><a href="games.html#toy_crypto.sec_games.State.STARTED">STARTED (toy_crypto.sec_games.State attribute)</a>
 </li>
       <li><a href="games.html#toy_crypto.sec_games.StateError">StateError (class in toy_crypto.sec_games)</a>
@@ -673,7 +753,7 @@
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024–2025 Jeffrey Goldberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/e4b5fc5.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/16d0471.
     </div>
   </body>
 </html>

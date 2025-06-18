@@ -1247,10 +1247,10 @@ c-deps = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "bitarray" },
     { name = "pytest" },
 ]
 docs = [
-    { name = "bitarray" },
     { name = "enum-tools", extra = ["sphinx"] },
     { name = "sphinx" },
     { name = "sphinx-autodoc-typehints" },
@@ -1258,7 +1258,6 @@ docs = [
     { name = "sphinxcontrib-bibtex" },
 ]
 lint = [
-    { name = "bitarray" },
     { name = "mypy" },
     { name = "ruff" },
     { name = "types-docutils" },
@@ -1266,7 +1265,6 @@ lint = [
     { name = "vermin" },
 ]
 prof = [
-    { name = "bitarray" },
     { name = "matplotlib" },
     { name = "polars" },
     { name = "seaborn" },
@@ -1280,9 +1278,11 @@ requires-dist = [
 provides-extras = ["c-deps"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8.3" }]
-docs = [
+dev = [
     { name = "bitarray", specifier = ">=3.4.2" },
+    { name = "pytest", specifier = ">=8.3" },
+]
+docs = [
     { name = "enum-tools", extras = ["sphinx"], specifier = ">=0.13.0" },
     { name = "sphinx", git = "https://github.com/sphinx-doc/sphinx" },
     { name = "sphinx-autodoc-typehints", specifier = ">=3.1.0" },
@@ -1290,7 +1290,6 @@ docs = [
     { name = "sphinxcontrib-bibtex", specifier = ">=2.6.4" },
 ]
 lint = [
-    { name = "bitarray", specifier = ">=3.4.2" },
     { name = "mypy", specifier = ">=1.15" },
     { name = "ruff", specifier = ">=0.11.13" },
     { name = "types-docutils", specifier = ">=0.21.0.20241128" },
@@ -1298,7 +1297,6 @@ lint = [
     { name = "vermin", specifier = ">=1.6.0" },
 ]
 prof = [
-    { name = "bitarray", specifier = ">=3.4.2" },
     { name = "matplotlib", specifier = ">=3.10.1" },
     { name = "polars", specifier = ">=1.28.1" },
     { name = "seaborn", specifier = ">=0.13.2" },

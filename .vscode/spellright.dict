@@ -31,3 +31,11 @@ py_int
 py_set
 bytearray
 pyright
+github
+typehints
+sphinx_toolbox.more_autodoc.autoprotocol
+sphinx_toolbox.more_autodoc.typevars
+sphinxcontrib.bibtex
+primefac
+pyproject.toml
+len

@@ -232,7 +232,7 @@ class BaSieve(Sievish):
     def __init__(self, data: bitarray, size: int | None) -> None:
         """Sieve from bitarray, treated as up to size.
 
-        :raises ValueError: if size > len(data)
+        :raises ValueError: if size > ``len(data)``
         """
 
         if size is None:

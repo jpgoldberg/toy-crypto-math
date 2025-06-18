@@ -37,7 +37,7 @@ class PublicKey:
         """
         There is a reason for the explicit conversion to int in the
         comparison below. If message was created as a member of a SageMath
-        finite group mod N, self._N would be converted to that before 
+        finite group mod N, self._N would be converted to that before
         comparison and self._N ≡ 0 (mod self._N).
         """
         if not int(message) < self._N:

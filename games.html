@@ -61,7 +61,7 @@
 </div>
 <p>The module includes a classes for running the several
 <a class="reference external" href="https://en.wikipedia.org/wiki/Ciphertext_indistinguishability">ciphertext indistisguishability</a>
-games for symmetric encryption game.</p>
+games for symmetric encryption.</p>
 <section id="general-structure">
 <h2>General Structure<a class="headerlink" href="#general-structure" title="Link to this heading">¶</a></h2>
 <p>Indisitinguisibility games are set up as an adversary
@@ -78,14 +78,15 @@ So creating a game will often look like</p>
 </pre></div>
 </div>
 <p>Once that is done, the adversary can interact with the game according to the rules of the particular game.</p>
-<p>The first thing (in how I’ve coding things here) is that the adversary will tell the game to initialize itself.</p>
+<p>The first thing (in how I’ve coded things here) is that the adversary will tell the game to initialize itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">game</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>During that initialization the game will generate a key and randomly select 0 or 1 as the value of the bit <strong>b</strong>.
-The adversary’s task durig the course of the game is to figure out the value of <strong>b</strong>.
-At the end of a round, the adversary will finalize the game by submitting its guess.</p>
+<p>During that initialization the game will
+generate a key and randomly select 0 or 1 as the value of the bit <strong>b</strong>.
+The adversary’s task during the course of the game is to figure out the value of <strong>b</strong>.</p>
+<p>At the end of a round, the adversary will finalize the game by submitting its guess.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
 <span class="k">if</span> <span class="n">game</span><span class="o">.</span><span class="n">finalize</span><span class="p">(</span><span class="n">guess</span><span class="p">):</span>
     <span class="c1"># Yay! Guessed correctly</span>
@@ -96,7 +97,9 @@ At the end of a round, the adversary will finalize the game by submitting its gu
 to tell it to re-initialize <a class="footnote-reference brackets" href="#reinit" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> , which will generate a fresh key and value for the bit, <strong>b</strong>.</p>
 <p>Between initialization and finalization the adversary can ask the game to
 to perform certain computions, which may include encrypting or decrypting
-data of the adversaries chosing. Which are available and in what sequences depends on the specific game.</p>
+data of the adversary’s chosing.
+Which methods are available and in what sequences they can be called
+depends on the specific game.</p>
 <p>The computation that is essential to all of these games is to encrypt one of
 two messages provided by the adversary.
 The game returns a challenge ciphertext that is the encryption of one of
@@ -117,7 +120,7 @@ while using the same encryption scheme. <a class="footnote-reference brackets" h
 </section>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
-<p>For testing, it is useful to have a challenge that the adversary can always
+<p>For testing it is useful to have a challenge that the adversary can always
 win, so we will use a shift ciper for testing IND-EAV
 and a reused pad (N-time-pad) for testing IND-CPA.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
@@ -163,7 +166,7 @@ be the same as each other. If they differ, then m1 was encrypted.</p>
 </div>
 <p>The N-Time-Pad (up to limited message length) is semantically secure.
 One can prove that any adversary that can reliability win the IND-EAV game
-can reliabily predict bits from the presumed security random number generator.
+can reliabily predict bits from the (presumedly secure) random number generator.
 Thus the NTP is at least as secure as the random number generator.</p>
 <p>But because the NTP is deterministic it will fail IND-CPA security.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">game</span> <span class="o">=</span> <span class="n">IndCpa</span><span class="p">(</span><span class="n">ntp_keygen</span><span class="p">,</span> <span class="n">ntp_encrypt</span><span class="p">)</span>
@@ -810,7 +813,7 @@ rely on the Python garbage collector to free up memory.</p>
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024–2025 Jeffrey Goldberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/16d0471.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/09a7234.
     </div>
   </body>
 </html>

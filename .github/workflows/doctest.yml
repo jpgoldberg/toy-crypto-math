@@ -1,0 +1,21 @@
+name: "Doctest"
+on:
+    workflow_dispatch:
+    push:
+      branches: [ "main" ]
+      paths:
+        - 'src/toy_crypto/__about__.py'
+
+jobs:
+  doctest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      
+      - name: sphinx
+        run: uv run --group docs spinx-build -c docs/conf.py -M doctest "source" "build"
+    

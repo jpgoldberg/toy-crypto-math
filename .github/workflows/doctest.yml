@@ -17,5 +17,5 @@ jobs:
         uses: astral-sh/setup-uv@v5
       
       - name: sphinx
-        run: uv run --group docs spinx-build -c docs/conf.py -M doctest "source" "build"
+        run: uv run --group docs sphinx-build -c docs/conf.py -M doctest "source" "build"
     

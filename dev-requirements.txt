@@ -2,5 +2,6 @@
 mypy >= 1.10
 pytest >= 8
 hatch
+types-docutils
 ruff >= 0.6
 bitarray >= 3.4

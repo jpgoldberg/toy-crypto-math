@@ -3,6 +3,4 @@ mypy >= 1.10
 pytest >= 8
 hatch
 ruff >= 0.6
-types-docutils
-sphinx >= 3.4.0
 bitarray >= 3.4

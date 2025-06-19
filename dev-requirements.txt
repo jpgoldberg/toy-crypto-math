@@ -1,8 +1,10 @@
+# This file is not properly maintained.
+# See dependency-groups in pyproject.toml for a source fo truth.
 -r requirements.txt
+bitarray >= 3.4
 mypy >= 1.10
 pytest >= 8
 sphinx
 hatch
 types-docutils
 ruff >= 0.6
-bitarray >= 3.4

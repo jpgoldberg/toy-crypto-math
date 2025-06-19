@@ -1,6 +1,11 @@
+# This file is not maintained
+# See dependency-groups in ../pyproject.toml
+# for a more truthful source of truth
+
+bitarray >= 3.4.2
+# We need sphinx >= 8.3, but 8.3 was yanked.
 sphinx@git+https://github.com/sphinx-doc/sphinx
-sphinx-autodoc-typehints
-sphinx-jinja2-compat>=0.3.0
+enum-tools[sphinx]>=0.13.0
+sphinx-autodoc-typehints>=3.1.0"
 sphinx-toolbox>=4.0.0
-enum-tools[sphinx] >=0.13.0
 sphinxcontrib-bibtex>=2.6.4

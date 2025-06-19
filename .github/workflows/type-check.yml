@@ -1,4 +1,4 @@
-name: lint
+name: type-check
 on:
   workflow_dispatch:
   push:

@@ -17,6 +17,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
       
       - name: sphinx
         run:  uv run --group docs sphinx-build -M doctest  "docs/source" "docs/build"

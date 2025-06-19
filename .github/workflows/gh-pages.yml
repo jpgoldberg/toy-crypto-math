@@ -23,6 +23,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Install Python
         uses: actions/setup-python@v5
@@ -34,7 +35,7 @@ jobs:
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
-        
+
         # I don't understand this next thing, but it appears to be needed,
         if: github.ref == 'refs/heads/main'
         with:

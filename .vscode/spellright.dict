@@ -39,3 +39,4 @@ sphinxcontrib.bibtex
 primefac
 pyproject.toml
 len
+Doctests

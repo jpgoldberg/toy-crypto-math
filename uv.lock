@@ -1039,7 +1039,7 @@ wheels = [
 [[package]]
 name = "sphinx"
 version = "8.3.0"
-source = { git = "https://github.com/sphinx-doc/sphinx#ea53cd47db079e6d0f133a25d18558119974eda8" }
+source = { git = "https://github.com/sphinx-doc/sphinx#f1edefee452c943cd5feee6158dfc88eaaf86b71" }
 dependencies = [
     { name = "alabaster" },
     { name = "babel" },
@@ -1249,16 +1249,17 @@ c-deps = [
 dev = [
     { name = "bitarray" },
     { name = "pytest" },
+    { name = "sphinx" },
 ]
 docs = [
     { name = "enum-tools", extra = ["sphinx"] },
-    { name = "sphinx" },
     { name = "sphinx-autodoc-typehints" },
     { name = "sphinx-toolbox" },
     { name = "sphinxcontrib-bibtex" },
 ]
 lint = [
     { name = "mypy" },
+    { name = "polars" },
     { name = "ruff" },
     { name = "types-docutils" },
     { name = "types-seaborn" },
@@ -1281,16 +1282,17 @@ provides-extras = ["c-deps"]
 dev = [
     { name = "bitarray", specifier = ">=3.4.2" },
     { name = "pytest", specifier = ">=8.3" },
+    { name = "sphinx", git = "https://github.com/sphinx-doc/sphinx" },
 ]
 docs = [
     { name = "enum-tools", extras = ["sphinx"], specifier = ">=0.13.0" },
-    { name = "sphinx", git = "https://github.com/sphinx-doc/sphinx" },
     { name = "sphinx-autodoc-typehints", specifier = ">=3.1.0" },
     { name = "sphinx-toolbox", specifier = ">=4.0.0" },
     { name = "sphinxcontrib-bibtex", specifier = ">=2.6.4" },
 ]
 lint = [
     { name = "mypy", specifier = ">=1.15" },
+    { name = "polars", specifier = ">=1.30" },
     { name = "ruff", specifier = ">=0.11.13" },
     { name = "types-docutils", specifier = ">=0.21.0.20241128" },
     { name = "types-seaborn", specifier = ">=0.13.2.20250111" },
@@ -1298,7 +1300,7 @@ lint = [
 ]
 prof = [
     { name = "matplotlib", specifier = ">=3.10.1" },
-    { name = "polars", specifier = ">=1.28.1" },
+    { name = "polars", specifier = ">=1.30" },
     { name = "seaborn", specifier = ">=0.13.2" },
 ]
 

@@ -88,6 +88,19 @@ but the end results will still contain all of the primes as Python integers.</p>
 </div></blockquote>
 </li>
 </ul>
+<p>Roughly speaking, the reasons for having three (so far) implementations is that I wanted to be able to run things in environments in which <a class="reference external" href="https://github.com/ilanschnell/bitarray">bitarray</a> is not available. That led the to <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSeive</span></code>.
+An off-hand comment I made in some discussion about how immutable <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> means that a seive implement with <code class="docutils literal notranslate"><span class="pre">int</span></code> would be slow was challanged. I was curious to see whether an <code class="docutils literal notranslate"><span class="pre">int</span></code>-based implementation would work, so that led to <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.</p>
+<p>It turns out that using native Python integers was enormously slower than I could have imagined.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A thing that I really like about Python,
+particulary for playing with cryptographic notions,
+is that there is just one type of <code class="docutils literal notranslate"><span class="pre">int</span></code>.
+I don’t have to go to a big integeer library when numbers get too
+large.</p>
+<p>My observation about ineffiencies of bit twidling in Python acknowleging
+a limitation that follows from a very reasonable design choice.</p>
+</div>
 <figure class="align-default" id="id2">
 <span id="all-figure"></span><img alt="Graph showing that IntSieve creation time is really slow" src="_images/all_data.png" />
 <figcaption>
@@ -808,7 +821,7 @@ illustrate the algorithm.</p>
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024–2025 Jeffrey Goldberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/09a7234.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/61cabd8.
     </div>
   </body>
 </html>

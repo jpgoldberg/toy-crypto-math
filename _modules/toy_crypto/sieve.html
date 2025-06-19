@@ -47,6 +47,7 @@
     <span class="n">Iterator</span><span class="p">,</span>
     <span class="n">Protocol</span><span class="p">,</span>
     <span class="n">Self</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
     <span class="n">runtime_checkable</span><span class="p">,</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
 <span class="p">)</span>
@@ -102,7 +103,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-    <span class="n">_data</span><span class="p">:</span> <span class="n">bitarray</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span>
+    <span class="n">_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">bitarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -736,7 +737,7 @@
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024–2025 Jeffrey Goldberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/09a7234.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/61cabd8.
     </div>
   </body>
 </html>

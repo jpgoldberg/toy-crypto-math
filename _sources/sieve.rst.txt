@@ -37,6 +37,22 @@ There are reasons, but first let me give an overview of the major differences.
 
     This is also a pure Python implementation that uses a Python integer as the sieve and uses bit twidling when creating the sieve. This makes it memory efficient, but it is excruciatingly slow.
 
+Roughly speaking, the reasons for having three (so far) implementations is that I wanted to be able to run things in environments in which bitarray_ is not available. That led the to :class:`SetSeive`.
+An off-hand comment I made in some discussion about how immutable :py:class:`int` means that a seive implement with ``int`` would be slow was challanged. I was curious to see whether an ``int``-based implementation would work, so that led to :class:`IntSieve`.
+
+It turns out that using native Python integers was enormously slower than I could have imagined.
+
+.. note::
+
+    A thing that I really like about Python,
+    particulary for playing with cryptographic notions,
+    is that there is just one type of ``int``.
+    I don't have to go to a big integeer library when numbers get too
+    large.
+    
+    My observation about ineffiencies of bit twidling in Python acknowleging
+    a limitation that follows from a very reasonable design choice.
+
 .. _all_figure:
 
 .. figure:: images/all_data.png

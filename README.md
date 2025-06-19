@@ -3,7 +3,7 @@
 ![Mypy](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/type-check.yml/badge.svg)
 ![Ruff](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/lint.yml/badge.svg)
 ![Tests status](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/pytest.yml/badge.svg)
-![Doctests](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/doctests.yml/badge.svg)
+![Doctests](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/doctest.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/toycrypto?label=pypi%20package)][published]
 [![Documentation](https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/gh-pages.yml/badge.svg)][documentation]
 [![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/jpgoldberg/toy-crypto-math/blob/main/LICENSE.txt)

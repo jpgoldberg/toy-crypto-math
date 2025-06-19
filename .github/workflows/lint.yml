@@ -1,4 +1,4 @@
-name: lint
+name: Ruff
 on:
   workflow_dispatch:
   push:

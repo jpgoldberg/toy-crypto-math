@@ -1,4 +1,4 @@
-name: type-check
+name: Mypy
 on:
   workflow_dispatch:
   push:

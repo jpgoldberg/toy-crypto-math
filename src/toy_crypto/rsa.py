@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import hashlib
 import math
 from typing import Callable
@@ -19,7 +20,47 @@ type HashFunc = Callable[[bytes], hashlib._Hash]
 type MgfFunc = Callable[[bytes, int], bytes]
 
 
-def mgf1(seed: bytes, length: int) -> bytes:
+@dataclass(frozen=True, kw_only=True)
+class HashInfo:
+    """Information about hash function
+
+    Note that names and identifiers here do not
+    conform to RFCs. These are not mean to be interoperable
+    with anything out in the world.
+
+    """
+
+    hashlib_name: str
+    function: HashFunc
+    digest_size: int  # in bytes
+    input_limit: int  # maximum input, in bytes
+
+
+KNOWN_HASHES: dict[str, HashInfo] = {
+    "sha256": HashInfo(
+        hashlib_name="sha256",
+        function=hashlib.sha256,
+        digest_size=32,
+        input_limit=2**61,
+    )
+}
+"""Hashes known for OAEP. key will be hashlib names."""
+
+
+@dataclass(frozen=True, kw_only=True)
+class MgfInfo:
+    """Information about Mask Generation function"""
+
+    algorithm: str  # eg "id-mfg1"
+    hashAlgorithm: str  # Key in KNOWN_HASHES
+    function: MgfFunc
+
+
+def mgf1(
+    seed: bytes,  # There do not appear to be any constraints on this
+    length: int,  #  Output length
+    hash: str,  # key for KNOWN_HASHES
+) -> bytes:
     """Mask generation function.
 
     From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
@@ -35,7 +76,7 @@ def mgf1(seed: bytes, length: int) -> bytes:
     mask    | mask      | Output
     T       | t         | Internal array for building mask
     C       | counter   | Counter, four octets
-    Hash    | HASHER    | CS hash function
+    Hash    | hash      | CS hash function
     """
 
     if length > 2**32:
@@ -112,12 +153,14 @@ class PublicKey:
             raise ValueError("Message too big")
 
         return pow(base=message, exp=self._e, mod=self._N)
-    
-    def oaep_encrypt(self,
-                     message: bytes,
-                     label: str,
-                     hash: HashFunc = hashlib.sha256,
-                     mgf: MgfFunc = mgf1) -> bytes:
+
+    def oaep_encrypt(
+        self,
+        message: bytes,
+        label: str,
+        hash: HashFunc = hashlib.sha256,
+        mgf: MgfFunc = mgf1,
+    ) -> bytes:
         """
         RSA OAEP encryption.
 
@@ -126,12 +169,10 @@ class PublicKey:
 
         h_digest_size = hash(b"").digest_size
 
-        k = self.N.bit_length // 8
+        k = self.N.bit_length() // 8
         m_length = len(message)
 
-        
-        return(bytes())
-
+        return bytes()
 
     def __eq__(self, other: object) -> bool:
         """True when each has the same modulus and public exponent.

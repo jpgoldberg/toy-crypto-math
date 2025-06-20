@@ -41,3 +41,6 @@ pyproject.toml
 len
 Doctests
 domdfcoding
+sha256
+hashlib
+id-sha256

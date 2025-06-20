@@ -15,7 +15,7 @@ Security games
 
 The module includes a classes for running the several 
 :wikipedia:`ciphertext indistisguishability <Ciphertext indistinguishability>` 
-games for symmetric encryption game.
+games for symmetric encryption.
 
 General Structure
 ==================
@@ -37,15 +37,17 @@ So creating a game will often look like
 
 Once that is done, the adversary can interact with the game according to the rules of the particular game.
 
-The first thing (in how I've coding things here) is that the adversary will tell the game to initialize itself.
+The first thing (in how I've coded things here) is that the adversary will tell the game to initialize itself.
 
 .. code-block:: python
 
     game.initialize()
     ...
     
-During that initialization the game will generate a key and randomly select 0 or 1 as the value of the bit **b**.
-The adversary's task durig the course of the game is to figure out the value of **b**.
+During that initialization the game will
+generate a key and randomly select 0 or 1 as the value of the bit **b**.
+The adversary's task during the course of the game is to figure out the value of **b**.
+
 At the end of a round, the adversary will finalize the game by submitting its guess.
 
 .. code-block:: python
@@ -60,7 +62,9 @@ to tell it to re-initialize [#reinit]_ , which will generate a fresh key and val
 
 Between initialization and finalization the adversary can ask the game to
 to perform certain computions, which may include encrypting or decrypting
-data of the adversaries chosing. Which are available and in what sequences depends on the specific game.
+data of the adversary's chosing.
+Which methods are available and in what sequences they can be called
+depends on the specific game.
 
 The computation that is essential to all of these games is to encrypt one of 
 two messages provided by the adversary.
@@ -86,7 +90,7 @@ while using the same encryption scheme. [#reinit]_
 Examples
 ==========
 
-For testing, it is useful to have a challenge that the adversary can always
+For testing it is useful to have a challenge that the adversary can always
 win, so we will use a shift ciper for testing IND-EAV
 and a reused pad (N-time-pad) for testing IND-CPA.
 
@@ -139,7 +143,7 @@ Let's use a stronger cipher, the N-Time-Pad for our IND-CPA example.
 
 The N-Time-Pad (up to limited message length) is semantically secure.
 One can prove that any adversary that can reliability win the IND-EAV game
-can reliabily predict bits from the presumed security random number generator.
+can reliabily predict bits from the (presumedly secure) random number generator.
 Thus the NTP is at least as secure as the random number generator.
 
 But because the NTP is deterministic it will fail IND-CPA security.

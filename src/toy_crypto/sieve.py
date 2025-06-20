@@ -6,6 +6,7 @@ from typing import (
     Iterator,
     Protocol,
     Self,
+    Union,
     runtime_checkable,
     TYPE_CHECKING,
 )
@@ -59,7 +60,7 @@ class Sievish(Protocol):
         """
         ...
 
-    _data: bitarray | list[int] | int
+    _data: Union[bitarray, list[int], int]
 
     @property
     def count(self) -> int:
@@ -232,7 +233,7 @@ class BaSieve(Sievish):
     def __init__(self, data: bitarray, size: int | None) -> None:
         """Sieve from bitarray, treated as up to size.
 
-        :raises ValueError: if size > len(data)
+        :raises ValueError: if size > ``len(data)``
         """
 
         if size is None:

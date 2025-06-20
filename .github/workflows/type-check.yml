@@ -1,16 +1,16 @@
-name: Ruff
+name: Mypy
 on:
   workflow_dispatch:
   push:
     paths:
       - '**.py'
-      - 'ruff.toml'
+      - 'mypy.ini'
       - "pyproject.toml"
 
 jobs:
-  type-format-checking:
+  type-checking:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,10 +21,7 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
     
-      - name: ruff format
-        run: uv run --group lint ruff format --check .
-
-      - name: ruff check
-        run: uv run --group lint ruff check .
+      - name: mypy check
+        run: uv run --group lint mypy .
   
-    
+     

@@ -12,7 +12,7 @@
 
 This is (almost certainly) not the package you are looking for.
 The primary reason this is [published on PyPi][published] is so I can create reproducible Jupyter Notebooks,
-but among the variety of tools that have been accumulated here might offer something to somone.
+but among the variety of tools that have been accumulated here might offer something to someone.
 
 See the [documentation] for use (or not) and [reasons why this exists](https://jpgoldberg.github.io/toy-crypto-math/#motivation).
 

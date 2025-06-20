@@ -5,16 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.4.1 2025-06-19
+
 ### Fixed
 
-- Fixes type error that popped up with Python 3.13.5.
+- Fixes incomprehensible type error that popped up with Python 3.13.5.
 
 - Documentation now builds correctly in CI (instead of merely on my machine).
 
 ### Changed
 
 - Minor documentation fixes
-- `*requirements.txt` files are on the way out. Dependencies are exclusively managed in `pyproject.toml` with dependency-groups.
+- `*requirements.txt` files are on the way out. Dependencies are exclusively managed in `pyproject.toml`.
 
 ### Internal
 

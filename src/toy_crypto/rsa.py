@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 import hashlib
 import math
+import secrets
 from typing import Callable
+from toy_crypto import utils
 from toy_crypto.nt import lcm, modinv
 
 _DEFAULT_E = 65537
@@ -12,109 +14,116 @@ def default_e() -> int:
     return _DEFAULT_E
 
 
-# Some helper functions needed for OAEP
-
 type HashFunc = Callable[[bytes], hashlib._Hash]
-
+"""Type for hashlib style hash function."""
 
 type MgfFunc = Callable[[bytes, int], bytes]
+"""Type for RFC8017 Mask Generation Function."""
 
 
-@dataclass(frozen=True, kw_only=True)
-class HashInfo:
-    """Information about hash function
+class Oaep:
+    """
+    Tools and data for OAEP.
 
-    Note that names and identifiers here do not
-    conform to RFCs. These are not mean to be interoperable
-    with anything out in the world.
-
+    Although this attempts to follow RFC8017 in many
+    respects, this is not designed to be interoperable
+    with compliant keys and ciphertext.
     """
 
-    hashlib_name: str
-    function: HashFunc
-    digest_size: int  # in bytes
-    input_limit: int  # maximum input, in bytes
+    @dataclass(frozen=True, kw_only=True)
+    class HashInfo:
+        """Information about hash function
 
+        Note that names and identifiers here do not
+        conform to RFCs. These are not mean to be interoperable
+        with anything out in the world.
+        """
 
-KNOWN_HASHES: dict[str, HashInfo] = {
-    "sha256": HashInfo(
-        hashlib_name="sha256",
-        function=hashlib.sha256,
-        digest_size=32,
-        input_limit=2**61,
-    )
-}
-"""Hashes known for OAEP. key will be hashlib names."""
+        hashlib_name: str
+        function: HashFunc
+        digest_size: int  # in bytes
+        input_limit: int  # maximum input, in bytes
 
+    @dataclass(frozen=True, kw_only=True)
+    class MgfInfo:
+        """Information about Mask Generation function"""
 
-@dataclass(frozen=True, kw_only=True)
-class MgfInfo:
-    """Information about Mask Generation function"""
+        algorithm: str  # eg "id-mfg1"
+        hashAlgorithm: str  # Key in KNOWN_HASHES
+        function: MgfFunc
 
-    algorithm: str  # eg "id-mfg1"
-    hashAlgorithm: str  # Key in KNOWN_HASHES
-    function: MgfFunc
+    KNOWN_HASHES: dict[str, HashInfo] = {
+        "sha256": HashInfo(
+            hashlib_name="sha256",
+            function=hashlib.sha256,
+            digest_size=32,
+            input_limit=2**61,
+        )
+    }
+    """Hashes known for OAEP. key will be hashlib names."""
 
+    @classmethod
+    def mgf1(
+        cls,
+        seed: bytes,  # There do not appear to be any constraints on this
+        length: int,  # Output length
+        hash_id: str = "sha256",  # key for KNOWN_HASHES
+    ) -> bytes:
+        """Mask generation function.
 
-def mgf1(
-    seed: bytes,  # There do not appear to be any constraints on this
-    length: int,  #  Output length
-    hash: str,  # key for KNOWN_HASHES
-) -> bytes:
-    """Mask generation function.
+        From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
+        """
 
-    From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
-    """
+        """
+        I am using Pythonic variable naming instead of what is in the RFC
 
-    """
-    I am using Pythonic variable naming instead of what is in the RFC
+        RFC Name | My name | Description                        | Type
+        -----------------------------------------------------------------
+        mfgSeed | seed      | seed from which mask is generated | bytes
+        maskLen | length    | Intended length of mask           | int
+        mask    | mask      | Output                            | bytes
+        T       | t         | Internal array for building mask  | bytearray
+        C       | counter   | Counter, four octets              | bytes
+                | hash_id   | ID of hash function               | str
+        Hash    | hasher    | CS hash function                  | HashFunc
+        """
 
-    RFC Name | My name | Description
-    --------------------------------
-    mfgSeed | seed      | seed from which mask is generated, an octet string
-    maskLen | length    | Intended length of mask
-    mask    | mask      | Output
-    T       | t         | Internal array for building mask
-    C       | counter   | Counter, four octets
-    Hash    | hash      | CS hash function
-    """
+        if length > 2**32:
+            raise ValueError("mask too long")
 
-    if length > 2**32:
-        raise ValueError("mask too long")
+        try:
+            hash = cls.KNOWN_HASHES[hash_id]
+        except KeyError:
+            raise Exception(f'Unsupported hash function: "{hash_id}')
 
-    HASHER = hashlib.sha256
-    digest_size = HASHER(b"").digest_size
+        hasher = hash.function
+        digest_size = hash.digest_size
 
-    t = bytearray()
+        t = bytearray()
 
-    for c in range(math.ceil(length / digest_size) - 1):
-        counter = i2osp(c, 4)
-        t += HASHER(seed + counter).digest()
+        for c in range(math.ceil(length / digest_size) - 1):
+            counter = cls.i2osp(c, 4)
+            t += hasher(seed + counter).digest()
 
-    mask = bytes(t[:length])
-    return mask
+        mask = bytes(t[:length])
+        return mask
 
+    @classmethod
+    def i2osp(cls, n: int, length: int) -> bytes:
+        """converts a nonnegative integer to an octet string length.
 
-def i2osp(x: int, length: int) -> bytes:
-    """converts a nonnegative integer to an octet string length.
+        https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
+        """
 
-    https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
-    """
+        if n < 0:
+            raise ValueError("Number cannot be negative")
 
-    if x >= 256**length:
-        raise ValueError("integer too large")
+        return n.to_bytes(length, byteorder="big", signed=False)
 
-    x_bytes = bytearray()
-
-    while length:
-        length -= 1
-        x, r = divmod(x, 256)
-        x_bytes.append(r)
-
-    # We need most significant byte to be leftmost (at index[0])
-    x_bytes.reverse()
-
-    return bytes(x_bytes)
+    @classmethod
+    def os2ip(cls, x: bytes) -> int:
+        """octet-stream to unsigned big-endian int"""
+        return int.from_bytes(x, byteorder="big", signed=False)
 
 
 class PublicKey:
@@ -157,9 +166,9 @@ class PublicKey:
     def oaep_encrypt(
         self,
         message: bytes,
-        label: str,
-        hash: HashFunc = hashlib.sha256,
-        mgf: MgfFunc = mgf1,
+        label: bytes = b"",
+        hash_id: str = "sha256",
+        mgf_id: str = "mgf1",
     ) -> bytes:
         """
         RSA OAEP encryption.
@@ -167,12 +176,36 @@ class PublicKey:
         https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.1
         """
 
-        h_digest_size = hash(b"").digest_size
+        try:
+            h = Oaep.KNOWN_HASHES[hash_id]
+        except KeyError:
+            raise ValueError(f'Unsupported hash: "{hash_id}')
 
-        k = self.N.bit_length() // 8
-        m_length = len(message)
+        if len(label) > h.input_limit:
+            raise ValueError("label too long")
 
-        return bytes()
+        k = self.N.bit_length() + 7 // 8  # length of N in bytes
+
+        if len(message) > k - 2 * h.digest_size - 2:
+            raise ValueError("message too long")
+
+        lhash = h.function(label).digest()
+
+        ps_length = k - len(message) - 2 * h.digest_size - 2
+        padding_string = bytes(ps_length)
+
+        data_block = lhash + padding_string + bytes.fromhex("01") + message
+        seed = secrets.token_bytes(h.digest_size)
+        mask = Oaep.mgf1(seed, k - h.digest_size - 1)
+        masked_db = utils.xor(data_block, mask)
+        seed_mask = Oaep.mgf1(masked_db, h.digest_size)
+        masked_seed = utils.xor(seed, seed_mask)
+
+        encoded_m = bytes.fromhex("00") + masked_seed + masked_db
+        m = Oaep.os2ip(encoded_m)
+        ctext = self.encrypt(m)
+
+        return Oaep.i2osp(ctext, k)
 
     def __eq__(self, other: object) -> bool:
         """True when each has the same modulus and public exponent.

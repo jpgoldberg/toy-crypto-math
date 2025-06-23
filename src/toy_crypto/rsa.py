@@ -17,7 +17,7 @@ def default_e() -> int:
 type HashFunc = Callable[[bytes], hashlib._Hash]
 """Type for hashlib style hash function."""
 
-type MgfFunc = Callable[[bytes, int], bytes]
+type MgfFunc = Callable[[bytes, int, str], bytes]
 """Type for RFC8017 Mask Generation Function."""
 
 
@@ -52,19 +52,8 @@ class Oaep:
         hashAlgorithm: str  # Key in KNOWN_HASHES
         function: MgfFunc
 
-    KNOWN_HASHES: dict[str, HashInfo] = {
-        "sha256": HashInfo(
-            hashlib_name="sha256",
-            function=hashlib.sha256,
-            digest_size=32,
-            input_limit=2**61,
-        )
-    }
-    """Hashes known for OAEP. key will be hashlib names."""
-
-    @classmethod
+    @staticmethod
     def mgf1(
-        cls,
         seed: bytes,  # There do not appear to be any constraints on this
         length: int,  # Output length
         hash_id: str = "sha256",  # key for KNOWN_HASHES
@@ -92,7 +81,7 @@ class Oaep:
             raise ValueError("mask too long")
 
         try:
-            hash = cls.KNOWN_HASHES[hash_id]
+            hash = Oaep.KNOWN_HASHES[hash_id]
         except KeyError:
             raise Exception(f'Unsupported hash function: "{hash_id}')
 
@@ -102,14 +91,32 @@ class Oaep:
         t = bytearray()
 
         for c in range(math.ceil(length / digest_size) - 1):
-            counter = cls.i2osp(c, 4)
+            counter = Oaep.i2osp(c, 4)
             t += hasher(seed + counter).digest()
 
         mask = bytes(t[:length])
         return mask
 
-    @classmethod
-    def i2osp(cls, n: int, length: int) -> bytes:
+    KNOWN_HASHES: dict[str, HashInfo] = {
+        "sha256": HashInfo(
+            hashlib_name="sha256",
+            function=hashlib.sha256,
+            digest_size=32,
+            input_limit=2**61,
+        )
+    }
+    """Hashes known for OAEP. key will be hashlib names."""
+
+    KNOWN_MFGS: dict[str, MgfInfo] = {
+        "id-mfg1": MgfInfo(
+            algorithm="id_mgf1",
+            hashAlgorithm="sha256",
+            function=mgf1
+        )
+    }
+
+    @staticmethod
+    def i2osp(n: int, length: int) -> bytes:
         """converts a nonnegative integer to an octet string length.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
@@ -120,8 +127,8 @@ class Oaep:
 
         return n.to_bytes(length, byteorder="big", signed=False)
 
-    @classmethod
-    def os2ip(cls, x: bytes) -> int:
+    @staticmethod
+    def os2ip(x: bytes) -> int:
         """octet-stream to unsigned big-endian int"""
         return int.from_bytes(x, byteorder="big", signed=False)
 
@@ -180,6 +187,8 @@ class PublicKey:
             h = Oaep.KNOWN_HASHES[hash_id]
         except KeyError:
             raise ValueError(f'Unsupported hash: "{hash_id}')
+        
+        
 
         if len(label) > h.input_limit:
             raise ValueError("label too long")

@@ -17,7 +17,7 @@ def default_e() -> int:
 type HashFunc = Callable[[bytes], hashlib._Hash]
 """Type for hashlib style hash function."""
 
-type MgfFunc = Callable[[bytes, int, str], bytes]
+type MgfFunc = Callable[[bytes, int], bytes]
 """Type for RFC8017 Mask Generation Function."""
 
 
@@ -109,9 +109,7 @@ class Oaep:
 
     KNOWN_MFGS: dict[str, MgfInfo] = {
         "id-mfg1": MgfInfo(
-            algorithm="id_mgf1",
-            hashAlgorithm="sha256",
-            function=mgf1
+            algorithm="id_mgf1", hashAlgorithm="sha256", function=mgf1
         )
     }
 
@@ -175,7 +173,7 @@ class PublicKey:
         message: bytes,
         label: bytes = b"",
         hash_id: str = "sha256",
-        mgf_id: str = "mgf1",
+        mgf_id: str = "id-mgf1",
     ) -> bytes:
         """
         RSA OAEP encryption.
@@ -187,8 +185,13 @@ class PublicKey:
             h = Oaep.KNOWN_HASHES[hash_id]
         except KeyError:
             raise ValueError(f'Unsupported hash: "{hash_id}')
-        
-        
+
+        try:
+            mgf = Oaep.KNOWN_MFGS[mgf_id]
+        except KeyError:
+            raise ValueError(
+                f'Unsupported mask generation function: "{mgf_id}'
+            )
 
         if len(label) > h.input_limit:
             raise ValueError("label too long")
@@ -205,9 +208,9 @@ class PublicKey:
 
         data_block = lhash + padding_string + bytes.fromhex("01") + message
         seed = secrets.token_bytes(h.digest_size)
-        mask = Oaep.mgf1(seed, k - h.digest_size - 1)
+        mask = mgf.function(seed, k - h.digest_size - 1)
         masked_db = utils.xor(data_block, mask)
-        seed_mask = Oaep.mgf1(masked_db, h.digest_size)
+        seed_mask = mgf.function(masked_db, h.digest_size)
         masked_seed = utils.xor(seed, seed_mask)
 
         encoded_m = bytes.fromhex("00") + masked_seed + masked_db
@@ -311,3 +314,75 @@ class PrivateKey:
 
         m = m_2 + self._q * h
         return m
+
+    def oaep_decrypt(
+        self,
+        ciphertext: bytes,
+        label: bytes = b"",
+        hash_id: str = "sha256",
+        mgf_id: str = "id-mgf1",
+    ) -> bytes:
+        """
+        RSA OAEP decryption.
+
+        https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.2
+        """
+
+        try:
+            h = Oaep.KNOWN_HASHES[hash_id]
+        except KeyError:
+            raise ValueError(f'Unsupported hash: "{hash_id}')
+
+        try:
+            mgf = Oaep.KNOWN_MFGS[mgf_id]
+        except KeyError:
+            raise ValueError(
+                f'Unsupported mask generation function: "{mgf_id}'
+            )
+        k = self.pub_key.N.bit_length() + 7 // 8  # length of N in bytes
+
+        if len(label) > h.input_limit:
+            raise Exception("decryption error")
+
+        if len(ciphertext) != k:
+            raise Exception("decryption error")
+
+        if k < 2 * h.digest_size + 2:
+            raise Exception("decryption error")
+
+        c = Oaep.os2ip(ciphertext)
+        m = self.decrypt(c)
+        em = Oaep.i2osp(m, k)
+
+        lhash = h.function(label).digest()
+
+        # We split em into three parts (Step 3b)
+        y: int = em[0]
+        masked_seed: bytes = em[1:h.digest_size + 1]
+        masked_datablock: bytes = em[h.digest_size + 1:]
+
+        # Steps 3c-f
+        seed_mask = mgf.function(masked_datablock, h.digest_size)
+        seed = utils.xor(masked_seed, seed_mask)
+        db_mask = mgf.function(seed, k - h.digest_size - 1)
+        data_block = utils.xor(masked_datablock, db_mask)
+
+        # Split the data block. Step 3g
+        lhash_prime: bytes = data_block[: h.digest_size]
+        remainder: bytes = data_block[h.digest_size:].lstrip(bytes([0]))
+        one: int = remainder[0]
+        message: bytes = remainder[1:]
+
+        # Checks on all of that are standardly deferred to avoid
+        # timing on failure reason.
+        # We aren't worried about that in this toy code, but follow
+        # the sequence anyway.
+
+        if one != 1:
+            raise Exception("decryption error")
+        if lhash != lhash_prime:
+            raise Exception("decryption error")
+        if y != 0:
+            raise Exception("decryption error")
+
+        return message

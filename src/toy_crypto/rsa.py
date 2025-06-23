@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import hashlib
+from hmac import compare_digest
 import math
 import secrets
 from typing import Callable
@@ -12,6 +13,16 @@ _DEFAULT_E = 65537
 def default_e() -> int:
     """Returns the default public exponent, 65537"""
     return _DEFAULT_E
+
+
+class DecryptionError(Exception):
+    """
+    For secure implementations it is important to not
+    report why a decryption failed.
+
+    But for this implementation we will do the opposite.
+    We will be very revealing about decryption failures.
+    """
 
 
 type HashFunc = Callable[[bytes], hashlib._Hash]
@@ -300,7 +311,7 @@ class PrivateKey:
         ciphertext = int(ciphertext)  # See comment in PublicKey.encrypt()
 
         if ciphertext < 1 or ciphertext >= self.pub_key.N:
-            raise ValueError("ciphertext is out of range")
+            raise DecryptionError("ciphertext is out of range")
 
         # m =  pow(base=ciphertext, exp=self._d, mod=self._N)
         # but we will use the CRT
@@ -341,14 +352,16 @@ class PrivateKey:
             )
         k = self.pub_key.N.bit_length() + 7 // 8  # length of N in bytes
 
+        # Don't be explicit about decryption is serious code.
+        # This is toy code.
         if len(label) > h.input_limit:
-            raise Exception("decryption error")
+            raise DecryptionError("Label too long")
 
         if len(ciphertext) != k:
-            raise Exception("decryption error")
+            raise DecryptionError("Ciphertext is wrong size")
 
         if k < 2 * h.digest_size + 2:
-            raise Exception("decryption error")
+            raise DecryptionError("Modulus is way too short")
 
         c = Oaep.os2ip(ciphertext)
         m = self.decrypt(c)
@@ -358,8 +371,8 @@ class PrivateKey:
 
         # We split em into three parts (Step 3b)
         y: int = em[0]
-        masked_seed: bytes = em[1:h.digest_size + 1]
-        masked_datablock: bytes = em[h.digest_size + 1:]
+        masked_seed: bytes = em[1 : h.digest_size + 1]
+        masked_datablock: bytes = em[h.digest_size + 1 :]
 
         # Steps 3c-f
         seed_mask = mgf.function(masked_datablock, h.digest_size)
@@ -369,7 +382,7 @@ class PrivateKey:
 
         # Split the data block. Step 3g
         lhash_prime: bytes = data_block[: h.digest_size]
-        remainder: bytes = data_block[h.digest_size:].lstrip(bytes([0]))
+        remainder: bytes = data_block[h.digest_size :].lstrip(bytes([0]))
         one: int = remainder[0]
         message: bytes = remainder[1:]
 
@@ -378,11 +391,14 @@ class PrivateKey:
         # We aren't worried about that in this toy code, but follow
         # the sequence anyway.
 
+        # Revealing why decryption fails opens things up
+        # for chosen ciphertext attacks. Don't do what I do here.
+
         if one != 1:
-            raise Exception("decryption error")
-        if lhash != lhash_prime:
-            raise Exception("decryption error")
+            raise DecryptionError("Expected 0x01")
+        if not compare_digest(lhash, lhash_prime):
+            raise DecryptionError("Label mismatch")
         if y != 0:
-            raise Exception("decryption error")
+            raise Exception("Expected 0x00 prefix")
 
         return message

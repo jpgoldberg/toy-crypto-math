@@ -47,3 +47,5 @@ id-sha256
 mfgSeed
 id-mgf1
 mgf_id
+sha1
+id_mgf

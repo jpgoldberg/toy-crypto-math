@@ -28,7 +28,7 @@ class DecryptionError(Exception):
 type HashFunc = Callable[[bytes], hashlib._Hash]
 """Type for hashlib style hash function."""
 
-type MgfFunc = Callable[[bytes, int], bytes]
+type MgfFunc = Callable[[bytes, int, str], bytes]
 """Type for RFC8017 Mask Generation Function."""
 
 
@@ -113,13 +113,20 @@ class Oaep:
             hashlib_name="sha256",
             function=hashlib.sha256,
             digest_size=32,
-            input_limit=2**61,
-        )
+            input_limit=2**61 - 1,
+        ),
+        # We need sha1 because that is what test vectors exist for
+        "sha1": HashInfo(
+            hashlib_name="sha1",
+            function=hashlib.sha1,
+            digest_size=20,
+            input_limit=2**64 - 1,
+        ),
     }
     """Hashes known for OAEP. key will be hashlib names."""
 
     KNOWN_MFGS: dict[str, MgfInfo] = {
-        "id-mfg1": MgfInfo(
+        "id-mgf1": MgfInfo(
             algorithm="id_mgf1", hashAlgorithm="sha256", function=mgf1
         )
     }
@@ -207,7 +214,7 @@ class PublicKey:
         if len(label) > h.input_limit:
             raise ValueError("label too long")
 
-        k = self.N.bit_length() + 7 // 8  # length of N in bytes
+        k = self.N.bit_length() // 8  # length of N in bytes
 
         if len(message) > k - 2 * h.digest_size - 2:
             raise ValueError("message too long")
@@ -219,9 +226,9 @@ class PublicKey:
 
         data_block = lhash + padding_string + bytes.fromhex("01") + message
         seed = secrets.token_bytes(h.digest_size)
-        mask = mgf.function(seed, k - h.digest_size - 1)
+        mask = mgf.function(seed, k - h.digest_size - 1, hash_id)
         masked_db = utils.xor(data_block, mask)
-        seed_mask = mgf.function(masked_db, h.digest_size)
+        seed_mask = mgf.function(masked_db, h.digest_size, hash_id)
         masked_seed = utils.xor(seed, seed_mask)
 
         encoded_m = bytes.fromhex("00") + masked_seed + masked_db
@@ -350,7 +357,7 @@ class PrivateKey:
             raise ValueError(
                 f'Unsupported mask generation function: "{mgf_id}'
             )
-        k = self.pub_key.N.bit_length() + 7 // 8  # length of N in bytes
+        k = self.pub_key.N.bit_length() // 8  # length of N in bytes
 
         # Don't be explicit about decryption is serious code.
         # This is toy code.
@@ -375,9 +382,9 @@ class PrivateKey:
         masked_datablock: bytes = em[h.digest_size + 1 :]
 
         # Steps 3c-f
-        seed_mask = mgf.function(masked_datablock, h.digest_size)
+        seed_mask = mgf.function(masked_datablock, h.digest_size, hash_id)
         seed = utils.xor(masked_seed, seed_mask)
-        db_mask = mgf.function(seed, k - h.digest_size - 1)
+        db_mask = mgf.function(seed, k - h.digest_size - 1, hash_id)
         data_block = utils.xor(masked_datablock, db_mask)
 
         # Split the data block. Step 3g

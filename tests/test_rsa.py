@@ -1,6 +1,7 @@
 from collections import namedtuple
 from typing import Optional
 
+
 from toy_crypto import rsa
 from toy_crypto.nt import lcm, modinv
 from toy_crypto.utils import Rsa129
@@ -208,3 +209,71 @@ class TestMisc:
         priv_key = rsa.PrivateKey(self.p, self.q)
 
         assert priv_key.e == default_e
+
+
+class TestOaep:
+    # from 1024 bit key at
+    # https://github.com/pyca/cryptography/blob/main/vectors/cryptography_vectors/asymmetric/RSA/pkcs-1v2-1d2-vec/oaep-vect.txt
+
+    prime1 = int.from_bytes(
+        bytes.fromhex(
+            """
+            d3 27 37 e7 26 7f fe 13 41 b2 d5 c0 d1 50 a8 1b 
+            58 6f b3 13 2b ed 2f 8d 52 62 86 4a 9c b9 f3 0a 
+            f3 8b e4 48 59 8d 41 3a 17 2e fb 80 2c 21 ac f1 
+            c1 1c 52 0c 2f 26 a4 71 dc ad 21 2e ac 7c a3 9d 
+        """
+        )
+    )
+    prime2 = int.from_bytes(
+        bytes.fromhex(
+            """
+            cc 88 53 d1 d5 4d a6 30 fa c0 04 f4 71 f2 81 c7 
+            b8 98 2d 82 24 a4 90 ed be b3 3d 3e 3d 5c c9 3c 
+            47 65 70 3d 1d d7 91 64 2f 1f 11 6a 0d d8 52 be 
+            24 19 b2 af 72 bf e9 a0 30 e8 60 b0 28 8b 5d 77    
+        """
+        )
+    )
+
+    exponent = 65537
+
+    key1 = rsa.PrivateKey(prime1, prime2, pub_exponent=exponent)
+
+    def test_enc_dec(self) -> None:
+        class Vector:
+            def __init__(
+                self, name: str, message: str, seed: str, encryption: str
+            ) -> None:
+                self.name = name
+                self.message = bytes.fromhex(message)
+                self.seed = bytes.fromhex(seed)
+                self.encryption = bytes.fromhex(encryption)
+
+        vectors: list[Vector] = [
+            Vector(
+                name="Example 1.1",
+                message="""
+                    66 28 19 4e 12 07 3d b0 3b a9 4c da 9e f9 53 23
+                    97 d5 0d ba 79 b9 87 00 4a fe fe 34
+                """,
+                seed="""
+                    18 b7 76 ea 21 06 9d 69 77 6a 33 e9 6b ad 48 e1
+                    dd a0 a5 ef 
+                """,
+                encryption="""
+                    35 4f e6 7b 4a 12 6d 5d 35 fe 36 c7 77 79 1a 3f
+                    7b a1 3d ef 48 4e 2d 39 08 af f7 22 fa d4 68 fb
+                    21 69 6d e9 5d 0b e9 11 c2 d3 17 4f 8a fc c2 01
+                    03 5f 7b 6d 8e 69 40 2d e5 45 16 18 c2 1a 53 5f
+                    a9 d7 bf c5 b8 dd 9f c2 43 f8 cf 92 7d b3 13 22
+                    d6 e8 81 ea a9 1a 99 61 70 e6 57 a0 5a 26 64 26
+                    d9 8c 88 00 3f 84 77 c1 22 70 94 a0 d9 fa 1e 8c
+                    40 24 30 9c e1 ec cc b5 21 00 35 d4 7a c7 2e 8a 
+                """,
+            )
+        ]
+
+        for v in vectors:
+            ctext = self.key1.pub_key.oaep_encrypt(v.message, hash_id="sha1")
+            assert ctext == v.encryption

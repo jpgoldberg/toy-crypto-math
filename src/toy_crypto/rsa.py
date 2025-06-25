@@ -65,9 +65,9 @@ class Oaep:
 
     @staticmethod
     def mgf1(
-        seed: bytes,    # There do not appear to be any constraints on this
-        length: int,    # Output length
-        hash_id: str,   # key for KNOWN_HASHES
+        seed: bytes,  # There do not appear to be any constraints on this
+        length: int,  # Output length
+        hash_id: str,  # key for KNOWN_HASHES
     ) -> bytes:
         """Mask generation function.
 
@@ -101,7 +101,9 @@ class Oaep:
 
         t = bytearray()
 
-        for c in range(math.ceil(length / digest_size) - 1):
+        # For counter from 0 to \ceil (maskLen / hLen) - 1,
+        # range is not inclusive at high end. So we need to add one
+        for c in range(math.ceil(length / digest_size) - 1 + 1):
             counter = Oaep.i2osp(c, 4)
             t += hasher(seed + counter).digest()
 
@@ -227,14 +229,14 @@ class PublicKey:
         ps_length = k - len(message) - 2 * h.digest_size - 2
         padding_string = bytes(ps_length)
 
-        data_block = lhash + padding_string + bytes.fromhex("01") + message
+        data_block = lhash + padding_string + bytes([0x01]) + message
         seed = secrets.token_bytes(h.digest_size)
         mask = mgf.function(seed, k - h.digest_size - 1, mgf.hashAlgorithm)
         masked_db = utils.xor(data_block, mask)
         seed_mask = mgf.function(masked_db, h.digest_size, mgf.hashAlgorithm)
         masked_seed = utils.xor(seed, seed_mask)
 
-        encoded_m = bytes.fromhex("00") + masked_seed + masked_db
+        encoded_m = bytes([0x00]) + masked_seed + masked_db
         m = Oaep.os2ip(encoded_m)
         ctext = self.encrypt(m)
 
@@ -341,7 +343,7 @@ class PrivateKey:
         ciphertext: bytes,
         label: bytes = b"",
         hash_id: str = "sha256",
-        mgf_id: str = "id-mgf1",
+        mgf_id: str = "mgf1SHA256",
     ) -> bytes:
         """
         RSA OAEP decryption.

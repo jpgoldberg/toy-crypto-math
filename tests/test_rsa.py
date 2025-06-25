@@ -226,7 +226,7 @@ class TestOaep:
             cc 88 53 d1 d5 4d a6 30 fa c0 04 f4 71 f2 81 c7
             b8 98 2d 82 24 a4 90 ed be b3 3d 3e 3d 5c c9 3c
             47 65 70 3d 1d d7 91 64 2f 1f 11 6a 0d d8 52 be
-            24 19 b2 af 72 bf e9 a0 30 e8 60 b0 28 8b 5d 77 
+            24 19 b2 af 72 bf e9 a0 30 e8 60 b0 28 8b 5d 77
         """)
 
     exponent = 65537
@@ -237,7 +237,7 @@ class TestOaep:
         pub_exponent=exponent,
     )
 
-    def test_enc_dec(self) -> None:
+    def test_enc(self) -> None:
         class Vector:
             def __init__(
                 self, name: str, message: str, seed: str, encryption: str
@@ -276,3 +276,22 @@ class TestOaep:
                 v.message, hash_id="sha1", mgf_id="mgf1SHA1"
             )
             assert ctext == v.encryption
+
+    def test_enc_dec(self) -> None:
+        p = int.from_bytes(self.prime1, "big")
+        q = int.from_bytes(self.prime2, "big")
+        key = rsa.PrivateKey(p, q, pub_exponent=self.exponent)
+
+        plaintext = b"THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE"
+
+        # As a sanity check, do primitive RSA with this key
+        int_ptext = int.from_bytes(plaintext, "big")
+
+        primitive_ctext = key.pub_key.encrypt(int_ptext)
+        primitive_decrypted = key.decrypt(primitive_ctext)
+        assert primitive_decrypted == int_ptext
+
+        ctext = key.pub_key.oaep_encrypt(plaintext)
+        decrypted = key.oaep_decrypt(ctext)
+
+        assert plaintext == decrypted

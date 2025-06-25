@@ -215,30 +215,27 @@ class TestOaep:
     # from 1024 bit key at
     # https://github.com/pyca/cryptography/blob/main/vectors/cryptography_vectors/asymmetric/RSA/pkcs-1v2-1d2-vec/oaep-vect.txt
 
-    prime1 = int.from_bytes(
-        bytes.fromhex(
-            """
-            d3 27 37 e7 26 7f fe 13 41 b2 d5 c0 d1 50 a8 1b 
-            58 6f b3 13 2b ed 2f 8d 52 62 86 4a 9c b9 f3 0a 
-            f3 8b e4 48 59 8d 41 3a 17 2e fb 80 2c 21 ac f1 
-            c1 1c 52 0c 2f 26 a4 71 dc ad 21 2e ac 7c a3 9d 
-        """
-        )
-    )
-    prime2 = int.from_bytes(
-        bytes.fromhex(
-            """
-            cc 88 53 d1 d5 4d a6 30 fa c0 04 f4 71 f2 81 c7 
-            b8 98 2d 82 24 a4 90 ed be b3 3d 3e 3d 5c c9 3c 
-            47 65 70 3d 1d d7 91 64 2f 1f 11 6a 0d d8 52 be 
-            24 19 b2 af 72 bf e9 a0 30 e8 60 b0 28 8b 5d 77    
-        """
-        )
-    )
+    prime1 = bytes.fromhex("""
+                d3 27 37 e7 26 7f fe 13 41 b2 d5 c0 d1 50 a8 1b
+                58 6f b3 13 2b ed 2f 8d 52 62 86 4a 9c b9 f3 0a
+                f3 8b e4 48 59 8d 41 3a 17 2e fb 80 2c 21 ac f1
+                c1 1c 52 0c 2f 26 a4 71 dc ad 21 2e ac 7c a3 9d
+            """)
+
+    prime2 = bytes.fromhex("""
+            cc 88 53 d1 d5 4d a6 30 fa c0 04 f4 71 f2 81 c7
+            b8 98 2d 82 24 a4 90 ed be b3 3d 3e 3d 5c c9 3c
+            47 65 70 3d 1d d7 91 64 2f 1f 11 6a 0d d8 52 be
+            24 19 b2 af 72 bf e9 a0 30 e8 60 b0 28 8b 5d 77 
+        """)
 
     exponent = 65537
 
-    key1 = rsa.PrivateKey(prime1, prime2, pub_exponent=exponent)
+    key1 = rsa.PrivateKey(
+        int.from_bytes(prime1, byteorder="big"),
+        int.from_bytes(prime2, byteorder="big"),
+        pub_exponent=exponent,
+    )
 
     def test_enc_dec(self) -> None:
         class Vector:
@@ -275,5 +272,7 @@ class TestOaep:
         ]
 
         for v in vectors:
-            ctext = self.key1.pub_key.oaep_encrypt(v.message, hash_id="sha1")
+            ctext = self.key1.pub_key.oaep_encrypt(
+                v.message, hash_id="sha1", mgf_id="mgf1SHA1"
+            )
             assert ctext == v.encryption

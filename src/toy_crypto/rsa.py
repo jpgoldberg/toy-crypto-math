@@ -65,9 +65,9 @@ class Oaep:
 
     @staticmethod
     def mgf1(
-        seed: bytes,  # There do not appear to be any constraints on this
-        length: int,  # Output length
-        hash_id: str = "sha256",  # key for KNOWN_HASHES
+        seed: bytes,    # There do not appear to be any constraints on this
+        length: int,    # Output length
+        hash_id: str,   # key for KNOWN_HASHES
     ) -> bytes:
         """Mask generation function.
 
@@ -126,9 +126,12 @@ class Oaep:
     """Hashes known for OAEP. key will be hashlib names."""
 
     KNOWN_MFGS: dict[str, MgfInfo] = {
-        "id-mgf1": MgfInfo(
+        "mgf1SHA256": MgfInfo(
             algorithm="id_mgf1", hashAlgorithm="sha256", function=mgf1
-        )
+        ),
+        "mgf1SHA1": MgfInfo(
+            algorithm="id_mgf1", hashAlgorithm="sha1", function=mgf1
+        ),
     }
 
     @staticmethod
@@ -191,7 +194,7 @@ class PublicKey:
         message: bytes,
         label: bytes = b"",
         hash_id: str = "sha256",
-        mgf_id: str = "id-mgf1",
+        mgf_id: str = "mgf1SHA256",
     ) -> bytes:
         """
         RSA OAEP encryption.
@@ -226,9 +229,9 @@ class PublicKey:
 
         data_block = lhash + padding_string + bytes.fromhex("01") + message
         seed = secrets.token_bytes(h.digest_size)
-        mask = mgf.function(seed, k - h.digest_size - 1, hash_id)
+        mask = mgf.function(seed, k - h.digest_size - 1, mgf.hashAlgorithm)
         masked_db = utils.xor(data_block, mask)
-        seed_mask = mgf.function(masked_db, h.digest_size, hash_id)
+        seed_mask = mgf.function(masked_db, h.digest_size, mgf.hashAlgorithm)
         masked_seed = utils.xor(seed, seed_mask)
 
         encoded_m = bytes.fromhex("00") + masked_seed + masked_db
@@ -382,9 +385,11 @@ class PrivateKey:
         masked_datablock: bytes = em[h.digest_size + 1 :]
 
         # Steps 3c-f
-        seed_mask = mgf.function(masked_datablock, h.digest_size, hash_id)
+        seed_mask = mgf.function(
+            masked_datablock, h.digest_size, mgf.hashAlgorithm
+        )
         seed = utils.xor(masked_seed, seed_mask)
-        db_mask = mgf.function(seed, k - h.digest_size - 1, hash_id)
+        db_mask = mgf.function(seed, k - h.digest_size - 1, mgf.hashAlgorithm)
         data_block = utils.xor(masked_datablock, db_mask)
 
         # Split the data block. Step 3g

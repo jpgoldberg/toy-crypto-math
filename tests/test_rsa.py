@@ -231,6 +231,65 @@ class TestOaep:
 
     exponent = 65537
 
+    # test vectors from https://github.com/bdauvergne/python-pkcs1/
+    pkcs_vector: dict[str, bytes] = {
+        "prime1": bytes.fromhex(
+            "ee cf ae 81 b1 b9 b3 c9 08 81 0b 10 a1 b5 60 01"
+            "99 eb 9f 44 ae f4 fd a4 93 b8 1a 9e 3d 84 f6 32"
+            "12 4e f0 23 6e 5d 1e 3b 7e 28 fa e7 aa 04 0a 2d"
+            "5b 25 21 76 45 9d 1f 39 75 41 ba 2a 58 fb 65 99"
+        ),
+        "prime2": bytes.fromhex(
+            "c9 7f b1 f0 27 f4 53 f6 34 12 33 ea aa d1 d9 35"
+            "3f 6c 42 d0 88 66 b1 d0 5a 0f 20 35 02 8b 9d 86"
+            "98 40 b4 16 66 b4 2e 92 ea 0d a3 b4 32 04 b5 cf"
+            "ce 33 52 52 4d 04 16 a5 a4 41 e7 00 af 46 15 03"
+        ),
+        "exponent_bytes": bytes([0x11]),
+        "message": bytes.fromhex(
+            "d4 36 e9 95 69 fd 32 a7c8 a0 5b bc 90 d3 2c 49"
+        ),
+        "seed": bytes.fromhex(
+            "aa fd 12 f6 59 ca e6 34 89 b479 e5 07 6d de c2 f0 6c b5 8f"
+        ),
+        "seed_mask": bytes.fromhex(
+            "41 87 0b 5a b0 29 e6 57 d9 57 50 b5 4c 28 3c 08 72 5d be a9"
+        ),
+        "ciphertext": bytes.fromhex(
+            "12 53 e0 4d c0 a5 39 7b b4 4a 7a b8 7e 9b f2 a0 39 a3 3d 1e"
+            "99 6f c8 2a 94 cc d3 00 74 c9 5d f7 63 72 20 17 06 9e 52 68"
+            "da 5d 1c 0b 4f 87 2c f6 53 c1 1d f8 23 14 a6 79 68 df ea e2"
+            "8d ef 04 bb 6d 84 b1 c3 1d 65 4a 19 70 e5 78 3b d6 eb 96 a0"
+            "24 c2 ca 2f 4a 90 fe 9f 2e f5 c9 c1 40 e5 bb 48 da 95 36 ad"
+            "87 00 c8 4f c9 13 0a de a7 4e 55 8d 51 a7 4d df 85 d8 b5 0d"
+            "e9 68 38 d6 06 3e 09 55"
+        ),
+        "db": bytes.fromhex(
+            "da 39 a3 ee 5e 6b 4b 0d 32 55 bf ef 95 60 18 90 af d8 07 09"
+            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
+            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
+            "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"
+            "00 00 00 00 00 00 00 00 00 00 01 d4 36 e9 95 69 fd 32 a7 c8"
+            "a0 5b bc 90 d3 2c 49"
+        ),
+        "db_mask": bytes.fromhex(
+            "06 e1 de b2 36 9a a5 a5 c7 07 d8 2c 8e 4e 93 24 8a c7 83 de"
+            "e0 b2 c0 46 26 f5 af f9 3e dc fb 25 c9 c2 b3 ff 8a e1 0e 83"
+            "9a 2d db 4c dc fe 4f f4 77 28 b4 a1 b7 c1 36 2b aa d2 9a b4"
+            "8d 28 69 d5 02 41 21 43 58 11 59 1b e3 92 f9 82 fb 3e 87 d0"
+            "95 ae b4 04 48 db 97 2f 3a c1 4e af f4 9c 8c 3b 7c fc 95 1a"
+            "51 ec d1 dd e6 12 64"
+        ),
+        "masked_db": bytes.fromhex(
+            "dc d8 7d 5c 68 f1 ee a8 f5 52 67 c3 1b 2e 8b b4 25 1f 84 d7"
+            "e0 b2 c0 46 26 f5 af f9 3e dc fb 25 c9 c2 b3 ff 8a e1 0e 83"
+            "9a 2d db 4c dc fe 4f f4 77 28 b4 a1 b7 c1 36 2b aa d2 9a b4"
+            "8d 28 69 d5 02 41 21 43 58 11 59 1b e3 92 f9 82 fb 3e 87 d0"
+            "95 ae b4 04 48 db 97 2f 3a c1 4f 7b c2 75 19 52 81 ce 32 d2"
+            "f1 b7 6d 4d 35 3e 2d"
+        ),
+    }
+
     key1 = rsa.PrivateKey(
         int.from_bytes(prime1, byteorder="big"),
         int.from_bytes(prime2, byteorder="big"),
@@ -273,7 +332,7 @@ class TestOaep:
 
         for v in vectors:
             ctext = self.key1.pub_key.oaep_encrypt(
-                v.message, hash_id="sha1", mgf_id="mgf1SHA1"
+                v.message, hash_id="sha1", mgf_id="mgf1SHA1", _seed=v.seed
             )
             assert ctext == v.encryption
 
@@ -295,3 +354,31 @@ class TestOaep:
         decrypted = key.oaep_decrypt(ctext)
 
         assert plaintext == decrypted
+
+    def test_mgf1(self) -> None:
+        seed = self.pkcs_vector["seed"]
+        db = self.pkcs_vector["db"]
+        db_mask = rsa.Oaep.mgf1(seed, len(db), "sha1")
+        assert db_mask == self.pkcs_vector["db_mask"]
+
+    def test_enc_pkcs(self) -> None:
+        """Test with vectors from Python PKCS"""
+
+        p1 = int.from_bytes(self.pkcs_vector["prime1"], "big")
+        p2 = int.from_bytes(self.pkcs_vector["prime2"], "big")
+        e = int.from_bytes(self.pkcs_vector["exponent_bytes"], "big")
+
+        key = rsa.PrivateKey(p1, p2, pub_exponent=e)
+        pub_key = key.pub_key
+
+        m = self.pkcs_vector["message"]
+        ctext = pub_key.oaep_encrypt(
+            m,
+            hash_id="sha1",
+            mgf_id="mgf1SHA1",
+            _seed=self.pkcs_vector["seed"],
+        )
+        decrypted = key.oaep_decrypt(ctext, hash_id="sha1", mgf_id="mgf1SHA1")
+
+        assert m == decrypted
+        assert ctext == self.pkcs_vector["ciphertext"]

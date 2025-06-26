@@ -96,17 +96,20 @@ class Oaep:
         except KeyError:
             raise Exception(f'Unsupported hash function: "{hash_id}')
 
-        hasher = hash.function
         digest_size = hash.digest_size
+        hasher = hash.function
 
         t = bytearray()
 
-        # For counter from 0 to \ceil (maskLen / hLen) - 1,
+        # "For counter from 0 to \ceil (maskLen / hLen) - 1, ..."
         # range is not inclusive at high end. So we need to add one
         for c in range(math.ceil(length / digest_size) - 1 + 1):
             counter = Oaep.i2osp(c, 4)
-            t += hasher(seed + counter).digest()
+            assert len(counter) == 4
+            digest = hasher(seed + counter).digest()
+            t.extend(digest)
 
+        assert len(t) >= length
         mask = bytes(t[:length])
         return mask
 
@@ -197,6 +200,7 @@ class PublicKey:
         label: bytes = b"",
         hash_id: str = "sha256",
         mgf_id: str = "mgf1SHA256",
+        _seed: bytes | None = None,  # For testing only
     ) -> bytes:
         """
         RSA OAEP encryption.
@@ -230,7 +234,14 @@ class PublicKey:
         padding_string = bytes(ps_length)
 
         data_block = lhash + padding_string + bytes([0x01]) + message
-        seed = secrets.token_bytes(h.digest_size)
+
+        # So that we can test with a set seed
+        seed: bytes
+        if _seed is None:
+            seed = secrets.token_bytes(h.digest_size)
+        else:
+            seed = _seed
+
         mask = mgf.function(seed, k - h.digest_size - 1, mgf.hashAlgorithm)
         masked_db = utils.xor(data_block, mask)
         seed_mask = mgf.function(masked_db, h.digest_size, mgf.hashAlgorithm)

@@ -115,6 +115,7 @@ dev = [
     "bitarray>=3.4.2",
     # We need sphinx 8.3, but that version was yanked,
     "sphinx@git+https://github.com/sphinx-doc/sphinx",
+    "pkcs1>=0.9.7",
 ]
 lint = [
     "mypy >= 1.15",

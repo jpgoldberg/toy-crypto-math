@@ -128,7 +128,7 @@ class Oaep:
             input_limit=2**64 - 1,
         ),
     }
-    """Hashes known for OAEP. key will be hashlib names."""
+    """Hashes known for OAEP. keys will be hashlib names."""
 
     KNOWN_MFGS: dict[str, MgfInfo] = {
         "mgf1SHA256": MgfInfo(
@@ -138,10 +138,11 @@ class Oaep:
             algorithm="id_mgf1", hashAlgorithm="sha1", function=mgf1
         ),
     }
+    """Known Mask Generation Functions."""
 
     @staticmethod
     def i2osp(n: int, length: int) -> bytes:
-        """converts a nonnegative integer to an octet string length.
+        """converts a nonnegative integer to big-endian an octet string length.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
         """
@@ -153,7 +154,10 @@ class Oaep:
 
     @staticmethod
     def os2ip(x: bytes) -> int:
-        """octet-stream to unsigned big-endian int"""
+        """octet-stream to unsigned big-endian int.
+
+        https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
+        """
         return int.from_bytes(x, byteorder="big", signed=False)
 
 
@@ -204,6 +208,17 @@ class PublicKey:
     ) -> bytes:
         """
         RSA OAEP encryption.
+
+        :param message: The message to encrypt.
+        :param label: Rarely used. Just leave as default.
+        :param hash_id: Name of the hash function.
+        :param mgf_id: Name of the MGF function (with hash).
+        :param _seed: Used for testing only. OAEP is not supposed to be deterministic.
+
+        :raises ValueError: if hash or MGF is not recognized.
+        :raises ValueError:
+            if lengths of inputs exceed what modulus and hash sizes
+            can accommodate.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.1
         """
@@ -343,7 +358,7 @@ class PrivateKey:
         m_1 = pow(ciphertext, self._dP, self._p)
         m_2 = pow(ciphertext, self._dQ, self._q)
 
-        # I need to review CRT to see what this is for
+        # CRT for the win!
         h = ((m_1 - m_2) * self._qInv) % self._p
 
         m = m_2 + self._q * h
@@ -358,6 +373,17 @@ class PrivateKey:
     ) -> bytes:
         """
         RSA OAEP decryption.
+
+        :param ciphertext: The message to encrypt.
+        :param label: Rarely used.
+        :param hash_id: Name of the hash function.
+        :param mgf_id: Name of the MGF function (with hash).
+
+        :raises ValueError: if hash or MGF is not recognized.
+        :raises DecryptionError:
+            on various decryption errors.
+            Note that these messages provide specific reasons for decryption
+            failure. That behavior enables CCA attacks on OAEP.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.2
         """

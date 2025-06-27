@@ -174,7 +174,7 @@ When a game is set up, it must be given an encryption scheme,
 which will include a key generation function, an encryption function,
 and optionally a decryption function.
 
-Spinx doesn't seem to have good ways of documenting these,
+Sphinx doesn't seem to have good ways of documenting these,
 but hopefully what I list here makes some sense.
 
 .. autotypevar:: K

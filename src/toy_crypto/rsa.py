@@ -71,7 +71,19 @@ class Oaep:
     ) -> bytes:
         """Mask generation function.
 
+        Generates a unique mask of length :data:`length`.
+
+        :param seed: This should come from a CSPRNG
+        :param length: Length in bytes of the mask to generate.
+        :param hash_id: The name hash function in :data:`KNOWN_HASHES`.
+
+        :raises ValueError: if :data:`length` :math:`> 2^{32}` bytes.
+        :raises ValueError: if :data:`hash_id` is unknown.
+
         From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
+
+        This would have been a lot simpler if :rfc:`HKDF <5896>`
+        had been around before :rfc:`3447`.
         """
 
         """
@@ -94,7 +106,7 @@ class Oaep:
         try:
             hash = Oaep.KNOWN_HASHES[hash_id]
         except KeyError:
-            raise Exception(f'Unsupported hash function: "{hash_id}')
+            raise ValueError(f'Unsupported hash function: "{hash_id}')
 
         digest_size = hash.digest_size
         hasher = hash.function
@@ -142,7 +154,16 @@ class Oaep:
 
     @staticmethod
     def i2osp(n: int, length: int) -> bytes:
-        """converts a nonnegative integer to big-endian an octet string length.
+        """Integer to an octet string of length length.
+
+        :param n: A non-negative integer
+        :param length: Length of returned bytes object
+
+        :raises ValueError: if :data:`n` is negative.
+        :raises ValueError: if :data:`n` cannot fit in :data:`length` bytes
+
+
+        All operations big-endian.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
         """
@@ -150,11 +171,22 @@ class Oaep:
         if n < 0:
             raise ValueError("Number cannot be negative")
 
+        if (n.bit_length() + 7) // 8 > length:
+            raise ValueError("input is too large for the given length")
+
         return n.to_bytes(length, byteorder="big", signed=False)
 
     @staticmethod
     def os2ip(x: bytes) -> int:
         """octet-stream to unsigned big-endian int.
+
+        :param x:
+            The octet-stream (:py:class:`bytes`) you want
+            to make an :py:class:`int` from.
+
+        Returned is a non-negative integer.
+
+        All operations are big-endian.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
         """

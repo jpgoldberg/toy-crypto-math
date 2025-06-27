@@ -91,8 +91,9 @@ extensions: list[str] = [
     "sphinx_toolbox.github",
     "sphinx_toolbox.decorators",
     "sphinx_toolbox.wikipedia",
-    "sphinx_toolbox.installation",
-    "sphinx_toolbox.more_autodoc.typehints",
+    # "sphinx_toolbox.installation",
+    # "sphinx_toolbox.more_autodoc.typehints",
+    "sphinx_autodoc_typehints",
     "sphinx_toolbox.more_autodoc.autoprotocol",
     "sphinx_toolbox.more_autodoc.genericalias",
     "sphinx_toolbox.more_autodoc.typevars",
@@ -134,6 +135,8 @@ rst_prolog = f"""
 .. _SageMath: https://www.sagemath.org
 .. _primefac: https://pypi.org/project/primefac/
 .. _bitarray: https://github.com/ilanschnell/bitarray
+.. _pypkcs1: https://github.com/bdauvergne/python-pkcs1/
+.. _pypi: https://pypi.org/
 """
 
 

@@ -113,10 +113,6 @@ markers = [
 dev = [
     "pytest >= 8.3",
     "bitarray>=3.4.2",
-    # We need sphinx 8.3, but that version was yanked,
-    # "sphinx@git+https://github.com/sphinx-doc/sphinx",
-    "sphinx>=8.2.3",
-
 ]
 lint = [
     "mypy >= 1.15",
@@ -128,8 +124,8 @@ lint = [
 ]
 docs = [
     "enum-tools[sphinx]>=0.13.0",
-    "sphinx-autodoc-typehints>=3.1.0",
-    "sphinx-toolbox>=4.0.0",
+    "sphinx_autodoc_typehints",
+    "sphinx-toolbox>=3.10.0",
     "sphinxcontrib-bibtex>=2.6.4",
 ]
 prof = [

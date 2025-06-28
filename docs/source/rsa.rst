@@ -68,14 +68,6 @@ is designed to address both of those when *properly implemented*.
 This module does *not* provide a proper implemenation.
 
 
-.. warning::
-
-    The way OAEP decryption errors are reported in this module enable
-    chosen ciphertext attacks.
-    A proper implemetation must not provide information about why
-    decryption failed.
-    |project| does not provide a proper implemenation.
-
 Much of the code here attempts to follow :rfc:`8017`,
 particularly :rfc:`section 7.1 <8017#section-7.1>`
 and :rfc:`appendix B.2 <8017#appendix-B.2>`.

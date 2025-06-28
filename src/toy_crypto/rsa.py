@@ -20,8 +20,8 @@ class DecryptionError(Exception):
     For secure implementations it is important to not
     report why a decryption failed.
 
-    But for this implementation we will do the opposite.
-    We will be very revealing about decryption failures.
+    See :func:`Oaep.allow_unsafe_messages` to enable
+    reasons why decryption fails.
     """
 
 
@@ -41,13 +41,14 @@ class Oaep:
     with compliant keys and ciphertext.
     """
 
-    _unsafe_messages: str = "allow"
+    _unsafe_messages: str = "forbid"
+    """Anything other than "allow" will keep DecryptionError messages safe."""
 
     @classmethod
     def allow_unsafe_messages(cls, allow: bool = True) -> None:
         """Allow (or disallow) verbose DecryptionError messages."""
 
-        cls._unsafe_messages = "allow" if allow else "disallow"
+        cls._unsafe_messages = "allow" if allow else "forbid"
 
     @classmethod
     def are_unsafe_messages_allowed(cls) -> bool:
@@ -445,10 +446,10 @@ class PrivateKey:
         :param mgf_id: Name of the MGF function (with hash).
 
         :raises ValueError: if hash or MGF is not recognized.
-        :raises DecryptionError:
+        :raises :class:`DecryptionError`:
             on various decryption errors.
-            Note that these messages provide specific reasons for decryption
-            failure. That behavior enables CCA attacks on OAEP.
+            If unsafe error reporting is enabled, details of
+            decryption errors will be provided.
 
         https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.2
         """
@@ -477,18 +478,23 @@ class PrivateKey:
         if k < 2 * h.digest_size + 2:
             raise DecryptionError(Oaep._unsafe_msg("Modulus is way too short"))
 
+        c = Oaep.os2ip(ciphertext)
         try:
-            c = Oaep.os2ip(ciphertext)
+            m = self.decrypt(c)
         except Exception as e:
             raise DecryptionError(
                 Oaep._unsafe_msg(f"Primitive decryption error: {e}")
             )
-        m = self.decrypt(c)
+
+        # rfc8017 does not say to catch and handle an error
+        # in I2OSP, and so "integer too large" from I2OSP would
+        # be output enabling exactly the attack the RFC is designed to
+        # defend against.
         try:
             em = Oaep.i2osp(m, k)
         except ValueError:
             raise DecryptionError(
-                Oaep._unsafe_msg("Manger, Will Robinson! Manger")
+                Oaep._unsafe_msg("Manger, Will Robinson! Manger!")
             )
 
         # This is computed early to thwart some timing attacks

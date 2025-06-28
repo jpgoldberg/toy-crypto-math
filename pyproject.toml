@@ -121,6 +121,7 @@ lint = [
     "types-seaborn>=0.13.2.20250111",
     "vermin>=1.6.0",
     "polars>=1.30",
+    "sphinx>=8.2.3",
 ]
 docs = [
     "enum-tools[sphinx]>=0.13.0",

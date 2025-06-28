@@ -36,7 +36,7 @@ class Oaep:
     """
     Tools and data for OAEP.
 
-    Although this attempts to follow RFC8017 in many
+    Although this attempts to follow :rfc:`8017` in many
     respects, this is not designed to be interoperable
     with compliant keys and ciphertext.
     """
@@ -71,7 +71,8 @@ class Oaep:
     ) -> bytes:
         """Mask generation function.
 
-        Generates a unique mask of length :data:`length`.
+        Generates a unique mask of length :data:`length` as described in
+        :rfc:`appendix B.2.1 <8017#appendix-B.2.1>` of :rfc:`8017`.
 
         :param seed: This should come from a CSPRNG
         :param length: Length in bytes of the mask to generate.
@@ -79,8 +80,6 @@ class Oaep:
 
         :raises ValueError: if :data:`length` :math:`> 2^{32}` bytes.
         :raises ValueError: if :data:`hash_id` is unknown.
-
-        From https://datatracker.ietf.org/doc/html/rfc8017#appendix-B.2.1
 
         This would have been a lot simpler if :rfc:`HKDF <5896>`
         had been around before :rfc:`3447`.
@@ -156,6 +155,8 @@ class Oaep:
     def i2osp(n: int, length: int) -> bytes:
         """Integer to an octet string of length length.
 
+        Implements function from :rfc:`RFC 8017 §4.1 <8017#section-4.1>`.
+
         :param n: A non-negative integer
         :param length: Length of returned bytes object
 
@@ -164,8 +165,6 @@ class Oaep:
 
 
         All operations big-endian.
-
-        https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
         """
 
         if n < 0:
@@ -179,6 +178,8 @@ class Oaep:
     @staticmethod
     def os2ip(x: bytes) -> int:
         """octet-stream to unsigned big-endian int.
+
+         Implements function from :rfc:`RFC 8017 §4.2 <8017#section-4.2>`.
 
         :param x:
             The octet-stream (:py:class:`bytes`) you want
@@ -245,7 +246,8 @@ class PublicKey:
         :param label: Rarely used. Just leave as default.
         :param hash_id: Name of the hash function.
         :param mgf_id: Name of the MGF function (with hash).
-        :param _seed: Used for testing only. OAEP is not supposed to be deterministic.
+        :param _seed:
+            Used for testing only. OAEP is not supposed to be deterministic.
 
         :raises ValueError: if hash or MGF is not recognized.
         :raises ValueError:
@@ -270,7 +272,7 @@ class PublicKey:
         if len(label) > h.input_limit:
             raise ValueError("label too long")
 
-        k = self.N.bit_length() // 8  # length of N in bytes
+        k = (self.N.bit_length() + 7) // 8  # length of N in bytes
 
         if len(message) > k - 2 * h.digest_size - 2:
             raise ValueError("message too long")
@@ -431,7 +433,7 @@ class PrivateKey:
             raise ValueError(
                 f'Unsupported mask generation function: "{mgf_id}'
             )
-        k = self.pub_key.N.bit_length() // 8  # length of N in bytes
+        k = (self.pub_key.N.bit_length() + 7) // 8  # length of N in bytes
 
         # Don't be explicit about decryption is serious code.
         # This is toy code.

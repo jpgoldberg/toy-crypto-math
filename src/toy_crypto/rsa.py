@@ -41,6 +41,28 @@ class Oaep:
     with compliant keys and ciphertext.
     """
 
+    _unsafe_messages: str = "allow"
+
+    @classmethod
+    def allow_unsafe_messages(cls, allow: bool = True) -> None:
+        """Allow (or disallow) verbose DecryptionError messages."""
+
+        cls._unsafe_messages = "allow" if allow else "disallow"
+
+    @classmethod
+    def are_unsafe_messages_allowed(cls) -> bool:
+        """Does what it says on the tin."""
+
+        if cls._unsafe_messages == "allow":
+            return True
+        return False
+
+    @classmethod
+    def _unsafe_msg(cls, message: str) -> str:
+        if cls._unsafe_messages == "allow":
+            return message
+        return "Not telling, nohow!"
+
     @dataclass(frozen=True, kw_only=True)
     class HashInfo:
         """Information about hash function
@@ -163,6 +185,11 @@ class Oaep:
         :raises ValueError: if :data:`n` is negative.
         :raises ValueError: if :data:`n` cannot fit in :data:`length` bytes
 
+        .. warning::
+
+            When called from a decryption operation, exceptions should be caught
+            and handled discretely.
+
 
         All operations big-endian.
         """
@@ -188,9 +215,8 @@ class Oaep:
         Returned is a non-negative integer.
 
         All operations are big-endian.
-
-        https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
         """
+
         return int.from_bytes(x, byteorder="big", signed=False)
 
 
@@ -378,12 +404,17 @@ class PrivateKey:
             raise ValueError("Inverse of e mod λ does not exist")
 
     def decrypt(self, ciphertext: int) -> int:
-        """Primitive decryption."""
+        """Primitive decryption.
+
+        :param ciphertext: Ciphertext as :py:class:`int`
+
+        :raises ValueError: if :data:`ciphertext` is out of range for this key.
+        """
 
         ciphertext = int(ciphertext)  # See comment in PublicKey.encrypt()
 
         if ciphertext < 1 or ciphertext >= self.pub_key.N:
-            raise DecryptionError("ciphertext is out of range")
+            raise ValueError("ciphertext is out of range")
 
         # m =  pow(base=ciphertext, exp=self._d, mod=self._N)
         # but we will use the CRT
@@ -438,18 +469,29 @@ class PrivateKey:
         # Don't be explicit about decryption is serious code.
         # This is toy code.
         if len(label) > h.input_limit:
-            raise DecryptionError("Label too long")
+            raise DecryptionError(Oaep._unsafe_msg("Label too long"))
 
         if len(ciphertext) != k:
-            raise DecryptionError("Ciphertext is wrong size")
+            raise DecryptionError(Oaep._unsafe_msg("Ciphertext is wrong size"))
 
         if k < 2 * h.digest_size + 2:
-            raise DecryptionError("Modulus is way too short")
+            raise DecryptionError(Oaep._unsafe_msg("Modulus is way too short"))
 
-        c = Oaep.os2ip(ciphertext)
+        try:
+            c = Oaep.os2ip(ciphertext)
+        except Exception as e:
+            raise DecryptionError(
+                Oaep._unsafe_msg(f"Primitive decryption error: {e}")
+            )
         m = self.decrypt(c)
-        em = Oaep.i2osp(m, k)
+        try:
+            em = Oaep.i2osp(m, k)
+        except ValueError:
+            raise DecryptionError(
+                Oaep._unsafe_msg("Manger, Will Robinson! Manger")
+            )
 
+        # This is computed early to thwart some timing attacks
         lhash = h.function(label).digest()
 
         # We split em into three parts (Step 3b)
@@ -480,10 +522,10 @@ class PrivateKey:
         # for chosen ciphertext attacks. Don't do what I do here.
 
         if one != 1:
-            raise DecryptionError("Expected 0x01")
+            raise DecryptionError(Oaep._unsafe_msg("Expected 0x01"))
         if not compare_digest(lhash, lhash_prime):
-            raise DecryptionError("Label mismatch")
+            raise DecryptionError(Oaep._unsafe_msg("Label mismatch"))
         if y != 0:
-            raise Exception("Expected 0x00 prefix")
+            raise Exception(Oaep._unsafe_msg("Expected 0x00 leading byte"))
 
         return message

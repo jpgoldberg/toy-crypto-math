@@ -193,5 +193,21 @@ The :class:`Oaep` class
 All of the OAEP bits and piece other than the type alias
 fit neatly into a class.
 
+
 .. autoclass:: Oaep
     :members:
+    :exclude-members: KNOWN_HASHES, KNOWN_MGFS
+
+
+.. data:: Oaep.KNOWN_HASHES[str, HashInfo]
+
+    Hashes known for OAEP. keys will be hashlib names.
+
+    .. pprint:: toy_crypto.rsa.Oaep.KNOWN_HASHES
+    
+.. data:: Oaep.KNOWN_MGFS[str, HashInfo]
+
+    Known mask generatation fubctions.
+
+    .. pprint:: toy_crypto.rsa.Oaep.KNOWN_MGFS
+    

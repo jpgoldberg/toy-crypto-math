@@ -164,7 +164,7 @@ class Oaep:
     }
     """Hashes known for OAEP. keys will be hashlib names."""
 
-    KNOWN_MFGS: dict[str, MgfInfo] = {
+    KNOWN_MGFS: dict[str, MgfInfo] = {
         "mgf1SHA256": MgfInfo(
             algorithm="id_mgf1", hashAlgorithm="sha256", function=mgf1
         ),
@@ -290,7 +290,7 @@ class PublicKey:
             raise ValueError(f'Unsupported hash: "{hash_id}')
 
         try:
-            mgf = Oaep.KNOWN_MFGS[mgf_id]
+            mgf = Oaep.KNOWN_MGFS[mgf_id]
         except KeyError:
             raise ValueError(
                 f'Unsupported mask generation function: "{mgf_id}'
@@ -408,8 +408,8 @@ class PrivateKey:
         """Primitive decryption.
 
         :param ciphertext: Ciphertext as :py:class:`int`
-
         :raises ValueError: if :data:`ciphertext` is out of range for this key.
+
         """
 
         ciphertext = int(ciphertext)  # See comment in PublicKey.encrypt()
@@ -446,12 +446,11 @@ class PrivateKey:
         :param mgf_id: Name of the MGF function (with hash).
 
         :raises ValueError: if hash or MGF is not recognized.
-        :raises :class:`DecryptionError`:
+        :raises DecryptionError:
             on various decryption errors.
             If unsafe error reporting is enabled, details of
             decryption errors will be provided.
 
-        https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.2
         """
 
         try:
@@ -460,7 +459,7 @@ class PrivateKey:
             raise ValueError(f'Unsupported hash: "{hash_id}')
 
         try:
-            mgf = Oaep.KNOWN_MFGS[mgf_id]
+            mgf = Oaep.KNOWN_MGFS[mgf_id]
         except KeyError:
             raise ValueError(
                 f'Unsupported mask generation function: "{mgf_id}'

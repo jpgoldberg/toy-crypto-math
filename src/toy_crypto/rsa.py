@@ -464,20 +464,27 @@ class PrivateKey:
             raise ValueError(
                 f'Unsupported mask generation function: "{mgf_id}'
             )
-        k = (self.pub_key.N.bit_length() + 7) // 8  # length of N in bytes
+        k = (
+            self.pub_key.N.bit_length() + 7
+        ) // 8  # ceil(length of N in bytes)
 
-        # Don't be explicit about decryption is serious code.
-        # This is toy code.
+        # checks in Step 1 involve no secrets
+        # Step 1.a
         if len(label) > h.input_limit:
             raise DecryptionError(Oaep._unsafe_msg("Label too long"))
 
+        # Step 1.b
         if len(ciphertext) != k:
             raise DecryptionError(Oaep._unsafe_msg("Ciphertext is wrong size"))
 
+        # Step 1.c
         if k < 2 * h.digest_size + 2:
             raise DecryptionError(Oaep._unsafe_msg("Modulus is way too short"))
 
+        # Step 2.a
         c = Oaep.os2ip(ciphertext)
+
+        # Step 2.b
         try:
             m = self.decrypt(c)
         except Exception as e:
@@ -485,47 +492,38 @@ class PrivateKey:
                 Oaep._unsafe_msg(f"Primitive decryption error: {e}")
             )
 
-        # rfc8017 does not say to catch and handle an error
-        # in I2OSP, and so "integer too large" from I2OSP would
-        # be output enabling exactly the attack the RFC is designed to
-        # defend against.
-        try:
-            em = Oaep.i2osp(m, k)
-        except ValueError:
-            raise DecryptionError(
-                Oaep._unsafe_msg("Manger, Will Robinson! Manger!")
-            )
+        # Step 2.c
+        # if k is computed correctly, conversion of bytes
+        # should never fail.
+        em = Oaep.i2osp(m, k)
 
-        # This is computed early to thwart some timing attacks
+        # Step 3 is where we perform validations that make use of secrets
+
+        # Step 3.a is done before other tests to thwart certain timing attacks
         lhash = h.function(label).digest()
 
-        # We split em into three parts (Step 3b)
+        # Step 3.b. Parse encoded message
         y: int = em[0]
         masked_seed: bytes = em[1 : h.digest_size + 1]
         masked_datablock: bytes = em[h.digest_size + 1 :]
 
-        # Steps 3c-f
+        # Step 3.c and 3.d
         seed_mask = mgf.function(
             masked_datablock, h.digest_size, mgf.hashAlgorithm
         )
         seed = utils.xor(masked_seed, seed_mask)
+
+        # Steps 3.e and 3.f
         db_mask = mgf.function(seed, k - h.digest_size - 1, mgf.hashAlgorithm)
         data_block = utils.xor(masked_datablock, db_mask)
 
-        # Split the data block. Step 3g
+        # Parsing portion of Step 3.g
         lhash_prime: bytes = data_block[: h.digest_size]
         remainder: bytes = data_block[h.digest_size :].lstrip(bytes([0]))
         one: int = remainder[0]
         message: bytes = remainder[1:]
 
-        # Checks on all of that are standardly deferred to avoid
-        # timing on failure reason.
-        # We aren't worried about that in this toy code, but follow
-        # the sequence anyway.
-
-        # Revealing why decryption fails opens things up
-        # for chosen ciphertext attacks. Don't do what I do here.
-
+        # Validation portion of Step 3.g
         if one != 1:
             raise DecryptionError(Oaep._unsafe_msg("Expected 0x01"))
         if not compare_digest(lhash, lhash_prime):

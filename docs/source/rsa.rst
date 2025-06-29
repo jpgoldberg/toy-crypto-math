@@ -189,6 +189,13 @@ The :class:`Oaep` class
 All of the OAEP bits and piece other than the type alias
 fit neatly into a class.
 
+.. figure:: /images/Big-endian-Chena-320x320.png
+    :align: center
+    :alt: A dog with a big rear-end
+
+    Chena, like all operations in this class, is big-endian;
+    although in her case it is her rear end is bigger than her bytey end.
+
 
 .. autoclass:: Oaep
     :members:

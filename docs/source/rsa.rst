@@ -163,15 +163,17 @@ message always yields the same ciphertext.
     assert oaep_ctext1 != oaep_ctext2
 
 
+A (very limted) choice of hashes
+--------------------------------
 
-Type aliases
--------------
+For my purposes, I could have just hardcoded use of
+:py:func:`hashlib.sha256` or a more modern one,
+but most of published test vectors
+for RSA-OAEP use :py:func:`hashlib.sha1`.
 
-We need to pass some functions around, and so a defining
-their types is useful.
-For reasons I don't understand, these appear to need to be in
-module scope.
-
+For reasons I don't understand, I had difficulty
+getting these type definition within the :class:`Oaep` class,
+so those are given module scope.
 
 .. type:: HashFunc
     :canonical: Callable[[bytes], hashlib._Hash]
@@ -182,6 +184,22 @@ module scope.
     :canonical: Callable[[bytes, int, str], bytes]
 
     Type for RFC8017 Mask Generation Function.
+
+The (short) lists of supported hash and mask generation functions
+are attributes of the :class:`Oeap` class. Also note that these are 
+more sanely defined than what may appear in the automatically generated
+documentation of these.
+
+.. autoattribute:: Oaep.KNOWN_HASHES
+    :no-value:
+
+    .. pprint:: toy_crypto.rsa.Oaep.KNOWN_HASHES
+    
+.. autoattribute:: Oaep.KNOWN_MGFS
+    :no-value:
+
+    .. pprint:: toy_crypto.rsa.Oaep.KNOWN_MGFS
+    
 
 The :class:`Oaep` class
 -------------------------
@@ -200,17 +218,3 @@ fit neatly into a class.
 .. autoclass:: Oaep
     :members:
     :exclude-members: KNOWN_HASHES, KNOWN_MGFS
-
-
-.. data:: Oaep.KNOWN_HASHES[str, HashInfo]
-
-    Hashes known for OAEP. keys will be hashlib names.
-
-    .. pprint:: toy_crypto.rsa.Oaep.KNOWN_HASHES
-    
-.. data:: Oaep.KNOWN_MGFS[str, HashInfo]
-
-    Known mask generatation fubctions.
-
-    .. pprint:: toy_crypto.rsa.Oaep.KNOWN_MGFS
-    

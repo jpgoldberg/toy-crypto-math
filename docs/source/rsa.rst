@@ -133,7 +133,7 @@ Our primitive encryption and decryption functions take and yield integers
 
 .. testcode::
 
-    message = b"attack @ dawn"
+    message = b"My hovercraft is full of eels"
     i_message = rsa.Oaep.os2ip(message)
 
     prim_ctext1 = pub2048.encrypt(i_message)
@@ -145,21 +145,17 @@ message always yields the same ciphertext.
 .. testcode::
 
     # same key and message as above
-
     prim_ctext2 = pub2048.encrypt(i_message)
-    
     assert prim_ctext2 == prim_ctext1
 
 .. testcode::
 
     # same message and keys as above
     oaep_ctext1 = pub2048.oaep_encrypt(message)
-
     decrypted1 = key2048.oaep_decrypt(oaep_ctext1)
     assert decrypted1 == message
 
     oaep_ctext2 = pub2048.oaep_encrypt(message)
-
     decrypted2 = key2048.oaep_decrypt(oaep_ctext2)
     assert decrypted2 == message
 

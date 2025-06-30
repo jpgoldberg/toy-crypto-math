@@ -4,17 +4,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>toy_crypto.rsa &#8212; toycrypto 0.4.1 documentation</title>
+    <title>toy_crypto.rsa &#8212; toycrypto 0.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/nature.css?v=279e0f84" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/sphinx-toolbox.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=a5c4661c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_toolbox_installation.css" />
-    <script src="../../_static/documentation_options.js?v=c87aa342"></script>
-    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
-    <script src="../../_static/sphinx_highlight.js?v=5572e0a9"></script>
-    <script src="../../_static/tabs.js?v=3030b3cb"></script>
-    <script src="../../_static/sphinx_toolbox_installation.js"></script>
+    <script src="../../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -27,7 +22,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">toy_crypto.rsa</a></li> 
       </ul>
@@ -39,7 +34,14 @@
           <div class="body" role="main">
             
   <h1>Source code for toy_crypto.rsa</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.nt</span><span class="w"> </span><span class="kn">import</span> <span class="n">lcm</span><span class="p">,</span> <span class="n">modinv</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">hmac</span><span class="w"> </span><span class="kn">import</span> <span class="n">compare_digest</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.nt</span><span class="w"> </span><span class="kn">import</span> <span class="n">lcm</span><span class="p">,</span> <span class="n">modinv</span>
 
 <span class="n">_DEFAULT_E</span> <span class="o">=</span> <span class="mi">65537</span>
 
@@ -49,6 +51,244 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">default_e</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the default public exponent, 65537&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_DEFAULT_E</span></div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DecryptionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For secure implementations it is important to not</span>
+<span class="sd">    report why a decryption failed.</span>
+
+<span class="sd">    See :func:`Oaep.allow_unsafe_messages` to enable</span>
+<span class="sd">    reasons why decryption fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="nb">type</span> <span class="n">HashFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">_Hash</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Type for hashlib style hash function.&quot;&quot;&quot;</span>
+
+<span class="nb">type</span> <span class="n">MgfFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Type for RFC8017 Mask Generation Function.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Oaep">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Oaep</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tools and data for OAEP.</span>
+
+<span class="sd">    Although this attempts to follow :rfc:`8017` in many</span>
+<span class="sd">    respects, this is not designed to be interoperable</span>
+<span class="sd">    with compliant keys and ciphertext.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_unsafe_messages</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forbid&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Anything other than &quot;allow&quot; will keep DecryptionError messages safe.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Oaep.allow_unsafe_messages">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.allow_unsafe_messages">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allow_unsafe_messages</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">allow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow (or disallow) verbose DecryptionError messages.&quot;&quot;&quot;</span>
+
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_unsafe_messages</span> <span class="o">=</span> <span class="s2">&quot;allow&quot;</span> <span class="k">if</span> <span class="n">allow</span> <span class="k">else</span> <span class="s2">&quot;forbid&quot;</span></div>
+
+
+<div class="viewcode-block" id="Oaep.are_unsafe_messages_allowed">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">are_unsafe_messages_allowed</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Does what it says on the tin.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_unsafe_messages</span> <span class="o">==</span> <span class="s2">&quot;allow&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unsafe_msg</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_unsafe_messages</span> <span class="o">==</span> <span class="s2">&quot;allow&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">message</span>
+        <span class="k">return</span> <span class="s2">&quot;Not telling, nohow!&quot;</span>
+
+<div class="viewcode-block" id="Oaep.HashInfo">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.HashInfo">[docs]</a>
+    <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">HashInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Information about hash function</span>
+
+<span class="sd">        :param hashlib_name: Name as known by hashlib</span>
+<span class="sd">        :param function: The callable function</span>
+<span class="sd">        :param digest_size: in bytes</span>
+<span class="sd">        :param input_limit: in bytes</span>
+
+<span class="sd">        Note that names and identifiers here do not</span>
+<span class="sd">        conform to RFCs. These are not mean to be interoperable</span>
+<span class="sd">        with anything out in the world.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1">#: Name as known by hashlib</span>
+        <span class="n">hashlib_name</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="n">function</span><span class="p">:</span> <span class="n">HashFunc</span>  <span class="c1">#: The callable function itself</span>
+        <span class="n">digest_size</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1">#: in bytes</span>
+        <span class="n">input_limit</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1">#: maximum input, in bytes</span></div>
+
+
+<div class="viewcode-block" id="Oaep.MgfInfo">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.MgfInfo">[docs]</a>
+    <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">MgfInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Information about Mask Generation function.</span>
+
+<span class="sd">        :param algorithm: Name of the algorithm.</span>
+<span class="sd">        :param hashAlgorithm: Key in :data:`KNOWN_HASHES`.</span>
+<span class="sd">        :param function: A Callable mask generation function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># eg &quot;id-mfg1&quot;</span>
+        <span class="n">hashAlgorithm</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Key in KNOWN_HASHES</span>
+        <span class="n">function</span><span class="p">:</span> <span class="n">MgfFunc</span></div>
+
+
+<div class="viewcode-block" id="Oaep.mgf1">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.mgf1">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mgf1</span><span class="p">(</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>  <span class="c1"># There do not appear to be any constraints on this</span>
+        <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>  <span class="c1"># Output length</span>
+        <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="c1"># key for KNOWN_HASHES</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mask generation function.</span>
+
+<span class="sd">        Generates a unique mask of length :data:`length` as described in</span>
+<span class="sd">        :rfc:`appendix B.2.1 &lt;8017#appendix-B.2.1&gt;` of :rfc:`8017`.</span>
+
+<span class="sd">        :param seed: This should come from a CSPRNG</span>
+<span class="sd">        :param length: Length in bytes of the mask to generate.</span>
+<span class="sd">        :param hash_id: The name hash function in :data:`KNOWN_HASHES`.</span>
+
+<span class="sd">        :raises ValueError: if :data:`length` :math:`&gt; 2^{32}` bytes.</span>
+<span class="sd">        :raises ValueError: if :data:`hash_id` is unknown.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        I am using Pythonic variable naming instead of what is in the RFC</span>
+
+<span class="sd">        RFC Name | My name | Description                        | Type</span>
+<span class="sd">        -----------------------------------------------------------------</span>
+<span class="sd">        mfgSeed | seed      | seed from which mask is generated | bytes</span>
+<span class="sd">        maskLen | length    | Intended length of mask           | int</span>
+<span class="sd">        mask    | mask      | Output                            | bytes</span>
+<span class="sd">        T       | t         | Internal array for building mask  | bytearray</span>
+<span class="sd">        C       | counter   | Counter, four octets              | bytes</span>
+<span class="sd">                | hash_id   | ID of hash function               | str</span>
+<span class="sd">        Hash    | hasher    | CS hash function                  | HashFunc</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;mask too long&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">KNOWN_HASHES</span><span class="p">[</span><span class="n">hash_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported hash function: &quot;</span><span class="si">{</span><span class="n">hash_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">digest_size</span> <span class="o">=</span> <span class="nb">hash</span><span class="o">.</span><span class="n">digest_size</span>
+        <span class="n">hasher</span> <span class="o">=</span> <span class="nb">hash</span><span class="o">.</span><span class="n">function</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+        <span class="c1"># &quot;For counter from 0 to \ceil (maskLen / hLen) - 1, ...&quot;</span>
+        <span class="c1"># range is not inclusive at high end. So we need to add one</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">length</span> <span class="o">/</span> <span class="n">digest_size</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">i2osp</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+            <span class="n">digest</span> <span class="o">=</span> <span class="n">hasher</span><span class="p">(</span><span class="n">seed</span> <span class="o">+</span> <span class="n">counter</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">digest</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">length</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="n">length</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">mask</span></div>
+
+
+    <span class="n">KNOWN_HASHES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">HashInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;sha256&quot;</span><span class="p">:</span> <span class="n">HashInfo</span><span class="p">(</span>
+            <span class="n">hashlib_name</span><span class="o">=</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+            <span class="n">function</span><span class="o">=</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">,</span>
+            <span class="n">digest_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">input_limit</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">61</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="c1"># We need sha1 because that is what test vectors exist for</span>
+        <span class="s2">&quot;sha1&quot;</span><span class="p">:</span> <span class="n">HashInfo</span><span class="p">(</span>
+            <span class="n">hashlib_name</span><span class="o">=</span><span class="s2">&quot;sha1&quot;</span><span class="p">,</span>
+            <span class="n">function</span><span class="o">=</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">,</span>
+            <span class="n">digest_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+            <span class="n">input_limit</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">64</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hashes known for OAEP. keys will be hashlib names.&quot;&quot;&quot;</span>
+
+    <span class="n">KNOWN_MGFS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MgfInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;mgf1SHA256&quot;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span>
+            <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;id_mgf1&quot;</span><span class="p">,</span> <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s2">&quot;sha256&quot;</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">mgf1</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;mgf1SHA1&quot;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span>
+            <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;id_mgf1&quot;</span><span class="p">,</span> <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s2">&quot;sha1&quot;</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">mgf1</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Known Mask Generation Functions.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Oaep.i2osp">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.i2osp">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">i2osp</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Integer to an octet string of length length.</span>
+
+<span class="sd">        Implements function from :rfc:`RFC 8017 §4.1 &lt;8017#section-4.1&gt;`.</span>
+
+<span class="sd">        :param n: A non-negative integer</span>
+<span class="sd">        :param length: Length of returned bytes object</span>
+
+<span class="sd">        :raises ValueError: if :data:`n` is negative.</span>
+<span class="sd">        :raises ValueError: if :data:`n` cannot fit in :data:`length` bytes</span>
+
+<span class="sd">        .. warning::</span>
+
+<span class="sd">            When called from a decryption operation, exceptions should be caught</span>
+<span class="sd">            and handled discretely.</span>
+
+
+<span class="sd">        All operations big-endian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number cannot be negative&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span> <span class="o">&gt;</span> <span class="n">length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input is too large for the given length&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Oaep.os2ip">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.Oaep.os2ip">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">os2ip</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;octet-stream to unsigned big-endian int.</span>
+
+<span class="sd">         Implements function from :rfc:`RFC 8017 §4.2 &lt;8017#section-4.2&gt;`.</span>
+
+<span class="sd">        :param x:</span>
+<span class="sd">            The octet-stream (:py:class:`bytes`) you want</span>
+<span class="sd">            to make an :py:class:`int` from.</span>
+
+<span class="sd">        Returned is a non-negative integer.</span>
+
+<span class="sd">        All operations are big-endian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</div>
 
 
 
@@ -92,6 +332,80 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Message too big&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">pow</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">exp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_e</span><span class="p">,</span> <span class="n">mod</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_N</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PublicKey.oaep_encrypt">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.PublicKey.oaep_encrypt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">oaep_encrypt</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+        <span class="n">mgf_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mgf1SHA256&quot;</span><span class="p">,</span>
+        <span class="n">_seed</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># For testing only</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        RSA OAEP encryption.</span>
+
+<span class="sd">        :param message: The message to encrypt.</span>
+<span class="sd">        :param label: Rarely used. Just leave as default.</span>
+<span class="sd">        :param hash_id: Name of the hash function.</span>
+<span class="sd">        :param mgf_id: Name of the MGF function (with hash).</span>
+<span class="sd">        :param _seed:</span>
+<span class="sd">            Used for testing only. OAEP is not supposed to be deterministic.</span>
+
+<span class="sd">        :raises ValueError: if hash or MGF is not recognized.</span>
+<span class="sd">        :raises ValueError:</span>
+<span class="sd">            if lengths of inputs exceed what modulus and hash sizes</span>
+<span class="sd">            can accommodate.</span>
+
+<span class="sd">        https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">KNOWN_HASHES</span><span class="p">[</span><span class="n">hash_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported hash: &quot;</span><span class="si">{</span><span class="n">hash_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mgf</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">KNOWN_MGFS</span><span class="p">[</span><span class="n">mgf_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Unsupported mask generation function: &quot;</span><span class="si">{</span><span class="n">mgf_id</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">input_limit</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;label too long&quot;</span><span class="p">)</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span>  <span class="c1"># length of N in bytes</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;message too long&quot;</span><span class="p">)</span>
+
+        <span class="n">lhash</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+        <span class="n">ps_length</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="n">padding_string</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">ps_length</span><span class="p">)</span>
+
+        <span class="n">data_block</span> <span class="o">=</span> <span class="n">lhash</span> <span class="o">+</span> <span class="n">padding_string</span> <span class="o">+</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x01</span><span class="p">])</span> <span class="o">+</span> <span class="n">message</span>
+
+        <span class="c1"># So that we can test with a set seed</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">bytes</span>
+        <span class="k">if</span> <span class="n">_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_bytes</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">digest_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">_seed</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mgf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mgf</span><span class="o">.</span><span class="n">hashAlgorithm</span><span class="p">)</span>
+        <span class="n">masked_db</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">data_block</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+        <span class="n">seed_mask</span> <span class="o">=</span> <span class="n">mgf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">masked_db</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span><span class="p">,</span> <span class="n">mgf</span><span class="o">.</span><span class="n">hashAlgorithm</span><span class="p">)</span>
+        <span class="n">masked_seed</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">seed_mask</span><span class="p">)</span>
+
+        <span class="n">encoded_m</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x00</span><span class="p">])</span> <span class="o">+</span> <span class="n">masked_seed</span> <span class="o">+</span> <span class="n">masked_db</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">os2ip</span><span class="p">(</span><span class="n">encoded_m</span><span class="p">)</span>
+        <span class="n">ctext</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">i2osp</span><span class="p">(</span><span class="n">ctext</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -175,7 +489,12 @@
 <div class="viewcode-block" id="PrivateKey.decrypt">
 <a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.PrivateKey.decrypt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Primitive decryption.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Primitive decryption.</span>
+
+<span class="sd">        :param ciphertext: Ciphertext as :py:class:`int`</span>
+<span class="sd">        :raises ValueError: if :data:`ciphertext` is out of range for this key.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ciphertext</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>  <span class="c1"># See comment in PublicKey.encrypt()</span>
 
@@ -189,11 +508,117 @@
         <span class="n">m_1</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">)</span>
         <span class="n">m_2</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dQ</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q</span><span class="p">)</span>
 
-        <span class="c1"># I need to review CRT to see what this is for</span>
+        <span class="c1"># CRT for the win!</span>
         <span class="n">h</span> <span class="o">=</span> <span class="p">((</span><span class="n">m_1</span> <span class="o">-</span> <span class="n">m_2</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qInv</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span>
 
         <span class="n">m</span> <span class="o">=</span> <span class="n">m_2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_q</span> <span class="o">*</span> <span class="n">h</span>
         <span class="k">return</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="PrivateKey.oaep_decrypt">
+<a class="viewcode-back" href="../../rsa.html#toy_crypto.rsa.PrivateKey.oaep_decrypt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">oaep_decrypt</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sha256&quot;</span><span class="p">,</span>
+        <span class="n">mgf_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mgf1SHA256&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        RSA OAEP decryption.</span>
+
+<span class="sd">        :param ciphertext: The message to encrypt.</span>
+<span class="sd">        :param label: Rarely used.</span>
+<span class="sd">        :param hash_id: Name of the hash function.</span>
+<span class="sd">        :param mgf_id: Name of the MGF function (with hash).</span>
+
+<span class="sd">        :raises ValueError: if hash or MGF is not recognized.</span>
+<span class="sd">        :raises DecryptionError:</span>
+<span class="sd">            on various decryption errors.</span>
+<span class="sd">            If unsafe error reporting is enabled, details of</span>
+<span class="sd">            decryption errors will be provided.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">KNOWN_HASHES</span><span class="p">[</span><span class="n">hash_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported hash: &quot;</span><span class="si">{</span><span class="n">hash_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mgf</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">KNOWN_MGFS</span><span class="p">[</span><span class="n">mgf_id</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Unsupported mask generation function: &quot;</span><span class="si">{</span><span class="n">mgf_id</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_key</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">7</span>
+        <span class="p">)</span> <span class="o">//</span> <span class="mi">8</span>  <span class="c1"># ceil(length of N in bytes)</span>
+
+        <span class="c1"># checks in Step 1 involve no secrets</span>
+        <span class="c1"># Step 1.a</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">input_limit</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DecryptionError</span><span class="p">(</span><span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="s2">&quot;Label too long&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Step 1.b</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="o">!=</span> <span class="n">k</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DecryptionError</span><span class="p">(</span><span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="s2">&quot;Ciphertext is wrong size&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Step 1.c</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DecryptionError</span><span class="p">(</span><span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="s2">&quot;Modulus is way too short&quot;</span><span class="p">))</span>
+
+        <span class="c1"># Step 2.a</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">os2ip</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
+
+        <span class="c1"># Step 2.b</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DecryptionError</span><span class="p">(</span>
+                <span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Primitive decryption error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Step 2.c</span>
+        <span class="c1"># if k is computed correctly, conversion of bytes</span>
+        <span class="c1"># should never fail.</span>
+        <span class="n">em</span> <span class="o">=</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">i2osp</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+        <span class="c1"># Step 3 is where we perform validations that make use of secrets</span>
+
+        <span class="c1"># Step 3.a is done before other tests to thwart certain timing attacks</span>
+        <span class="n">lhash</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+        <span class="c1"># Step 3.b. Parse encoded message</span>
+        <span class="n">y</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">em</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">masked_seed</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">em</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">masked_datablock</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">em</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+
+        <span class="c1"># Step 3.c and 3.d</span>
+        <span class="n">seed_mask</span> <span class="o">=</span> <span class="n">mgf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span>
+            <span class="n">masked_datablock</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span><span class="p">,</span> <span class="n">mgf</span><span class="o">.</span><span class="n">hashAlgorithm</span>
+        <span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">masked_seed</span><span class="p">,</span> <span class="n">seed_mask</span><span class="p">)</span>
+
+        <span class="c1"># Steps 3.e and 3.f</span>
+        <span class="n">db_mask</span> <span class="o">=</span> <span class="n">mgf</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">k</span> <span class="o">-</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mgf</span><span class="o">.</span><span class="n">hashAlgorithm</span><span class="p">)</span>
+        <span class="n">data_block</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">xor</span><span class="p">(</span><span class="n">masked_datablock</span><span class="p">,</span> <span class="n">db_mask</span><span class="p">)</span>
+
+        <span class="c1"># Parsing portion of Step 3.g</span>
+        <span class="n">lhash_prime</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">data_block</span><span class="p">[:</span> <span class="n">h</span><span class="o">.</span><span class="n">digest_size</span><span class="p">]</span>
+        <span class="n">remainder</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">data_block</span><span class="p">[</span><span class="n">h</span><span class="o">.</span><span class="n">digest_size</span> <span class="p">:]</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">one</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">remainder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">remainder</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="c1"># Validation portion of Step 3.g</span>
+        <span class="k">if</span> <span class="n">one</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DecryptionError</span><span class="p">(</span><span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="s2">&quot;Expected 0x01&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">compare_digest</span><span class="p">(</span><span class="n">lhash</span><span class="p">,</span> <span class="n">lhash_prime</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DecryptionError</span><span class="p">(</span><span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="s2">&quot;Label mismatch&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">Oaep</span><span class="o">.</span><span class="n">_unsafe_msg</span><span class="p">(</span><span class="s2">&quot;Expected 0x00 leading byte&quot;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">message</span></div>
 </div>
 
 </pre></div>
@@ -227,14 +652,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">toycrypto 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">toy_crypto.rsa</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
     &#169; Copyright 2024–2025 Jeffrey Goldberg.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.3.0+/c7e5ab9.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
     </div>
   </body>
 </html>

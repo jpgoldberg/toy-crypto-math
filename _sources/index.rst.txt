@@ -16,10 +16,24 @@ Installation
 Remember that nothing here is built to be used for security purposes,
 but if you must:
 
-.. installation:: toycrypto
+..
+  Until https://github.com/sphinx-toolbox/sphinx-toolbox/issues/190 is resolved
+  I will not be using "sphinx_toolbox.installation",
+
+.. 
+  installation:: toycrypto
     :pypi:
     :github: main
 
+From pypi_ for the latest *released* version::
+
+    python3 -m pip install toycrypto --user
+
+From GitHub for the head of the main branch::
+
+    python3 -m pip install git+https://github.com/jpgoldberg/toy-crypto-math@main --user
+
+    
 
 Import names
 ------------

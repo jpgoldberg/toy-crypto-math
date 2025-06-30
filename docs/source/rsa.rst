@@ -188,17 +188,8 @@ so those are given module scope.
 
 The (short) lists of supported hash and mask generation functions
 are attributes of the :class:`Oaep` class, as are the classes to describe them.
-
-.. autoclass:: toy_crypto.rsa.Oaep.HashInfo
-    :no-index:
-
-.. autoclass:: toy_crypto.rsa.Oaep.MgfInfo
-    :no-index:
-
-
-Also note that these are 
-more sanely defined than what may appear in the automatically generated
-documentation of these.
+Also note that these are more sanely  and readably defined than
+what may appear in the automatically generated documentation.
 
 .. autoattribute:: Oaep.KNOWN_HASHES
     :no-index:
@@ -219,9 +210,9 @@ Primitive RSA operations on integers, but OAEP is designed for
 encryption and decryption of sequences of :py:class:`bytes`,
 or octet-streams in the parlence of the standards.
 The standards define two functions, ``I2OSP`` and ``OS2IP`` for those
-conversions. I don't implement them as in the standards, but use Python standard library utililties. So class methods :func:`Oaep.i2osp` and
-:func:`Oaep.os2ip` are wrappers for standard library method
-:py:func:`int.to_bytes` and class method :py:func:`int.from_bytes`.
+conversions. I don't implement them as in the standards, but use Python standard library utililties. So class methods :meth:`Oaep.i2osp` and
+:meth:`Oaep.os2ip` are wrappers for standard library method
+:py:meth:`int.to_bytes` and class method :py:meth:`int.from_bytes`.
 
 .. automethod:: Oaep.i2osp
     :no-index:

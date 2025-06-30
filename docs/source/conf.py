@@ -100,7 +100,7 @@ extensions: list[str] = [
     # "sphinx_toolbox.more_autodoc.variables",
 ]
 
-autodoc_typehints = "both"
+autodoc_typehints = "signature"
 typehints_use_signature = True
 typehints_use_signature_return = True
 always_document_param_types = True

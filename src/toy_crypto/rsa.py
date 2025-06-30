@@ -68,19 +68,30 @@ class Oaep:
     class HashInfo:
         """Information about hash function
 
+        :param hashlib_name: Name as known by hashlib
+        :param function: The callable function
+        :param digest_size: in bytes
+        :param input_limit: in bytes
+
         Note that names and identifiers here do not
         conform to RFCs. These are not mean to be interoperable
         with anything out in the world.
         """
 
+        #: Name as known by hashlib
         hashlib_name: str
-        function: HashFunc
-        digest_size: int  # in bytes
-        input_limit: int  # maximum input, in bytes
+        function: HashFunc  #: The callable function itself
+        digest_size: int  #: in bytes
+        input_limit: int  #: maximum input, in bytes
 
     @dataclass(frozen=True, kw_only=True)
     class MgfInfo:
-        """Information about Mask Generation function"""
+        """Information about Mask Generation function.
+
+        :param algorithm: Name of the algorithm.
+        :param hashAlgorithm: Key in :data:`KNOWN_HASHES`.
+        :param function: A Callable mask generation function
+        """
 
         algorithm: str  # eg "id-mfg1"
         hashAlgorithm: str  # Key in KNOWN_HASHES
@@ -103,9 +114,6 @@ class Oaep:
 
         :raises ValueError: if :data:`length` :math:`> 2^{32}` bytes.
         :raises ValueError: if :data:`hash_id` is unknown.
-
-        This would have been a lot simpler if :rfc:`HKDF <5896>`
-        had been around before :rfc:`3447`.
         """
 
         """

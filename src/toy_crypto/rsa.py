@@ -589,3 +589,26 @@ def key_gen(
             raise Exception("pair-wise consistency failure")
         break
     return (key.pub_key, key)
+
+
+def estimate_strength(key_size: int) -> int:
+    """Strength estimate for key bit size.
+
+    :param key_size: Modulus size in bits
+    """
+
+    # Formula from 800-56b Appendix D
+    # ln2 = math.log(2)
+    ln2 = 0.6931471805599453
+
+    bln2 = key_size * ln2
+
+    estimate = (1.923 * pow(bln2, -3) * pow(math.log(bln2), -3) - 4.69) / ln2
+
+    # round to nearest multiple of 8
+    q, r = divmod(estimate, 8)
+    estimate = int(q) * 8
+    if r > 4:
+        estimate += 1
+
+    return estimate

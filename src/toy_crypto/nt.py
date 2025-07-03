@@ -317,6 +317,14 @@ def probably_prime(n: int, k: int = 4) -> bool:
     If you need a real primality check, use sympy.isprime() instead.
     """
 
+    # Let's deal with some very low primes
+    if n < 2:
+        return False
+    if n in [2, 3, 5, 7]:
+        return True
+    if n < 11:
+        return False
+
     # This s reduction is what distinguishes M-R from FLT
     r, s = 0, n - 1
     while s % 2 == 0:

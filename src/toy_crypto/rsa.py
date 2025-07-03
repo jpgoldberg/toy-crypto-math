@@ -5,7 +5,7 @@ import math
 import secrets
 from typing import Callable
 from toy_crypto import utils
-from toy_crypto.nt import lcm, modinv
+from toy_crypto.nt import lcm, modinv, get_prime, gcd
 
 _DEFAULT_E = 65537
 
@@ -540,3 +540,52 @@ class PrivateKey:
             raise Exception(Oaep._unsafe_msg("Expected 0x00 leading byte"))
 
         return message
+
+
+def key_gen(
+    bit_size: int = 2048, e: int = 65537
+) -> tuple[PublicKey, PrivateKey]:
+    """Generates private key.
+
+    :param bit_size: size in bits of desired modulus.
+    :param e: public exponent.
+
+    Partially follows NIST SP 80056B, but do not take
+    following standards as a suggestion that these keys are secure.
+    """
+
+    # Computation of d and CRT values is done by constructor.
+    # So not all the checks will be performed in the same order
+    # as in standards
+
+    # TODO: Security level, bit size matching
+
+    # I think we only need it to be even, but lets make our primes
+    # fit into a whole number of bytes.
+    if bit_size % 64 != 0:
+        raise ValueError("bit_size must be a multiple of 64")
+
+    if not (65537 <= e < 2**256):
+        raise ValueError("e is out of range")
+
+    prime_size = bit_size // 2
+
+    minimum_d = 2**prime_size
+    while True:
+        p = e  # this must change
+        while gcd(p, e) != 1:
+            p = get_prime(prime_size)
+        q = e
+        while gcd(q, q) != 1:
+            q = get_prime(prime_size)
+
+        key = PrivateKey(p, q, e)
+        if key._d < minimum_d:
+            continue
+
+        m = secrets.randbelow(key._N - 2) + 1
+        c = key.pub_key.encrypt(m)
+        if key.decrypt(c) != m:
+            raise Exception("pair-wise consistency failure")
+        break
+    return (key.pub_key, key)

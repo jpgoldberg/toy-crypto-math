@@ -3,26 +3,14 @@
 # SPDX-License-Identifier: MIT
 
 import math
+import secrets
 from collections import UserList
 from collections.abc import Iterator, Iterable
 from typing import Any, NewType, Optional, Self, TypeGuard
 
 import primefac
 
-try:
-    from bitarray import bitarray
-    from bitarray.util import count_n, ba2int
-except ImportError:
-
-    def bitarray(*args, **kwargs) -> Any:  # type: ignore
-        raise NotImplementedError("bitarray is not installed")
-
-    def count_n(*args, **kwargs) -> int:  # type: ignore
-        raise NotImplementedError("bitarray is not installed")
-
-    def ba2int(*args, **kwargs) -> int:  # type: ignore
-        raise NotImplementedError("bitarray is not installed")
-
+from . import rand
 
 from . import types
 
@@ -316,3 +304,68 @@ def lcm(*integers: int) -> int:
 
     # requires python 3.9, but I'm already requiring 3.11
     return math.lcm(*integers)
+
+
+# lifted from https://gist.github.com/Ayrx/5884790
+def probably_prime(n: int, k: int = 4) -> bool:
+    """Returns True if n is prime or if you had really bad luck.
+
+    Runs the Miller-Rabin primality test with k trials.
+    Default value of k=40 is appropriate for use in key generation,
+    but may be way high in other contexts.
+
+    If you need a real primality check, use sympy.isprime() instead.
+    """
+
+    # This s reduction is what distinguishes M-R from FLT
+    r, s = 0, n - 1
+    while s % 2 == 0:
+        r += 1
+        s //= 2
+
+    # Now we use FLT for the reduced s, but still mod n
+    for _ in range(k):
+        a = rand.randrange(2, n - 1)
+        x = pow(a, s, n)
+        if x == 1 or x == n - 1:
+            # This a is good. Call the next witness!
+            continue
+
+        # square x for each time we reduced s for a passing x
+        for _ in range(r - 1):
+            x = pow(x, 2, n)
+            if x == n - 1:
+                # Our a really was good, once we tested squares of x
+                break
+        else:
+            # We've exited the loop without finding a to be good
+            return False
+
+    # We've run all k trials, without any a telling us n is composite
+    return True
+
+
+def get_prime(bit_size: int, k: int = 40) -> int:
+    """Return a randomly chosen prime of :data:`bit_size` bits.
+
+    :param bit_size: Size in bits of the prime to be generated
+    :param k: Number of witnesses to primality we require.
+
+    k of 40 seems really high to me, but I see that the recommendation is from
+    Thomas Pornin, so I am going to use that.
+    """
+
+    n: int
+    while True:  # Until we find a prime
+        # We will construct a random number of the right size and then test it.
+
+        # We want our constructed number to have a leading bit of 1
+        # And we want it final bit to be 1 (odd)
+        # So we pick random number two bits shorter than our target
+        n = secrets.randbits(bit_size - 2)
+        n = n * 2 + 1  # shift left and make LSB 1
+        n += 2 ** (bit_size - 1)  # Add a MSB 1 bit
+
+        if probably_prime(n, k):
+            break
+    return n

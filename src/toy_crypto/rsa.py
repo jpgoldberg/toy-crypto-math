@@ -597,18 +597,41 @@ def estimate_strength(key_size: int) -> int:
     :param key_size: Modulus size in bits
     """
 
+    pre_baked: dict[int, int] = {
+        512: 56,
+        1028: 80,
+        2048: 112,
+        3072: 128,
+        4069: 152,
+        6144: 176,
+        8192: 200,
+    }
+
+    e = pre_baked.get(key_size)
+    if e:
+        return e
+
+    # Else we calculate it
+
     # Formula from 800-56b Appendix D
     # ln2 = math.log(2)
     ln2 = 0.6931471805599453
 
-    bln2 = key_size * ln2
+    # I had a bug in simple math, so this got broken into lots
+    # of intermediate values. I'm going to hope that the compiler
+    # cleans this up.
+    bln2 = key_size * ln2  # nBits x ln 2
+    log_bln2 = math.log(bln2)
+    croot_bln2 = bln2 ** (1 / 3)
+    log_bln2_squared = log_bln2**2
+    croot_log_squared = log_bln2_squared ** (1 / 3)
 
-    estimate = (1.923 * pow(bln2, -3) * pow(math.log(bln2), -3) - 4.69) / ln2
+    estimate = (1.923 * croot_bln2 * croot_log_squared - 4.69) / ln2
 
     # round to nearest multiple of 8
     q, r = divmod(estimate, 8)
-    estimate = int(q) * 8
+    i_estimate: int = int(q) * 8
     if r > 4:
-        estimate += 1
+        i_estimate += 8
 
-    return estimate
+    return i_estimate

@@ -382,3 +382,21 @@ class TestOaep:
 
         assert m == decrypted
         assert ctext == self.pkcs_vector["ciphertext"]
+
+
+class TestES:
+    def test_estimator(self) -> None:
+        vectors: list[tuple[int, int]] = [
+            (512, 56),
+            (720, 64),  # Our only non-present example
+            (1028, 80),
+            (2048, 112),
+            (3072, 128),
+            (4069, 152),
+            (6144, 176),
+            (8192, 200),
+        ]
+
+        for v in vectors:
+            estimate = rsa.estimate_strength(v[0])
+            assert estimate == v[1]

@@ -576,7 +576,7 @@ def key_gen(
         while gcd(p, e) != 1:
             p = get_prime(prime_size)
         q = e
-        while gcd(q, q) != 1:
+        while gcd(q, e) != 1:
             q = get_prime(prime_size)
 
         key = PrivateKey(p, q, e)

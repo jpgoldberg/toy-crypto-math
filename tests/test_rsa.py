@@ -400,3 +400,21 @@ class TestES:
         for v in vectors:
             estimate = rsa.estimate_strength(v[0])
             assert estimate == v[1]
+
+
+class TestKeyGen:
+    def test_size(self) -> None:
+        # sizes = [512, 1024, 2048, 3072]
+        sizes = [512, 1024]
+
+        for size in sizes:
+            pub, priv = rsa.key_gen(size)
+            N = pub.N
+            p = priv._p
+            q = priv._q
+            d = priv._d
+
+            assert p.bit_length() == size / 2
+            assert q.bit_length() == size / 2
+            assert 2 ** (size / 2) < d < lcm((p - 1), (q - 1))
+            assert N.bit_length() == size

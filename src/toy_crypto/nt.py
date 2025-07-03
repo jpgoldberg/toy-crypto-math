@@ -353,7 +353,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
     return True
 
 
-def get_prime(bit_size: int, k: int = 40) -> int:
+def get_prime(bit_size: int, k: int = 4) -> int:
     """Return a randomly chosen prime of :data:`bit_size` bits.
 
     :param bit_size: Size in bits of the prime to be generated

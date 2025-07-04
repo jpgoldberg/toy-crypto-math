@@ -551,6 +551,12 @@ def key_gen(
     :param e: public exponent.
     :param k: Trial parameter for primality testing.
 
+    .. warning::
+
+        This allows for the generation of unconscionably
+        small keys. But that is ok, because this is a toy
+        implementation in lots of other respects, too.
+
     Partially follows NIST SP 80056B, but mixes
     FIPS 186 Appendix B.3.3
     """
@@ -572,16 +578,19 @@ def key_gen(
     if bit_size % 64 != 0:
         raise ValueError("bit_size must be a multiple of 64")
 
-    if not (65537 <= e < 2**256):
+    if not 16 <= e.bit_length() < 256:
         raise ValueError("e is out of range")
 
-    min_difference = 2 ** ((bit_size // 2) - 100)
+    # B.3.3 Step 5.4 wants the two primes to differ in their first 100 bits
+    # So will will (inside the loop) be testing
+    #  p >> diff_shift == q >> diff_shift:
+    diff_shift = (bit_size // 2) - 100
     while True:
         p = get_prime(bit_size // 2, k=k, e=e)
         q = get_prime(bit_size // 2, k=k, e=e)
 
-        if bit_size >= 2048:  # We don't run this check for tiny moduli
-            if abs(p - q) < min_difference:
+        if bit_size >= 1024:  # We don't run this check for tiny moduli
+            if p >> diff_shift == q >> diff_shift:
                 continue
         key = PrivateKey(p, q, e)
         if key._d.bit_length() < bit_size // 2:
@@ -596,17 +605,24 @@ def key_gen(
     return (key.pub_key, key)
 
 
-def fips186_prime_gen(n_len: int, e: int, k: int = 4) -> tuple[int, int]:
+def fips186_prime_gen(
+    n_len: int, e: int = 65537, k: int = 4
+) -> tuple[int, int]:
     """Prime generation from Appendix B of FIPS 186
+
+    .. warning::
+
+        This is broken and often returns primes that are too small.
 
     :param n_length: Desired length of modulus in bits
     :param e: Public exponent.
     :param k: Trials for primality testing.
     """
 
-    _SQRT2 = 1.4142135623730951
+    if e.bit_length() <= 16 or e.bit_length() >= 256:
+        raise ValueError("e is out of range")
+
     prime_size = n_len // 2
-    log_min_prime = 0.5 * (prime_size - 1)
     log_min_diff = prime_size - 100
 
     i = 0
@@ -614,13 +630,13 @@ def fips186_prime_gen(n_len: int, e: int, k: int = 4) -> tuple[int, int]:
         p = secrets.randbits(prime_size)
         if p % 2 == 0:
             p += 1
-        if math.log2(p) < log_min_prime:
+        if p >> (prime_size - 2) != 0x03:  # Step 4.4
             continue
-        if gcd(p - 1, e) == 1:
+        if gcd(p - 1, e) == 1:  # Step 4.5
             if probably_prime(p, k):
                 break
         i += 1
-        if i >= 5 * prime_size:
+        if i >= 5 * prime_size:  # Step 4.7
             raise Exception(f"Failure generating p: i = {i}")
 
     # q is much the same, but we also check that it isn't too close to p
@@ -629,15 +645,15 @@ def fips186_prime_gen(n_len: int, e: int, k: int = 4) -> tuple[int, int]:
         q = secrets.randbits(prime_size)
         if q % 2 == 0:
             q += 1
-        if math.log2(abs(p - q)) <= log_min_diff:
+        if (p >> log_min_diff) == (q >> log_min_diff):  # Step 5.4
             continue
-        if math.log2(q) < log_min_prime:
+        if q >> (prime_size - 2) != 0x03:  # Step 5.5
             continue
-        if gcd(q - 1, e) == 1:
+        if gcd(q - 1, e) == 1:  # Step 5.6
             if probably_prime(q, k):
                 return p, q
         i += 1
-        if i >= 5 * prime_size:
+        if i >= 5 * prime_size:  # Step 5.8
             raise Exception(f"Failure generating q: i = {i}")
 
 

@@ -6,7 +6,7 @@ from typing import Optional
 
 
 from toy_crypto import rsa
-from toy_crypto.nt import lcm, modinv
+from toy_crypto.nt import lcm, modinv, gcd
 from toy_crypto.utils import Rsa129
 
 
@@ -433,6 +433,28 @@ class TestKeyGen:
             assert d.bit_length() > size / 2
 
             assert N.bit_length() == size
+
+    def test_fips186_b33(self) -> None:
+        # Each trial can take several seconds, particularly at larger sizes
+        trials = 5
+
+        sizes = [512, 1024, 2048]
+        e = 65537
+
+        for size in sizes:
+            prime_size = size // 2
+
+            for _trial in range(trials):
+                p, q = rsa.fips186_prime_gen(size, e=e)
+
+                assert gcd(p - 1, e) == 1
+                assert gcd(p - 1, e) == 1
+
+                assert p.bit_length() == prime_size
+                assert q.bit_length() == prime_size
+
+                n = p * q
+                assert n.bit_length() == size
 
 
 if __name__ == "__main__":

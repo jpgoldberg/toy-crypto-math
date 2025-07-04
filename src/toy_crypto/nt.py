@@ -353,14 +353,15 @@ def probably_prime(n: int, k: int = 4) -> bool:
     return True
 
 
-def get_prime(bit_size: int, k: int = 4) -> int:
+def get_prime(bit_size: int, k: int = 4, e: int | None = None) -> int:
     """Return a randomly chosen prime of :data:`bit_size` bits.
 
     :param bit_size: Size in bits of the prime to be generated
     :param k: Number of witnesses to primality we require.
+    :param e: Number which gcd(prime -1, e) must be 1
 
-    k of 40 seems really high to me, but I see that the recommendation is from
-    Thomas Pornin, so I am going to use that.
+    The produces primes for which the leading two bits are 1.
+    So it is not a uniform distribution of primes in the range
     """
 
     n: int
@@ -370,9 +371,14 @@ def get_prime(bit_size: int, k: int = 4) -> int:
         # We want our constructed number to have a leading bit of 1
         # And we want it final bit to be 1 (odd)
         # So we pick random number two bits shorter than our target
-        n = secrets.randbits(bit_size - 2)
+        n = secrets.randbits(bit_size - 3)
         n = n * 2 + 1  # shift left and make LSB 1
         n += 2 ** (bit_size - 1)  # Add a MSB 1 bit
+        n += 2 ** (bit_size - 2)  # Add a MSB 1 bit
+
+        if e is not None:
+            if gcd(n - 1, e) != 1:
+                continue
 
         if probably_prime(n, k):
             break

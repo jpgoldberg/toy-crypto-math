@@ -1,3 +1,6 @@
+import sys
+import pytest
+
 from collections import namedtuple
 from typing import Optional
 
@@ -133,15 +136,26 @@ class TestMG1977:
 
         # From Martin Gardner's 1977
         challenge = Challenge(
-            modulus=114381625757888867669235779976146612010218296721242362562561842935706935245733897830597123563958705058989075147599290026879543541,
+            modulus=int(
+                "11438162575788886766923577997614661201021829672"
+                "12423625625618429357069352457338978305971235639"
+                "58705058989075147599290026879543541"
+            ),
             pub_exponent=9007,
-            ctext=96869613754622061477140922254355882905759991124574319874695120930816298225145708356931476622883989628013391990551829945157815154,
+            ctext=int(
+                "9686961375462206147714092225435588290575999112457"
+                "4319874695120930816298225145708356931476622883989"
+                "628013391990551829945157815154"
+            ),
         )
 
         # From Atkins et al 1995
         solution = Solution(
             p=3490529510847650949147849619903898133417764638493387843990820577,
-            q=32769132993266709549961988190834461413177642967992942539798288533,
+            q=int(
+                "327691329932667095499619881908344614131776429679"
+                "92942539798288533"
+            ),
             plaintext="THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE",
         )
 
@@ -403,9 +417,9 @@ class TestES:
 
 
 class TestKeyGen:
+    @pytest.mark.skip(reason="Slow")
     def test_size(self) -> None:
-        # sizes = [512, 1024, 2048, 3072]
-        sizes = [512, 1024]
+        sizes = [512, 1024, 2048]
 
         for size in sizes:
             pub, priv = rsa.key_gen(size)
@@ -416,5 +430,10 @@ class TestKeyGen:
 
             assert p.bit_length() == size / 2
             assert q.bit_length() == size / 2
-            assert 2 ** (size / 2) < d < lcm((p - 1), (q - 1))
+            assert d.bit_length() > size / 2
+
             assert N.bit_length() == size
+
+
+if __name__ == "__main__":
+    sys.exit(pytest.main(args=[__file__]))

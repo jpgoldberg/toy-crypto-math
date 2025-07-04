@@ -5,7 +5,7 @@ import math
 import secrets
 from typing import Callable
 from toy_crypto import utils
-from toy_crypto.nt import lcm, modinv, get_prime, gcd
+from toy_crypto.nt import lcm, modinv, get_prime, probably_prime, gcd
 
 _DEFAULT_E = 65537
 
@@ -543,15 +543,16 @@ class PrivateKey:
 
 
 def key_gen(
-    bit_size: int = 2048, e: int = 65537
+    bit_size: int = 2048, e: int = 65537, k: int = 4
 ) -> tuple[PublicKey, PrivateKey]:
     """Generates private key.
 
     :param bit_size: size in bits of desired modulus.
     :param e: public exponent.
+    :param k: Trial parameter for primality testing.
 
-    Partially follows NIST SP 80056B, but do not take
-    following standards as a suggestion that these keys are secure.
+    Partially follows NIST SP 80056B, but mixes
+    FIPS 186 Appendix B.3.3
     """
 
     # Computation of d and CRT values is done by constructor.
@@ -559,6 +560,12 @@ def key_gen(
     # as in standards
 
     # TODO: Security level, bit size matching
+
+    if bit_size < 512:
+        raise ValueError(
+            "any bit size under 2048 is unsafe. "
+            "Anything under 512 can't be handled here"
+        )
 
     # I think we only need it to be even, but lets make our primes
     # fit into a whole number of bytes.
@@ -568,27 +575,70 @@ def key_gen(
     if not (65537 <= e < 2**256):
         raise ValueError("e is out of range")
 
-    prime_size = bit_size // 2
-
-    minimum_d = 2**prime_size
+    min_difference = 2 ** ((bit_size // 2) - 100)
     while True:
-        p = e  # this must change
-        while gcd(p, e) != 1:
-            p = get_prime(prime_size)
-        q = e
-        while gcd(q, e) != 1:
-            q = get_prime(prime_size)
+        p = get_prime(bit_size // 2, k=k, e=e)
+        q = get_prime(bit_size // 2, k=k, e=e)
 
+        if bit_size >= 2048:  # We don't run this check for tiny moduli
+            if abs(p - q) < min_difference:
+                continue
         key = PrivateKey(p, q, e)
-        if key._d < minimum_d:
+        if key._d.bit_length() < bit_size // 2:
             continue
-
-        m = secrets.randbelow(key._N - 2) + 1
-        c = key.pub_key.encrypt(m)
-        if key.decrypt(c) != m:
-            raise Exception("pair-wise consistency failure")
         break
+
+    m = secrets.randbelow(key._N - 2) + 1
+    c = key.pub_key.encrypt(m)
+    if key.decrypt(c) != m:
+        raise Exception("pair-wise consistency failure")
+
     return (key.pub_key, key)
+
+
+def fips186_prime_gen(n_len: int, e: int, k: int = 4) -> tuple[int, int]:
+    """Prime generation from Appendix B of FIPS 186
+
+    :param n_length: Desired length of modulus in bits
+    :param e: Public exponent.
+    :param k: Trials for primality testing.
+    """
+
+    _SQRT2 = 1.4142135623730951
+    prime_size = n_len // 2
+    log_min_prime = 0.5 * (prime_size - 1)
+    log_min_diff = prime_size - 100
+
+    i = 0
+    while True:
+        p = secrets.randbits(prime_size)
+        if p % 2 == 0:
+            p += 1
+        if math.log2(p) < log_min_prime:
+            continue
+        if gcd(p - 1, e) == 1:
+            if probably_prime(p, k):
+                break
+        i += 1
+        if i >= 5 * prime_size:
+            raise Exception(f"Failure generating p: i = {i}")
+
+    # q is much the same, but we also check that it isn't too close to p
+    i = 0
+    while True:
+        q = secrets.randbits(prime_size)
+        if q % 2 == 0:
+            q += 1
+        if math.log2(abs(p - q)) <= log_min_diff:
+            continue
+        if math.log2(q) < log_min_prime:
+            continue
+        if gcd(q - 1, e) == 1:
+            if probably_prime(q, k):
+                return p, q
+        i += 1
+        if i >= 5 * prime_size:
+            raise Exception(f"Failure generating q: i = {i}")
 
 
 def estimate_strength(key_size: int) -> int:

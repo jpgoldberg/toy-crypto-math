@@ -557,7 +557,7 @@ def key_gen(
         small keys. But that is ok, because this is a toy
         implementation in lots of other respects, too.
 
-    Partially follows NIST SP 80056B, §6.
+    Partially follows NIST SP 80056B, §6.3.1.
     """
 
     # Computation of d and CRT values is done by constructor.
@@ -576,6 +576,9 @@ def key_gen(
     # fit into a whole number of bytes.
     if bit_size % 64 != 0:
         raise ValueError("bit_size must be a multiple of 64")
+
+    if e % 2 != 1:
+        raise ValueError("it is odd that e isn't odd")
 
     if not 16 <= e.bit_length() < 256:
         raise ValueError("e is out of range")
@@ -605,10 +608,17 @@ def fips186_prime_gen(
     :param k: Trials for primality testing.
     """
 
-    if e.bit_length() <= 16 or e.bit_length() >= 256:
+    # We don't enforce Step 1 for this toy
+
+    # Step 2
+    if not (16 <= e.bit_length() <= 256):
         raise ValueError("e is out of range")
+    if e % 2 == 0:
+        raise ValueError("e is odd in that it isn't odd")
 
     prime_size = n_len // 2
+
+    # Will be used for checking that p and q differ within leading 100 bits
     log_min_diff = prime_size - 100
 
     i = 0

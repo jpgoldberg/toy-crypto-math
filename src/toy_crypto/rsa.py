@@ -5,7 +5,7 @@ import math
 import secrets
 from typing import Callable
 from toy_crypto import utils
-from toy_crypto.nt import lcm, modinv, get_prime, probably_prime, gcd
+from toy_crypto.nt import lcm, modinv, probably_prime, gcd
 
 _DEFAULT_E = 65537
 
@@ -557,8 +557,7 @@ def key_gen(
         small keys. But that is ok, because this is a toy
         implementation in lots of other respects, too.
 
-    Partially follows NIST SP 80056B, but mixes
-    FIPS 186 Appendix B.3.3
+    Partially follows NIST SP 80056B, §6.
     """
 
     # Computation of d and CRT values is done by constructor.
@@ -581,17 +580,8 @@ def key_gen(
     if not 16 <= e.bit_length() < 256:
         raise ValueError("e is out of range")
 
-    # B.3.3 Step 5.4 wants the two primes to differ in their first 100 bits
-    # So will will (inside the loop) be testing
-    #  p >> diff_shift == q >> diff_shift:
-    diff_shift = (bit_size // 2) - 100
     while True:
-        p = get_prime(bit_size // 2, k=k, e=e)
-        q = get_prime(bit_size // 2, k=k, e=e)
-
-        if bit_size >= 1024:  # We don't run this check for tiny moduli
-            if p >> diff_shift == q >> diff_shift:
-                continue
+        p, q = fips186_prime_gen(bit_size, e=e, k=k)
         key = PrivateKey(p, q, e)
         if key._d.bit_length() < bit_size // 2:
             continue
@@ -609,10 +599,6 @@ def fips186_prime_gen(
     n_len: int, e: int = 65537, k: int = 4
 ) -> tuple[int, int]:
     """Prime generation from Appendix B of FIPS 186
-
-    .. warning::
-
-        This is broken and often returns primes that are too small.
 
     :param n_length: Desired length of modulus in bits
     :param e: Public exponent.

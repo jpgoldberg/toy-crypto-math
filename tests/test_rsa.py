@@ -419,21 +419,25 @@ class TestES:
 class TestKeyGen:
     @pytest.mark.skip(reason="Slow")
     def test_size(self) -> None:
+        # Note that a single trial will take several seconds
+        trials = 4
         sizes = [512, 1024, 2048]
 
-        for size in sizes:
-            pub, priv = rsa.key_gen(size)
-            N = pub.N
-            p = priv._p
-            q = priv._q
-            d = priv._d
+        for _trial in range(trials):
+            for size in sizes:
+                pub, priv = rsa.key_gen(size)
+                N = pub.N
+                p = priv._p
+                q = priv._q
+                d = priv._d
 
-            assert p.bit_length() == size / 2
-            assert q.bit_length() == size / 2
-            assert d.bit_length() > size / 2
+                assert p.bit_length() == size / 2
+                assert q.bit_length() == size / 2
+                assert d.bit_length() > size / 2
 
-            assert N.bit_length() == size
+                assert N.bit_length() == size
 
+    @pytest.mark.skip(reason="Slow")
     def test_fips186_b33(self) -> None:
         # Each trial can take several seconds, particularly at larger sizes
         trials = 5

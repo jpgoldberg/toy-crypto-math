@@ -354,36 +354,71 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
 
 def get_prime(
-    bit_size: int, k: int = 4, leading_1_bits: int = 1, e: int | None = None
+    bit_size: int, k: int = 4, leading_1_bits: int = 1, e: int = 1
 ) -> int:
     """Return a randomly chosen prime of :data:`bit_size` bits.
 
     :param bit_size: Size in bits of the prime to be generated
     :param k: Number of witnesses to primality we require.
     :param leading_1_bits: How many most significant bits should be set.
-    :param e: Number which gcd(prime -1, e) must be 1
+    :param e:
+        Number which gcd(prime -1, e) must be 1. Default of 1 places no
+        restriction on the prime.
 
     The produces primes for which the leading two bits are 1.
     So it is not a uniform distribution of primes in the range
     """
+
+    if leading_1_bits >= bit_size:
+        raise ValueError("leading_1_bits must be less than bit_size")
+
+    # might lower this in future and just choose from list of primes
+    if bit_size > 8:
+        raise ValueError("bit_size must be at least 8")
+
+    if leading_1_bits < 0:
+        raise ValueError("leading_1_bits can't be negative")
+
+    if e < 1 or e.bit_length() >= bit_size:
+        raise ValueError("e is out of range")
+
+    if e % 2 == 0:
+        raise ValueError("e must be odd")
+
+    # Things that will make it harder (or impossible) to find a prime
+    # - Small bit_size
+    # - Large leading_1_bits (relative to bit_size)
+    # - e with small factor(s) (note that default of 1 has no factors)
+    #
+    # So we will put a limit on searching on the number of primality tests
+    # we will run.
+    prime_test_limit = 10 * (bit_size - leading_1_bits)
+    prime_test_count = 0
 
     n: int
     while True:  # Until we find a prime
         # We will construct a random number of the right size and then test it.
 
         # We want our constructed number to have leading_one_bits of leading 1s
-        # And we want it final bit to be 1 (odd)
-        # So we pick random number two bits shorter than our target
-        n = secrets.randbits(bit_size - (1 + leading_1_bits))
-        n = n * 2 + 1  # shift left and make LSB 1
+        n = secrets.randbits(bit_size - leading_1_bits)
 
-        for bit in range(1, leading_1_bits + 1):
-            n += 2 ** (bit_size - bit)  # Add a MSB 1 bit
+        prefix = (2**leading_1_bits) - 1
+        n += prefix << (bit_size - leading_1_bits)
 
-        if e is not None:
-            if gcd(n - 1, e) != 1:
-                continue
+        # Well, this is a special case, innit?
+        if n == 2:
+            return n
+
+        # Make it odd
+        if n % 2 == 0:
+            n += 1
+
+        if gcd(n - 1, e) != 1:
+            continue
 
         if probably_prime(n, k):
             break
+        prime_test_count += 1
+        if prime_test_count > prime_test_limit:
+            raise Exception("failed to find prime meeting all conditions")
     return n

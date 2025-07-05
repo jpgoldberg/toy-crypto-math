@@ -313,5 +313,48 @@ class TestPrimeTesting:
                 )
 
 
+class TestGenPrime:
+    @pytest.mark.skip(reason="Slow")
+    def test_sizes(self) -> None:
+        sizes = [8, 16, 24, 32, 1028]
+        trials = 5
+
+        for size in sizes:
+            for _trial in range(trials):
+                p = nt.get_prime(size, leading_1_bits=0, e=1)
+                assert p.bit_length() <= size
+
+    @pytest.mark.skip(reason="Slow")
+    def test_1prefix(self) -> None:
+        sizes = [8, 16, 24, 32, 1028]
+        trials = 5
+
+        for size in sizes:
+            for _trials in range(trials):
+                p = nt.get_prime(size, leading_1_bits=1, e=1)
+                assert p.bit_length() == size
+
+    @pytest.mark.skip(reason="Slow")
+    def test_2prefix(self) -> None:
+        sizes = [8, 16, 24, 32, 1028]
+        trials = 5
+
+        for size in sizes:
+            for _trials in range(trials):
+                p = nt.get_prime(size, leading_1_bits=2, e=1)
+                assert p.bit_length() == size
+                assert p >> (size - 2) == 0x03
+
+    def test_e(self) -> None:
+        sizes = [16, 24, 512]
+        trials = 5
+        e = 3
+
+        for size in sizes:
+            for _trial in range(trials):
+                p = nt.get_prime(size, leading_1_bits=0, e=e)
+                assert nt.gcd(e, p - 1) == 1
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

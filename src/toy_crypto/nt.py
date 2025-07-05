@@ -373,7 +373,7 @@ def get_prime(
         raise ValueError("leading_1_bits must be less than bit_size")
 
     # might lower this in future and just choose from list of primes
-    if bit_size > 8:
+    if bit_size < 8:
         raise ValueError("bit_size must be at least 8")
 
     if leading_1_bits < 0:

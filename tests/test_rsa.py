@@ -438,7 +438,7 @@ class TestKeyGen:
                 assert N.bit_length() == size
 
     @pytest.mark.skip(reason="Slow")
-    def test_fips186_b33(self) -> None:
+    def test_fips186_4_A1_3(self) -> None:
         # Each trial can take several seconds, particularly at larger sizes
         trials = 5
 

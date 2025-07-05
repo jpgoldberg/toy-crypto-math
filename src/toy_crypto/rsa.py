@@ -601,7 +601,7 @@ def key_gen(
 def fips186_prime_gen(
     n_len: int, e: int = 65537, k: int = 4
 ) -> tuple[int, int]:
-    """Prime generation from Appendix B of FIPS 186
+    """Prime generation from Appendix A of FIPS 186-5
 
     :param n_length: Desired length of modulus in bits
     :param e: Public exponent.
@@ -616,39 +616,52 @@ def fips186_prime_gen(
     if e % 2 == 0:
         raise ValueError("e is odd in that it isn't odd")
 
+    # We don't do step 3
+
     prime_size = n_len // 2
 
     # Will be used for checking that p and q differ within leading 100 bits
     log_min_diff = prime_size - 100
 
-    i = 0
+    i = 0  # Step 4.1
     while True:
-        p = secrets.randbits(prime_size)
+        p = secrets.randbits(prime_size)  # Step 4.1
+
+        # Step 4.3 options (without options)
         if p % 2 == 0:
             p += 1
+
         if p >> (prime_size - 2) != 0x03:  # Step 4.4
             continue
+
         if gcd(p - 1, e) == 1:  # Step 4.5
             if probably_prime(p, k):
                 break
-        i += 1
+
+        i += 1  # Step 4.6
         if i >= 5 * prime_size:  # Step 4.7
             raise Exception(f"Failure generating p: i = {i}")
 
     # q is much the same, but we also check that it isn't too close to p
-    i = 0
+    i = 0  # Step 5.1
     while True:
-        q = secrets.randbits(prime_size)
-        if q % 2 == 0:
+        q = secrets.randbits(prime_size)  # Step 5.2
+
+        if q % 2 == 0:  # Step 5.3 without options
             q += 1
-        if (p >> log_min_diff) == (q >> log_min_diff):  # Step 5.4
+
+        if q >> (prime_size - 2) != 0x03:  # Step 5.4
             continue
-        if q >> (prime_size - 2) != 0x03:  # Step 5.5
+
+        if (p >> log_min_diff) == (q >> log_min_diff):  # Step 5.5
             continue
+
         if gcd(q - 1, e) == 1:  # Step 5.6
             if probably_prime(q, k):
                 return p, q
-        i += 1
+
+        i += 1  # Step 5.7
+
         if i >= 5 * prime_size:  # Step 5.8
             raise Exception(f"Failure generating q: i = {i}")
 

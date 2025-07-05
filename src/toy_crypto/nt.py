@@ -311,8 +311,6 @@ def probably_prime(n: int, k: int = 4) -> bool:
     """Returns True if n is prime or if you had really bad luck.
 
     Runs the Miller-Rabin primality test with k trials.
-    Default value of k=40 is appropriate for use in key generation,
-    but may be way high in other contexts.
 
     If you need a real primality check, use sympy.isprime() instead.
     """

@@ -625,7 +625,8 @@ def fips186_prime_gen(
 
     i = 0  # Step 4.1
     while True:
-        p = secrets.randbits(prime_size)  # Step 4.1
+        p = secrets.randbits(prime_size - 2)  # Step 4.1
+        p += 0x3 << (prime_size - 2)
 
         # Step 4.3 options (without options)
         if p % 2 == 0:
@@ -645,7 +646,8 @@ def fips186_prime_gen(
     # q is much the same, but we also check that it isn't too close to p
     i = 0  # Step 5.1
     while True:
-        q = secrets.randbits(prime_size)  # Step 5.2
+        q = secrets.randbits(prime_size - 2)  # Step 4.1
+        q += 0x3 << (prime_size - 2)
 
         if q % 2 == 0:  # Step 5.3 without options
             q += 1

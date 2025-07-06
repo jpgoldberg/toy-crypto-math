@@ -144,5 +144,9 @@ rst_prolog = f"""
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "nature"
+# html_theme = "nature"
+html_theme = 'pydata_sphinx_theme'
+html_theme_options = {
+  "show_nav_level": 2
+}
 html_static_path = ["_static"]

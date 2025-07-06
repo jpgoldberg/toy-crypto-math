@@ -248,3 +248,27 @@ All of the OAEP bits and piece, including the ones documented above.
 
 .. autoclass:: Oaep
     :members:
+
+Key Generation
+###############
+
+The algorithm used in :func:`fips186_prime_gen` roughly follows
+appendix A.1.3 FIPS 186-B :cite:yearpar:`FIPS-186-5`
+for generation of suitable prime numbers.
+A nice thing about that algorithm is that where possible
+it checks that a randomly generated number meets various
+criteria prior to runing primality tests.
+The algorithm used is :func:`key_gen` roughly follows 
+§6.3.1} of NIST-SP-56b :cite:yearpar:`NIST-SP800-56b`.
+These, however, do not enforce the minimum modulus size requirements
+of the standards. I want to be able to generate some extremely weak
+keys for demonstration purposes.
+
+.. warning::
+
+    Faithfully following (which we don't here) secure algorithms does not
+    mean that an implementation is secure. These are not.
+
+.. autofunction:: fips186_prime_gen
+
+.. autofunction:: key_gen

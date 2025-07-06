@@ -551,6 +551,15 @@ def key_gen(
     :param e: public exponent.
     :param k: Trial parameter for primality testing.
 
+    :raises ValueError:
+        if bit_size is even smaller that the small values allowed by this toy.
+    :raises ValueError:
+        if bit_size doesn't correspond to an even number of bytes.
+        (This is not a requirement of standards, but is of this implementation.)
+    :raises ValueError: if e is out of range or is not odd.
+    :raises Exception: if key that would be generated doesn't seem to work.
+    :raises Exception: if prime generation fails.
+
     .. warning::
 
         This allows for the generation of unconscionably
@@ -584,7 +593,10 @@ def key_gen(
         raise ValueError("e is out of range")
 
     while True:
-        p, q = fips186_prime_gen(bit_size, e=e, k=k)
+        try:
+            p, q = fips186_prime_gen(bit_size, e=e, k=k)
+        except Exception as ex:
+            raise Exception(f"prime creation error: {ex}")
         key = PrivateKey(p, q, e)
         if key._d.bit_length() < bit_size // 2:
             continue
@@ -603,9 +615,12 @@ def fips186_prime_gen(
 ) -> tuple[int, int]:
     """Prime generation from Appendix A of FIPS 186-5
 
-    :param n_length: Desired length of modulus in bits
+    :param n_len: Desired length of modulus in bits
     :param e: Public exponent.
     :param k: Trials for primality testing.
+
+    :raises ValueError: if :data:`e` is out of range or odd.
+    :raises Exception: if it fails to find a suitable prime after trying really hard.
     """
 
     # We don't enforce Step 1 for this toy

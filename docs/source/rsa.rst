@@ -269,6 +269,37 @@ keys for demonstration purposes.
     Faithfully following (which we don't here) secure algorithms does not
     mean that an implementation is secure. These are not.
 
+.. testcode:: keygen
+    :hide:
+
+    from toy_crypto import rsa
+
+So that documentation building doesn't take too long, we
+will use a tiny key size.
+
+.. testcode:: keygen
+
+
+    # Do not use RSA keys smaller than 2048 bits,
+    # Do as I say, not as I do
+    pub_key, priv_key = rsa.key_gen(512)  # Tiny keys make faster tests
+    assert pub_key.N.bit_length() == 512
+
+Now we set up a message to encrypt with the tiny key.
+Any integer we encryption with a 512 bit key must be less than :math:`2^{512}`.
+OAEP consumes more than 40 bytes of the space, so we will just use
+primitive RSA.
+
+.. testcode:: keygen
+
+    message = int.from_bytes(b"Attack @ dusk!")
+    assert message.bit_count() < 512
+
+    ctext = pub_key.encrypt(message)
+    decrypted = priv_key.decrypt(ctext)
+    assert message == decrypted
+
+
 .. autofunction:: fips186_prime_gen
 
 .. autofunction:: key_gen

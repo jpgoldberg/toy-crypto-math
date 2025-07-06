@@ -425,7 +425,9 @@ class TestKeyGen:
 
         for _trial in range(trials):
             for size in sizes:
-                pub, priv = rsa.key_gen(size)
+                # So we can test with small keys
+                min_strength = rsa.estimate_strength(size)
+                pub, priv = rsa.key_gen(strength=min_strength, key_size=size)
                 N = pub.N
                 p = priv._p
                 q = priv._q

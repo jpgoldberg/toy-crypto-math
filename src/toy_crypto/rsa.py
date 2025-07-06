@@ -543,13 +543,16 @@ class PrivateKey:
 
 
 def key_gen(
-    bit_size: int = 2048, e: int = 65537, k: int = 4
+    strength: int = 112,
+    key_size: int = 2048,
+    e: int = 65537,
 ) -> tuple[PublicKey, PrivateKey]:
     """Generates private key.
 
-    :param bit_size: size in bits of desired modulus.
+    :param strength: Intended security parameter (in bits).
+    :param key_size: size in bits of desired modulus.
     :param e: public exponent.
-    :param k: Trial parameter for primality testing.
+
 
     :raises ValueError:
         if bit_size is even smaller that the small values allowed by this toy.
@@ -557,6 +560,7 @@ def key_gen(
         if bit_size doesn't correspond to an even number of bytes.
         (This is not a requirement of standards, but is of this implementation.)
     :raises ValueError: if e is out of range or is not odd.
+    :raises ValueError: if key_size doesn't provide target strength.
     :raises Exception: if key that would be generated doesn't seem to work.
     :raises Exception: if prime generation fails.
 
@@ -569,13 +573,19 @@ def key_gen(
     Partially follows NIST SP 80056B, §6.3.1.
     """
 
+    k = 5
+
     # Computation of d and CRT values is done by constructor.
     # So not all the checks will be performed in the same order
     # as in standards
 
-    # TODO: Security level, bit size matching
+    if strength > estimate_strength(key_size):
+        raise ValueError(
+            f"Requested key size ({key_size}) doesn't meet"
+            "requested security level ({strength})"
+        )
 
-    if bit_size < 512:
+    if key_size < 512:
         raise ValueError(
             "any bit size under 2048 is unsafe. "
             "Anything under 512 can't be handled here"
@@ -583,7 +593,7 @@ def key_gen(
 
     # I think we only need it to be even, but lets make our primes
     # fit into a whole number of bytes.
-    if bit_size % 64 != 0:
+    if key_size % 64 != 0:
         raise ValueError("bit_size must be a multiple of 64")
 
     if e % 2 != 1:
@@ -594,11 +604,11 @@ def key_gen(
 
     while True:
         try:
-            p, q = fips186_prime_gen(bit_size, e=e, k=k)
+            p, q = fips186_prime_gen(key_size, e=e, k=k)
         except Exception as ex:
             raise Exception(f"prime creation error: {ex}")
         key = PrivateKey(p, q, e)
-        if key._d.bit_length() < bit_size // 2:
+        if key._d.bit_length() < key_size // 2:
             continue
         break
 

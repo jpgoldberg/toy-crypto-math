@@ -282,7 +282,7 @@ will use a tiny key size.
 
     # Do not use RSA keys smaller than 2048 bits,
     # Do as I say, not as I do
-    pub_key, priv_key = rsa.key_gen(512)  # Tiny keys make faster tests
+    pub_key, priv_key = rsa.key_gen(strength=56, key_size=512)
     assert pub_key.N.bit_length() == 512
 
 Now we set up a message to encrypt with the tiny key.

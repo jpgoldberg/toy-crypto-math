@@ -289,7 +289,7 @@ class PublicKey:
             if lengths of inputs exceed what modulus and hash sizes
             can accommodate.
 
-        https://datatracker.ietf.org/doc/html/rfc8017#section-7.1.1
+        :rfc:`8017#section-7.1.1`
         """
 
         try:

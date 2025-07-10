@@ -1,4 +1,4 @@
-.. include:: ../common/unsafe.rst
+.. include:: /../common/unsafe.rst
 
 Sieve of Eratosthenes
 ======================
@@ -55,7 +55,7 @@ It turns out that using native Python integers was enormously slower than I coul
 
 .. _all_figure:
 
-.. figure:: images/all_data.png
+.. figure:: /images/all_data.png
     :alt: Graph showing that IntSieve creation time is really slow
 
     Seconds to create sieves
@@ -69,7 +69,7 @@ So here is a graph showing the times just for :class:`BaSieve` and a :class:`Set
 
 .. _sans_int_figure: 
 
-.. figure:: images/sans_int.png
+.. figure:: /images/sans_int.png
     :alt: Graph showing that Sieve is more efficient than SetSeive
 
     Seconds to create sieves (without IntSieve).

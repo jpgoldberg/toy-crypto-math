@@ -1,4 +1,4 @@
-.. include:: ../common/unsafe.rst
+.. include:: /../common/unsafe.rst
 
 Number Theory
 ==============
@@ -10,7 +10,11 @@ This module is imported with::
 
     import toy_crypto.nt
 
-The module contains classes for the factorization of numbers along this some utility functions.
+The module contains pure Python classes and functions for a handful of
+integer math utilities. The SymPy_ ``ntheory`` module is almost certainly
+going to have better versions of everything here.
+
+.. _SymPy: https://www.sympy.org/
 
 The :class:`FactorList` class
 ------------------------------
@@ -36,6 +40,10 @@ Functions
 ----------
 
 .. autofunction:: egcd
+
+.. autofunction:: probably_prime
+
+.. autofunction:: get_prime
 
 .. autoclass:: Modulus
 
@@ -73,5 +81,3 @@ That is, the interface and behavior may differ.
 .. autofunction:: isqrt
 
 .. autofunction:: isprime
-   
-   

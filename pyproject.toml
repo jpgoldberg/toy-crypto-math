@@ -129,6 +129,7 @@ docs = [
     "sphinx-toolbox>=3.10.0",
     "sphinxcontrib-bibtex>=2.6.4",
     "sphinx-reredirects>=1.0.0",
+    "pydata-sphinx-theme>=0.16.1",
 ]
 prof = [
     "matplotlib>=3.10.1",

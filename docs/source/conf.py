@@ -160,10 +160,10 @@ html_theme_options: dict[str, object] = {
     },
     "icon_links": [
         {
-         "name": "PyPI",
-         "url": "https://pypi.org/project/toycrypto/",
-         "icon": "_static/pypi-logo-no-text.svg",
-         "type": "local",
+            "name": "PyPI",
+            "url": "https://pypi.org/project/toycrypto/",
+            "icon": "_static/pypi-logo-no-text.svg",
+            "type": "local",
         },
         {
             # Label for this link

@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Documentation re-organization.
+- Documentation uses [PyData theme](https://pydata-sphinx-theme.readthedocs.io/).
+
 ## 0.4.2 2025-06-30
 
 ### Added

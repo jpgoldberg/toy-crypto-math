@@ -1,4 +1,4 @@
-.. include:: ../common/unsafe.rst
+.. include:: /../common/unsafe.rst
 
 Number Theory
 ==============

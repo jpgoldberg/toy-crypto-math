@@ -33,7 +33,7 @@ with open("../../pyproject.toml", "rb") as f:
 
 pyproject = toml["project"]
 
-project = pyproject["name"]
+project = "ToyCrypto"
 release = version
 author = ",".join([author["name"] for author in pyproject["authors"]])
 copyright = f"2024–2025 {author}"
@@ -98,6 +98,7 @@ extensions: list[str] = [
     "sphinx_toolbox.more_autodoc.genericalias",
     "sphinx_toolbox.more_autodoc.typevars",
     # "sphinx_toolbox.more_autodoc.variables",
+    "sphinx_reredirects",
 ]
 
 autodoc_typehints = "signature"
@@ -112,7 +113,6 @@ autodoc_show_sourcelink = True
 extensions.append("sphinx.ext.intersphinx")
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
 
 extensions.append("sphinxcontrib.bibtex")
@@ -138,11 +138,60 @@ rst_prolog = f"""
 .. _bitarray: https://github.com/ilanschnell/bitarray
 .. _pypkcs1: https://github.com/bdauvergne/python-pkcs1/
 .. _pypi: https://pypi.org/
+.. _sympy: https://www.sympy.org/
 """
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "nature"
+html_theme = "pydata_sphinx_theme"
+html_sidebars = {
+    "**": [
+        "sidebar-nav-bs.html",
+    ],
+    "why/index": [],
+    "index": [],
+    "bibliography": [],
+}
+html_theme_options: dict[str, object] = {
+    "logo": {
+        "text": f"ToyCrypto ({version})",
+    },
+    "icon_links": [
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/toycrypto/",
+            "icon": "_static/pypi-logo-no-text.svg",
+            "type": "local",
+        },
+        {
+            # Label for this link
+            "name": "GitHub",
+            "url": f"https://github.com/{github_username}/{github_repository}",
+            "icon": "fa-brands fa-github",
+            "type": "fontawesome",
+        },
+    ],
+    # page elements
+    "navbar_start": ["navbar-logo"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links.html"],
+    "footer_start": ["copyright", "sphinx-version"],
+    "footer_end": ["theme-version"],
+    "secondary_sidebar_items": ["page-toc", "edit-this-page", "sourcelink"],
+    "header_links_before_dropdown": 4,
+    "primary_sidebar_end": ["indices.html", "sidebar-ethical-ads.html"],
+}
+
+# Reorganization means some redirects.
+# Sadly, I can't to 301s when hosting on github pages
+
+redirects: dict[str, str] = {
+    src: f"modules/{src}.html"
+    for src in [
+        "birthday", "bit_utils", "ec", "games", "nt", "rand",
+        "rsa", "sieve", "types", "utils", "vigenere",
+    ]
+}  # fmt: skip
+
 html_static_path = ["_static"]

@@ -1100,6 +1100,18 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-reredirects"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/72/61/d3039bc2b688c73e81f515afe771b7cc9631dfef63b3e3ac3aab3d73c685/sphinx_reredirects-1.0.0.tar.gz", hash = "sha256:7c9bada9f1330489fcf4c7297a2d6da2a49ca4877d3f42d1388ae1de1019bf5c", size = 711970 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2a/7f/adb886a3db417a2ccea6a13dcb4b88d08f82104aed17e347346f79480a5f/sphinx_reredirects-1.0.0-py3-none-any.whl", hash = "sha256:1d0102710a8f633c6c885f940f440f7195ada675c1739976f0135790747dea06", size = 6173 },
+]
+
+[[package]]
 name = "sphinx-tabs"
 version = "3.4.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1248,6 +1260,7 @@ dev = [
 docs = [
     { name = "enum-tools", extra = ["sphinx"] },
     { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-reredirects" },
     { name = "sphinx-toolbox" },
     { name = "sphinxcontrib-bibtex" },
 ]
@@ -1281,6 +1294,7 @@ dev = [
 docs = [
     { name = "enum-tools", extras = ["sphinx"], specifier = ">=0.13.0" },
     { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-reredirects", specifier = ">=1.0.0" },
     { name = "sphinx-toolbox", specifier = ">=3.10.0" },
     { name = "sphinxcontrib-bibtex", specifier = ">=2.6.4" },
 ]

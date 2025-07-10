@@ -98,6 +98,7 @@ extensions: list[str] = [
     "sphinx_toolbox.more_autodoc.genericalias",
     "sphinx_toolbox.more_autodoc.typevars",
     # "sphinx_toolbox.more_autodoc.variables",
+    "sphinx_reredirects",
 ]
 
 autodoc_typehints = "signature"
@@ -145,7 +146,7 @@ rst_prolog = f"""
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # html_theme = "nature"
-html_theme = 'pydata_sphinx_theme'
+html_theme = "pydata_sphinx_theme"
 html_sidebars = {
     "**": [
         "sidebar-nav-bs.html",
@@ -166,5 +167,16 @@ html_theme_options: dict[str, object] = {
     "secondary_sidebar_items": ["page-toc", "edit-this-page", "sourcelink"],
     "header_links_before_dropdown": 7,
 }
+
+# Reorganization means some redirects.
+# Sadly, I can't to 301s when hosting on github pages
+
+redirects: dict[str, str] = {
+    src: f"modules/{src}.html"
+    for src in [
+        "birthday", "bit_utils", "ec", "games", "nt", "rand",
+        "rsa", "sieve", "types", "utils", "vigenere",
+    ]
+}  # fmt: skip
 
 html_static_path = ["_static"]

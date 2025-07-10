@@ -157,15 +157,16 @@ html_sidebars = {
 }
 html_theme_options: dict[str, object] = {
     "logo": {
-        "text": "ToyCrypto",
+        "text": f"ToyCrypto ({version})",
     },
     # page elements
-    # "navbar_start": ["project", "version"],
+    "navbar_start": ["navbar-logo"],
     "navbar_end": ["theme-switcher", "navbar-icon-links.html"],
     "footer_start": ["copyright", "sphinx-version"],
     "footer_end": ["theme-version"],
     "secondary_sidebar_items": ["page-toc", "edit-this-page", "sourcelink"],
-    "header_links_before_dropdown": 7,
+    "header_links_before_dropdown": 4,
+    "primary_sidebar_end": ["indices.html", "sidebar-ethical-ads.html"],
 }
 
 # Reorganization means some redirects.

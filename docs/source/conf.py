@@ -145,7 +145,6 @@ rst_prolog = f"""
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-# html_theme = "nature"
 html_theme = "pydata_sphinx_theme"
 html_sidebars = {
     "**": [
@@ -161,10 +160,16 @@ html_theme_options: dict[str, object] = {
     },
     "icon_links": [
         {
+         "name": "PyPI",
+         "url": "https://pypi.org/project/toycrypto/",
+         "icon": "_static/pypi-logo-no-text.svg",
+         "type": "local",
+        },
+        {
             # Label for this link
             "name": "GitHub",
-            "url": f"https://github.com/{github_username}/{github_repository}", 
-            "icon": "fa-brands fa-square-github",
+            "url": f"https://github.com/{github_username}/{github_repository}",
+            "icon": "fa-brands fa-github",
             "type": "fontawesome",
         },
     ],

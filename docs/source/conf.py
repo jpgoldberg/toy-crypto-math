@@ -159,6 +159,15 @@ html_theme_options: dict[str, object] = {
     "logo": {
         "text": f"ToyCrypto ({version})",
     },
+    "icon_links": [
+        {
+            # Label for this link
+            "name": "GitHub",
+            "url": f"https://github.com/{github_username}/{github_repository}", 
+            "icon": "fa-brands fa-square-github",
+            "type": "fontawesome",
+        },
+    ],
     # page elements
     "navbar_start": ["navbar-logo"],
     "navbar_end": ["theme-switcher", "navbar-icon-links.html"],

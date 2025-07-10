@@ -33,7 +33,7 @@ with open("../../pyproject.toml", "rb") as f:
 
 pyproject = toml["project"]
 
-project = pyproject["name"]
+project = "ToyCrypto"
 release = version
 author = ",".join([author["name"] for author in pyproject["authors"]])
 copyright = f"2024–2025 {author}"
@@ -112,7 +112,6 @@ autodoc_show_sourcelink = True
 extensions.append("sphinx.ext.intersphinx")
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dns": ("https://dnspython.readthedocs.io/en/stable/", None),
 }
 
 extensions.append("sphinxcontrib.bibtex")
@@ -138,6 +137,7 @@ rst_prolog = f"""
 .. _bitarray: https://github.com/ilanschnell/bitarray
 .. _pypkcs1: https://github.com/bdauvergne/python-pkcs1/
 .. _pypi: https://pypi.org/
+.. _sympy: https://www.sympy.org/
 """
 
 
@@ -146,7 +146,25 @@ rst_prolog = f"""
 
 # html_theme = "nature"
 html_theme = 'pydata_sphinx_theme'
-html_theme_options = {
-  "show_nav_level": 2
+html_sidebars = {
+    "**": [
+        "sidebar-nav-bs.html",
+    ],
+    "why/index": [],
+    "index": [],
+    "bibliography": [],
 }
+html_theme_options: dict[str, object] = {
+    "logo": {
+        "text": "ToyCrypto",
+    },
+    # page elements
+    # "navbar_start": ["project", "version"],
+    "navbar_end": ["theme-switcher", "navbar-icon-links.html"],
+    "footer_start": ["copyright", "sphinx-version"],
+    "footer_end": ["theme-version"],
+    "secondary_sidebar_items": ["page-toc", "edit-this-page", "sourcelink"],
+    "header_links_before_dropdown": 7,
+}
+
 html_static_path = ["_static"]

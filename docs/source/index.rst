@@ -16,7 +16,7 @@ these are **not secure** implementations.
 Note that if you need to do cryptography in Python,
 I recommend pyca_ or PyNaCl_.
 If you want tools to explore the algebraic and number theoretic constructs used in cryptography,
-look at SageMath_ or `SymPy <https://www.sympy.org/en/index.html>`__.
+look at SageMath_ or sympy_.
 
     
 Table of Contents 

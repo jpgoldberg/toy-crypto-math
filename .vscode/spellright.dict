@@ -67,3 +67,5 @@ page-toc
 sourcelink
 sphinx_reredirects
 pypi
+linkcheck
+pynacl

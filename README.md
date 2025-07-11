@@ -10,15 +10,17 @@
 
 ----
 
-This is (almost certainly) not the package you are looking for.
-The primary reason this is [published on PyPi][published] is so I can create reproducible Jupyter Notebooks,
-but among the variety of tools that have been accumulated here might offer something to someone.
+This is a collection of utilities that can be used for illustrating or
+exploring some cryptographic concepts.
+Although it includes implementations of some cryptographic algorithms,
+these are **not secure** implementations.
 
-See the [documentation] for use (or not) and [reasons why this exists](https://jpgoldberg.github.io/toy-crypto-math/#motivation).
+See the [documentation] for use (or not) and [reasons why this exists](https://jpgoldberg.github.io/toy-crypto-math/why/).
 
-Note that if you need to do cryptography in Python, I recommend [pyca](https://cryptography.io/).
+Note that if you need to do cryptography in Python,
+I recommend [pyca](https://cryptography.io/) or [PyNaCl](https://pynacl.readthedocs.io/en/latest/).
 If you want tools to explore the algebraic and number theoretic constructs used in cryptography,
-look at [SageMath](https://doc.sagemath.org/).
+look at [SageMath](https://doc.sagemath.org/) or [SymPy](https://www.sympy.org/en/index.html).
 
 [published]: https://pypi.org/project/toycrypto/ "toycrypto on PyPi"
 [documentation]: https://jpgoldberg.github.io/toy-crypto-math/

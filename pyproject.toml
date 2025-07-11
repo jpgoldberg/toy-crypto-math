@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "toycrypto"
 dynamic = ["version"]
-description = 'Some toy cryptographic modules and related tools that should never, ever be used for anything other than demonstation purposes.'
+description = 'Modules that can be used to illustrate and explore cryptographic concepts. This should never be used for security purposes.'
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"

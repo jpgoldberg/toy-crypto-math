@@ -133,6 +133,7 @@ rst_prolog = f"""
 .. |project| replace:: **{project}**
 .. |root| replace:: :mod:`toy_crypto`
 .. _pyca: https://cryptography.io/en/latest/
+.. _PyNaCl: https://pynacl.readthedocs.io/en/latest/
 .. _SageMath: https://www.sagemath.org
 .. _primefac: https://pypi.org/project/primefac/
 .. _bitarray: https://github.com/ilanschnell/bitarray
@@ -195,3 +196,14 @@ redirects: dict[str, str] = {
 }  # fmt: skip
 
 html_static_path = ["_static"]
+
+# linkcheck configuration
+
+linkcheck_ignore: list[str] = [
+    # Taylor and Francis seem to forbid (403) robots
+    r'^https://www.tandfonline.com/doi/abs/'
+]
+
+# If we hit a rate limit, just give it a pass after a few seconds
+linkcheck_rate_limit_timeout = 5
+linkcheck_report_timeouts_as_broken = False

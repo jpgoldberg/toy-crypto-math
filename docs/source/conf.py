@@ -201,7 +201,7 @@ html_static_path = ["_static"]
 
 linkcheck_ignore: list[str] = [
     # Taylor and Francis seem to forbid (403) robots
-    r'^https://www.tandfonline.com/doi/abs/'
+    r"^https://www.tandfonline.com/doi/abs/"
 ]
 
 # If we hit a rate limit, just give it a pass after a few seconds

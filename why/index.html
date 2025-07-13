@@ -45,7 +45,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The modules" href="../modules/index.html" />
-    <link rel="prev" title="Get Started" href="../intro/quickstart.html" />
+    <link rel="prev" title="Installing &amp; Importing" href="../intro/quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4.3" />
@@ -126,7 +126,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -253,7 +253,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -396,40 +396,93 @@
 <p class="admonition-title">Danger</p>
 <p>Nothing here should be used for any security purposes.</p>
 <ul class="simple">
-<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.</p></li>
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.</p></li>
 <li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
 </ul>
 </div>
 <section id="motiviation">
 <h1>Motiviation<a class="headerlink" href="#motiviation" title="Link to this heading">#</a></h1>
-<p>This package is almost certainly not the package you are looking for.
-Instead, <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://www.sagemath.org">SageMath</a> will better suite your needs.
-I created it to meet a number of my own idiosyncratic  needs.</p>
-<ul>
-<li><p>I don’t have the flexibility of Python version that I may want when using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p>
-<p>For example, I want to have access to something that behaves a bit like SageMath’s <code class="docutils literal notranslate"><span class="pre">factor()</span></code>
-or the ability to play with elliptic curves without having do everything in Sage.
-Perhaps when <a class="reference external" href="https://pypi.org/project/sagemath-standard/">sagemath-standard</a> quickly becomes available for the latest Python versions, I won’t need to have my own (failable and incomplete) pure Python substitutes for some things I need.</p>
-</li>
-<li><p>I sometimes talk about these algorithms for teaching purposes. Having pure Python versions allows me to present these.</p>
-<p>Proper cryptographic packages, like <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>,</p>
+<p>There are two facts to keep in mind when considering why something like this
+toy cryptography project should exist:</p>
+<ol class="arabic simple">
+<li><p>Python is great for illustrating (some) cryptographic concepts.</p></li>
+<li><p>Python is terrible for developing secure implementations.</p></li>
+</ol>
+<section id="python-is-great">
+<h2>Python is great<a class="headerlink" href="#python-is-great" title="Link to this heading">#</a></h2>
+<section id="pseudocode-that-runs">
+<h3>Pseudocode that runs<a class="headerlink" href="#pseudocode-that-runs" title="Link to this heading">#</a></h3>
+<p>Python code can be highly readable, even to people with limited programming experience.
+Indeed, the oldest (and most poorly coded) module here, <a class="reference internal" href="../modules/ec.html#module-toy_crypto.ec" title="toy_crypto.ec: Simple elliptic curves"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ec</span></code></a>, exists because I wanted to
+illustrate the Double and Add approach to <code class="xref py py-meth docutils literal notranslate"><span class="pre">ec.scaler_multiply()</span></code>.
+I thought it would be fun if my pseudo-code would actually run.</p>
+</section>
+<section id="one-int-to-rule-them-all">
+<h3>One <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> to Rule Them All<a class="headerlink" href="#one-int-to-rule-them-all" title="Link to this heading">#</a></h3>
+<p>Nearly everyone I know with a math background complains about two things when they first learn a (typical) programmming language.
+The first is that <code class="docutils literal notranslate"><span class="pre">=</span></code> is an assignment
+instead of just a statement of eqaulity.
+The second is when they discover that something of type <code class="docutils literal notranslate"><span class="pre">int</span></code>
+is strictly limited in size and is not actually an Integer.
+Python solves this latter problem,
+and more importanlty makes it easy to present code that deals with
+larger integers.</p>
+<p>I had previously attempted to use Golang to illustrate algorithms,
+but found that the clutter of
+<a class="reference external" href="https://pkg.go.dev/math/big&#64;go1.24.5#NewInt">big.NewInt()</a> was just distracting.</p>
+</section>
+</section>
+<section id="and-python-is-terrible">
+<h2>And Python is terrible<a class="headerlink" href="#and-python-is-terrible" title="Link to this heading">#</a></h2>
+<p>Python is not well-suited for secure cryptographic implementations,
+which is why things like <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> are mostly written in C or Rust.
+Effiency and defense against many side challenges require direct manipultation
+of bytes and integer types that are closer to the machine.
+Python, by design, does not offer direct access to memory management or low level data types.
+This design helps Python be as readable as it is, but it does have consequence for cyrptographic implementations.
+This also impacts what Python is suitable for illustrating.
+I have (so far) chosen to not implement algorithms that depend heavily
+on bitwise manipulation.</p>
+<p>Additionally, all Python objects,
+including imported non-builtin modules,
+can be read even modified at run time.
+Again there are reasons why Python, an interpreted language,
+is designed this way.
+Modules and code is expected to behave politely, but there is no enforcement
+of that within the language itself.</p>
+<p>Fortunately I am not attempted to provide secure implementations of anything.</p>
+</section>
+<section id="early-motivation">
+<h2>Early motivation<a class="headerlink" href="#early-motivation" title="Link to this heading">#</a></h2>
+<p>My initial goals for what what became different modules varied,</p>
 <ul class="simple">
-<li><p>Correctly obscure the lower level primitives I may wish to exhibit;</p></li>
-<li><p>Correctly prevent use of unsafe parameters such as small keys;</p></li>
-<li><p>Correctly involve a lot of abstractions in the calls to the concealed primitives.</p></li>
+<li><p><a class="reference internal" href="../modules/birthday.html#module-toy_crypto.birthday" title="toy_crypto.birthday: Birthday problem computations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">birthday</span></code></a> originated because I had need for the calculations.</p></li>
+<li><p><a class="reference internal" href="../modules/games.html#module-toy_crypto.sec_games" title="toy_crypto.sec_games: Classes for running security games, including IND-CPA and IND-EAV."><code class="xref py py-mod docutils literal notranslate"><span class="pre">sec_games</span></code></a> exists because a presentation I gave intending to explain <code class="docutils literal notranslate"><span class="pre">IND-CPA</span></code> had failed, and I hope that providing illustrations of the game in action will help for next time.</p></li>
+<li><p><a class="reference internal" href="../modules/ec.html#module-toy_crypto.ec" title="toy_crypto.ec: Simple elliptic curves"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ec</span></code></a> originated becasue I wanted to illustrate the “double and add” algorithm for scaler multiplication of a point.</p></li>
+<li><p><a class="reference internal" href="../modules/rsa/index.html#module-toy_crypto.rsa" title="toy_crypto.rsa: RSA utilities"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rsa</span></code></a> had its origins in me wanted to provide a walk through of Adversary in the Middle Attack with small numbers. It has now been expanded because, among other things, I wanted to understand OAEP better.</p></li>
+<li><p><a class="reference internal" href="../modules/types.html#module-toy_crypto.types" title="toy_crypto.types: Helpful(?) type definitions and guards."><code class="xref py py-mod docutils literal notranslate"><span class="pre">types</span></code></a> and some of the run time type checking exists because when I first started to play with Python I reacted badly to its type system. (I will probably remove much of that run time type checking in future versions.)</p></li>
+<li><p><a class="reference internal" href="../modules/nt.html#module-toy_crypto.nt" title="toy_crypto.nt: Number theorertic utilities and integer factorization tools"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nt</span></code></a> exists because I didn’t know that <a class="reference external" href="https://www.sympy.org/">sympy</a> was pure Python and I did want illustrate some of the algorithms themselves in presentation slides.</p></li>
 </ul>
-<p>Those features, essential for something to be used, are not great for expository discussion.</p>
-</li>
-<li><p>Some of these I created or copied for my own learning purposes.</p></li>
-<li><p>I have a number of “good enough” (for my purposes) implementations of things that I want to reuse.</p>
-<p>For example, Birthday collision calculations are things I occasionally want, and I don’t want to hunt for wherever I have something like that written or rewrite it yet again.
-Likewise, I wouldn’t be surprised if I’m written the extended GCD algorithm more than a dozen times
-(not all in Python), and so would like to have at least the Python version in one place</p>
-</li>
-<li><p>I want to use cryptographic examples in Jupyter Notebooks.</p>
-<p>I also want them to be <em>reproducible</em>, which is why I am making this public.</p>
-</li>
-</ul>
+<p>Other modules have their own peculiar origin stories.</p>
+<p>Eventually I realized that I should gather this into a single
+repository and super module.
+After all,
+I had probably written the Extended Euclidean Algorithm half a dozen times,
+and I was getting tired of not finding my previous implementations.
+And as I wanted to include these in Jupyter notebooks, I published on PyPI
+(because I didn’t know at the time that pip could install packages from a public git respositor.)</p>
+<section id="that-was-then-this-is-now">
+<h3>That was then. This is now<a class="headerlink" href="#that-was-then-this-is-now" title="Link to this heading">#</a></h3>
+<p>I do believe that what is here can be genuinely useful,
+particularly for those teaching or learning about some
+aspects of cyrptography.
+The <a class="reference internal" href="../modules/games.html#module-toy_crypto.sec_games" title="toy_crypto.sec_games: Classes for running security games, including IND-CPA and IND-EAV."><code class="xref py py-mod docutils literal notranslate"><span class="pre">sec_games</span></code></a> module is not
+something I’ve seen elsewhere and provides a mechanism for
+teaching about <em>Modern</em> Cryptography.
+The <a class="reference internal" href="../modules/birthday.html#module-toy_crypto.birthday" title="toy_crypto.birthday: Birthday problem computations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">birthday</span></code></a> modules provides ways to calculate things that
+people working with or adjacent to Cryptography might want to calculate.</p>
+</section>
+</section>
 </section>
 
 
@@ -448,7 +501,7 @@ Likewise, I wouldn’t be surprised if I’m written the extended GCD algorithm 
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Get Started</p>
+        <p class="prev-next-title">Installing &amp; Importing</p>
       </div>
     </a>
     <a class="right-next"
@@ -470,6 +523,27 @@ Likewise, I wouldn’t be surprised if I’m written the extended GCD algorithm 
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-is-great">Python is great</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudocode-that-runs">Pseudocode that runs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-int-to-rule-them-all">One <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> to Rule Them All</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#and-python-is-terrible">And Python is terrible</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#early-motivation">Early motivation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#that-was-then-this-is-now">That was then. This is now</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">

@@ -123,7 +123,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -248,7 +248,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -403,12 +403,9 @@
 <span class="n">_DEFAULT_E</span> <span class="o">=</span> <span class="mi">65537</span>
 
 
-<div class="viewcode-block" id="default_e">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.default_e">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">default_e</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the default public exponent, 65537&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_DEFAULT_E</span></div>
-
+    <span class="k">return</span> <span class="n">_DEFAULT_E</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DecryptionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -416,7 +413,7 @@
 <span class="sd">    For secure implementations it is important to not</span>
 <span class="sd">    report why a decryption failed.</span>
 
-<span class="sd">    See :func:`Oaep.allow_unsafe_messages` to enable</span>
+<span class="sd">    See :meth:`Oaep.allow_unsafe_messages` to enable</span>
 <span class="sd">    reasons why decryption fails.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -429,7 +426,7 @@
 
 
 <div class="viewcode-block" id="Oaep">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Oaep</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tools and data for OAEP.</span>
@@ -443,7 +440,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Anything other than &quot;allow&quot; will keep DecryptionError messages safe.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Oaep.allow_unsafe_messages">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.allow_unsafe_messages">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.allow_unsafe_messages">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">allow_unsafe_messages</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">allow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Allow (or disallow) verbose DecryptionError messages.&quot;&quot;&quot;</span>
@@ -452,7 +449,7 @@
 
 
 <div class="viewcode-block" id="Oaep.are_unsafe_messages_allowed">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">are_unsafe_messages_allowed</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Does what it says on the tin.&quot;&quot;&quot;</span>
@@ -469,7 +466,7 @@
         <span class="k">return</span> <span class="s2">&quot;Not telling, nohow!&quot;</span>
 
 <div class="viewcode-block" id="Oaep.HashInfo">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.HashInfo">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.HashInfo">[docs]</a>
     <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">HashInfo</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Information about hash function</span>
@@ -492,7 +489,7 @@
 
 
 <div class="viewcode-block" id="Oaep.MgfInfo">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.MgfInfo">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.MgfInfo">[docs]</a>
     <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">MgfInfo</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Information about Mask Generation function.</span>
@@ -508,7 +505,7 @@
 
 
 <div class="viewcode-block" id="Oaep.mgf1">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.mgf1">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.mgf1">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">mgf1</span><span class="p">(</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>  <span class="c1"># There do not appear to be any constraints on this</span>
@@ -596,7 +593,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Known Mask Generation Functions.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Oaep.i2osp">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.i2osp">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.i2osp">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">i2osp</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Integer to an octet string of length length.</span>
@@ -611,8 +608,8 @@
 
 <span class="sd">        .. warning::</span>
 
-<span class="sd">            When called from a decryption operation, exceptions should be caught</span>
-<span class="sd">            and handled discretely.</span>
+<span class="sd">            When called from a decryption operation,</span>
+<span class="sd">            exceptions should be caught and handled discretely.</span>
 
 
 <span class="sd">        All operations big-endian.</span>
@@ -628,7 +625,7 @@
 
 
 <div class="viewcode-block" id="Oaep.os2ip">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.Oaep.os2ip">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/oaep.html#toy_crypto.rsa.Oaep.os2ip">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">os2ip</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;octet-stream to unsigned big-endian int.</span>
@@ -650,7 +647,7 @@
 
 
 <div class="viewcode-block" id="PublicKey">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.PublicKey">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/primitive.html#toy_crypto.rsa.PublicKey">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PublicKey</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modulus</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">public_exponent</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Public key from public values.&quot;&quot;&quot;</span>
@@ -668,7 +665,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_e</span>
 
 <div class="viewcode-block" id="PublicKey.encrypt">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.PublicKey.encrypt">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/primitive.html#toy_crypto.rsa.PublicKey.encrypt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">encrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Primitive encryption with neither padding nor nonce.</span>
 
@@ -692,7 +689,7 @@
 
 
 <div class="viewcode-block" id="PublicKey.oaep_encrypt">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.PublicKey.oaep_encrypt">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/primitive.html#toy_crypto.rsa.PublicKey.oaep_encrypt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">oaep_encrypt</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
@@ -778,15 +775,17 @@
 
 
 <div class="viewcode-block" id="PrivateKey">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.PrivateKey">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PrivateKey</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pub_exponent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_DEFAULT_E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;RSA private key from primes p and q.</span>
 
 <span class="sd">        This does not perform any sanity checks on p and q.</span>
-<span class="sd">        It is your responsibility to ensure that p and q are prime</span>
+<span class="sd">        It is your responsibility to ensure that they are suitable primes.</span>
+<span class="sd">        Consider using :func:`fips186_prime_gen` to generate primes.</span>
 
-<span class="sd">        :raises ValueError: if e is not coprime with lcm(p - 1, q - 1).</span>
+<span class="sd">        :raises ValueError:</span>
+<span class="sd">            if :math:`\\gcd(e, \\mathop{\\mathrm{lcm}}(p - 1, q - 1)) \\neq 1`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">p</span>
@@ -844,7 +843,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inverse of e mod λ does not exist&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PrivateKey.decrypt">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.PrivateKey.decrypt">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey.decrypt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Primitive decryption.</span>
 
@@ -873,7 +872,7 @@
 
 
 <div class="viewcode-block" id="PrivateKey.oaep_decrypt">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.PrivateKey.oaep_decrypt">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey.oaep_decrypt">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">oaep_decrypt</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
@@ -981,7 +980,7 @@
 
 
 <div class="viewcode-block" id="key_gen">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.key_gen">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/keygen.html#toy_crypto.rsa.key_gen">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">key_gen</span><span class="p">(</span>
     <span class="n">strength</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">112</span><span class="p">,</span>
     <span class="n">key_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2048</span><span class="p">,</span>
@@ -1013,6 +1012,8 @@
 <span class="sd">    Partially follows NIST SP 80056B, §6.3.1.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="c1"># Not going to mess with FIPS 186-5 C.1</span>
+    <span class="c1"># So just set k = 5 to cover all reasonable cases.</span>
     <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span>
 
     <span class="c1"># Computation of d and CRT values is done by constructor.</span>
@@ -1062,18 +1063,19 @@
 
 
 <div class="viewcode-block" id="fips186_prime_gen">
-<a class="viewcode-back" href="../../modules/rsa.html#toy_crypto.rsa.fips186_prime_gen">[docs]</a>
+<a class="viewcode-back" href="../../modules/rsa/keygen.html#toy_crypto.rsa.fips186_prime_gen">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fips186_prime_gen</span><span class="p">(</span>
     <span class="n">n_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">65537</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prime generation from Appendix A of FIPS 186-5</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prime generation from Appendix A.1.3 of FIPS 186-5v2</span>
 
 <span class="sd">    :param n_len: Desired length of modulus in bits</span>
 <span class="sd">    :param e: Public exponent.</span>
 <span class="sd">    :param k: Trials for primality testing.</span>
 
 <span class="sd">    :raises ValueError: if :data:`e` is out of range or odd.</span>
-<span class="sd">    :raises Exception: if it fails to find a suitable prime after trying really hard.</span>
+<span class="sd">    :raises Exception:</span>
+<span class="sd">        if it fails to find suitable primes after trying really hard.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># We don&#39;t enforce Step 1 for this toy</span>
@@ -1093,7 +1095,7 @@
 
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Step 4.1</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">randbits</span><span class="p">(</span><span class="n">prime_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Step 4.1</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">randbits</span><span class="p">(</span><span class="n">prime_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Step 4.2</span>
         <span class="n">p</span> <span class="o">+=</span> <span class="mh">0x3</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">prime_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="c1"># Step 4.3 options (without options)</span>
@@ -1114,7 +1116,7 @@
     <span class="c1"># q is much the same, but we also check that it isn&#39;t too close to p</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Step 5.1</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">randbits</span><span class="p">(</span><span class="n">prime_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Step 4.1</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">secrets</span><span class="o">.</span><span class="n">randbits</span><span class="p">(</span><span class="n">prime_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Step 5.2</span>
         <span class="n">q</span> <span class="o">+=</span> <span class="mh">0x3</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">prime_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">q</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Step 5.3 without options</span>
@@ -1137,8 +1139,12 @@
 
 
 
+<div class="viewcode-block" id="estimate_strength">
+<a class="viewcode-back" href="../../modules/rsa/keygen.html#toy_crypto.rsa.estimate_strength">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">estimate_strength</span><span class="p">(</span><span class="n">key_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strength estimate for key bit size.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Strength estimate for key size.</span>
+
+<span class="sd">    From NIST SP-800-56B r2 Appendix D.</span>
 
 <span class="sd">    :param key_size: Modulus size in bits</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1177,10 +1183,11 @@
     <span class="c1"># round to nearest multiple of 8</span>
     <span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">estimate</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
     <span class="n">i_estimate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="mi">8</span>
-    <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">i_estimate</span> <span class="o">+=</span> <span class="mi">8</span>
 
-    <span class="k">return</span> <span class="n">i_estimate</span>
+    <span class="k">return</span> <span class="n">i_estimate</span></div>
+
 </pre></div>
 
                 </article>

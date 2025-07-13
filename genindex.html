@@ -123,7 +123,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -248,7 +248,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -419,7 +419,7 @@
         <li><a href="modules/vigenere.html#toy_crypto.vigenere.Alphabet.add">(toy_crypto.vigenere.Alphabet method)</a>
 </li>
       </ul></li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.allow_unsafe_messages">allow_unsafe_messages() (toy_crypto.rsa.Oaep class method)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.allow_unsafe_messages">allow_unsafe_messages() (toy_crypto.rsa.Oaep class method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -431,7 +431,7 @@
         <li><a href="modules/vigenere.html#toy_crypto.vigenere.Cipher.alphabet">(toy_crypto.vigenere.Cipher property)</a>
 </li>
       </ul></li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed">are_unsafe_messages_allowed() (toy_crypto.rsa.Oaep class method)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed">are_unsafe_messages_allowed() (toy_crypto.rsa.Oaep class method)</a>
 </li>
       <li><a href="modules/bit_utils.html#toy_crypto.bit_utils.Bit.as_bytes">as_bytes() (toy_crypto.bit_utils.Bit method)</a>
 </li>
@@ -509,7 +509,7 @@
 </li>
       <li><a href="modules/games.html#toy_crypto.sec_games.Action.DECRYPT">DECRYPT (toy_crypto.sec_games.Action attribute)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PrivateKey.decrypt">decrypt() (toy_crypto.rsa.PrivateKey method)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey.decrypt">decrypt() (toy_crypto.rsa.PrivateKey method)</a>
 
       <ul>
         <li><a href="modules/games.html#toy_crypto.sec_games.Ind.decrypt">(toy_crypto.sec_games.Ind method)</a>
@@ -521,9 +521,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/vigenere.html#toy_crypto.vigenere.Alphabet.DEFAULT">DEFAULT (toy_crypto.vigenere.Alphabet attribute)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.default_e">default_e() (in module toy_crypto.rsa)</a>
-</li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.HashInfo.digest_size">digest_size (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.HashInfo.digest_size">digest_size (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
 </li>
       <li><a href="modules/utils.html#toy_crypto.utils.digit_count">digit_count() (in module toy_crypto.utils)</a>
 </li>
@@ -535,10 +533,10 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PrivateKey.e">e (toy_crypto.rsa.PrivateKey property)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey.e">e (toy_crypto.rsa.PrivateKey property)</a>
 
       <ul>
-        <li><a href="modules/rsa.html#toy_crypto.rsa.PublicKey.e">(toy_crypto.rsa.PublicKey property)</a>
+        <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PublicKey.e">(toy_crypto.rsa.PublicKey property)</a>
 </li>
       </ul></li>
       <li><a href="modules/nt.html#toy_crypto.nt.egcd">egcd() (in module toy_crypto.nt)</a>
@@ -547,9 +545,7 @@
 </li>
       <li><a href="modules/games.html#toy_crypto.sec_games.Action.ENCRYPT">ENCRYPT (toy_crypto.sec_games.Action attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PublicKey.encrypt">encrypt() (toy_crypto.rsa.PublicKey method)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PublicKey.encrypt">encrypt() (toy_crypto.rsa.PublicKey method)</a>
 
       <ul>
         <li><a href="modules/games.html#toy_crypto.sec_games.Ind.encrypt">(toy_crypto.sec_games.Ind method)</a>
@@ -557,9 +553,13 @@
         <li><a href="modules/vigenere.html#toy_crypto.vigenere.Cipher.encrypt">(toy_crypto.vigenere.Cipher method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/games.html#toy_crypto.sec_games.Action.ENCRYPT_ONE">ENCRYPT_ONE (toy_crypto.sec_games.Action attribute)</a>
 </li>
       <li><a href="modules/games.html#toy_crypto.sec_games.Ind.encrypt_one">encrypt_one() (toy_crypto.sec_games.Ind method)</a>
+</li>
+      <li><a href="modules/rsa/keygen.html#toy_crypto.rsa.estimate_strength">estimate_strength() (in module toy_crypto.rsa)</a>
 </li>
       <li><a href="modules/birthday.html#toy_crypto.birthday.EXACT_THRESHOLD">EXACT_THRESHOLD (in module toy_crypto.birthday)</a>
 </li>
@@ -579,7 +579,7 @@
 </li>
       <li><a href="modules/games.html#toy_crypto.sec_games.Ind.finalize">finalize() (toy_crypto.sec_games.Ind method)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.fips186_prime_gen">fips186_prime_gen() (in module toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/keygen.html#toy_crypto.rsa.fips186_prime_gen">fips186_prime_gen() (in module toy_crypto.rsa)</a>
 </li>
       <li><a href="modules/bit_utils.html#toy_crypto.bit_utils.flip_end">flip_end() (in module toy_crypto.bit_utils)</a>
 </li>
@@ -615,7 +615,7 @@
         <li><a href="modules/sieve.html#toy_crypto.sieve.Sievish.from_size">(toy_crypto.sieve.Sievish class method)</a>
 </li>
       </ul></li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.HashInfo.function">function (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.HashInfo.function">function (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -641,9 +641,9 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.HashFunc">HashFunc (in module toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.HashFunc">HashFunc (in module toy_crypto.rsa)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.HashInfo.hashlib_name">hashlib_name (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.HashInfo.hashlib_name">hashlib_name (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -651,7 +651,7 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.i2osp">i2osp() (toy_crypto.rsa.Oaep static method)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.i2osp">i2osp() (toy_crypto.rsa.Oaep static method)</a>
 </li>
       <li><a href="modules/ec.html#toy_crypto.ec.Point.iadd">iadd() (toy_crypto.ec.Point method)</a>
 </li>
@@ -683,7 +683,7 @@
 </li>
       <li><a href="modules/games.html#toy_crypto.sec_games.State.INITIALIZED">INITIALIZED (toy_crypto.sec_games.State attribute)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.HashInfo.input_limit">input_limit (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.HashInfo.input_limit">input_limit (toy_crypto.rsa.Oaep.HashInfo attribute)</a>
 </li>
       <li><a href="modules/sieve.html#toy_crypto.sieve.IntSieve">IntSieve (class in toy_crypto.sieve)</a>
 </li>
@@ -717,7 +717,7 @@
 </li>
       <li><a href="modules/vigenere.html#toy_crypto.vigenere.Cipher.key">key (toy_crypto.vigenere.Cipher property)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.key_gen">key_gen() (in module toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/keygen.html#toy_crypto.rsa.key_gen">key_gen() (in module toy_crypto.rsa)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -725,9 +725,9 @@
 </li>
       <li><a href="modules/games.html#toy_crypto.sec_games.TransitionTable.keys">keys() (toy_crypto.sec_games.TransitionTable method)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.KNOWN_HASHES">KNOWN_HASHES (toy_crypto.rsa.Oaep attribute)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.KNOWN_HASHES">KNOWN_HASHES (toy_crypto.rsa.Oaep attribute)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.KNOWN_MGFS">KNOWN_MGFS (toy_crypto.rsa.Oaep attribute)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.KNOWN_MGFS">KNOWN_MGFS (toy_crypto.rsa.Oaep attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -747,9 +747,9 @@
 </li>
       <li><a href="modules/birthday.html#toy_crypto.birthday.MAX_QBIRTHDAY_P">MAX_QBIRTHDAY_P (in module toy_crypto.birthday)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.mgf1">mgf1() (toy_crypto.rsa.Oaep static method)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.mgf1">mgf1() (toy_crypto.rsa.Oaep static method)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.MgfFunc">MgfFunc (in module toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.MgfFunc">MgfFunc (in module toy_crypto.rsa)</a>
 </li>
       <li><a href="modules/nt.html#toy_crypto.nt.mod_sqrt">mod_sqrt() (in module toy_crypto.nt)</a>
 </li>
@@ -769,7 +769,7 @@
 </li>
         <li><a href="modules/rand.html#module-toy_crypto.rand">toy_crypto.rand</a>
 </li>
-        <li><a href="modules/rsa.html#module-toy_crypto.rsa">toy_crypto.rsa</a>
+        <li><a href="modules/rsa/index.html#module-toy_crypto.rsa">toy_crypto.rsa</a>
 </li>
         <li><a href="modules/games.html#module-toy_crypto.sec_games">toy_crypto.sec_games</a>
 </li>
@@ -800,7 +800,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/nt.html#toy_crypto.nt.FactorList.n">n (toy_crypto.nt.FactorList property)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PublicKey.N">N (toy_crypto.rsa.PublicKey property)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PublicKey.N">N (toy_crypto.rsa.PublicKey property)</a>
 </li>
       <li><a href="modules/sieve.html#toy_crypto.sieve.BaSieve.n">n (toy_crypto.sieve.BaSieve property)</a>
 
@@ -834,23 +834,23 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep">Oaep (class in toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep">Oaep (class in toy_crypto.rsa)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.HashInfo">Oaep.HashInfo (class in toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.HashInfo">Oaep.HashInfo (class in toy_crypto.rsa)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.MgfInfo">Oaep.MgfInfo (class in toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.MgfInfo">Oaep.MgfInfo (class in toy_crypto.rsa)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PrivateKey.oaep_decrypt">oaep_decrypt() (toy_crypto.rsa.PrivateKey method)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey.oaep_decrypt">oaep_decrypt() (toy_crypto.rsa.PrivateKey method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PublicKey.oaep_encrypt">oaep_encrypt() (toy_crypto.rsa.PublicKey method)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PublicKey.oaep_encrypt">oaep_encrypt() (toy_crypto.rsa.PublicKey method)</a>
 </li>
       <li><a href="modules/ec.html#toy_crypto.ec.Point.on_curve">on_curve() (toy_crypto.ec.Point method)</a>
 </li>
       <li><a href="modules/ec.html#toy_crypto.ec.Curve.order">order (toy_crypto.ec.Curve property)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.Oaep.os2ip">os2ip() (toy_crypto.rsa.Oaep static method)</a>
+      <li><a href="modules/rsa/oaep.html#toy_crypto.rsa.Oaep.os2ip">os2ip() (toy_crypto.rsa.Oaep static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -886,7 +886,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/vigenere.html#toy_crypto.vigenere.Alphabet.PRINTABLE">PRINTABLE (toy_crypto.vigenere.Alphabet attribute)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PrivateKey">PrivateKey (class in toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey">PrivateKey (class in toy_crypto.rsa)</a>
 </li>
       <li><a href="modules/types.html#toy_crypto.types.Prob">Prob (class in toy_crypto.types)</a>
 </li>
@@ -894,9 +894,9 @@
 </li>
       <li><a href="modules/nt.html#toy_crypto.nt.probably_prime">probably_prime() (in module toy_crypto.nt)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PrivateKey.pub_key">pub_key (toy_crypto.rsa.PrivateKey property)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PrivateKey.pub_key">pub_key (toy_crypto.rsa.PrivateKey property)</a>
 </li>
-      <li><a href="modules/rsa.html#toy_crypto.rsa.PublicKey">PublicKey (class in toy_crypto.rsa)</a>
+      <li><a href="modules/rsa/primitive.html#toy_crypto.rsa.PublicKey">PublicKey (class in toy_crypto.rsa)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -924,21 +924,21 @@
     RFC
 
       <ul>
-        <li><a href="modules/rsa.html#index-9">RFC 5869</a>
+        <li><a href="modules/rsa/oaep.html#index-7">RFC 5869</a>
 </li>
-        <li><a href="modules/rsa.html#index-13">RFC 8017</a>, <a href="modules/rsa.html#index-18">[1]</a>, <a href="modules/rsa.html#index-2">[2]</a>, <a href="modules/rsa.html#index-21">[3]</a>
+        <li><a href="modules/rsa/oaep.html#index-0">RFC 8017</a>, <a href="modules/rsa/oaep.html#index-11">[1]</a>, <a href="modules/rsa/oaep.html#index-18">[2]</a>, <a href="modules/rsa/oaep.html#index-21">[3]</a>
 </li>
-        <li><a href="modules/rsa.html#index-4">RFC 8017 Appendix B.2</a>
+        <li><a href="modules/rsa/oaep.html#index-2">RFC 8017 Appendix B.2</a>
 </li>
-        <li><a href="modules/rsa.html#index-12">RFC 8017 Appendix B.2.1</a>, <a href="modules/rsa.html#index-20">[1]</a>
+        <li><a href="modules/rsa/oaep.html#index-10">RFC 8017 Appendix B.2.1</a>, <a href="modules/rsa/oaep.html#index-20">[1]</a>
 </li>
-        <li><a href="modules/rsa.html#index-19">RFC 8017 Section 4.1</a>, <a href="modules/rsa.html#index-6">[1]</a>
+        <li><a href="modules/rsa/oaep.html#index-19">RFC 8017 Section 4.1</a>, <a href="modules/rsa/oaep.html#index-4">[1]</a>
 </li>
-        <li><a href="modules/rsa.html#index-22">RFC 8017 Section 4.2</a>, <a href="modules/rsa.html#index-8">[1]</a>
+        <li><a href="modules/rsa/oaep.html#index-22">RFC 8017 Section 4.2</a>, <a href="modules/rsa/oaep.html#index-6">[1]</a>
 </li>
-        <li><a href="modules/rsa.html#index-3">RFC 8017 Section 7.1</a>
+        <li><a href="modules/rsa/oaep.html#index-1">RFC 8017 Section 7.1</a>
 </li>
-        <li><a href="modules/rsa.html#index-1">RFC 8017 Section 7.1.1</a>
+        <li><a href="modules/rsa/oaep.html#index-13">RFC 8017 Section 7.1.1</a>, <a href="modules/rsa/primitive.html#index-1">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1024,7 +1024,7 @@
     toy_crypto.rsa
 
       <ul>
-        <li><a href="modules/rsa.html#module-toy_crypto.rsa">module</a>
+        <li><a href="modules/rsa/index.html#module-toy_crypto.rsa">module</a>
 </li>
       </ul></li>
       <li>

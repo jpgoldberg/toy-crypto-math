@@ -44,7 +44,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Get Started" href="intro/quickstart.html" />
+    <link rel="next" title="Installing &amp; Importing" href="intro/quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="0.4.3" />
@@ -125,7 +125,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -254,7 +254,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -373,30 +373,42 @@
 <p class="admonition-title">Danger</p>
 <p>Nothing here should be used for any security purposes.</p>
 <ul class="simple">
-<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.</p></li>
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.</p></li>
 <li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
 </ul>
 </div>
 <section id="toy-cryptographic-functions-and-utilities">
 <h1>Toy cryptographic functions and utilities<a class="headerlink" href="#toy-cryptographic-functions-and-utilities" title="Link to this heading">#</a></h1>
-<p>Some toy (unsafe for actual use) cryptography related utilites.</p>
+<p>This is a collection of utilities that can be used for illustrating or
+exploring some cryptographic concepts.
+Although it includes implementations of some cryptographic algorithms,
+these are <strong>not secure</strong> implementations.</p>
+<p>Note that if you need to do cryptography in Python,
+I recommend <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.
+If you want tools to explore the algebraic and number theoretic constructs used in cryptography,
+look at <a class="reference external" href="https://www.sagemath.org">SageMath</a> or <a class="reference external" href="https://www.sympy.org/">sympy</a>.</p>
 <section id="table-of-contents">
 <h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="intro/quickstart.html">Get Started</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="intro/quickstart.html">Installing &amp; Importing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="intro/quickstart.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intro/quickstart.html#dependencies">Dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intro/quickstart.html#import-names">Import names</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="why/index.html">Motiviation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="why/index.html">Motiviation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="why/index.html#python-is-great">Python is great</a></li>
+<li class="toctree-l2"><a class="reference internal" href="why/index.html#and-python-is-terrible">And Python is terrible</a></li>
+<li class="toctree-l2"><a class="reference internal" href="why/index.html#early-motivation">Early motivation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">The modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/nt.html">Number Theory</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/sieve.html">Sieve of Eratosthenes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/sieve.html#the-concrete-classes">The concrete classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/birthday.html">Birthday Paradox Computations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/rsa.html">RSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/rsa/index.html">RSA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/ec.html">Elliptic curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/games.html">Security games</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/vigenere.html">Vigenère cipher</a></li>
@@ -427,7 +439,7 @@
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Get Started</p>
+        <p class="prev-next-title">Installing &amp; Importing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -1,37 +1,99 @@
 .. include:: /../common/unsafe.rst
 
+.. currentmodule:: toy_crypto
+
+*************
 Motiviation
-===========
+*************
 
-This package is almost certainly not the package you are looking for.
-Instead, pyca_ or SageMath_ will better suite your needs.
-I created it to meet a number of my own idiosyncratic  needs.
+There are two facts to keep in mind when considering why something like this
+toy cryptography project should exist:
 
-- I don't have the flexibility of Python version that I may want when using SageMath_.
+1. Python is great for illustrating (some) cryptographic concepts.
+2. Python is terrible for developing secure implementations.
 
-  For example, I want to have access to something that behaves a bit like SageMath's ``factor()``
-  or the ability to play with elliptic curves without having do everything in Sage.
-  Perhaps when `sagemath-standard <https://pypi.org/project/sagemath-standard/>`_ quickly becomes available for the latest Python versions, I won't need to have my own (failable and incomplete) pure Python substitutes for some things I need.
 
-- I sometimes talk about these algorithms for teaching purposes. Having pure Python versions allows me to present these.
+Python is great
+===============
 
-  Proper cryptographic packages, like pyca_,
+Pseudocode that runs
+---------------------
 
-  - Correctly obscure the lower level primitives I may wish to exhibit;
-  - Correctly prevent use of unsafe parameters such as small keys;
-  - Correctly involve a lot of abstractions in the calls to the concealed primitives.
+Python code can be highly readable, even to people with limited programming experience.
+Indeed, the oldest (and most poorly coded) module here, :mod:`.ec`, exists because I wanted to
+illustrate the Double and Add approach to :meth:`.ec.scaler_multiply`.
+I thought it would be fun if my pseudo-code would actually run.
 
-  Those features, essential for something to be used, are not great for expository discussion.
+One :py:class:`int` to Rule Them All
+-------------------------------------
 
-- Some of these I created or copied for my own learning purposes.
+Nearly everyone I know with a math background complains about two things when they first learn a (typical) programmming language.
+The first is that ``=`` is an assignment
+instead of just a statement of eqaulity.
+The second is when they discover that something of type ``int``
+is strictly limited in size and is not actually an Integer.
+Python solves this latter problem,
+and more importanlty makes it easy to present code that deals with
+larger integers.
 
-- I have a number of "good enough" (for my purposes) implementations of things that I want to reuse.
+I had previously attempted to use Golang to illustrate algorithms,
+but found that the clutter of
+`big.NewInt() <https://pkg.go.dev/math/big@go1.24.5#NewInt>`__ was just distracting.
 
-  For example, Birthday collision calculations are things I occasionally want, and I don't want to hunt for wherever I have something like that written or rewrite it yet again.
-  Likewise, I wouldn't be surprised if I'm written the extended GCD algorithm more than a dozen times
-  (not all in Python), and so would like to have at least the Python version in one place
+And Python is terrible
+======================
 
-- I want to use cryptographic examples in Jupyter Notebooks.
+Python is not well-suited for secure cryptographic implementations,
+which is why things like pyca_ are mostly written in C or Rust.
+Effiency and defense against many side challenges require direct manipultation
+of bytes and integer types that are closer to the machine.
+Python, by design, does not offer direct access to memory management or low level data types.
+This design helps Python be as readable as it is, but it does have consequence for cyrptographic implementations.
+This also impacts what Python is suitable for illustrating.
+I have (so far) chosen to not implement algorithms that depend heavily
+on bitwise manipulation.
 
-  I also want them to be *reproducible*, which is why I am making this public.
+Additionally, all Python objects,
+including imported non-builtin modules,
+can be read even modified at run time.
+Again there are reasons why Python, an interpreted language,
+is designed this way.
+Modules and code is expected to behave politely, but there is no enforcement
+of that within the language itself.
+
+Fortunately I am not attempted to provide secure implementations of anything.
+
+Early motivation
+================
+
+My initial goals for what what became different modules varied,
+
+- :mod:`.birthday` originated because I had need for the calculations.
+- :mod:`.sec_games` exists because a presentation I gave intending to explain ``IND-CPA`` had failed, and I hope that providing illustrations of the game in action will help for next time.
+- :mod:`.ec` originated becasue I wanted to illustrate the “double and add” algorithm for scaler multiplication of a point.
+- :mod:`.rsa` had its origins in me wanted to provide a walk through of Adversary in the Middle Attack with small numbers. It has now been expanded because, among other things, I wanted to understand OAEP better.
+- :mod:`.types` and some of the run time type checking exists because when I first started to play with Python I reacted badly to its type system. (I will probably remove much of that run time type checking in future versions.)
+- :mod:`.nt` exists because I didn't know that sympy_ was pure Python and I did want illustrate some of the algorithms themselves in presentation slides.
+
+Other modules have their own peculiar origin stories.
+
+Eventually I realized that I should gather this into a single
+repository and super module.
+After all,
+I had probably written the Extended Euclidean Algorithm half a dozen times,
+and I was getting tired of not finding my previous implementations.
+And as I wanted to include these in Jupyter notebooks, I published on PyPI
+(because I didn't know at the time that pip could install packages from a public git respositor.)
+
+That was then. This is now
+---------------------------
+
+I do believe that what is here can be genuinely useful,
+particularly for those teaching or learning about some
+aspects of cyrptography.
+The :mod:`.sec_games` module is not
+something I've seen elsewhere and provides a mechanism for
+teaching about *Modern* Cryptography.
+The :mod:`.birthday` modules provides ways to calculate things that
+people working with or adjacent to Cryptography might want to calculate.
 

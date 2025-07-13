@@ -10,7 +10,7 @@ There are a number distinct modules for playing with different Cryptographic con
     nt
     sieve
     birthday
-    rsa
+    rsa/index
     ec
     games
     vigenere

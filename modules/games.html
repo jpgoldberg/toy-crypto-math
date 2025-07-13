@@ -126,7 +126,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -253,7 +253,7 @@
     
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../intro/quickstart.html">
-    Get Started
+    Installing & Importing
   </a>
 </li>
 
@@ -338,7 +338,12 @@
 <li class="toctree-l1"><a class="reference internal" href="sieve.html">Sieve of Eratosthenes</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="birthday.html">Birthday Paradox Computations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rsa.html">RSA</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="rsa/index.html">RSA</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="rsa/primitive.html">Primitive RSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rsa/keygen.html">RSA Key Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rsa/oaep.html">OAEP</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="ec.html">Elliptic curves</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Security games</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vigenere.html">Vigenère cipher</a></li>
@@ -426,7 +431,7 @@
 <p class="admonition-title">Danger</p>
 <p>Nothing here should be used for any security purposes.</p>
 <ul class="simple">
-<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.</p></li>
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.</p></li>
 <li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
 </ul>
 </div>

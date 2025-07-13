@@ -1,0 +1,710 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>RSA Key Generation &#8212; ToyCrypto 0.4.3 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5bfaad31"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'modules/rsa/keygen';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="OAEP" href="oaep.html" />
+    <link rel="prev" title="Primitive RSA" href="primitive.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4.3" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ToyCrypto (0.4.3)</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../intro/quickstart.html">
+    Installing & Importing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../why/index.html">
+    Motiviation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    The modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../bibliography.html">
+    Bibliography
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/toycrypto/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/pypi-logo-no-text.svg" class="icon-link-image" alt="PyPI"/></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jpgoldberg/toy-crypto-math" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../intro/quickstart.html">
+    Installing & Importing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../why/index.html">
+    Motiviation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    The modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../bibliography.html">
+    Bibliography
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/toycrypto/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/pypi-logo-no-text.svg" class="icon-link-image" alt="PyPI"/></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jpgoldberg/toy-crypto-math" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Main modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../nt.html">Number Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sieve.html">Sieve of Eratosthenes</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../birthday.html">Birthday Paradox Computations</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">RSA</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="primitive.html">Primitive RSA</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">RSA Key Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="oaep.html">OAEP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../ec.html">Elliptic curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../games.html">Security games</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vigenere.html">Vigenère cipher</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../rand.html">Random Numbers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../types.html">Types</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item"><nav class="sidebar-indices-items" aria-labelledby="pst-indices-navigation-heading-2">
+  <p id="pst-indices-navigation-heading-2" class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
+  <ul class="indices-link">
+        <li class="toctree-l1">
+          <a class="reference internal"
+             href="../../genindex.html"
+             accesskey="I">General Index</a>
+        </li>
+        <li class="toctree-l1">
+          <a class="reference internal" href="../../py-modindex.html">Python Module Index</a>
+        </li>
+  </ul>
+</nav></div>
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">The modules</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">RSA</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">RSA Key Generation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Nothing here should be used for any security purposes.</p>
+<ul class="simple">
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.</p></li>
+<li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
+</ul>
+</div>
+<section id="rsa-key-generation">
+<h1>RSA Key Generation<a class="headerlink" href="#rsa-key-generation" title="Link to this heading">#</a></h1>
+<p>This page describes <em>some</em> of things that are part of
+the <a class="reference internal" href="index.html#module-toy_crypto.rsa" title="toy_crypto.rsa: RSA utilities"><code class="xref py py-mod docutils literal notranslate"><span class="pre">toy_crypto.rsa</span></code></a> module.
+They are imported with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">rsa</span>
+</pre></div>
+</div>
+<p>Not every pair of primes, <span class="math notranslate nohighlight">\((p, q)\)</span>,
+is suitable for creating a good <a class="reference internal" href="primitive.html#toy_crypto.rsa.PrivateKey" title="toy_crypto.rsa.PrivateKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrivateKey</span></code></a>.
+With public modulus <span class="math notranslate nohighlight">\(N = pq\)</span>, and public exponent, <em>e</em>,
+some of the conditions that should hold of them are</p>
+<ul class="simple">
+<li><p>They should be large enough so that <em>N</em> is the desired bit size;</p></li>
+<li><p>They should each be not much less then <span class="math notranslate nohighlight">\(\sqrt{N}\)</span>;</p></li>
+<li><p>But they shouldn’t be too close to each other, either;</p></li>
+<li><p>The totient of <em>N</em> must be relatively prime to the public exponent, <em>e</em>.
+That is <span class="math notranslate nohighlight">\(\gcd(p - 1, e)\)</span> and <span class="math notranslate nohighlight">\(\gcd(q - 1, e)\)</span> must each be 1.</p></li>
+</ul>
+<p>The prime generation function defined in
+appendix A.1.3 FIPS 186-B <span id="id1">[<a class="reference internal" href="../../bibliography.html#id7" title="NIST. FIPS 186-5. Technical Report 186, National Institute of Standards and Technology, 2023. URL: https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf (visited on 2025-07-05), doi:10.6028/NIST.FIPS.186-5.">NIST, 2023</a>]</span>
+guarentees those conditions are met.
+It is clever in that it checks those conditions on candidate primes
+before testing whether those candidates are prime,
+which is a much more computationally expensive test.</p>
+<p>The algorithm defined in
+§6.3.1} of NIST-SP-56b <span id="id2">[<a class="reference internal" href="../../bibliography.html#id6" title="NIST. SP 800-56B. Technical Report, National Institute of Standards and Technology, 2019. URL: https://csrc.nist.gov/pubs/sp/800/56/b/r2/final (visited on 2025-07-04), doi:10.6028/NIST.SP.800-56Br2.">NIST, 2019</a>]</span>
+imposes the additional condition that the secret
+decryption exponent, <em>d</em>, of a private key is not less than
+<span class="math notranslate nohighlight">\(\sqrt{N}\)</span>.</p>
+<p>The functions in this module,
+<a class="reference internal" href="#toy_crypto.rsa.fips186_prime_gen" title="toy_crypto.rsa.fips186_prime_gen"><code class="xref py py-func docutils literal notranslate"><span class="pre">fips186_prime_gen()</span></code></a> and <a class="reference internal" href="#toy_crypto.rsa.key_gen" title="toy_crypto.rsa.key_gen"><code class="xref py py-func docutils literal notranslate"><span class="pre">key_gen()</span></code></a>,
+partially follow those specifications,
+but they do not enforce the minimum strength
+specifications (2048-bit moduli).
+I want to be able to generate some extremely weak
+keys for demonstration purposes.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Faithfully following (which we don’t here) secure algorithms does not
+mean that an implementation is secure. These are not.</p>
+</div>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>So that documentation building doesn’t take too long, we
+will use a tiny key size.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Do not use RSA keys smaller than 2048 bits,</span>
+<span class="c1"># Do as I say, not as I do</span>
+<span class="n">pub_key</span><span class="p">,</span> <span class="n">priv_key</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">key_gen</span><span class="p">(</span><span class="n">strength</span><span class="o">=</span><span class="mi">56</span><span class="p">,</span> <span class="n">key_size</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pub_key</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">==</span> <span class="mi">512</span>
+</pre></div>
+</div>
+<p>Now we set up a message to encrypt with the tiny key.
+Any integer we encryption with a 512 bit key must be less than <span class="math notranslate nohighlight">\(2^{512}\)</span>.
+OAEP padding (with SHA1) would take up 322 bits, so we will just use
+primitive RSA.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">message</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;Attack @ dusk!&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">message</span><span class="o">.</span><span class="n">bit_count</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">512</span>
+
+<span class="n">ctext</span> <span class="o">=</span> <span class="n">pub_key</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="n">decrypted</span> <span class="o">=</span> <span class="n">priv_key</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">ctext</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">message</span> <span class="o">==</span> <span class="n">decrypted</span>
+</pre></div>
+</div>
+</section>
+<section id="the-api">
+<h2>The API<a class="headerlink" href="#the-api" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="toy_crypto.rsa.fips186_prime_gen">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.rsa.</span></span><span class="sig-name descname"><span class="pre">fips186_prime_gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_len</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">65537</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#fips186_prime_gen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.fips186_prime_gen" title="Link to this definition">#</a></dt>
+<dd><p>Prime generation from Appendix A.1.3 of FIPS 186-5v2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_len</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Desired length of modulus in bits</p></li>
+<li><p><strong>e</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>) – Public exponent.</p></li>
+<li><p><strong>k</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">4</span></code>) – Trials for primality testing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">e</span></code> is out of range or odd.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><strong>Exception</strong></a> – if it fails to find suitable primes after trying really hard.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="toy_crypto.rsa.key_gen">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.rsa.</span></span><span class="sig-name descname"><span class="pre">key_gen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strength</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">112</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">65537</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="primitive.html#toy_crypto.rsa.PublicKey" title="toy_crypto.rsa.PublicKey"><span class="pre">PublicKey</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="primitive.html#toy_crypto.rsa.PrivateKey" title="toy_crypto.rsa.PrivateKey"><span class="pre">PrivateKey</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#key_gen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.key_gen" title="Link to this definition">#</a></dt>
+<dd><p>Generates private key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strength</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">112</span></code>) – Intended security parameter (in bits).</p></li>
+<li><p><strong>key_size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">2048</span></code>) – size in bits of desired modulus.</p></li>
+<li><p><strong>e</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>) – public exponent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if bit_size is even smaller that the small values allowed by this toy.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if bit_size doesn’t correspond to an even number of bytes.
+(This is not a requirement of standards, but is of this implementation.)</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if e is out of range or is not odd.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if key_size doesn’t provide target strength.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><strong>Exception</strong></a> – if key that would be generated doesn’t seem to work.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><strong>Exception</strong></a> – if prime generation fails.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="primitive.html#toy_crypto.rsa.PublicKey" title="toy_crypto.rsa.PublicKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicKey</span></code></a>, <a class="reference internal" href="primitive.html#toy_crypto.rsa.PrivateKey" title="toy_crypto.rsa.PrivateKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrivateKey</span></code></a>]</span></p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This allows for the generation of unconscionably
+small keys. But that is ok, because this is a toy
+implementation in lots of other respects, too.</p>
+</div>
+<p>Partially follows NIST SP 80056B, §6.3.1.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="toy_crypto.rsa.estimate_strength">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.rsa.</span></span><span class="sig-name descname"><span class="pre">estimate_strength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#estimate_strength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.estimate_strength" title="Link to this definition">#</a></dt>
+<dd><p>Strength estimate for key size.</p>
+<p>From NIST SP-800-56B r2 Appendix D.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key_size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Modulus size in bits</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="primitive.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Primitive RSA</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="oaep.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">OAEP</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-api">The API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.fips186_prime_gen"><code class="docutils literal notranslate"><span class="pre">fips186_prime_gen()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.key_gen"><code class="docutils literal notranslate"><span class="pre">key_gen()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.estimate_strength"><code class="docutils literal notranslate"><span class="pre">estimate_strength()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modules/rsa/keygen.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024–2025 Jeffrey Goldberg.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1043 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>OAEP &#8212; ToyCrypto 0.4.3 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5bfaad31"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'modules/rsa/oaep';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Elliptic curves" href="../ec.html" />
+    <link rel="prev" title="RSA Key Generation" href="keygen.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.4.3" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ToyCrypto (0.4.3)</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../intro/quickstart.html">
+    Installing & Importing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../why/index.html">
+    Motiviation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    The modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../bibliography.html">
+    Bibliography
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/toycrypto/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/pypi-logo-no-text.svg" class="icon-link-image" alt="PyPI"/></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jpgoldberg/toy-crypto-math" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../intro/quickstart.html">
+    Installing & Importing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../why/index.html">
+    Motiviation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    The modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../bibliography.html">
+    Bibliography
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/toycrypto/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/pypi-logo-no-text.svg" class="icon-link-image" alt="PyPI"/></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jpgoldberg/toy-crypto-math" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Main modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../nt.html">Number Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sieve.html">Sieve of Eratosthenes</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="../birthday.html">Birthday Paradox Computations</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">RSA</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="primitive.html">Primitive RSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html">RSA Key Generation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">OAEP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../ec.html">Elliptic curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../games.html">Security games</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vigenere.html">Vigenère cipher</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../rand.html">Random Numbers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../types.html">Types</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item"><nav class="sidebar-indices-items" aria-labelledby="pst-indices-navigation-heading-2">
+  <p id="pst-indices-navigation-heading-2" class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
+  <ul class="indices-link">
+        <li class="toctree-l1">
+          <a class="reference internal"
+             href="../../genindex.html"
+             accesskey="I">General Index</a>
+        </li>
+        <li class="toctree-l1">
+          <a class="reference internal" href="../../py-modindex.html">Python Module Index</a>
+        </li>
+  </ul>
+</nav></div>
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">The modules</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">RSA</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">OAEP</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Nothing here should be used for any security purposes.</p>
+<ul class="simple">
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.</p></li>
+<li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
+</ul>
+</div>
+<section id="oaep">
+<h1>OAEP<a class="headerlink" href="#oaep" title="Link to this heading">#</a></h1>
+<p>Imported with</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">rsa</span>
+</pre></div>
+</div>
+<p>Primitive RSA is deterministic,
+so it completely fails to provide IND-CPA security.
+It is also vulnerable to chosen ciphertext attacks.
+<a class="reference external" href="https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding">OAEP (Optimized Assymmetric Encryption Padding)</a>
+is designed to address both of those when <em>properly implemented</em>.
+This module does <em>not</em> provide a proper implemenation.</p>
+<p>Much of the code here attempts to follow <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html"><strong>RFC 8017</strong></a>,
+particularly <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-7.1"><strong>section 7.1</strong></a>
+and <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#appendix-B.2"><strong>appendix B.2</strong></a>.
+My intention in doing that was to help me better understand OAEP.
+This is not intended to be interoperable with things out there in the world.
+To whatever extent it is interoperable with the world must not be taken as
+an invitation to use it that way.</p>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>RSA keys used with OAEP need to have moduli large enough to handle a couple of hash digests and a few other bytes, so we will use a 1024-bit key for our examples.</p>
+<p><code class="xref py py-data docutils literal notranslate"><span class="pre">key2048</span></code> is a 2048-bit private key already set up in some undisplayed code.</p>
+<p>Just showing that the key exists and is the right size.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># key2048 = ...</span>
+<span class="n">pub2048</span> <span class="o">=</span> <span class="n">key2048</span><span class="o">.</span><span class="n">pub_key</span>
+<span class="k">assert</span>  <span class="mi">2048</span> <span class="o">-</span> <span class="mi">7</span> <span class="o">&lt;</span> <span class="n">pub2048</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">2048</span>
+</pre></div>
+</div>
+<p>And lets demo an unfortunate (unless you are an attacker) property of primitive
+RSA.
+Our primitive encryption and decryption functions take and yield integers</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">message</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;My hovercraft is full of eels&quot;</span>
+<span class="n">i_message</span> <span class="o">=</span> <span class="n">rsa</span><span class="o">.</span><span class="n">Oaep</span><span class="o">.</span><span class="n">os2ip</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+<span class="n">prim_ctext1</span> <span class="o">=</span> <span class="n">pub2048</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">i_message</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">key2048</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">prim_ctext1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So far so good, but sadly, the encryption of the same
+message always yields the same ciphertext.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># same key and message as above</span>
+<span class="n">prim_ctext2</span> <span class="o">=</span> <span class="n">pub2048</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">i_message</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">prim_ctext2</span> <span class="o">==</span> <span class="n">prim_ctext1</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># same message and keys as above</span>
+<span class="n">oaep_ctext1</span> <span class="o">=</span> <span class="n">pub2048</span><span class="o">.</span><span class="n">oaep_encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="n">decrypted1</span> <span class="o">=</span> <span class="n">key2048</span><span class="o">.</span><span class="n">oaep_decrypt</span><span class="p">(</span><span class="n">oaep_ctext1</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">decrypted1</span> <span class="o">==</span> <span class="n">message</span>
+
+<span class="n">oaep_ctext2</span> <span class="o">=</span> <span class="n">pub2048</span><span class="o">.</span><span class="n">oaep_encrypt</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="n">decrypted2</span> <span class="o">=</span> <span class="n">key2048</span><span class="o">.</span><span class="n">oaep_decrypt</span><span class="p">(</span><span class="n">oaep_ctext2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">decrypted2</span> <span class="o">==</span> <span class="n">message</span>
+
+<span class="c1"># but now we see that the two ciphertexts are different</span>
+<span class="k">assert</span> <span class="n">oaep_ctext1</span> <span class="o">!=</span> <span class="n">oaep_ctext2</span>
+</pre></div>
+</div>
+</section>
+<section id="a-very-limted-choice-of-hashes">
+<h2>A (very limted) choice of hashes<a class="headerlink" href="#a-very-limted-choice-of-hashes" title="Link to this heading">#</a></h2>
+<p>For my purposes, I could have just hardcoded use of
+<a class="reference external" href="https://docs.python.org/3/library/hashlib.html#hashlib.sha256" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">hashlib.sha256()</span></code></a> or a more modern one,
+but most of published test vectors
+for RSA-OAEP use <a class="reference external" href="https://docs.python.org/3/library/hashlib.html#hashlib.sha1" title="(in Python v3.13)"><code class="xref py py-func docutils literal notranslate"><span class="pre">hashlib.sha1()</span></code></a>.</p>
+<p>For reasons I don’t understand, I had difficulty
+getting these type definition within the <a class="reference internal" href="#toy_crypto.rsa.Oaep" title="toy_crypto.rsa.Oaep"><code class="xref py py-class docutils literal notranslate"><span class="pre">Oaep</span></code></a> class,
+so those are given module scope.</p>
+<dl class="py type">
+<dt class="sig sig-object py" id="toy_crypto.rsa.HashFunc">
+<em class="property"><span class="k"><span class="pre">type</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.rsa.</span></span><span class="sig-name descname"><span class="pre">HashFunc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">hashlib._Hash</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#toy_crypto.rsa.HashFunc" title="Link to this definition">#</a></dt>
+<dd><p>Type for hashlib style hash function.</p>
+</dd></dl>
+
+<dl class="py type">
+<dt class="sig sig-object py" id="toy_crypto.rsa.MgfFunc">
+<em class="property"><span class="k"><span class="pre">type</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.rsa.</span></span><span class="sig-name descname"><span class="pre">MgfFunc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#toy_crypto.rsa.MgfFunc" title="Link to this definition">#</a></dt>
+<dd><p>Type for RFC8017 Mask Generation Function.</p>
+</dd></dl>
+
+<p>The (short) lists of supported hash and mask generation functions
+are attributes of the <a class="reference internal" href="#toy_crypto.rsa.Oaep" title="toy_crypto.rsa.Oaep"><code class="xref py py-class docutils literal notranslate"><span class="pre">Oaep</span></code></a> class, as are the classes to describe them.
+Also note that these are more sanely  and readably defined than
+what may appear in the automatically generated documentation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">Oaep.</span></span><span class="sig-name descname"><span class="pre">KNOWN_HASHES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference internal" href="#toy_crypto.rsa.Oaep.HashInfo" title="toy_crypto.rsa.Oaep.HashInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashInfo</span></code></a><span class="pre">]</span></em></dt>
+<dd><p>Hashes known for OAEP. keys will be hashlib names.</p>
+<dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s1">&#39;sha256&#39;</span><span class="p">:</span> <span class="n">HashInfo</span><span class="p">(</span><span class="n">hashlib_name</span><span class="o">=</span><span class="s1">&#39;sha256&#39;</span><span class="p">,</span>
+                     <span class="n">function</span><span class="o">=&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="n">openssl_sha256</span><span class="o">&gt;</span><span class="p">,</span>
+                     <span class="n">digest_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+                     <span class="n">input_limit</span><span class="o">=</span><span class="mi">2305843009213693951</span><span class="p">),</span>
+  <span class="s1">&#39;sha1&#39;</span><span class="p">:</span> <span class="n">HashInfo</span><span class="p">(</span><span class="n">hashlib_name</span><span class="o">=</span><span class="s1">&#39;sha1&#39;</span><span class="p">,</span>
+                   <span class="n">function</span><span class="o">=&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="n">openssl_sha1</span><span class="o">&gt;</span><span class="p">,</span>
+                   <span class="n">digest_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                   <span class="n">input_limit</span><span class="o">=</span><span class="mi">18446744073709551615</span><span class="p">)}</span>
+</pre></div>
+</div>
+</dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">Oaep.</span></span><span class="sig-name descname"><span class="pre">KNOWN_MGFS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference internal" href="#toy_crypto.rsa.Oaep.MgfInfo" title="toy_crypto.rsa.Oaep.MgfInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MgfInfo</span></code></a><span class="pre">]</span></em></dt>
+<dd><p>Known Mask Generation Functions.</p>
+<dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s1">&#39;mgf1SHA256&#39;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;id_mgf1&#39;</span><span class="p">,</span>
+                        <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s1">&#39;sha256&#39;</span><span class="p">,</span>
+                        <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f96b105e700</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+  <span class="s1">&#39;mgf1SHA1&#39;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;id_mgf1&#39;</span><span class="p">,</span>
+                      <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s1">&#39;sha1&#39;</span><span class="p">,</span>
+                      <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f96b105e700</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)}</span>
+</pre></div>
+</div>
+</dd></dd></dl>
+
+<section id="integers-octet-streams-and-masks">
+<h3>Integers, octet-streams, and masks<a class="headerlink" href="#integers-octet-streams-and-masks" title="Link to this heading">#</a></h3>
+<p>Primitive RSA operations on integers, but OAEP is designed for
+encryption and decryption of sequences of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>,
+or octet-streams in the parlence of the standards.
+The standards define two functions, <code class="docutils literal notranslate"><span class="pre">I2OSP</span></code> and <code class="docutils literal notranslate"><span class="pre">OS2IP</span></code> for those
+conversions. I don’t implement them as in the standards, but use Python standard library utililties. So class methods <a class="reference internal" href="#toy_crypto.rsa.Oaep.i2osp" title="toy_crypto.rsa.Oaep.i2osp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Oaep.i2osp()</span></code></a> and
+<a class="reference internal" href="#toy_crypto.rsa.Oaep.os2ip" title="toy_crypto.rsa.Oaep.os2ip"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Oaep.os2ip()</span></code></a> are wrappers for standard library method
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#int.to_bytes" title="(in Python v3.13)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">int.to_bytes()</span></code></a> and class method <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#int.from_bytes" title="(in Python v3.13)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">int.from_bytes()</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Oaep.</span></span><span class="sig-name descname"><span class="pre">i2osp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.i2osp"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Integer to an octet string of length length.</p>
+<p>Implements function from <span class="target" id="index-4"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-4.1"><strong>RFC 8017 §4.1</strong></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – A non-negative integer</p></li>
+<li><p><strong>length</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Length of returned bytes object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code> is negative.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code> cannot fit in <code class="xref py py-data docutils literal notranslate"><span class="pre">length</span></code> bytes</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When called from a decryption operation,
+exceptions should be caught and handled discretely.</p>
+</div>
+<p>All operations big-endian.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Oaep.</span></span><span class="sig-name descname"><span class="pre">os2ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.os2ip"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>octet-stream to unsigned big-endian int.</p>
+<blockquote>
+<div><p>Implements function from <span class="target" id="index-6"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-4.2"><strong>RFC 8017 §4.2</strong></a>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – The octet-stream (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) you want
+to make an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+</dd>
+</dl>
+<p>Returned is a non-negative integer.</p>
+<p>All operations are big-endian.</p>
+</dd></dl>
+
+<figure class="align-center" id="id1">
+<img alt="A dog with a big rear-end" src="../../_images/Big-endian-Chena-320x320.png" />
+<figcaption>
+<p><span class="caption-text">Chena, like all operations in this class, is big-endian;
+although in her case it is her rear end is bigger than her bytey end.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p>The security that OEAP offers comes from the clevernesss of applying a mask
+to the plaintext, while keeping the seed for the mask out of the clear.
+The mask is generated by a mask generation function,
+<code class="docutils literal notranslate"><span class="pre">MGF1</span></code> in the standards.
+It is a lot like <span class="target" id="index-7"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5869.html"><strong>HKDF</strong></a>,
+which probably would have used had it been around when OAEP was first developed.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Oaep.</span></span><span class="sig-name descname"><span class="pre">mgf1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.mgf1"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Mask generation function.</p>
+<p>Generates a unique mask of length <code class="xref py py-data docutils literal notranslate"><span class="pre">length</span></code> as described in
+<span class="target" id="index-10"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#appendix-B.2.1"><strong>appendix B.2.1</strong></a> of <span class="target" id="index-11"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html"><strong>RFC 8017</strong></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – This should come from a CSPRNG</p></li>
+<li><p><strong>length</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Length in bytes of the mask to generate.</p></li>
+<li><p><strong>hash_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name hash function in <a class="reference internal" href="#toy_crypto.rsa.Oaep.KNOWN_HASHES" title="toy_crypto.rsa.Oaep.KNOWN_HASHES"><code class="xref py py-data docutils literal notranslate"><span class="pre">KNOWN_HASHES</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">length</span></code> <span class="math notranslate nohighlight">\(&gt; 2^{32}\)</span> bytes.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">hash_id</span></code> is unknown.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="the-api">
+<h3>The API<a class="headerlink" href="#the-api" title="Link to this heading">#</a></h3>
+<p>OAEP encryption and decryption performed with method on instances of the
+<a class="reference internal" href="primitive.html#toy_crypto.rsa.PublicKey" title="toy_crypto.rsa.PublicKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublicKey</span></code></a> and <a class="reference internal" href="primitive.html#toy_crypto.rsa.PrivateKey" title="toy_crypto.rsa.PrivateKey"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrivateKey</span></code></a> respectively.</p>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">PublicKey.</span></span><span class="sig-name descname"><span class="pre">oaep_encrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">b''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sha256'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mgf_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mgf1SHA256'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#PublicKey.oaep_encrypt"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>RSA OAEP encryption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – The message to encrypt.</p></li>
+<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">b''</span></code>) – Rarely used. Just leave as default.</p></li>
+<li><p><strong>hash_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">'sha256'</span></code>) – Name of the hash function.</p></li>
+<li><p><strong>mgf_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">'mgf1SHA256'</span></code>) – Name of the MGF function (with hash).</p></li>
+<li><p><strong>_seed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Used for testing only. OAEP is not supposed to be deterministic.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if hash or MGF is not recognized.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if lengths of inputs exceed what modulus and hash sizes
+can accommodate.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+<p><span class="target" id="index-13"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-7.1.1"><strong>RFC 8017 Section 7.1.1</strong></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">PrivateKey.</span></span><span class="sig-name descname"><span class="pre">oaep_decrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ciphertext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">b''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'sha256'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mgf_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mgf1SHA256'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#PrivateKey.oaep_decrypt"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>RSA OAEP decryption.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ciphertext</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – The message to encrypt.</p></li>
+<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">b''</span></code>) – Rarely used.</p></li>
+<li><p><strong>hash_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">'sha256'</span></code>) – Name of the hash function.</p></li>
+<li><p><strong>mgf_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">'mgf1SHA256'</span></code>) – Name of the MGF function (with hash).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if hash or MGF is not recognized.</p></li>
+<li><p><strong>DecryptionError</strong> – on various decryption errors.
+If unsafe error reporting is enabled, details of
+decryption errors will be provided.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.rsa.</span></span><span class="sig-name descname"><span class="pre">Oaep</span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep" title="Link to this definition">#</a></dt>
+<dd><p>Tools and data for OAEP.</p>
+<p>Although this attempts to follow <span class="target" id="index-18"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html"><strong>RFC 8017</strong></a> in many
+respects, this is not designed to be interoperable
+with compliant keys and ciphertext.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.HashInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">HashInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashlib_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HashFunc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digest_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.HashInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.HashInfo" title="Link to this definition">#</a></dt>
+<dd><p>Information about hash function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hashlib_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name as known by hashlib</p></li>
+<li><p><strong>function</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeAliasType</span></code></span>) – The callable function</p></li>
+<li><p><strong>digest_size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – in bytes</p></li>
+<li><p><strong>input_limit</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – in bytes</p></li>
+</ul>
+</dd>
+</dl>
+<p>Note that names and identifiers here do not
+conform to RFCs. These are not mean to be interoperable
+with anything out in the world.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.HashInfo.digest_size">
+<span class="sig-name descname"><span class="pre">digest_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.HashInfo.digest_size" title="Link to this definition">#</a></dt>
+<dd><p>in bytes</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.HashInfo.function">
+<span class="sig-name descname"><span class="pre">function</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeAliasType</span></code></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.HashInfo.function" title="Link to this definition">#</a></dt>
+<dd><p>The callable function itself</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.HashInfo.hashlib_name">
+<span class="sig-name descname"><span class="pre">hashlib_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.HashInfo.hashlib_name" title="Link to this definition">#</a></dt>
+<dd><p>Name as known by hashlib</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.HashInfo.input_limit">
+<span class="sig-name descname"><span class="pre">input_limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.HashInfo.input_limit" title="Link to this definition">#</a></dt>
+<dd><p>maximum input, in bytes</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.KNOWN_HASHES">
+<span class="sig-name descname"><span class="pre">KNOWN_HASHES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference internal" href="#toy_crypto.rsa.Oaep.HashInfo" title="toy_crypto.rsa.Oaep.HashInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashInfo</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'sha1':</span> <span class="pre">Oaep.HashInfo(hashlib_name='sha1',</span> <span class="pre">function=&lt;built-in</span> <span class="pre">function</span> <span class="pre">openssl_sha1&gt;,</span> <span class="pre">digest_size=20,</span> <span class="pre">input_limit=18446744073709551615),</span> <span class="pre">'sha256':</span> <span class="pre">Oaep.HashInfo(hashlib_name='sha256',</span> <span class="pre">function=&lt;built-in</span> <span class="pre">function</span> <span class="pre">openssl_sha256&gt;,</span> <span class="pre">digest_size=32,</span> <span class="pre">input_limit=2305843009213693951)}</span></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.KNOWN_HASHES" title="Link to this definition">#</a></dt>
+<dd><p>Hashes known for OAEP. keys will be hashlib names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.KNOWN_MGFS">
+<span class="sig-name descname"><span class="pre">KNOWN_MGFS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">,</span> <a class="reference internal" href="#toy_crypto.rsa.Oaep.MgfInfo" title="toy_crypto.rsa.Oaep.MgfInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">MgfInfo</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'mgf1SHA1':</span> <span class="pre">Oaep.MgfInfo(algorithm='id_mgf1',</span> <span class="pre">hashAlgorithm='sha1',</span> <span class="pre">function=&lt;staticmethod(&lt;function</span> <span class="pre">Oaep.mgf1&gt;)&gt;),</span> <span class="pre">'mgf1SHA256':</span> <span class="pre">Oaep.MgfInfo(algorithm='id_mgf1',</span> <span class="pre">hashAlgorithm='sha256',</span> <span class="pre">function=&lt;staticmethod(&lt;function</span> <span class="pre">Oaep.mgf1&gt;)&gt;)}</span></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.KNOWN_MGFS" title="Link to this definition">#</a></dt>
+<dd><p>Known Mask Generation Functions.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.MgfInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MgfInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashAlgorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MgfFunc</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.MgfInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.MgfInfo" title="Link to this definition">#</a></dt>
+<dd><p>Information about Mask Generation function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>algorithm</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Name of the algorithm.</p></li>
+<li><p><strong>hashAlgorithm</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Key in <code class="xref py py-data docutils literal notranslate"><span class="pre">KNOWN_HASHES</span></code>.</p></li>
+<li><p><strong>function</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeAliasType</span></code></span>) – A Callable mask generation function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.allow_unsafe_messages">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">allow_unsafe_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.allow_unsafe_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.allow_unsafe_messages" title="Link to this definition">#</a></dt>
+<dd><p>Allow (or disallow) verbose DecryptionError messages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.are_unsafe_messages_allowed">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">are_unsafe_messages_allowed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.are_unsafe_messages_allowed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed" title="Link to this definition">#</a></dt>
+<dd><p>Does what it says on the tin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.i2osp">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">i2osp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.i2osp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.i2osp" title="Link to this definition">#</a></dt>
+<dd><p>Integer to an octet string of length length.</p>
+<p>Implements function from <span class="target" id="index-19"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-4.1"><strong>RFC 8017 §4.1</strong></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – A non-negative integer</p></li>
+<li><p><strong>length</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Length of returned bytes object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code> is negative.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">n</span></code> cannot fit in <code class="xref py py-data docutils literal notranslate"><span class="pre">length</span></code> bytes</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When called from a decryption operation,
+exceptions should be caught and handled discretely.</p>
+</div>
+<p>All operations big-endian.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.mgf1">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mgf1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.mgf1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.mgf1" title="Link to this definition">#</a></dt>
+<dd><p>Mask generation function.</p>
+<p>Generates a unique mask of length <code class="xref py py-data docutils literal notranslate"><span class="pre">length</span></code> as described in
+<span class="target" id="index-20"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#appendix-B.2.1"><strong>appendix B.2.1</strong></a> of <span class="target" id="index-21"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html"><strong>RFC 8017</strong></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – This should come from a CSPRNG</p></li>
+<li><p><strong>length</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Length in bytes of the mask to generate.</p></li>
+<li><p><strong>hash_id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name hash function in <a class="reference internal" href="#toy_crypto.rsa.Oaep.KNOWN_HASHES" title="toy_crypto.rsa.Oaep.KNOWN_HASHES"><code class="xref py py-data docutils literal notranslate"><span class="pre">KNOWN_HASHES</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">length</span></code> <span class="math notranslate nohighlight">\(&gt; 2^{32}\)</span> bytes.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">hash_id</span></code> is unknown.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.os2ip">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">os2ip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/toy_crypto/rsa.html#Oaep.os2ip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.rsa.Oaep.os2ip" title="Link to this definition">#</a></dt>
+<dd><p>octet-stream to unsigned big-endian int.</p>
+<blockquote>
+<div><p>Implements function from <span class="target" id="index-22"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-4.2"><strong>RFC 8017 §4.2</strong></a>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a></span>) – The octet-stream (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></a>) you want
+to make an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+</dd>
+</dl>
+<p>Returned is a non-negative integer.</p>
+<p>All operations are big-endian.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="keygen.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">RSA Key Generation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../ec.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Elliptic curves</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-very-limted-choice-of-hashes">A (very limted) choice of hashes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.HashFunc"><code class="docutils literal notranslate"><span class="pre">HashFunc</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.MgfFunc"><code class="docutils literal notranslate"><span class="pre">MgfFunc</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integers-octet-streams-and-masks">Integers, octet-streams, and masks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-api">The API</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep"><code class="docutils literal notranslate"><span class="pre">Oaep</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.HashInfo"><code class="docutils literal notranslate"><span class="pre">Oaep.HashInfo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h6 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.HashInfo.digest_size"><code class="docutils literal notranslate"><span class="pre">Oaep.HashInfo.digest_size</span></code></a></li>
+<li class="toc-h6 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.HashInfo.function"><code class="docutils literal notranslate"><span class="pre">Oaep.HashInfo.function</span></code></a></li>
+<li class="toc-h6 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.HashInfo.hashlib_name"><code class="docutils literal notranslate"><span class="pre">Oaep.HashInfo.hashlib_name</span></code></a></li>
+<li class="toc-h6 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.HashInfo.input_limit"><code class="docutils literal notranslate"><span class="pre">Oaep.HashInfo.input_limit</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.KNOWN_HASHES"><code class="docutils literal notranslate"><span class="pre">Oaep.KNOWN_HASHES</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.KNOWN_MGFS"><code class="docutils literal notranslate"><span class="pre">Oaep.KNOWN_MGFS</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.MgfInfo"><code class="docutils literal notranslate"><span class="pre">Oaep.MgfInfo</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.allow_unsafe_messages"><code class="docutils literal notranslate"><span class="pre">Oaep.allow_unsafe_messages()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.are_unsafe_messages_allowed"><code class="docutils literal notranslate"><span class="pre">Oaep.are_unsafe_messages_allowed()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.i2osp"><code class="docutils literal notranslate"><span class="pre">Oaep.i2osp()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.mgf1"><code class="docutils literal notranslate"><span class="pre">Oaep.mgf1()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.Oaep.os2ip"><code class="docutils literal notranslate"><span class="pre">Oaep.os2ip()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modules/rsa/oaep.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024–2025 Jeffrey Goldberg.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

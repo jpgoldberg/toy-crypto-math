@@ -22,7 +22,7 @@ See :doc:`oaep` for discussion of and illustration of how those are properly add
 The original example
 =====================
 
-Let's see a simple example, from the original publication describing the RSA algorithm. This will require the text decoding scheme used then which is in
+Let's see a simple example, from the original publication describing the RSA algorithm :cite:`Gardner77:RSA`. This will require the text decoding scheme used then which is in
 :py:func:`toy_crypto.utils.Rsa129.decode`.
 
 .. testcode::

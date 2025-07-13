@@ -24,14 +24,14 @@ some of the conditions that should hold of them are
   That is :math:`\gcd(p - 1, e)` and :math:`\gcd(q - 1, e)` must each be 1.
 
 The prime generation function defined in 
-appendix A.1.3 FIPS 186-B :cite:yearpar:`FIPS-186-5`
+appendix A.1.3 FIPS 186-B :cite:`FIPS-186-5`
 guarentees those conditions are met.
 It is clever in that it checks those conditions on candidate primes
 before testing whether those candidates are prime,
 which is a much more computationally expensive test.
 
 The algorithm defined in
-§6.3.1} of NIST-SP-56b :cite:yearpar:`NIST-SP800-56b`
+§6.3.1} of NIST-SP-56b :cite:`NIST-SP800-56b`
 imposes the additional condition that the secret
 decryption exponent, *d*, of a private key is not less than
 :math:`\sqrt{N}`.

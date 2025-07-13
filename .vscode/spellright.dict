@@ -69,3 +69,4 @@ sphinx_reredirects
 pypi
 linkcheck
 pynacl
+py

@@ -399,16 +399,28 @@ class TestOaep:
 
 
 class TestES:
-    def test_estimator(self) -> None:
-        vectors: list[tuple[int, int]] = [
+    def test_estimator_std(self) -> None:
+        # Uses data from published lists
+        vectors_std: list[tuple[int, int]] = [
             (512, 56),
-            (720, 64),  # Our only non-present example
             (1028, 80),
             (2048, 112),
             (3072, 128),
             (4069, 152),
             (6144, 176),
             (8192, 200),
+        ]
+
+        for v in vectors_std:
+            estimate = rsa.estimate_strength(v[0])
+            assert estimate == v[1]
+
+    def test_estimator_other(self) -> None:
+        # We have no published "correct" answers for these.
+        vectors: list[tuple[int, int]] = [
+            (264, 40),
+            (312, 48),
+            (560, 64),
         ]
 
         for v in vectors:

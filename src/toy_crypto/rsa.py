@@ -20,7 +20,7 @@ class DecryptionError(Exception):
     For secure implementations it is important to not
     report why a decryption failed.
 
-    See :func:`Oaep.allow_unsafe_messages` to enable
+    See :meth:`Oaep.allow_unsafe_messages` to enable
     reasons why decryption fails.
     """
 
@@ -196,8 +196,8 @@ class Oaep:
 
         .. warning::
 
-            When called from a decryption operation, exceptions should be caught
-            and handled discretely.
+            When called from a decryption operation,
+            exceptions should be caught and handled discretely.
 
 
         All operations big-endian.
@@ -623,14 +623,15 @@ def key_gen(
 def fips186_prime_gen(
     n_len: int, e: int = 65537, k: int = 4
 ) -> tuple[int, int]:
-    """Prime generation from Appendix A of FIPS 186-5
+    """Prime generation from Appendix A.1.3 of FIPS 186-5v2
 
     :param n_len: Desired length of modulus in bits
     :param e: Public exponent.
     :param k: Trials for primality testing.
 
     :raises ValueError: if :data:`e` is out of range or odd.
-    :raises Exception: if it fails to find a suitable prime after trying really hard.
+    :raises Exception:
+        if it fails to find suitable primes after trying really hard.
     """
 
     # We don't enforce Step 1 for this toy
@@ -650,7 +651,7 @@ def fips186_prime_gen(
 
     i = 0  # Step 4.1
     while True:
-        p = secrets.randbits(prime_size - 2)  # Step 4.1
+        p = secrets.randbits(prime_size - 2)  # Step 4.2
         p += 0x3 << (prime_size - 2)
 
         # Step 4.3 options (without options)
@@ -671,7 +672,7 @@ def fips186_prime_gen(
     # q is much the same, but we also check that it isn't too close to p
     i = 0  # Step 5.1
     while True:
-        q = secrets.randbits(prime_size - 2)  # Step 4.1
+        q = secrets.randbits(prime_size - 2)  # Step 5.2
         q += 0x3 << (prime_size - 2)
 
         if q % 2 == 0:  # Step 5.3 without options
@@ -694,7 +695,9 @@ def fips186_prime_gen(
 
 
 def estimate_strength(key_size: int) -> int:
-    """Strength estimate for key bit size.
+    """Strength estimate for key size.
+
+    From NIST SP-800-56B r2 Appendix D.
 
     :param key_size: Modulus size in bits
     """
@@ -733,7 +736,7 @@ def estimate_strength(key_size: int) -> int:
     # round to nearest multiple of 8
     q, r = divmod(estimate, 8)
     i_estimate: int = int(q) * 8
-    if r > 4:
+    if r > 3:
         i_estimate += 8
 
     return i_estimate

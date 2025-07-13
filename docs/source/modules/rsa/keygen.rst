@@ -89,3 +89,5 @@ The API
 .. autofunction:: fips186_prime_gen
 
 .. autofunction:: key_gen
+
+.. autofunction:: estimate_strength

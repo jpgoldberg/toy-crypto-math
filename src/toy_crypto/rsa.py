@@ -353,9 +353,11 @@ class PrivateKey:
         """RSA private key from primes p and q.
 
         This does not perform any sanity checks on p and q.
-        It is your responsibility to ensure that p and q are prime
+        It is your responsibility to ensure that they are suitable primes.
+        Consider using :func:`fips186_prime_gen` to generate primes.
 
-        :raises ValueError: if e is not coprime with lcm(p - 1, q - 1).
+        :raises ValueError:
+            if :math:`\\gcd(e, \\mathop{\\mathrm{lcm}}(p - 1, q - 1)) \\neq 1`.
         """
 
         self._p = p
@@ -573,6 +575,8 @@ def key_gen(
     Partially follows NIST SP 80056B, §6.3.1.
     """
 
+    # Not going to mess with FIPS 186-5 C.1
+    # So just set k = 5 to cover all reasonable cases.
     k = 5
 
     # Computation of d and CRT values is done by constructor.

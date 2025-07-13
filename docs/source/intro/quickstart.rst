@@ -1,8 +1,8 @@
 
 .. include:: /../common/unsafe.rst
 
-Get Started
-==========================================
+Installing & Importing
+=======================
 
 Installation
 -------------
@@ -60,5 +60,3 @@ would be imported with ``import toy_crypto.nt``.
 True
 >>> factorization.phi
 62860010840
-
-Note again that the `SageMath Factorization class <https://doc.sagemath.org/html/en/reference/structure/sage/structure/factorization.html>`_ is far more efficient and general than what exists in this toy cryptography module.

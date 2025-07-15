@@ -474,6 +474,29 @@ class TestKeyGen:
                 n = p * q
                 assert n.bit_length() == size
 
+    def test_fips186_4_A1_3_small(self) -> None:
+        # Test with values that would be blocked by the 100 bit rule
+        # if we enforced that for small values.
+        trials = 5
+
+        sizes = [16, 32, 64, 128]
+        e = 65537
+
+        for size in sizes:
+            prime_size = size // 2
+
+            for _trial in range(trials):
+                p, q = rsa.fips186_prime_gen(size, e=e)
+
+                assert gcd(p - 1, e) == 1
+                assert gcd(p - 1, e) == 1
+
+                assert p.bit_length() == prime_size
+                assert q.bit_length() == prime_size
+
+                n = p * q
+                assert n.bit_length() == size
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

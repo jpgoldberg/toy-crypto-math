@@ -650,8 +650,17 @@ def fips186_prime_gen(
 
     prime_size = n_len // 2
 
-    # Will be used for checking that p and q differ within leading 100 bits
-    log_min_diff = prime_size - 100
+    # Standard says p and q must differ within their 100 most significant
+    # bits, but that prevents us from generating some of our standard defying
+    # small keys. So we will relax the condition.
+
+    shift: int
+    if n_len >= 2048:
+        # The standard
+        shift = max(prime_size - 100, (prime_size // 2) + 2)
+    else:
+        # Fermat can have his way with modulus.
+        shift = 0
 
     i = 0  # Step 4.1
     while True:
@@ -685,7 +694,7 @@ def fips186_prime_gen(
         if q >> (prime_size - 2) != 0x03:  # Step 5.4
             continue
 
-        if (p >> log_min_diff) == (q >> log_min_diff):  # Step 5.5
+        if (p >> shift) == (q >> shift):  # Step 5.5
             continue
 
         if gcd(q - 1, e) == 1:  # Step 5.6

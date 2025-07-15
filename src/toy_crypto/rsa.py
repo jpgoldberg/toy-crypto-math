@@ -657,7 +657,7 @@ def fips186_prime_gen(
     shift: int
     if n_len >= 2048:
         # The standard
-        shift = max(prime_size - 100, (prime_size // 2) + 2)
+        shift = min(100, prime_size // 2 + 2)
     else:
         # Fermat can have his way with modulus.
         shift = 0

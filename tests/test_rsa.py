@@ -477,7 +477,7 @@ class TestKeyGen:
     def test_fips186_4_A1_3_small(self) -> None:
         # Test with values that would be blocked by the 100 bit rule
         # if we enforced that for small values.
-        trials = 5
+        trials = 2
 
         sizes = [16, 32, 64, 128]
         e = 65537

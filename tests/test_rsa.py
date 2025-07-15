@@ -497,6 +497,74 @@ class TestKeyGen:
                 n = p * q
                 assert n.bit_length() == size
 
+    @pytest.mark.skip(reason="Slow")
+    def test_pq_diff(self) -> None:
+        """p and q can't be too close to each other."""
+
+        trials = 1
+
+        def diff_initial_bits(size: int, p: int, q: int, bits: int) -> bool:
+            # I need to use a different construction than in the
+            # rsa.fips186_prime_gen to test this.
+
+            assert size % 16 == 0
+
+            pb = p.to_bytes(size // 16, "big", signed=False)
+            qb = q.to_bytes(size // 16, "big", signed=False)
+
+            # If bits was a multiple of 8, this would be easier,
+            # but we will start there.
+
+            nbytes, r = divmod(bits, 8)
+
+            if pb[:nbytes] != qb[:nbytes]:
+                # They differ "early"
+                return True
+
+            # No difference yet, so check those last r bits
+
+            # I could compute mask with:
+            # mask = 255 ^ ((1 << (8 - r)) - 1)
+            # but that is the kind of logic that I am trying to test
+            # So we will set the mask manually.
+            mask: int
+            match r:
+                case 0:
+                    # There are no left over bits to check
+                    return False
+                case 1:
+                    mask = int("10000000", base=2)
+                case 2:
+                    mask = int("11000000", base=2)
+                case 3:
+                    mask = int("11100000", base=2)
+                case 4:
+                    mask = int("11110000", base=2)
+                case 5:
+                    mask = int("11111000", base=2)
+                case 6:
+                    mask = int("11111100", base=2)
+                case 7:
+                    mask = int("11111110", base=2)
+                case _:
+                    assert False, "This should not happen"
+
+            p_remainder = pb[nbytes + 1] & mask
+            q_remainder = qb[nbytes + 1] & mask
+            if q_remainder != p_remainder:
+                return True
+            return False
+
+        vectors: dict[int, int] = {
+            2048: 100,
+            3072: 100,
+        }
+
+        for size, bits in vectors.items():
+            for _trial in range(trials):
+                p, q = rsa.fips186_prime_gen(size)
+                assert diff_initial_bits(size, p, q, bits)
+
 
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

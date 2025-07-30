@@ -636,6 +636,15 @@ def fips186_prime_gen(
     :raises ValueError: if :data:`e` is out of range or odd.
     :raises Exception:
         if it fails to find suitable primes after trying really hard.
+
+    This insecurely deviates from the standard in allowing :data:`n_len`
+    to be less than 2048.
+
+    .. note::
+
+        The condition that *p* and *q* differ in their
+        most significant 100 bits is relaxed when
+        :data:`n_len` < 2048.
     """
 
     # We don't enforce Step 1 for this toy

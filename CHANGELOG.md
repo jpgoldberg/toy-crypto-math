@@ -5,6 +5,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- `rsa.fips186_prime_gen()` can generate "small" primes.
+- `rsa.key_gen()` can generate "small" keys.
+
+### Changed
+
+- Fuller documentation on constraints on `rsa.key_gen()`.
+  
+
+  - 
+
 ## 0.4.3 2025-07-10
 
 ### Added

@@ -5,6 +5,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.4.4 2025-07-31
+
 ### Fixed
 
 - `sieve.Sieve` is properly understood by static type checkers [#12][issue12]

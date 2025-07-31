@@ -1,13 +1,12 @@
 from functools import cache
 from bisect import bisect_right
 import threading
+from abc import ABC, abstractmethod
 from typing import (
     Any,
     Iterator,
-    Protocol,
     Self,
     Union,
-    runtime_checkable,
     TYPE_CHECKING,
 )
 
@@ -37,8 +36,7 @@ else:
             raise NotImplementedError("bitarray is not installed")
 
 
-@runtime_checkable
-class Sievish(Protocol):
+class Sievish(ABC):
     """Methods available for all Sieve-like classes.
 
     This is primary of use for testing, where one might need to write
@@ -48,6 +46,7 @@ class Sievish(Protocol):
     """
 
     @classmethod
+    @abstractmethod
     def _reset(cls) -> None:
         """Resets the class largest sieve created if such a thing exists.
 
@@ -63,11 +62,13 @@ class Sievish(Protocol):
     _data: Union[bitarray, list[int], int]
 
     @property
+    @abstractmethod
     def count(self) -> int:
         """The total number of primes in the sieve"""
         ...
 
     @property
+    @abstractmethod
     def n(self) -> int:
         """The size of the sieve, including composites.
 
@@ -75,6 +76,7 @@ class Sievish(Protocol):
         """
         ...
 
+    @abstractmethod
     def primes(self, start: int = 1) -> Iterator[int]:
         """Iterator of primes starting at start-th prime.
 
@@ -84,6 +86,7 @@ class Sievish(Protocol):
         """
         ...
 
+    @abstractmethod
     def nth_prime(self, n: int) -> int:
         """Returns n-th prime.
 
@@ -92,6 +95,7 @@ class Sievish(Protocol):
         """
         ...
 
+    @abstractmethod
     def __int__(self) -> int:
         """Sieve as an integer with 1 bits representing primes.
 
@@ -102,16 +106,19 @@ class Sievish(Protocol):
         ...
 
     @classmethod
+    @abstractmethod
     def from_size[S](cls: type[S], size: int) -> S:
         """Returns a new sieve of primes less than or equal to size."""
         ...
 
     @classmethod
+    @abstractmethod
     def from_int[S](cls: type[S], n: int) -> S:
         """Returns a new sieve of primes from the bits of n."""
         ...
 
     @classmethod
+    @abstractmethod
     def from_list[S](
         cls: type[S], primes: list[int], size: int | None = None
     ) -> S:
@@ -575,7 +582,7 @@ class IntSieve(Sievish):
 
 
 # https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
-Sieve: type[object]
+Sieve: type[Sievish]
 """Sieve will be an alias for BaSieve if bitarray is available,
 otherwise it will be assigned to some other sieve class."""
 
@@ -583,3 +590,7 @@ if _has_bitarry:
     Sieve = BaSieve
 else:
     Sieve = SetSieve
+
+Sievish.register(Sieve)
+
+assert issubclass(Sieve, Sievish)

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RSA Key Generation &#8212; ToyCrypto 0.4.3 documentation</title>
+    <title>RSA Key Generation &#8212; ToyCrypto 0.4.4 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=5bfaad31"></script>
+    <script src="../../_static/documentation_options.js?v=90733dfc"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -49,7 +49,7 @@
     <link rel="prev" title="Primitive RSA" href="primitive.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4.3" />
+  <meta name="docsearch:version" content="0.4.4" />
   </head>
   
   
@@ -111,7 +111,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.4.3)</p>
+    <p class="title logo__title">ToyCrypto (0.4.4)</p>
   
 </a></div>
     
@@ -476,10 +476,11 @@ but they do not enforce the minimum strength
 specifications (2048-bit moduli).
 I want to be able to generate some extremely weak
 keys for demonstration purposes.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Faithfully following (which we don’t here) secure algorithms does not
-mean that an implementation is secure. These are not.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Even if functions here faithfully followed the standards
+(which they don’t) it would not mean that the implenetations
+would be secure.</p>
 </div>
 <section id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
@@ -528,6 +529,14 @@ primitive RSA.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
 </dd>
 </dl>
+<p>This insecurely deviates from the standard in allowing <code class="xref py py-data docutils literal notranslate"><span class="pre">n_len</span></code>
+to be less than 2048.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The condition that <em>p</em> and <em>q</em> differ in their
+most significant 100 bits is relaxed when
+<code class="xref py py-data docutils literal notranslate"><span class="pre">n_len</span></code> &lt; 2048.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">

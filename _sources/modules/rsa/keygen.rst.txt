@@ -45,10 +45,11 @@ specifications (2048-bit moduli).
 I want to be able to generate some extremely weak
 keys for demonstration purposes.
 
-.. warning::
+.. note::
 
-    Faithfully following (which we don't here) secure algorithms does not
-    mean that an implementation is secure. These are not.
+    Even if functions here faithfully followed the standards
+    (which they don't) it would not mean that the implenetations
+    would be secure.
 
 Examples
 =========

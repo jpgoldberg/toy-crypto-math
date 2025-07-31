@@ -168,9 +168,12 @@ class TestIntSieve:
 
 
 class TestSieve:
-    def test_type(self) -> None:
+    def test_type_mypy(self) -> None:
         # This is a no-op at runtime, but mypy should pick it up.
         assert_type(sieve.Sieve, type[sieve.Sievish])
+
+    def test_subclass(self) -> None:
+        assert issubclass(sieve.Sieve, sieve.Sievish)
 
 
 if __name__ == "__main__":

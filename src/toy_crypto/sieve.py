@@ -592,5 +592,3 @@ else:
     Sieve = SetSieve
 
 Sievish.register(Sieve)
-
-assert issubclass(Sieve, Sievish)

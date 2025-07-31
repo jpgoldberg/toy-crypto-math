@@ -7,15 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `sieve.Sieve` is properly understood by static type checkers [#12][issue12]
 - `rsa.fips186_prime_gen()` can generate "small" primes.
 - `rsa.key_gen()` can generate "small" keys.
 
-### Changed
+### Change
 
 - Fuller documentation on constraints on `rsa.key_gen()`.
-  
-
-  - 
+- `sieve.Sievish` is now an ABC instead of a Protocol.
 
 ## 0.4.3 2025-07-10
 
@@ -262,3 +261,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First public release
   
 [docs]: https://jpgoldberg.github.io/toy-crypto-math/
+
+[issue12]: https://github.com/jpgoldberg/toy-crypto-math/issues/12

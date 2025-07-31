@@ -1,5 +1,6 @@
 # mypy: disable-error-code="type-abstract"
 import sys
+from typing import assert_type
 
 import pytest
 from toy_crypto import sieve
@@ -164,6 +165,15 @@ class TestIntSieve:
 
     def test_test_nomut(self) -> None:
         Fixed.t_nomut(self.s_class)
+
+
+class TestSieve:
+    def test_type_mypy(self) -> None:
+        # This is a no-op at runtime, but mypy should pick it up.
+        assert_type(sieve.Sieve, type[sieve.Sievish])
+
+    def test_subclass(self) -> None:
+        assert issubclass(sieve.Sieve, sieve.Sievish)
 
 
 if __name__ == "__main__":

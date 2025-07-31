@@ -124,9 +124,10 @@ readable.
 [73, 79, 83, 89, 97]
 
 
-The :protocol:`Sievish` Protocol
+The :class:`Sievish` ABC
 ----------------------------------
-.. autoprotocol:: Sievish
+.. autoclass:: Sievish
+    :members:
 
 The :class:`Sieve` alias
 -------------------------

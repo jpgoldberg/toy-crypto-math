@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `utils.next_power2`
+
+### Changed
+
+- Change in `rsa.fips186_prime_gen()` different _p_ and _q_ must be when keys are smaller that 2048 bits.
+
 ## 0.4.4 2025-07-31
 
 ### Fixed

@@ -127,3 +127,30 @@ def hash_bytes(b: bytes) -> str:
     h = blake2b(b, digest_size=32).digest()
     t = str(a85encode(h))
     return t
+
+
+def next_power2(n: int) -> int:
+    """Returns smallest *p* such that :math:`2^p \\geq n`.
+
+    :raises ValueError: if n is less than 1.
+    """
+
+    if n < 1:
+        raise ValueError("n must be positive")
+
+    if n <= 2:
+        return 1
+
+    # I don't want to use log2 because the floating point approximation
+    # might get this wrong for large values, so bit fiddling instead.
+
+    # if n is a power of 2, then only its leading bit will be 1
+    if not (n & (n - 1)):
+        return n.bit_length() - 1
+
+    p = 2  # we have covered the p = 1 cases
+    t = 4
+    while t < n:
+        t *= 2
+        p += 1
+    return p

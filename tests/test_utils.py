@@ -24,6 +24,18 @@ class TestUtils:
             d = utils.digit_count(n)
             assert d == expected
 
+    def test_next_power2(self) -> None:
+        vectors: list[tuple[int, int]] = [
+            (1, 1), (2, 1),
+            (3, 2), (4, 2), (5, 3),
+            (7, 3), (8, 3), (9, 4),
+            (255, 8), (256, 8), (257, 9),
+            (1023, 10), (1024, 10), (1025, 11),
+        ]  # fmt: skip
+        for n, expected in vectors:
+            p = utils.next_power2(n)
+            assert p == expected
+
 
 class TestXor:
     def test_xor(self) -> None:

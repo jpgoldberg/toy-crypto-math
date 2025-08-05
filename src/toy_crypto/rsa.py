@@ -662,11 +662,16 @@ def fips186_prime_gen(
     # Standard says p and q must differ within their 100 most significant
     # bits, but that prevents us from generating some of our standard defying
     # small keys. So we will relax the condition.
+    #
+    # Standards say n_len must be at least 2024, and primes must differ
+    # in first 100 bits. So we keep 100 for any key 2024.
+    # We will reduce number for 2024 > n_len >= 512, and
+    # eliminate it for n_len < 512.
 
     shift: int
-    if n_len >= 2048:
+    if n_len >= 512:
         # The standard
-        shift = min(100, prime_size // 2 + 2)
+        shift = min(100, prime_size // 8 + 2)
     else:
         # Fermat can have his way with modulus.
         shift = 0
@@ -680,8 +685,8 @@ def fips186_prime_gen(
         if p % 2 == 0:
             p += 1
 
-        if p >> (prime_size - 2) != 0x03:  # Step 4.4
-            continue
+        # Step 4.4 is not needed given how p is constructed
+        # if p >> (prime_size - 2) != 0x03:  continue
 
         if gcd(p - 1, e) == 1:  # Step 4.5
             if probably_prime(p, k):
@@ -700,8 +705,8 @@ def fips186_prime_gen(
         if q % 2 == 0:  # Step 5.3 without options
             q += 1
 
-        if q >> (prime_size - 2) != 0x03:  # Step 5.4
-            continue
+        # Step 5.4 is not needed given how q is constructed
+        # if q >> (prime_size - 2) != 0x03:  continue
 
         if (p >> shift) == (q >> shift):  # Step 5.5
             continue

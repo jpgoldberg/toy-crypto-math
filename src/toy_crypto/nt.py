@@ -6,7 +6,7 @@ import math
 import secrets
 from collections import UserList
 from collections.abc import Iterator, Iterable
-from typing import Any, NewType, Optional, Self, TypeGuard
+from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 import primefac
 
@@ -348,6 +348,63 @@ def probably_prime(n: int, k: int = 4) -> bool:
             return False
 
     # We've run all k trials, without any a telling us n is composite
+    return True
+
+
+def fermat_test(n: int, k: int = 8) -> bool:
+    """Returns true if n is prime, a Carmichael number, or through bad luck.
+
+    Fermat's primality tests
+
+    :param n: The number we are checking
+    :param k: The number of bases to test against.
+
+    :raises ValueError: if :math:`n < 2`
+    :raises ValueError: if :math:`k < 1`
+
+    .. warning::
+
+        Fermat's primality is much more prone to falsely
+        claiming that a number is prime than other, equally
+        efficient tests.
+
+        It's only advantage is that it is easier to understand.
+    """
+
+    if n < 2:
+        raise ValueError("n must be greater than 1")
+
+    # I don't want to do Fermat for tiny numbers
+    # so we do trial division for primes <= 13
+    small_primes = (2, 3, 5, 7, 11, 13)
+    if n in small_primes:
+        return True
+    if n < small_primes[-1]:
+        return False
+    for p in small_primes:
+        if n % p == 0:
+            return False
+
+    # Now we are ready for Fermat's test
+    if k < 1:
+        raise ValueError("k must be greater than 0")
+
+    # Set up generator for k trial bases
+    bases: Generator[int, None, None]
+
+    # This case should only come up for testing very small numbers
+    # or using weirdly large k, but let's handle it nicely anyway.
+    if k >= n - 2:
+        bases = (b for b in range(2, n - 1))
+    else:
+        bases = (rand.randrange(2, n) for _ in range(k))
+
+    # Fermat's Little Theorem says
+    # if p is prime than a^(p-1) = 1 (mod p) for all a
+    for a in bases:
+        if pow(a, n - 1, n) != 1:
+            return False
+
     return True
 
 

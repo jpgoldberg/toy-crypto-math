@@ -300,7 +300,7 @@ class TestPrimeTesting:
             value = int.from_bytes(tv["value"], byteorder="big", signed=False)
 
             try:
-                result = nt.probably_prime(value, k=4)
+                result = nt.probably_prime(value, k=5)
             except Exception as e:
                 assert False, (
                     f"Runtime error {e}. {tv['tcId']}:  {tv['comment']}"

@@ -312,16 +312,42 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
     Runs the Miller-Rabin primality test with k trials.
 
+    :param n: The number we are checking.
+    :param k: The number of random bases to test against.
+    :raises ValueError: if :math:`k < 1`.
+
     If you need a real primality check, use sympy.isprime() instead.
     """
 
-    # Let's deal with some very low primes
     if n < 2:
         return False
-    if n in [2, 3, 5, 7]:
+    
+    if k < 1:
+        raise ValueError("k must be greater than 0")
+
+    # Let's deal with some very low primes
+    # I don't want to do Fermat for tiny numbers
+    # so we do trial division for primes <= 13
+    small_primes = (2, 3, 5, 7, 11, 13)
+    largest_small = small_primes[-1]
+    if n in small_primes:
         return True
-    if n < 11:
+    if n < largest_small:
         return False
+    for p in small_primes:
+        if n % p == 0:
+            return False
+    if n <= largest_small ** 2:
+        return True
+
+    # Set up generator for k trial bases
+    bases: Generator[int, None, None]
+    if k >= n - 2:
+        # This case should only come up for testing very small numbers
+        # or using weirdly large k, but let's handle it nicely anyway.
+        bases = (b for b in range(2, n - 1))
+    else:
+        bases = (rand.randrange(2, n) for _ in range(k))
 
     # This s reduction is what distinguishes M-R from FLT
     r, s = 0, n - 1
@@ -330,8 +356,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
         s //= 2
 
     # Now we use FLT for the reduced s, but still mod n
-    for _ in range(k):
-        a = rand.randrange(2, n - 1)
+    for a in bases:
         x = pow(a, s, n)
         if x == 1 or x == n - 1:
             # This a is good. Call the next witness!
@@ -341,10 +366,10 @@ def probably_prime(n: int, k: int = 4) -> bool:
         for _ in range(r - 1):
             x = pow(x, 2, n)
             if x == n - 1:
-                # Our a really was good, once we tested squares of x
+                # Our _a_ really was good, once we tested squares of x
                 break
         else:
-            # We've exited the loop without finding a to be good
+            # We've exited the loop without finding _a_ to be good
             return False
 
     # We've run all k trials, without any a telling us n is composite
@@ -359,31 +384,33 @@ def fermat_test(n: int, k: int = 8) -> bool:
     :param n: The number we are checking
     :param k: The number of bases to test against.
 
-    :raises ValueError: if :math:`n < 2`
     :raises ValueError: if :math:`k < 1`
 
     .. warning::
 
         Fermat's primality is much more prone to falsely
         claiming that a number is prime than other, equally
-        efficient tests.
+        efficient, tests.
 
-        It's only advantage is that it is easier to understand.
+        Its only advantage is that it is easier to understand.
     """
 
     if n < 2:
-        raise ValueError("n must be greater than 1")
+        return False
 
     # I don't want to do Fermat for tiny numbers
     # so we do trial division for primes <= 13
     small_primes = (2, 3, 5, 7, 11, 13)
+    largest_small = small_primes[-1]
     if n in small_primes:
         return True
-    if n < small_primes[-1]:
+    if n < largest_small:
         return False
     for p in small_primes:
         if n % p == 0:
             return False
+    if n <= largest_small ** 2:
+        return True
 
     # Now we are ready for Fermat's test
     if k < 1:
@@ -391,16 +418,15 @@ def fermat_test(n: int, k: int = 8) -> bool:
 
     # Set up generator for k trial bases
     bases: Generator[int, None, None]
-
-    # This case should only come up for testing very small numbers
-    # or using weirdly large k, but let's handle it nicely anyway.
     if k >= n - 2:
+        # This case should only come up for testing very small numbers
+        # or using weirdly large k, but let's handle it nicely anyway.
         bases = (b for b in range(2, n - 1))
     else:
         bases = (rand.randrange(2, n) for _ in range(k))
 
     # Fermat's Little Theorem says
-    # if p is prime than a^(p-1) = 1 (mod p) for all a
+    # if p is prime then a^(p-1) = 1 (mod p) for all a
     for a in bases:
         if pow(a, n - 1, n) != 1:
             return False

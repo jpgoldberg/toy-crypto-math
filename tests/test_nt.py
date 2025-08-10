@@ -3,16 +3,7 @@ from typing import NamedTuple
 
 import pytest
 from toy_crypto import nt, redundent
-
-# This will be needed for reading in data relative to test directory
-import os
-from pathlib import Path
-import json
-
 from . import wycheproof
-
-
-this_dir = Path(os.path.dirname(__file__))
 
 
 class TestFactor:
@@ -269,7 +260,7 @@ class TestMath:
 
 
 class TestPrimeTesting:
-    tvs = wycheproof.load_vectors(wycheproof.dot_dir() / "primality_test.json")
+    tvs = wycheproof.load_vectors("testvectors/primality_test.json")
 
     # @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:

@@ -1,5 +1,8 @@
 """Loading and parsing Wycheproof test data.
 
+Assumes you have a local copy, clone (submodule) of 
+https://github.com/C2SP/wycheproof
+
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
@@ -33,9 +36,24 @@ def dot_dir() -> Path:
     return Path(os.path.dirname(__file__))
 
 
+DEFAULT_WP_ROOT = dot_dir() / "wycheproof"
+"""Root of Wycheproof submodule."""
+
+
 def load_vectors(
-    path: Path, convert_keys: Set[str] = CONVERT_FROM_HEX
+    path: Path | str,
+    convert_keys: Set[str] = CONVERT_FROM_HEX,
+    wy_root: Path = DEFAULT_WP_ROOT,
 ) -> Collection[WyVector]:
+    """Load Wycheproof test vectors.
+
+    :param path: Either absolute path or path relative to Wycheproof root.
+    :param convert_keys: JSON keys to convert from hex to bytes
+    :param wy_root: Path of copy/clone/submodule root of Wycheproof repository
+    """
+
+    if isinstance(path, str):
+        path = Path(path)
     testVectors: list[WyVector] = []
 
     try:

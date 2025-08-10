@@ -9,6 +9,8 @@ import os
 from pathlib import Path
 import json
 
+from . import wycheproof
+
 
 this_dir = Path(os.path.dirname(__file__))
 
@@ -267,29 +269,9 @@ class TestMath:
 
 
 class TestPrimeTesting:
-    @staticmethod
-    def load_wycheproof_test_vectors(path: Path) -> list[dict[str, object]]:
-        testVectors: list[dict[str, object]] = []
+    tvs = wycheproof.load_vectors(wycheproof.dot_dir() / "primality_test.json")
 
-        try:
-            with open(path, "r") as f:
-                wycheproof_json = json.loads(f.read())
-        except FileNotFoundError:
-            print(f"No Wycheproof file found at: {path}")
-            return testVectors
-
-        convert_attr = {"value"}
-        for testGroup in wycheproof_json["testGroups"]:
-            for tv in testGroup["tests"]:
-                for attr in convert_attr:
-                    if attr in tv:
-                        tv[attr] = bytes.fromhex(tv[attr])
-                testVectors.append(tv)
-        return testVectors
-
-    tvs = load_wycheproof_test_vectors(this_dir / "primality_test.json")
-
-    @pytest.mark.skip(reason="Probabilistic")
+    # @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         for tv in self.tvs:
             tv_result = tv["result"]

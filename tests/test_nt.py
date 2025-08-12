@@ -2,8 +2,7 @@ import sys
 from typing import NamedTuple
 
 import pytest
-from toy_crypto import nt, redundent
-from . import wycheproof
+from toy_crypto import nt, wycheproof
 
 
 class TestFactor:
@@ -34,15 +33,6 @@ class TestFactor:
 
         for n, expected in vectors:
             assert nt.factor(n) == expected
-
-    def test_OLF(self) -> None:
-        vectors: list[tuple[int, int]] = [
-            (22171, 1),
-            (22171 * 45827 * 5483, 22171 * 5483),
-        ]
-
-        for n, expected in vectors:
-            assert redundent.OLF(n) == expected
 
     def test_normalize(self) -> None:
         text_vectors: list[tuple[nt.FactorList, nt.FactorList]] = [
@@ -260,10 +250,12 @@ class TestMath:
 
 
 class TestPrimeTesting:
+    wp_data = wycheproof.WycheproofLoad()
+
     @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
-            tvs = wycheproof.load_vectors("testvectors/primality_test.json")
+            tvs = self.wp_data.load_vectors("testvectors/primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
         for tv in tvs:

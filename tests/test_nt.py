@@ -250,7 +250,7 @@ class TestMath:
 
 
 class TestPrimeTesting:
-    wp_data = wycheproof.WycheproofLoad()
+    wp_data = wycheproof.Loader()
 
     @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:

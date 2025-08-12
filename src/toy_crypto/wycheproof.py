@@ -17,7 +17,7 @@ from referencing import Resource, Registry
 type WyVector = dict[str, object]
 
 
-class WycheproofLoad:
+class Loader:
     """Tools for loading Wycheproof test vectors."""
 
     def __init__(self, path: Path | None = None) -> None:
@@ -49,7 +49,7 @@ class WycheproofLoad:
 
         self.schemata_dir = self.local_wyche / "schemas"
         if not self.schemata_dir.is_dir():
-            raise NotADirectoryError("Couldn't find 'schamas' directory")
+            raise NotADirectoryError("Couldn't find 'schemas' directory")
 
         self.registry = Registry(retrieve=self.retrieve_from_fs)  # type: ignore[call-arg]
 
@@ -69,6 +69,12 @@ class WycheproofLoad:
         Wycheproof schemata use ``{"type": "string", "format": "BigInt"}``
         for attributes that are hexadecimal strings to be converted to int.
         We need to collect the names of such attributes.
+
+        .. note::
+
+            There must be a more natural way use scheme annotations
+            to help us process objects imported from JSON.
+            But if there is, I have not yet found it.
         """
 
         acc: set[str] = set()

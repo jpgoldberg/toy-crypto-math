@@ -252,14 +252,14 @@ class TestMath:
 class TestPrimeTesting:
     wp_data = wycheproof.Loader()
 
-    @pytest.mark.skip(reason="Probabilistic")
+    # @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
-            tvs = self.wp_data.tests("testvectors/primality_test.json")
+            tvs = self.wp_data.tests("primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
         for tv in tvs:
-            testcase = tv.testcase
+            testcase = tv.case
             tv_result = testcase["result"]
             if tv_result == "acceptable":
                 continue

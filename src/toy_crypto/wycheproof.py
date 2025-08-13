@@ -27,53 +27,54 @@ class WycheproofTest:
 
     def __init__(
         self,
-        testfiledata: Mapping[str, object],
-        testgroup: Mapping[str, object],
-        testcase: Mapping[str, object],
+        data: Mapping[str, object],
+        group: Mapping[str, object],
+        case: Mapping[str, object],
     ) -> None:
         """Takes subsets of the object created from the loaded JSON.
 
-        :param testfiledata: Test file data without the TestGroups.
-        :param textgroup: TestGroup, without the tests.
-        :param testcase: Individual test from the testgroup of the testfile
+        :param data: Test file data without the TestGroups.
+        :param group: TestGroup, without the tests.
+        :param case: Individual test from the group
         """
 
-        self.testfiledata = testfiledata
-        self.testgroup = testgroup
-        self.testcase = testcase
+        self.data = data
+        self.group = group
+        self.case = case
 
     # Today I learned that "!r" means use the __repr__, not the __str__.
     def __repr__(self) -> str:
         return "<WycheproofTest({!r}, {!r}, {!r}, tcId={})>".format(
-            self.testfiledata,
-            self.testgroup,
-            self.testcase,
-            self.testcase["tcId"],
+            self.data,
+            self.group,
+            self.case,
+            self.case["tcId"],
         )
 
     @property
     def valid(self) -> bool:
-        return self.testcase["result"] == "valid"
+        return self.case["result"] == "valid"
 
     @property
     def acceptable(self) -> bool:
-        return self.testcase["result"] == "acceptable"
+        return self.case["result"] == "acceptable"
 
     @property
     def invalid(self) -> bool:
-        return self.testcase["result"] == "invalid"
+        return self.case["result"] == "invalid"
 
     def has_flag(self, flag: str) -> bool:
-        flags = self.testcase["flags"]
+        flags = self.case["flags"]
         assert isinstance(flags, list)
         return flag in flags
 
+    # Copied from pyca. I do not know what this is for
     @typing.no_type_check
     def cache_value_to_group(self, cache_key: str, func):
-        cache_val = self.testgroup.get(cache_key)
+        cache_val = self.group.get(cache_key)
         if cache_val is not None:
             return cache_val
-        self.testgroup[cache_key] = cache_val = func()
+        self.group[cache_key] = cache_val = func()
         return cache_val
 
 
@@ -162,58 +163,10 @@ class Loader:
         contents = json.loads(self.schemata_dir.read_text())
         return Resource.from_contents(contents)
 
-    def load_vectors(
-        self,
-        path: Path | str,
-    ) -> list[WyVector]:
-        """Load Wycheproof test vectors.
-
-        :param path: relative path to json file with test vectors.
-
-        """
-
-        path = self.local_wyche / path
-
-        testVectors: list[WyVector] = []
-
-        # We want to find the path to the schema from the path
-        stem_name = path.stem
-        scheme_file_name = stem_name + "_schema" + ".json"
-        scheme_path = Path(self.schemata_dir / scheme_file_name)
-
-        try:
-            with open(scheme_path, "r") as s:
-                scheme = json.load(s)
-        except Exception as e:
-            raise Exception(f"failed to load schema: {e}")
-
-        try:
-            with open(path, "r") as f:
-                wycheproof_json = json.loads(f.read())
-        except Exception as e:
-            raise Exception(f"failed to load JSON: {e}")
-
-        validator = Validator(
-            schema=scheme,
-            registry=self.registry,
-        )  # type: ignore[misc]
-        try:
-            validator.validate(wycheproof_json)
-        except Exception as e:
-            raise Exception(f"JSON validation failed: {e}")
-
-        convert_attr = self.collect_bigint_attrs(scheme)
-        for testGroup in wycheproof_json["testGroups"]:
-            for tv in testGroup["tests"]:
-                for attr in convert_attr:
-                    if attr in tv:
-                        tv[attr] = bytes.fromhex(tv[attr])
-                testVectors.append(tv)
-        return testVectors
-
     def load_json(
         self,
         path: Path | str,
+        subdir: str = "testvectors",
     ) -> tuple[dict[str, object], Set[str]]:
         """Returns the file data and set of properties that are BigInt format.
 
@@ -224,8 +177,7 @@ class Loader:
 
         Raises exception of file doesn't conform to JSON Schema.
         """
-
-        path = self.local_wyche / path
+        path = self.local_wyche / subdir / path
 
         # We want to find the path to the schema from the path
         stem_name = path.stem
@@ -257,9 +209,11 @@ class Loader:
         return wycheproof_json, big_int_properties
 
     def tests(
-        self, path: str | Path
+        self,
+        path: str | Path,
+        subdir: str = "testvectors",
     ) -> typing.Generator[WycheproofTest, None, None]:
-        data, big_int_properties = self.load_json(path)
+        data, big_int_properties = self.load_json(path, subdir)
         for group in data.pop("testGroups"):  # type: ignore
             cases: dict[str, object] = group.pop("tests")
             for c in cases:

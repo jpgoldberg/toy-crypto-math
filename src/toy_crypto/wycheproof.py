@@ -261,8 +261,9 @@ class Loader:
     ) -> typing.Generator[WycheproofTest, None, None]:
         data, big_int_properties = self.load_json(path)
         for group in data.pop("testGroups"):  # type: ignore
-            cases = group.pop("tests")
+            cases: dict[str, object] = group.pop("tests")
             for c in cases:
+                assert isinstance(c, dict)
                 for property in big_int_properties:
                     if property in c:
                         c[property] = bytes.fromhex(c[property])

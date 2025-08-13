@@ -252,32 +252,31 @@ class TestMath:
 class TestPrimeTesting:
     wp_data = wycheproof.Loader()
 
-    pytest.mark.skip(reason="Probabilistic")
+    @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
-            tvs = self.wp_data.load_vectors("testvectors/primality_test.json")
+            tvs = self.wp_data.tests("testvectors/primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
         for tv in tvs:
-            tv_result = tv["result"]
+            testcase = tv.testcase
+            tv_result = testcase["result"]
             if tv_result == "acceptable":
                 continue
-            expected = bool(tv["result"] == "valid")
-            assert isinstance(tv["value"], bytes)
-            value = int.from_bytes(tv["value"], byteorder="big", signed=False)
+            expected = bool(testcase["result"] == "valid")
+            assert isinstance(testcase["value"], bytes)
+            value = int.from_bytes(
+                testcase["value"], byteorder="big", signed=False
+            )
 
             try:
                 result = nt.probably_prime(value, k=5)
             except Exception as e:
-                assert False, (
-                    f"Runtime error {e}. {tv['tcId']}:  {tv['comment']}"
-                )
+                assert False, f"Runtime error in {tv}: {e}"
             if expected:
-                assert result, f"False negative. {tv['tcId']}: {tv['comment']}"
+                assert result, f"False negative: {tv}"
             else:
-                assert not result, (
-                    f"False positive. {tv['tcId']}: {tv['comment']}"
-                )
+                assert not result, f"False positive: {tv}"
 
 
 class TestGenPrime:

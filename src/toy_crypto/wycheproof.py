@@ -6,15 +6,75 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
+from collections.abc import Mapping, Set
 import os
 from pathlib import Path
 from importlib.resources import files, as_file
 from importlib.resources.abc import Traversable
 import json
+import typing
+
 from jsonschema.protocols import Validator
 from referencing import Resource, Registry
 
 type WyVector = dict[str, object]
+
+
+# This is from pyca ... test/utils.py
+# But I have my own comments and docs
+class WycheproofTest:
+    """An individual test"""
+
+    def __init__(
+        self,
+        testfiledata: Mapping[str, object],
+        testgroup: Mapping[str, object],
+        testcase: Mapping[str, object],
+    ) -> None:
+        """Takes subsets of the object created from the loaded JSON.
+
+        :param testfiledata: Test file data without the TestGroups.
+        :param textgroup: TestGroup, without the tests.
+        :param testcase: Individual test from the testgroup of the testfile
+        """
+
+        self.testfiledata = testfiledata
+        self.testgroup = testgroup
+        self.testcase = testcase
+
+    # Today I learned that "!r" means use the __repr__, not the __str__.
+    def __repr__(self) -> str:
+        return "<WycheproofTest({!r}, {!r}, {!r}, tcId={})>".format(
+            self.testfiledata,
+            self.testgroup,
+            self.testcase,
+            self.testcase["tcId"],
+        )
+
+    @property
+    def valid(self) -> bool:
+        return self.testcase["result"] == "valid"
+
+    @property
+    def acceptable(self) -> bool:
+        return self.testcase["result"] == "acceptable"
+
+    @property
+    def invalid(self) -> bool:
+        return self.testcase["result"] == "invalid"
+
+    def has_flag(self, flag: str) -> bool:
+        flags = self.testcase["flags"]
+        assert isinstance(flags, list)
+        return flag in flags
+
+    @typing.no_type_check
+    def cache_value_to_group(self, cache_key: str, func):
+        cache_val = self.testgroup.get(cache_key)
+        if cache_val is not None:
+            return cache_val
+        self.testgroup[cache_key] = cache_val = func()
+        return cache_val
 
 
 class Loader:
@@ -150,3 +210,60 @@ class Loader:
                         tv[attr] = bytes.fromhex(tv[attr])
                 testVectors.append(tv)
         return testVectors
+
+    def load_json(
+        self,
+        path: Path | str,
+    ) -> tuple[dict[str, object], Set[str]]:
+        """Returns the file data and set of properties that are BigInt format.
+
+        :param path: relative path to json file with test vectors.
+
+        Raises exceptions if the expected directories and files aren't
+        found or can't be read.
+
+        Raises exception of file doesn't conform to JSON Schema.
+        """
+
+        path = self.local_wyche / path
+
+        # We want to find the path to the schema from the path
+        stem_name = path.stem
+        scheme_file_name = stem_name + "_schema" + ".json"
+        scheme_path = Path(self.schemata_dir / scheme_file_name)
+
+        try:
+            with open(scheme_path, "r") as s:
+                scheme = json.load(s)
+        except Exception as e:
+            raise Exception(f"failed to load schema: {e}")
+
+        try:
+            with open(path, "r") as f:
+                wycheproof_json = json.loads(f.read())
+        except Exception as e:
+            raise Exception(f"failed to load JSON: {e}")
+
+        validator = Validator(
+            schema=scheme,
+            registry=self.registry,
+        )  # type: ignore[misc]
+        try:
+            validator.validate(wycheproof_json)
+        except Exception as e:
+            raise Exception(f"JSON validation failed: {e}")
+
+        big_int_properties = self.collect_bigint_attrs(scheme)
+        return wycheproof_json, big_int_properties
+
+    def tests(
+        self, path: str | Path
+    ) -> typing.Generator[WycheproofTest, None, None]:
+        data, big_int_properties = self.load_json(path)
+        for group in data.pop("testGroups"):  # type: ignore
+            cases = group.pop("tests")
+            for c in cases:
+                for property in big_int_properties:
+                    if property in c:
+                        c[property] = bytes.fromhex(c[property])
+                yield WycheproofTest(data, group, c)

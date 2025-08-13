@@ -252,7 +252,7 @@ class TestMath:
 class TestPrimeTesting:
     wp_data = wycheproof.Loader()
 
-    @pytest.mark.skip(reason="Probabilistic")
+    pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
             tvs = self.wp_data.load_vectors("testvectors/primality_test.json")

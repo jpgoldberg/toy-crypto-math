@@ -104,6 +104,7 @@ exclude_lines = [
 ]
 
 [tool.pytest.ini_options]
+testpaths = [ "tests" ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "statistical: marks tests of a statistical nature (deselect with '-m \"not statistical\"')",

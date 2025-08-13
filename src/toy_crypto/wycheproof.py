@@ -22,8 +22,8 @@ type WyVector = dict[str, object]
 
 # This is from pyca ... test/utils.py
 # But I have my own comments and docs
-class WycheproofTest:
-    """An individual test"""
+class Test:
+    """An individual test with a useful representation."""
 
     def __init__(
         self,
@@ -32,6 +32,9 @@ class WycheproofTest:
         case: Mapping[str, object],
     ) -> None:
         """Takes subsets of the object created from the loaded JSON.
+
+        To conduct a test, we only need the ``.cases`` attribute,
+        but ``.data`` and ``.group`` are useful for describing the case.
 
         :param data: Test file data without the TestGroups.
         :param group: TestGroup, without the tests.
@@ -42,7 +45,6 @@ class WycheproofTest:
         self.group = group
         self.case = case
 
-    # Today I learned that "!r" means use the __repr__, not the __str__.
     def __repr__(self) -> str:
         return "<WycheproofTest({!r}, {!r}, {!r}, tcId={})>".format(
             self.data,
@@ -82,6 +84,12 @@ class Loader:
     """Tools for loading Wycheproof test vectors."""
 
     def __init__(self, path: Path | None = None) -> None:
+        """Establishes root of wycheproof data and preregisters schemata.
+
+        :param path:
+            Path of wycheproof root. If None, use data from library resources.
+
+        """
         self.local_wyche: Path
         self.schemata_dir: Path
         self.registry: Registry
@@ -112,7 +120,9 @@ class Loader:
         if not self.schemata_dir.is_dir():
             raise NotADirectoryError("Couldn't find 'schemas' directory")
 
-        self.registry = Registry(retrieve=self.retrieve_from_fs)  # type: ignore[call-arg]
+        self.registry = Registry(
+            retrieve=self.retrieve_from_fs,  # type: ignore[call-arg]
+        )
 
     @classmethod
     def collect_bigint_attrs(
@@ -166,6 +176,7 @@ class Loader:
     def load_json(
         self,
         path: Path | str,
+        *,
         subdir: str = "testvectors",
     ) -> tuple[dict[str, object], Set[str]]:
         """Returns the file data and set of properties that are BigInt format.
@@ -211,9 +222,10 @@ class Loader:
     def tests(
         self,
         path: str | Path,
+        *,
         subdir: str = "testvectors",
-    ) -> typing.Generator[WycheproofTest, None, None]:
-        data, big_int_properties = self.load_json(path, subdir)
+    ) -> typing.Generator[Test, None, None]:
+        data, big_int_properties = self.load_json(path, subdir=subdir)
         for group in data.pop("testGroups"):  # type: ignore
             cases: dict[str, object] = group.pop("tests")
             for c in cases:
@@ -221,4 +233,4 @@ class Loader:
                 for property in big_int_properties:
                     if property in c:
                         c[property] = bytes.fromhex(c[property])
-                yield WycheproofTest(data, group, c)
+                yield Test(data, group, c)

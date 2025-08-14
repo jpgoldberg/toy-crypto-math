@@ -7,17 +7,12 @@ Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
 from collections.abc import Mapping, Set
-import os
 from pathlib import Path
-from importlib.resources import files, as_file
-from importlib.resources.abc import Traversable
 import json
 import typing
 
 from jsonschema.protocols import Validator
 from referencing import Resource, Registry
-
-type WyVector = dict[str, object]
 
 
 # This is from pyca ... test/utils.py
@@ -83,40 +78,27 @@ class Test:
 class Loader:
     """Tools for loading Wycheproof test vectors."""
 
-    def __init__(self, path: Path | None = None) -> None:
-        """Establishes root of wycheproof data and preregisters schemata.
+    def __init__(self, path: Path) -> None:
+        """Establishes wycheproof data directory and preregisters schemata.
 
         :param path:
-            Path of wycheproof root. If None, use data from library resources.
+            Path of wycheproof root.
 
+        Unless you have multiple locations with Wycheproof-like test data,
+        you really should just call this constructor once.
         """
-        self.local_wyche: Path
+
+        self.root_dir: Path
         self.schemata_dir: Path
         self.registry: Registry
 
-        if path is None:
-            r_path: Traversable = files("toy_crypto").joinpath("resources")
-            if not r_path.is_dir():
-                raise Exception("resource directory isn't where it should be")
+        self.root_dir = path
+        if not self.root_dir.is_dir():
+            raise NotADirectoryError(
+                f"'{path}' is not a directory or could not be found"
+            )
 
-            wt: Traversable = r_path.joinpath("wycheproof")
-            with as_file(wt) as wp:
-                self.local_wyche = wp
-            if not self.local_wyche.is_dir():
-                raise Exception(
-                    "wycheproof directory is not where it should be"
-                )
-
-        elif isinstance(path, Path):
-            self.local_wyche = path
-            if not self.local_wyche.is_dir():
-                raise NotADirectoryError(
-                    f"'{path}' is not a directory or could not be found"
-                )
-        else:
-            raise NotImplementedError("please respect type annotations")
-
-        self.schemata_dir = self.local_wyche / "schemas"
+        self.schemata_dir = self.root_dir / "schemas"
         if not self.schemata_dir.is_dir():
             raise NotADirectoryError("Couldn't find 'schemas' directory")
 
@@ -162,11 +144,6 @@ class Loader:
                 acc |= cls.collect_bigint_attrs(n, "")
         return acc
 
-    @staticmethod
-    def dot_dir() -> Path:
-        """The Path of the directory of the file from which this is called."""
-        return Path(os.path.dirname(__file__))
-
     def retrieve_from_fs(self, directory: str = "") -> Resource:
         """Argument must be a str for reasons."""
 
@@ -188,7 +165,7 @@ class Loader:
 
         Raises exception of file doesn't conform to JSON Schema.
         """
-        path = self.local_wyche / subdir / path
+        path = self.root_dir / subdir / path
 
         # We want to find the path to the schema from the path
         stem_name = path.stem

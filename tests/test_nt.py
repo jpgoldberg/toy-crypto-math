@@ -2,7 +2,8 @@ import sys
 from typing import NamedTuple
 
 import pytest
-from toy_crypto import nt, wycheproof
+from toy_crypto import nt
+from . import WP_DATA
 
 
 class TestFactor:
@@ -250,12 +251,10 @@ class TestMath:
 
 
 class TestPrimeTesting:
-    wp_data = wycheproof.Loader()
-
     # @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
-            tvs = self.wp_data.tests("primality_test.json")
+            tvs = WP_DATA.tests("primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
         for tv in tvs:

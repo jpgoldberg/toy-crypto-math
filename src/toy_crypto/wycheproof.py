@@ -88,23 +88,27 @@ class Loader:
         you really should just call this constructor once.
         """
 
-        self.root_dir: Path
-        self.schemata_dir: Path
+        self._root_dir: Path
+        self._schemata_dir: Path
         self.registry: Registry
 
-        self.root_dir = path
-        if not self.root_dir.is_dir():
+        self._root_dir = path
+        if not self._root_dir.is_dir():
             raise NotADirectoryError(
                 f"'{path}' is not a directory or could not be found"
             )
 
-        self.schemata_dir = self.root_dir / "schemas"
-        if not self.schemata_dir.is_dir():
+        self._schemata_dir = self._root_dir / "schemas"
+        if not self._schemata_dir.is_dir():
             raise NotADirectoryError("Couldn't find 'schemas' directory")
 
         self.registry = Registry(
             retrieve=self.retrieve_from_fs,  # type: ignore[call-arg]
         )
+
+    @property
+    def root_dir(self) -> Path:
+        return self._root_dir
 
     @classmethod
     def collect_bigint_attrs(
@@ -112,7 +116,7 @@ class Loader:
         node: object,
         attr: str = "",
     ) -> set[str]:
-        """Collects attributes in schema that are "format": "BigInt".
+        """Collects properties that are hex strings".
 
         :param node:
             object returned by something like ``json.load()``,
@@ -120,6 +124,7 @@ class Loader:
         :param attr: is the name of the current object
 
         Wycheproof schemata use ``{"type": "string", "format": "BigInt"}``
+        or ``{"type": "string", "format": "HexBytes"}``
         for attributes that are hexadecimal strings to be converted to int.
         We need to collect the names of such attributes.
 
@@ -133,7 +138,8 @@ class Loader:
         acc: set[str] = set()
 
         if isinstance(node, dict):
-            if node.get("format") == "BigInt" and node.get("type") == "string":
+            format = node.get("format")
+            if format in ("BigInt", "HexBytes") and node.get("type") == "string":
                 acc.add(attr)
                 return acc
             for key, value in node.items():
@@ -147,7 +153,7 @@ class Loader:
     def retrieve_from_fs(self, directory: str = "") -> Resource:
         """Argument must be a str for reasons."""
 
-        contents = json.loads(self.schemata_dir.read_text())
+        contents = json.loads(self._schemata_dir.read_text())
         return Resource.from_contents(contents)
 
     def load_json(
@@ -165,24 +171,27 @@ class Loader:
 
         Raises exception of file doesn't conform to JSON Schema.
         """
-        path = self.root_dir / subdir / path
-
-        # We want to find the path to the schema from the path
-        stem_name = path.stem
-        scheme_file_name = stem_name + "_schema" + ".json"
-        scheme_path = Path(self.schemata_dir / scheme_file_name)
-
-        try:
-            with open(scheme_path, "r") as s:
-                scheme = json.load(s)
-        except Exception as e:
-            raise Exception(f"failed to load schema: {e}")
+        path = self._root_dir / subdir / path
 
         try:
             with open(path, "r") as f:
                 wycheproof_json = json.loads(f.read())
         except Exception as e:
             raise Exception(f"failed to load JSON: {e}")
+        
+        scheme_file = wycheproof_json["schema"]
+        scheme_path = Path(self._schemata_dir / scheme_file)
+
+        # We want to find the path to the schema from the path
+        # stem_name = path.stem
+        # scheme_file_name = stem_name + "_schema" + ".json"
+        # scheme_path = Path(self._schemata_dir / scheme_file_name)
+
+        try:
+            with open(scheme_path, "r") as s:
+                scheme = json.load(s)
+        except Exception as e:
+            raise Exception(f"failed to load schema: {e}")
 
         validator = Validator(
             schema=scheme,

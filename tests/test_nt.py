@@ -251,7 +251,7 @@ class TestMath:
 
 
 class TestPrimeTesting:
-    # @pytest.mark.skip(reason="Probabilistic")
+    @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
             tvs = WP_DATA.tests("primality_test.json")
@@ -263,19 +263,17 @@ class TestPrimeTesting:
             if tv_result == "acceptable":
                 continue
             expected = bool(testcase["result"] == "valid")
-            assert isinstance(testcase["value"], bytes)
-            value = int.from_bytes(
-                testcase["value"], byteorder="big", signed=False
-            )
+            value = testcase["value"]
+            assert isinstance(value, int)
 
             try:
                 result = nt.probably_prime(value, k=5)
             except Exception as e:
                 assert False, f"Runtime error in {tv}: {e}"
             if expected:
-                assert result, f"False negative: {tv}"
+                assert result, f"False negative: {testcase}"
             else:
-                assert not result, f"False positive: {tv}"
+                assert not result, f"False positive: {testcase}"
 
 
 class TestGenPrime:

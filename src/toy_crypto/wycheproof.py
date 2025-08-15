@@ -6,7 +6,7 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
-from collections.abc import Mapping, Set
+from collections.abc import Mapping
 from pathlib import Path
 import json
 import typing
@@ -111,6 +111,48 @@ class Loader:
         return self._root_dir
 
     @classmethod
+    def collect_formats(cls, schema: dict[str, object]) -> Mapping[str, str]:
+        """Collects format annotation for all string types in schema.
+
+        :param schema: The to collect string format annotations from.
+
+        .. warning::
+
+            If the same property name is used in different parts of the schema
+            and have distinct formats, which format will be assigned to the
+            single property name is undefined.
+        """
+
+        return cls._collect_formats(schema, property="")
+
+    @classmethod
+    def _collect_formats(
+        cls, node: object, property: str = ""
+    ) -> dict[str, str]:
+        # There really must be tools to match data properties with schemata,
+        # but I can't find any.
+
+        local_dict: dict[str, str] = {}
+
+        if isinstance(node, dict):
+            # Base of recursion
+            format = node.get("format")
+            if format is not None:
+                assert isinstance(format, str)
+                return {property: format}
+
+            # Recurse through dictionary values
+            for key, value in node.items():
+                local_dict.update(cls._collect_formats(value, key))
+
+        elif isinstance(node, list):
+            # Recurse through list members
+            # (Do schemata even have lists?)
+            for n in node:
+                local_dict.update(cls._collect_formats(n, ""))
+        return local_dict
+
+    @classmethod
     def collect_bigint_attrs(
         cls,
         node: object,
@@ -139,7 +181,10 @@ class Loader:
 
         if isinstance(node, dict):
             format = node.get("format")
-            if format in ("BigInt", "HexBytes") and node.get("type") == "string":
+            if (
+                format in ("BigInt", "HexBytes")
+                and node.get("type") == "string"
+            ):
                 acc.add(attr)
                 return acc
             for key, value in node.items():
@@ -161,8 +206,8 @@ class Loader:
         path: Path | str,
         *,
         subdir: str = "testvectors",
-    ) -> tuple[dict[str, object], Set[str]]:
-        """Returns the file data and set of properties that are BigInt format.
+    ) -> tuple[dict[str, object], Mapping[str, str]]:
+        """Returns the file data and dictionary of property formats
 
         :param path: relative path to json file with test vectors.
 
@@ -178,14 +223,9 @@ class Loader:
                 wycheproof_json = json.loads(f.read())
         except Exception as e:
             raise Exception(f"failed to load JSON: {e}")
-        
+
         scheme_file = wycheproof_json["schema"]
         scheme_path = Path(self._schemata_dir / scheme_file)
-
-        # We want to find the path to the schema from the path
-        # stem_name = path.stem
-        # scheme_file_name = stem_name + "_schema" + ".json"
-        # scheme_path = Path(self._schemata_dir / scheme_file_name)
 
         try:
             with open(scheme_path, "r") as s:
@@ -202,8 +242,39 @@ class Loader:
         except Exception as e:
             raise Exception(f"JSON validation failed: {e}")
 
-        big_int_properties = self.collect_bigint_attrs(scheme)
-        return wycheproof_json, big_int_properties
+        formats = self.collect_formats(scheme)
+        return wycheproof_json, formats
+
+    @staticmethod
+    def deserialize_top_level(
+        properties: dict[str, object], formats: Mapping[str, str]
+    ) -> None:
+        """Mutates properties. Deserializes top level members according for format"""
+
+        for p, s in properties.items():
+            if not isinstance(s, str):
+                continue
+
+            match formats.get(p):
+                case None:
+                    pass
+                case "HexBytes":
+                    properties[p] = bytes.fromhex(s)
+                case "BigInt":
+                    properties[p] = int.from_bytes(
+                        bytes.fromhex(s), byteorder="big", signed=True
+                    )
+                case "Asn":
+                    # Leave as string, as it might be invalid
+                    pass
+                case "Der":
+                    # TODO: either convert or issue warning
+                    pass
+                case "Pem":
+                    # TODO: either convert or issue warning
+                    pass
+                case _:
+                    pass
 
     def tests(
         self,
@@ -211,12 +282,13 @@ class Loader:
         *,
         subdir: str = "testvectors",
     ) -> typing.Generator[Test, None, None]:
-        data, big_int_properties = self.load_json(path, subdir=subdir)
+        data, formats = self.load_json(path, subdir=subdir)
+
         for group in data.pop("testGroups"):  # type: ignore
+            self.deserialize_top_level(group, formats)
+
             cases: dict[str, object] = group.pop("tests")
             for c in cases:
                 assert isinstance(c, dict)
-                for property in big_int_properties:
-                    if property in c:
-                        c[property] = bytes.fromhex(c[property])
+                self.deserialize_top_level(c, formats)
                 yield Test(data, group, c)

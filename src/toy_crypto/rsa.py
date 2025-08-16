@@ -530,6 +530,8 @@ class PrivateKey:
         # Parsing portion of Step 3.g
         lhash_prime: bytes = data_block[: h.digest_size]
         remainder: bytes = data_block[h.digest_size :].lstrip(bytes([0]))
+        if len(remainder) == 0:
+            raise DecryptionError(Oaep._unsafe_msg("Negative message space"))
         one: int = remainder[0]
         message: bytes = remainder[1:]
 
@@ -539,7 +541,9 @@ class PrivateKey:
         if not compare_digest(lhash, lhash_prime):
             raise DecryptionError(Oaep._unsafe_msg("Label mismatch"))
         if y != 0:
-            raise Exception(Oaep._unsafe_msg("Expected 0x00 leading byte"))
+            raise DecryptionError(
+                Oaep._unsafe_msg("Expected 0x00 leading byte")
+            )
 
         return message
 

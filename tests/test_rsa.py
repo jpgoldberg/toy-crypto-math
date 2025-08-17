@@ -319,25 +319,22 @@ class TestOaep:
     )
 
     def test_wycheproof_2048_sha1_mfg1_sha1(self) -> None:
-        tests = WP_DATA.tests("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        data = WP_DATA.load_json("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        for group in data.groups:
+            d = group["d"]
+            assert isinstance(d, int)
+            n = group["n"]
+            assert isinstance(d, int)
+            e = group["e"]
+            assert isinstance(e, int)
 
-        for t in tests:
-            # Need to construct private key from group PrivateJWK
-            # It isn't pretty. I should probably just use a PEM
-            # or JWK key loader.
+            # We will need p and q (or the CRT values) to construct
+            # a private key. Those aren't in the root of the group,
+            # so we will pull them out of the Jwk key
 
-            # Also I really should just do this one for test group.
-
-            d = t.group["d"]
-            n = t.group["n"]
-
-            # e is listed incorrectly in group header.
-            # e = t.group['e']
-            jwk = t.group.get("privateKeyJwk")
+            jwk = group["privateKeyJwk"]
             assert isinstance(jwk, dict)
-            e_b64 = jwk.get("e")
-            assert isinstance(e_b64, str)
-            e = b64_to_int(e_b64)
+
             p_b64 = jwk.get("p")
             assert isinstance(p_b64, str)
             p = b64_to_int(p_b64)
@@ -345,29 +342,36 @@ class TestOaep:
             assert isinstance(q_b64, str)
             q = b64_to_int(q_b64)
 
+            # Create our private key and check that it matches what
+            # we expect from the group.
+            # Assumes we all use the same mechanism to compute d
             priv_key = rsa.PrivateKey(p, q, e)
             assert priv_key.pub_key.N == n
             assert priv_key._d == d
-            # Done setting up key for test group.
 
-            ct = t.case["ct"]
-            assert isinstance(ct, bytes)
-            msg = t.case["msg"]
-            assert isinstance(msg, bytes)
-            label = t.case["label"]
-            assert isinstance(label, bytes)
+            # And now on to the tests
+            for t in group.tests:
+                ct = t["ct"]
+                assert isinstance(ct, bytes)
+                msg = t["msg"]
+                assert isinstance(msg, bytes)
+                label = t["label"]
+                assert isinstance(label, bytes)
 
-            match t.case["result"]:
-                case "invalid":
-                    with pytest.raises(rsa.DecryptionError):
-                        _ = priv_key.oaep_decrypt(
+                match t["result"]:
+                    case "invalid":
+                        with pytest.raises(rsa.DecryptionError):
+                            _ = priv_key.oaep_decrypt(
+                                ct,
+                                label=label,
+                                hash_id="sha1",
+                                mgf_id="mgf1SHA1",
+                            )
+                    case "valid":
+                        decrypted = priv_key.oaep_decrypt(
                             ct, label=label, hash_id="sha1", mgf_id="mgf1SHA1"
                         )
-                case "valid":
-                    decrypted = priv_key.oaep_decrypt(
-                        ct, label=label, hash_id="sha1", mgf_id="mgf1SHA1"
-                    )
-                    assert decrypted == msg
+                        assert decrypted == msg
 
     def test_enc(self) -> None:
         class Vector:

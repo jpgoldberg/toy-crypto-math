@@ -6,13 +6,162 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping
+from copy import copy, deepcopy
 from pathlib import Path
 import json
 import typing
 
 from jsonschema.protocols import Validator
 from referencing import Resource, Registry
+
+# I wouldn't need to have a whole bunch of isinstance instances
+# if I could use the schema to flesh out types. But, alas,
+# I have not figured out a way to do that reasonably.
+
+type StrDict = dict[str, object]
+
+
+def deserialize_top_level(
+    properties: StrDict, formats: Mapping[str, str]
+) -> None:
+    """Mutates. Deserializes root level members according for format
+
+    Any string values in ``HexBytes`` format
+    is converted to :py:class:`bytes`,
+    and any in ``BigInt`` format
+    is converted to an signed :py:class:`int`.
+    """
+
+    for p, s in properties.items():
+        if not isinstance(s, str):
+            continue
+
+        match formats.get(p):
+            case None:
+                pass
+            case "HexBytes":
+                properties[p] = bytes.fromhex(s)
+            case "BigInt":
+                properties[p] = int.from_bytes(
+                    bytes.fromhex(s), byteorder="big", signed=True
+                )
+            case "Asn" | "Jwk" | "Pem" | "Der":
+                # Leave as string, as it might be invalid
+                pass
+            case _:
+                # TODO: Should warn of unknown format
+                pass
+
+
+class TestCase:
+    def __init__(self, test_case: dict[str, object]) -> None:
+        tcId = test_case.get("tcId")
+        if tcId is None:
+            raise ValueError('Missing "tcId" key')
+        assert isinstance(tcId, int)
+        self._tcId: int = tcId
+
+        self._result = test_case.get("result")
+
+        if self._result is None:
+            raise ValueError('Missing "result" key')
+        if self._result not in ("valid", "invalid", "acceptable"):
+            raise ValueError("Weird result status")
+
+        self.data = copy(test_case)
+
+    def __getitem__(self, key: str) -> object:
+        return self.data[key]
+
+    @property
+    def tcId(self) -> int:
+        return self._tcId
+
+    @property
+    def valid(self) -> bool:
+        return self.data["result"] == "valid"
+
+    @property
+    def acceptable(self) -> bool:
+        return self.data["result"] == "acceptable"
+
+    @property
+    def invalid(self) -> bool:
+        return self.data["result"] == "invalid"
+
+
+class TestGroup:
+    def __init__(
+        self, group: dict[str, object], formats: Mapping[str, str]
+    ) -> None:
+        self._formats = formats
+        self.group: dict[str, object] = copy(group)
+
+        deserialize_top_level(self.group, formats)
+
+        tests: list[dict[str, object]]
+
+        try:
+            tests = self.group.pop("tests")  # type: ignore[assignment]
+        except KeyError:
+            raise ValueError('Group must have "tests')
+        assert isinstance(tests, list)
+        self._tests: list[dict[str, object]] = tests
+
+    def __getitem__(self, key: str) -> object:
+        return self.group[key]
+
+    @property
+    def tests(self) -> Generator[TestCase]:
+        for t in self._tests:
+            deserialize_top_level(t, self._formats)
+            yield TestCase(t)
+
+
+class Data:
+    """The Python object that results from loading the JSON source."""
+
+    def __init__(
+        self, data: dict[str, object], formats: Mapping[str, str]
+    ) -> None:
+        self._formats = formats
+        _data: dict[str, object] = deepcopy(data)
+        groups = _data.pop("testGroups", None)
+        if groups is None:
+            raise ValueError('There should be a "testGroups" key in the data')
+        assert isinstance(groups, list)
+        self._groups: list[dict[str, object]] = groups
+
+        header: list[str] = _data.pop("header", "")  # type: ignore[assignment]
+
+        # Hungarian Notation (well, it would be vonálHeader)
+        vonal_header: str = " ".join(header)
+        assert isinstance(vonal_header, str)
+        self._header: str = vonal_header
+
+        alg = _data.pop("algorithm", "")
+        assert isinstance(alg, str)
+        self._algorithm: str = alg
+
+        self._data: dict[str, object] = _data
+
+    @property
+    def header(self) -> str:
+        return self._header
+
+    @property
+    def groups(self) -> Generator[TestGroup]:
+        for g in self._groups:
+            yield TestGroup(g, self._formats)
+
+    @property
+    def algorithm(self) -> str:
+        return self._algorithm
+
+    @property
+    def data(self) -> Mapping[str, object]:
+        return self._data
 
 
 # This is from pyca ... test/utils.py
@@ -206,7 +355,7 @@ class Loader:
         path: Path | str,
         *,
         subdir: str = "testvectors",
-    ) -> tuple[dict[str, object], Mapping[str, str]]:
+    ) -> Data:
         """Returns the file data and dictionary of property formats
 
         :param path: relative path to json file with test vectors.
@@ -243,52 +392,4 @@ class Loader:
             raise Exception(f"JSON validation failed: {e}")
 
         formats = self.collect_formats(scheme)
-        return wycheproof_json, formats
-
-    @staticmethod
-    def deserialize_top_level(
-        properties: dict[str, object], formats: Mapping[str, str]
-    ) -> None:
-        """Mutates properties. Deserializes top level members according for format"""
-
-        for p, s in properties.items():
-            if not isinstance(s, str):
-                continue
-
-            match formats.get(p):
-                case None:
-                    pass
-                case "HexBytes":
-                    properties[p] = bytes.fromhex(s)
-                case "BigInt":
-                    properties[p] = int.from_bytes(
-                        bytes.fromhex(s), byteorder="big", signed=True
-                    )
-                case "Asn":
-                    # Leave as string, as it might be invalid
-                    pass
-                case "Der":
-                    # TODO: either convert or issue warning
-                    pass
-                case "Pem":
-                    # TODO: either convert or issue warning
-                    pass
-                case _:
-                    pass
-
-    def tests(
-        self,
-        path: str | Path,
-        *,
-        subdir: str = "testvectors",
-    ) -> typing.Generator[Test, None, None]:
-        data, formats = self.load_json(path, subdir=subdir)
-
-        for group in data.pop("testGroups"):  # type: ignore
-            self.deserialize_top_level(group, formats)
-
-            cases: dict[str, object] = group.pop("tests")
-            for c in cases:
-                assert isinstance(c, dict)
-                self.deserialize_top_level(c, formats)
-                yield Test(data, group, c)
+        return Data(wycheproof_json, formats)

@@ -116,6 +116,7 @@ dev = [
     "bitarray>=3.4.2",
     "jsonschema>=4.25.0",
     "types-jsonschema>=4.25.0.20250809",
+    "pytest-subtests>=0.14.2",
 ]
 lint = [
     "mypy >= 1.15",

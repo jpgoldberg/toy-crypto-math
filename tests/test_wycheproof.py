@@ -25,18 +25,18 @@ class TestLoading:
 
 class TestTests:
     def test_rsa_oaep_2046_sha1(self) -> None:
-        tests = WP_DATA.tests("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        data = WP_DATA.load_json("rsa_oaep_2048_sha1_mgf1sha1_test.json")
 
-        for test in tests:
-            case = test.case
-            if case["tcId"] == 1:
-                assert test.valid
-                assert isinstance(case["ct"], bytes)
-                assert isinstance(case["msg"], bytes)
-                assert isinstance(case["comment"], str)
-                break
-        else:
-            assert False, "tcID 1 not found"
+        for group in data.groups:
+            for case in group.tests:
+                if case.tcId == 1:
+                    assert case.valid
+                    assert isinstance(case["ct"], bytes)
+                    assert isinstance(case["msg"], bytes)
+                    assert isinstance(case["comment"], str)
+                    break
+            else:
+                assert False, "tcID 1 not found"
 
 
 if __name__ == "__main__":

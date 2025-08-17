@@ -254,26 +254,27 @@ class TestPrimeTesting:
     @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
-            tvs = WP_DATA.tests("primality_test.json")
+            data = WP_DATA.load_json("primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
-        for tv in tvs:
-            testcase = tv.case
-            tv_result = testcase["result"]
-            if tv_result == "acceptable":
-                continue
-            expected = bool(testcase["result"] == "valid")
-            value = testcase["value"]
-            assert isinstance(value, int)
 
-            try:
-                result = nt.probably_prime(value, k=5)
-            except Exception as e:
-                assert False, f"Runtime error in {tv}: {e}"
-            if expected:
-                assert result, f"False negative: {testcase}"
-            else:
-                assert not result, f"False positive: {testcase}"
+        for group in data.groups:
+            for testcase in group.tests:
+                tv_result = testcase["result"]
+                if tv_result == "acceptable":
+                    continue
+                expected = bool(testcase["result"] == "valid")
+                value = testcase["value"]
+                assert isinstance(value, int)
+
+                try:
+                    result = nt.probably_prime(value, k=5)
+                except Exception as e:
+                    assert False, f"Runtime error in {testcase}: {e}"
+                if expected:
+                    assert result, f"False negative: {testcase}"
+                else:
+                    assert not result, f"False positive: {testcase}"
 
 
 class TestGenPrime:

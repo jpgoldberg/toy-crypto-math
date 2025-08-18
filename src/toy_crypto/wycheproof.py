@@ -63,7 +63,7 @@ class TestCase:
         tcId = data.pop("tcId", None)
         if tcId is None:
             raise ValueError('Missing "tcId" key')
-        self._tcId: int = int(tcId)
+        self._tcId: int = int(tcId)  # type: ignore[call-overload]
 
         result = data.pop("result", None)
         if not isinstance(result, str):

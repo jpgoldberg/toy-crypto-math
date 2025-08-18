@@ -6,7 +6,7 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
-from collections.abc import Generator, Mapping
+from collections.abc import Generator, Mapping, Set
 from copy import copy, deepcopy
 from pathlib import Path
 import json
@@ -56,39 +56,74 @@ def deserialize_top_level(
 
 class TestCase:
     def __init__(self, test_case: dict[str, object]) -> None:
-        tcId = test_case.get("tcId")
+        # We are going to modify data by popping, so we will copy things.
+        # A shallow copy should be enough
+        data = copy(test_case)
+
+        tcId = data.pop("tcId", None)
         if tcId is None:
             raise ValueError('Missing "tcId" key')
         assert isinstance(tcId, int)
         self._tcId: int = tcId
 
-        self._result = test_case.get("result")
+        result = test_case.pop("result", None)
+        if not isinstance(result, str):
+            raise ValueError('Missing or garbled "result"')
 
-        if self._result is None:
-            raise ValueError('Missing "result" key')
-        if self._result not in ("valid", "invalid", "acceptable"):
+        if result not in ("valid", "invalid", "acceptable"):
             raise ValueError("Weird result status")
+        self._result: str = result
 
-        self.data = copy(test_case)
+        self._comment: str = data.pop("comment", "")  # type: ignore[assignment]
+        flags: list[str] = data.pop("flags", [])  # type: ignore[assignment]
+        self._flags: Set[str] = set(flags)
+
+        self._data = data
 
     def __getitem__(self, key: str) -> object:
-        return self.data[key]
+        return self._data[key]
 
     @property
     def tcId(self) -> int:
         return self._tcId
 
     @property
+    def result(self) -> str:
+        return self._result
+
+    @property
     def valid(self) -> bool:
-        return self.data["result"] == "valid"
+        return self._result == "valid"
 
     @property
     def acceptable(self) -> bool:
-        return self.data["result"] == "acceptable"
+        return self._result == "acceptable"
 
     @property
     def invalid(self) -> bool:
-        return self.data["result"] == "invalid"
+        return self._result == "invalid"
+
+    @property
+    def comment(self) -> str:
+        return self._comment
+
+    @property
+    def flags(self) -> Set[str]:
+        return self._flags
+
+    def has_flag(self, flag: str) -> bool:
+        return flag in self._flags
+
+    def __repr__(self) -> str:
+        s = f"tcId: {self.tcId}"
+        if self.comment != "":
+            s += f" ({self.comment})"
+        s += f"; {self._result}"
+        flag_repr = f"{self.flags:r}" if self.flags else "None"
+        s += f"; flags: {flag_repr}"
+        s += f"; other: {self._data:r}"
+
+        return s
 
 
 class TestGroup:
@@ -252,7 +287,7 @@ class Loader:
             raise NotADirectoryError("Couldn't find 'schemas' directory")
 
         self.registry = Registry(
-            retrieve=self.retrieve_from_fs,  # type: ignore[call-arg]
+            retrieve=self.retrieve_from_dir,  # type: ignore[call-arg]
         )
 
     @property
@@ -301,51 +336,15 @@ class Loader:
                 local_dict.update(cls._collect_formats(n, ""))
         return local_dict
 
-    @classmethod
-    def collect_bigint_attrs(
-        cls,
-        node: object,
-        attr: str = "",
-    ) -> set[str]:
-        """Collects properties that are hex strings".
+    # https://python-jsonschema.readthedocs.io/en/stable/referencing/#resolving-references-from-the-file-system
+    def retrieve_from_dir(self, directory: str = "") -> Resource:
+        """Retrieves schema from file system directory.
+        Retrieval function to be passed to Registry.
 
-        :param node:
-            object returned by something like ``json.load()``,
-            or a node within such an object in the recursive calls.
-        :param attr: is the name of the current object
-
-        Wycheproof schemata use ``{"type": "string", "format": "BigInt"}``
-        or ``{"type": "string", "format": "HexBytes"}``
-        for attributes that are hexadecimal strings to be converted to int.
-        We need to collect the names of such attributes.
-
-        .. note::
-
-            There must be a more natural way use scheme annotations
-            to help us process objects imported from JSON.
-            But if there is, I have not yet found it.
+        :param directory:
+            A string representing the file system directory
+            from which schemata are retrieved.
         """
-
-        acc: set[str] = set()
-
-        if isinstance(node, dict):
-            format = node.get("format")
-            if (
-                format in ("BigInt", "HexBytes")
-                and node.get("type") == "string"
-            ):
-                acc.add(attr)
-                return acc
-            for key, value in node.items():
-                acc |= cls.collect_bigint_attrs(value, key)
-
-        elif isinstance(node, list):
-            for n in node:
-                acc |= cls.collect_bigint_attrs(n, "")
-        return acc
-
-    def retrieve_from_fs(self, directory: str = "") -> Resource:
-        """Argument must be a str for reasons."""
 
         contents = json.loads(self._schemata_dir.read_text())
         return Resource.from_contents(contents)

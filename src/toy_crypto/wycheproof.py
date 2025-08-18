@@ -55,18 +55,17 @@ def deserialize_top_level(
 
 
 class TestCase:
-    def __init__(self, test_case: dict[str, object]) -> None:
+    def __init__(self, test_case: Mapping[str, object]) -> None:
         # We are going to modify data by popping, so we will copy things.
         # A shallow copy should be enough
-        data = copy(test_case)
+        data = dict(copy(test_case))
 
         tcId = data.pop("tcId", None)
         if tcId is None:
             raise ValueError('Missing "tcId" key')
-        assert isinstance(tcId, int)
-        self._tcId: int = tcId
+        self._tcId: int = int(tcId)
 
-        result = test_case.pop("result", None)
+        result = data.pop("result", None)
         if not isinstance(result, str):
             raise ValueError('Missing or garbled "result"')
 
@@ -119,9 +118,9 @@ class TestCase:
         if self.comment != "":
             s += f" ({self.comment})"
         s += f"; {self._result}"
-        flag_repr = f"{self.flags:r}" if self.flags else "None"
+        flag_repr = f"{repr(self.flags)}" if self.flags else "None"
         s += f"; flags: {flag_repr}"
-        s += f"; other: {self._data:r}"
+        s += f"; other: {repr(self._data)}"
 
         return s
 

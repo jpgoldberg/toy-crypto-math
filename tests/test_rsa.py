@@ -1,5 +1,6 @@
 import base64
 import sys
+import unittest
 import pytest
 
 from collections import namedtuple
@@ -233,7 +234,7 @@ class TestMisc:
         assert priv_key.e == default_e
 
 
-class TestOaep:
+class TestOaep(unittest.TestCase):
     # from 1024 bit key at
     # https://github.com/pyca/cryptography/blob/main/vectors/cryptography_vectors/asymmetric/RSA/pkcs-1v2-1d2-vec/oaep-vect.txt
 
@@ -351,27 +352,31 @@ class TestOaep:
 
             # And now on to the tests
             for t in group.tests:
-                ct = t["ct"]
-                assert isinstance(ct, bytes)
-                msg = t["msg"]
-                assert isinstance(msg, bytes)
-                label = t["label"]
-                assert isinstance(label, bytes)
+                with self.subTest(msg=f"tcId: {t.tcId}"):
+                    ct = t["ct"]
+                    assert isinstance(ct, bytes)
+                    msg = t["msg"]
+                    assert isinstance(msg, bytes)
+                    label = t["label"]
+                    assert isinstance(label, bytes)
 
-                match t["result"]:
-                    case "invalid":
-                        with pytest.raises(rsa.DecryptionError):
-                            _ = priv_key.oaep_decrypt(
+                    match t.result:
+                        case "invalid":
+                            with pytest.raises(rsa.DecryptionError):
+                                _ = priv_key.oaep_decrypt(
+                                    ct,
+                                    label=label,
+                                    hash_id="sha1",
+                                    mgf_id="mgf1SHA1",
+                                )
+                        case "valid":
+                            decrypted = priv_key.oaep_decrypt(
                                 ct,
                                 label=label,
                                 hash_id="sha1",
                                 mgf_id="mgf1SHA1",
                             )
-                    case "valid":
-                        decrypted = priv_key.oaep_decrypt(
-                            ct, label=label, hash_id="sha1", mgf_id="mgf1SHA1"
-                        )
-                        assert decrypted == msg
+                            assert decrypted == msg
 
     def test_enc(self) -> None:
         class Vector:

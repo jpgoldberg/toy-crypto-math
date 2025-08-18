@@ -1,6 +1,7 @@
 import sys
 from typing import NamedTuple
 
+import unittest
 import pytest
 from toy_crypto import nt
 from . import WP_DATA
@@ -250,8 +251,8 @@ class TestMath:
             assert nt.isqrt(n) == expected
 
 
-class TestPrimeTesting:
-    @pytest.mark.skip(reason="Probabilistic")
+class TestPrimeTesting(unittest.TestCase):
+    # @pytest.mark.skip(reason="Probabilistic")
     def test_probably_prime(self) -> None:
         try:
             data = WP_DATA.load_json("primality_test.json")
@@ -259,22 +260,24 @@ class TestPrimeTesting:
             raise Exception(f"Failed to load test vectors: {e}")
 
         for group in data.groups:
-            for testcase in group.tests:
-                tv_result = testcase["result"]
-                if tv_result == "acceptable":
+            for case in group.tests:
+                if case.acceptable:
                     continue
-                expected = bool(testcase["result"] == "valid")
-                value = testcase["value"]
-                assert isinstance(value, int)
+                if case.has_flag("WorstCaseMillerRabin"):
+                    continue
+                with self.subTest(msg=f"tcID: {case.tcId}"):
+                    expected: bool = case.valid
+                    value = case["value"]
+                    assert isinstance(value, int)
 
-                try:
-                    result = nt.probably_prime(value, k=5)
-                except Exception as e:
-                    assert False, f"Runtime error in {testcase}: {e}"
-                if expected:
-                    assert result, f"False negative: {testcase}"
-                else:
-                    assert not result, f"False positive: {testcase}"
+                    try:
+                        result = nt.probably_prime(value, k=4)
+                    except Exception as e:
+                        assert False, f"Runtime error in {case}: {e}"
+                    if expected:
+                        assert result, f"False negative: {case}"
+                    else:
+                        assert not result, f"False positive: {case}"
 
 
 class TestGenPrime:

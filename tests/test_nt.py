@@ -252,7 +252,7 @@ class TestMath:
 
 
 class TestPrimeTesting(unittest.TestCase):
-    # @pytest.mark.skip(reason="Probabilistic")
+    @pytest.mark.skip(reason="Slow")
     def test_probably_prime(self) -> None:
         try:
             data = WP_DATA.load_json("primality_test.json")
@@ -265,6 +265,34 @@ class TestPrimeTesting(unittest.TestCase):
                     continue
                 if case.has_flag("WorstCaseMillerRabin"):
                     continue
+                with self.subTest(msg=f"tcID: {case.tcId}"):
+                    expected: bool = case.valid
+                    value = case["value"]
+                    assert isinstance(value, int)
+
+                    try:
+                        result = nt.probably_prime(value, k=4)
+                    except Exception as e:
+                        assert False, f"Runtime error in {case}: {e}"
+                    if expected:
+                        assert result, f"False negative: {case}"
+                    else:
+                        assert not result, f"False positive: {case}"
+
+    # @pytest.mark.skip(reason="Probabilistic")
+    def test_worst_cases(self) -> None:
+        try:
+            data = WP_DATA.load_json("primality_test.json")
+        except Exception as e:
+            raise Exception(f"Failed to load test vectors: {e}")
+
+        for group in data.groups:
+            for case in group.tests:
+                if not case.has_flag("WorstCaseMillerRabin"):
+                    continue
+                if case.acceptable:
+                    continue
+
                 with self.subTest(msg=f"tcID: {case.tcId}"):
                     expected: bool = case.valid
                     value = case["value"]

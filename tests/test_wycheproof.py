@@ -25,7 +25,7 @@ class TestLoading:
 
 class TestTests:
     def test_rsa_oaep_2046_sha1(self) -> None:
-        data = WP_DATA.load_json("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
 
         assert data.header == str(
             "Test vectors of type RsaOeapDecrypt are"
@@ -51,7 +51,7 @@ class TestTests:
                         assert tc.comment == ""
                         assert tc.valid
                         assert not tc.flags
-                        assert tc["msg"] == bytes.fromhex("54657374")
+                        assert tc.fields["msg"] == bytes.fromhex("54657374")
 
                     case 12:
                         assert tc.comment == "first byte of l_hash modified"
@@ -66,7 +66,7 @@ class TestTests:
                     case 32:
                         assert tc.comment == "em has a large hamming weight"
                         assert tc.valid
-                        label = tc["label"]
+                        label = tc.fields["label"]
                         assert isinstance(label, bytes)
                         assert len(label) == 24
                         assert not tc.has_flag("InvalidOaepPadding")
@@ -74,8 +74,8 @@ class TestTests:
 
                     case _:
                         assert tc.result in ("valid", "invalid", "acceptable")
-                        assert isinstance(tc["ct"], bytes)
-                        assert isinstance(tc["msg"], bytes)
+                        assert isinstance(tc.fields["ct"], bytes)
+                        assert isinstance(tc.fields["msg"], bytes)
 
 
 if __name__ == "__main__":

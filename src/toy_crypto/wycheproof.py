@@ -6,11 +6,11 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
-from collections.abc import Generator, Mapping, Set
-from copy import copy, deepcopy
+from collections.abc import Generator, Mapping, Sequence, Set
+from copy import copy
 from pathlib import Path
 import json
-import typing
+from warnings import deprecated
 
 from jsonschema.protocols import Validator
 from referencing import Resource, Registry
@@ -63,7 +63,7 @@ class TestCase:
         tcId = data.pop("tcId", None)
         if tcId is None:
             raise ValueError('Missing "tcId" key')
-        self._tcId: int = int(tcId)  # type: ignore[call-overload]
+        self._tcId: int = tcId  # type: ignore[assignment]
 
         result = data.pop("result", None)
         if not isinstance(result, str):
@@ -74,13 +74,17 @@ class TestCase:
         self._result: str = result
 
         self._comment: str = data.pop("comment", "")  # type: ignore[assignment]
-        flags: list[str] = data.pop("flags", [])  # type: ignore[assignment]
-        self._flags: Set[str] = set(flags)
+        self._flags: Set[str] = data.pop("flags", [])  # type: ignore[assignment]
 
-        self._data = data
+        self._fields = data
 
+    @deprecated("Use 'fields' instead")
     def __getitem__(self, key: str) -> object:
-        return self._data[key]
+        return self._fields[key]
+
+    @property
+    def fields(self) -> Mapping[str, object]:
+        return self._fields
 
     @property
     def tcId(self) -> int:
@@ -120,7 +124,7 @@ class TestCase:
         s += f"; {self._result}"
         flag_repr = f"{repr(self.flags)}" if self.flags else "None"
         s += f"; flags: {flag_repr}"
-        s += f"; other: {repr(self._data)}"
+        s += f"; other: {repr(self._fields)}"
 
         return s
 
@@ -134,14 +138,11 @@ class TestGroup:
 
         deserialize_top_level(self.group, formats)
 
-        tests: list[dict[str, object]]
-
+        self._tests: Sequence[dict[str, object]]
         try:
-            tests = self.group.pop("tests")  # type: ignore[assignment]
+            self._tests = self.group.pop("tests")  # type: ignore[assignment]
         except KeyError:
             raise ValueError('Group must have "tests')
-        assert isinstance(tests, list)
-        self._tests: list[dict[str, object]] = tests
 
     def __getitem__(self, key: str) -> object:
         return self.group[key]
@@ -160,23 +161,21 @@ class Data:
         self, data: dict[str, object], formats: Mapping[str, str]
     ) -> None:
         self._formats = formats
-        _data: dict[str, object] = deepcopy(data)
-        groups = _data.pop("testGroups", None)
-        if groups is None:
+        self._groups: Sequence[dict[str, object]]
+
+        # Shallow copy should be ok, because everything we
+        # pop out of this gets copied.
+        _data: dict[str, object] = copy(data)
+
+        try:
+            self._groups = _data.pop("testGroups")  # type: ignore[assignment]
+        except KeyError:
             raise ValueError('There should be a "testGroups" key in the data')
-        assert isinstance(groups, list)
-        self._groups: list[dict[str, object]] = groups
 
         header: list[str] = _data.pop("header", "")  # type: ignore[assignment]
+        self._header: str = " ".join(header)
 
-        # Hungarian Notation (well, it would be vonálHeader)
-        vonal_header: str = " ".join(header)
-        assert isinstance(vonal_header, str)
-        self._header: str = vonal_header
-
-        alg = _data.pop("algorithm", "")
-        assert isinstance(alg, str)
-        self._algorithm: str = alg
+        self._algorithm: str = _data.pop("algorithm", "")  # type: ignore[assignment]
 
         self._data: dict[str, object] = _data
 
@@ -196,66 +195,6 @@ class Data:
     @property
     def data(self) -> Mapping[str, object]:
         return self._data
-
-
-# This is from pyca ... test/utils.py
-# But I have my own comments and docs
-class Test:
-    """An individual test with a useful representation."""
-
-    def __init__(
-        self,
-        data: Mapping[str, object],
-        group: Mapping[str, object],
-        case: Mapping[str, object],
-    ) -> None:
-        """Takes subsets of the object created from the loaded JSON.
-
-        To conduct a test, we only need the ``.cases`` attribute,
-        but ``.data`` and ``.group`` are useful for describing the case.
-
-        :param data: Test file data without the TestGroups.
-        :param group: TestGroup, without the tests.
-        :param case: Individual test from the group
-        """
-
-        self.data = data
-        self.group = group
-        self.case = case
-
-    def __repr__(self) -> str:
-        return "<WycheproofTest({!r}, {!r}, {!r}, tcId={})>".format(
-            self.data,
-            self.group,
-            self.case,
-            self.case["tcId"],
-        )
-
-    @property
-    def valid(self) -> bool:
-        return self.case["result"] == "valid"
-
-    @property
-    def acceptable(self) -> bool:
-        return self.case["result"] == "acceptable"
-
-    @property
-    def invalid(self) -> bool:
-        return self.case["result"] == "invalid"
-
-    def has_flag(self, flag: str) -> bool:
-        flags = self.case["flags"]
-        assert isinstance(flags, list)
-        return flag in flags
-
-    # Copied from pyca. I do not know what this is for
-    @typing.no_type_check
-    def cache_value_to_group(self, cache_key: str, func):
-        cache_val = self.group.get(cache_key)
-        if cache_val is not None:
-            return cache_val
-        self.group[cache_key] = cache_val = func()
-        return cache_val
 
 
 class Loader:
@@ -348,7 +287,7 @@ class Loader:
         contents = json.loads(self._schemata_dir.read_text())
         return Resource.from_contents(contents)
 
-    def load_json(
+    def load(
         self,
         path: Path | str,
         *,

@@ -320,7 +320,7 @@ class TestOaep(unittest.TestCase):
     )
 
     def test_wycheproof_2048_sha1_mfg1_sha1(self) -> None:
-        data = WP_DATA.load_json("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
         for group in data.groups:
             d = group["d"]
             assert isinstance(d, int)
@@ -353,11 +353,11 @@ class TestOaep(unittest.TestCase):
             # And now on to the tests
             for t in group.tests:
                 with self.subTest(msg=f"tcId: {t.tcId}"):
-                    ct = t["ct"]
+                    ct = t.fields["ct"]
                     assert isinstance(ct, bytes)
-                    msg = t["msg"]
+                    msg = t.fields["msg"]
                     assert isinstance(msg, bytes)
-                    label = t["label"]
+                    label = t.fields["label"]
                     assert isinstance(label, bytes)
 
                     match t.result:

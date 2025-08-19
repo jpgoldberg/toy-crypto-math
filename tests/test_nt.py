@@ -255,7 +255,7 @@ class TestPrimeTesting(unittest.TestCase):
     @pytest.mark.skip(reason="Slow")
     def test_probably_prime(self) -> None:
         try:
-            data = WP_DATA.load_json("primality_test.json")
+            data = WP_DATA.load("primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
 
@@ -267,7 +267,7 @@ class TestPrimeTesting(unittest.TestCase):
                     continue
                 with self.subTest(msg=f"tcID: {case.tcId}"):
                     expected: bool = case.valid
-                    value = case["value"]
+                    value = case.fields["value"]
                     assert isinstance(value, int)
 
                     try:
@@ -282,7 +282,7 @@ class TestPrimeTesting(unittest.TestCase):
     # @pytest.mark.skip(reason="Probabilistic")
     def test_worst_cases(self) -> None:
         try:
-            data = WP_DATA.load_json("primality_test.json")
+            data = WP_DATA.load("primality_test.json")
         except Exception as e:
             raise Exception(f"Failed to load test vectors: {e}")
 
@@ -295,7 +295,7 @@ class TestPrimeTesting(unittest.TestCase):
 
                 with self.subTest(msg=f"tcID: {case.tcId}"):
                     expected: bool = case.valid
-                    value = case["value"]
+                    value = case.fields["value"]
                     assert isinstance(value, int)
 
                     try:

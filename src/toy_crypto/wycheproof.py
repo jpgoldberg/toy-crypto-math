@@ -12,8 +12,9 @@ from pathlib import Path
 import json
 from warnings import deprecated
 
-from jsonschema.protocols import Validator
+from jsonschema import validators
 from referencing import Resource, Registry
+from referencing.jsonschema import DRAFT202012
 
 # I wouldn't need to have a whole bunch of isinstance instances
 # if I could use the schema to flesh out types. But, alas,
@@ -196,6 +197,10 @@ class Data:
     def data(self) -> Mapping[str, object]:
         return self._data
 
+    @property
+    def formats(self) -> Mapping[str, str]:
+        return self._formats
+
 
 class Loader:
     """Tools for loading Wycheproof test vectors."""
@@ -275,7 +280,7 @@ class Loader:
         return local_dict
 
     # https://python-jsonschema.readthedocs.io/en/stable/referencing/#resolving-references-from-the-file-system
-    def retrieve_from_dir(self, directory: str = "") -> Resource:
+    def retrieve_from_dir(self, filename: str = "") -> Resource:
         """Retrieves schema from file system directory.
         Retrieval function to be passed to Registry.
 
@@ -284,14 +289,15 @@ class Loader:
             from which schemata are retrieved.
         """
 
-        contents = json.loads(self._schemata_dir.read_text())
-        return Resource.from_contents(contents)
+        path = self._schemata_dir / filename
+        contents = json.loads(path.read_text())
+        return Resource.from_contents(contents, DRAFT202012)
 
     def load(
         self,
         path: Path | str,
         *,
-        subdir: str = "testvectors",
+        subdir: str = "testvectors_v1",
     ) -> Data:
         """Returns the file data and dictionary of property formats
 
@@ -319,7 +325,7 @@ class Loader:
         except Exception as e:
             raise Exception(f"failed to load schema: {e}")
 
-        validator = Validator(
+        validator = validators.Draft202012Validator(
             schema=scheme,
             registry=self.registry,
         )  # type: ignore[misc]
@@ -328,5 +334,7 @@ class Loader:
         except Exception as e:
             raise Exception(f"JSON validation failed: {e}")
 
-        formats = self.collect_formats(scheme)
+        full_schema = validator.schema
+        assert isinstance(full_schema, dict)
+        formats = self.collect_formats(full_schema)
         return Data(wycheproof_json, formats)

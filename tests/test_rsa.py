@@ -7,7 +7,7 @@ from collections import namedtuple
 from typing import Optional
 
 
-from toy_crypto import rsa
+from toy_crypto import rsa, wycheproof
 from toy_crypto.nt import lcm, modinv, gcd
 from toy_crypto.utils import Rsa129
 
@@ -322,26 +322,18 @@ class TestOaep(unittest.TestCase):
     def test_wycheproof_2048_sha1_mfg1_sha1(self) -> None:
         data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
         for group in data.groups:
-            d = group["d"]
+            privateKey: dict[str, object] = group["privateKey"]  # type: ignore[assignment]
+            wycheproof.deserialize_top_level(privateKey, data.formats)
+            d = privateKey["privateExponent"]
             assert isinstance(d, int)
-            n = group["n"]
+            n = privateKey["n"]
             assert isinstance(d, int)
-            e = group["e"]
+            e = privateKey["e"]
             assert isinstance(e, int)
-
-            # We will need p and q (or the CRT values) to construct
-            # a private key. Those aren't in the root of the group,
-            # so we will pull them out of the Jwk key
-
-            jwk = group["privateKeyJwk"]
-            assert isinstance(jwk, dict)
-
-            p_b64 = jwk.get("p")
-            assert isinstance(p_b64, str)
-            p = b64_to_int(p_b64)
-            q_b64 = jwk.get("q")
-            assert isinstance(q_b64, str)
-            q = b64_to_int(q_b64)
+            p = privateKey["prime1"]
+            assert isinstance(p, int)
+            q = privateKey["prime2"]
+            assert isinstance(q, int)
 
             # Create our private key and check that it matches what
             # we expect from the group.

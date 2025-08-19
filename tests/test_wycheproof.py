@@ -11,6 +11,8 @@ import sys
 import pytest
 from toy_crypto import wycheproof
 
+from referencing.exceptions import Unresolvable
+
 WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
 WP_DATA = wycheproof.Loader(WP_ROOT)
 
@@ -22,20 +24,33 @@ class TestLoading:
     def test_root_dir(self) -> None:
         assert WP_ROOT == WP_DATA._root_dir
 
+    def test_registry(self) -> None:
+        registry = WP_DATA.registry
+        resolver = registry.resolver()
+
+        try:
+            _resolved = resolver.lookup("rsaes_oaep_decrypt_schema_v1.json")
+        except Unresolvable as e:
+            assert False, f"Resolution failed: {e}"
+
+        # assert str(resolved) == "foo"
+        assert str(registry) == "<Registry (20 uncrawled resources)>"
+
 
 class TestTests:
     def test_rsa_oaep_2046_sha1(self) -> None:
         data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
 
         assert data.header == str(
-            "Test vectors of type RsaOeapDecrypt are"
-            " intended to check the decryption of RSA"
-            " encrypted ciphertexts."
+            "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
         )
 
         for group in data.groups:
-            assert isinstance(group["d"], int)
-            assert isinstance(group["keysize"], int)
+            privateKey = group["privateKey"]
+            assert isinstance(privateKey, dict)
+            d = privateKey["privateExponent"]
+            assert isinstance(d, int)
+            assert isinstance(group["keySize"], int)
             assert isinstance(group["mgf"], str)
 
             for tc in group.tests:

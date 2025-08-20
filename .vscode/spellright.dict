@@ -72,3 +72,13 @@ pynacl
 py
 rsa.fips186_prime_gen
 geq
+attr
+testvectors
+Asn
+Jwk
+Pem
+RsaOeapDecrypt
+mgf
+rsa_oaep_
+rsa_oaep_2048_sha1_mgf1sha1_test.json
+InvalidOaepPadding

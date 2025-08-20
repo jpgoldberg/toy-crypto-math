@@ -29,7 +29,10 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "jsonref>=1.1.0",
+  "jsonschema>=4.25.0",
   "primefac >= 2.0.12",
+  "referencing>=0.36.2",
 ]
 
 [project.optional-dependencies]
@@ -104,6 +107,7 @@ exclude_lines = [
 ]
 
 [tool.pytest.ini_options]
+testpaths = [ "tests" ]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "statistical: marks tests of a statistical nature (deselect with '-m \"not statistical\"')",
@@ -113,6 +117,9 @@ markers = [
 dev = [
     "pytest >= 8.3",
     "bitarray>=3.4.2",
+    "jsonschema>=4.25.0",
+    "types-jsonschema>=4.25.0.20250809",
+    "pytest-subtests>=0.14.2",
 ]
 lint = [
     "mypy >= 1.15",

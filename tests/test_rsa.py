@@ -1,13 +1,22 @@
+import base64
 import sys
+import unittest
 import pytest
 
 from collections import namedtuple
 from typing import Optional
 
 
-from toy_crypto import rsa
+from toy_crypto import rsa, wycheproof
 from toy_crypto.nt import lcm, modinv, gcd
 from toy_crypto.utils import Rsa129
+
+from . import WP_DATA
+
+
+def b64_to_int(s: str) -> int:
+    b = base64.urlsafe_b64decode(s + "==")
+    return int.from_bytes(b, byteorder="big")
 
 
 class TestCitm:
@@ -225,7 +234,7 @@ class TestMisc:
         assert priv_key.e == default_e
 
 
-class TestOaep:
+class TestOaep(unittest.TestCase):
     # from 1024 bit key at
     # https://github.com/pyca/cryptography/blob/main/vectors/cryptography_vectors/asymmetric/RSA/pkcs-1v2-1d2-vec/oaep-vect.txt
 
@@ -309,6 +318,57 @@ class TestOaep:
         int.from_bytes(prime2, byteorder="big"),
         pub_exponent=exponent,
     )
+
+    def test_wycheproof_2048_sha1_mfg1_sha1(self) -> None:
+        data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        for group in data.groups:
+            privateKey: dict[str, object] = group["privateKey"]  # type: ignore[assignment]
+            wycheproof.deserialize_top_level(privateKey, data.formats)
+            d = privateKey["privateExponent"]
+            assert isinstance(d, int)
+            n = privateKey["modulus"]
+            assert isinstance(d, int)
+            e = privateKey["publicExponent"]
+            assert isinstance(e, int)
+            p = privateKey["prime1"]
+            assert isinstance(p, int)
+            q = privateKey["prime2"]
+            assert isinstance(q, int)
+
+            # Create our private key and check that it matches what
+            # we expect from the group.
+            # Assumes we all use the same mechanism to compute d
+            priv_key = rsa.PrivateKey(p, q, e)
+            assert priv_key.pub_key.N == n
+            assert priv_key._d == d
+
+            # And now on to the tests
+            for t in group.tests:
+                with self.subTest(msg=f"tcId: {t.tcId}"):
+                    ct = t.fields["ct"]
+                    assert isinstance(ct, bytes)
+                    msg = t.fields["msg"]
+                    assert isinstance(msg, bytes)
+                    label = t.fields["label"]
+                    assert isinstance(label, bytes)
+
+                    match t.result:
+                        case "invalid":
+                            with pytest.raises(rsa.DecryptionError):
+                                _ = priv_key.oaep_decrypt(
+                                    ct,
+                                    label=label,
+                                    hash_id="sha1",
+                                    mgf_id="mgf1SHA1",
+                                )
+                        case "valid":
+                            decrypted = priv_key.oaep_decrypt(
+                                ct,
+                                label=label,
+                                hash_id="sha1",
+                                mgf_id="mgf1SHA1",
+                            )
+                            assert decrypted == msg
 
     def test_enc(self) -> None:
         class Vector:

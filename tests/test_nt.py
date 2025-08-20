@@ -1,16 +1,10 @@
 import sys
 from typing import NamedTuple
 
+import unittest
 import pytest
-from toy_crypto import nt, redundent
-
-# This will be needed for reading in data relative to test directory
-import os
-from pathlib import Path
-import json
-
-
-this_dir = Path(os.path.dirname(__file__))
+from toy_crypto import nt
+from . import WP_DATA
 
 
 class TestFactor:
@@ -41,15 +35,6 @@ class TestFactor:
 
         for n, expected in vectors:
             assert nt.factor(n) == expected
-
-    def test_OLF(self) -> None:
-        vectors: list[tuple[int, int]] = [
-            (22171, 1),
-            (22171 * 45827 * 5483, 22171 * 5483),
-        ]
-
-        for n, expected in vectors:
-            assert redundent.OLF(n) == expected
 
     def test_normalize(self) -> None:
         text_vectors: list[tuple[nt.FactorList, nt.FactorList]] = [
@@ -266,51 +251,61 @@ class TestMath:
             assert nt.isqrt(n) == expected
 
 
-class TestPrimeTesting:
-    @staticmethod
-    def load_wycheproof_test_vectors(path: Path) -> list[dict[str, object]]:
-        testVectors: list[dict[str, object]] = []
-
-        try:
-            with open(path, "r") as f:
-                wycheproof_json = json.loads(f.read())
-        except FileNotFoundError:
-            print(f"No Wycheproof file found at: {path}")
-            return testVectors
-
-        convert_attr = {"value"}
-        for testGroup in wycheproof_json["testGroups"]:
-            for tv in testGroup["tests"]:
-                for attr in convert_attr:
-                    if attr in tv:
-                        tv[attr] = bytes.fromhex(tv[attr])
-                testVectors.append(tv)
-        return testVectors
-
-    tvs = load_wycheproof_test_vectors(this_dir / "primality_test.json")
-
-    @pytest.mark.skip(reason="Probabilistic")
+class TestPrimeTesting(unittest.TestCase):
+    @pytest.mark.skip(reason="Slow")
     def test_probably_prime(self) -> None:
-        for tv in self.tvs:
-            tv_result = tv["result"]
-            if tv_result == "acceptable":
-                continue
-            expected = bool(tv["result"] == "valid")
-            assert isinstance(tv["value"], bytes)
-            value = int.from_bytes(tv["value"], byteorder="big", signed=False)
+        try:
+            data = WP_DATA.load("primality_test.json")
+        except Exception as e:
+            raise Exception(f"Failed to load test vectors: {e}")
 
-            try:
-                result = nt.probably_prime(value, k=5)
-            except Exception as e:
-                assert False, (
-                    f"Runtime error {e}. {tv['tcId']}:  {tv['comment']}"
-                )
-            if expected:
-                assert result, f"False negative. {tv['tcId']}: {tv['comment']}"
-            else:
-                assert not result, (
-                    f"False positive. {tv['tcId']}: {tv['comment']}"
-                )
+        for group in data.groups:
+            for case in group.tests:
+                if case.acceptable:
+                    continue
+                if case.has_flag("WorstCaseMillerRabin"):
+                    continue
+                with self.subTest(msg=f"tcID: {case.tcId}"):
+                    expected: bool = case.valid
+                    value = case.fields["value"]
+                    assert isinstance(value, int)
+
+                    try:
+                        result = nt.probably_prime(value, k=4)
+                    except Exception as e:
+                        assert False, f"Runtime error in {case}: {e}"
+                    if expected:
+                        assert result, f"False negative: {case}"
+                    else:
+                        assert not result, f"False positive: {case}"
+
+    # @pytest.mark.skip(reason="Probabilistic")
+    def test_worst_cases(self) -> None:
+        try:
+            data = WP_DATA.load("primality_test.json")
+        except Exception as e:
+            raise Exception(f"Failed to load test vectors: {e}")
+
+        for group in data.groups:
+            for case in group.tests:
+                if not case.has_flag("WorstCaseMillerRabin"):
+                    continue
+                if case.acceptable:
+                    continue
+
+                with self.subTest(msg=f"tcID: {case.tcId}"):
+                    expected: bool = case.valid
+                    value = case.fields["value"]
+                    assert isinstance(value, int)
+
+                    try:
+                        result = nt.probably_prime(value, k=4)
+                    except Exception as e:
+                        assert False, f"Runtime error in {case}: {e}"
+                    if expected:
+                        assert result, f"False negative: {case}"
+                    else:
+                        assert not result, f"False positive: {case}"
 
 
 class TestGenPrime:

@@ -321,7 +321,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
     if n < 2:
         return False
-    
+
     if k < 1:
         raise ValueError("k must be greater than 0")
 
@@ -337,7 +337,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
     for p in small_primes:
         if n % p == 0:
             return False
-    if n <= largest_small ** 2:
+    if n <= largest_small**2:
         return True
 
     # Set up generator for k trial bases
@@ -409,7 +409,7 @@ def fermat_test(n: int, k: int = 8) -> bool:
     for p in small_primes:
         if n % p == 0:
             return False
-    if n <= largest_small ** 2:
+    if n <= largest_small**2:
         return True
 
     # Now we are ready for Fermat's test

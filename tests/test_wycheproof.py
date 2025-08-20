@@ -33,13 +33,13 @@ class TestLoading:
         except Unresolvable as e:
             assert False, f"Resolution failed: {e}"
 
-        # assert str(resolved) == "foo"
-        assert str(registry) == "<Registry (20 uncrawled resources)>"
-
 
 class TestTests:
     def test_rsa_oaep_2046_sha1(self) -> None:
         data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+
+        formats = data.formats
+        assert "privateExponent" in formats
 
         assert data.header == str(
             "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
@@ -48,6 +48,8 @@ class TestTests:
         for group in data.groups:
             privateKey = group["privateKey"]
             assert isinstance(privateKey, dict)
+
+            wycheproof.deserialize_top_level(privateKey, data.formats)
             d = privateKey["privateExponent"]
             assert isinstance(d, int)
             assert isinstance(group["keySize"], int)
@@ -60,12 +62,12 @@ class TestTests:
                     case 1:
                         assert tc.comment == ""
                         assert tc.valid
-                        assert not tc.flags
+                        assert tc.has_flag("Normal")
 
                     case 3:
                         assert tc.comment == ""
                         assert tc.valid
-                        assert not tc.flags
+                        assert "Normal" in tc.flags
                         assert tc.fields["msg"] == bytes.fromhex("54657374")
 
                     case 12:
@@ -74,11 +76,16 @@ class TestTests:
                         assert len(tc.flags) == 1
                         assert tc.has_flag("InvalidOaepPadding")
 
-                    case 21:
+                    case 22:
                         assert tc.comment == "seed is all 1"
                         assert tc.valid
 
-                    case 32:
+                    case 29:
+                        assert tc.comment == "ciphertext is empty"
+                        assert tc.has_flag("InvalidCiphertext")
+                        assert tc.invalid
+
+                    case 34:
                         assert tc.comment == "em has a large hamming weight"
                         assert tc.valid
                         label = tc.fields["label"]
@@ -86,6 +93,7 @@ class TestTests:
                         assert len(label) == 24
                         assert not tc.has_flag("InvalidOaepPadding")
                         assert tc.has_flag("Constructed")
+                        assert tc.has_flag("EncryptionWithLabel")
 
                     case _:
                         assert tc.result in ("valid", "invalid", "acceptable")

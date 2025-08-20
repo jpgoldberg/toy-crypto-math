@@ -29,7 +29,10 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "jsonref>=1.1.0",
+  "jsonschema>=4.25.0",
   "primefac >= 2.0.12",
+  "referencing>=0.36.2",
 ]
 
 [project.optional-dependencies]

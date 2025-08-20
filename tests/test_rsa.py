@@ -326,9 +326,9 @@ class TestOaep(unittest.TestCase):
             wycheproof.deserialize_top_level(privateKey, data.formats)
             d = privateKey["privateExponent"]
             assert isinstance(d, int)
-            n = privateKey["n"]
+            n = privateKey["modulus"]
             assert isinstance(d, int)
-            e = privateKey["e"]
+            e = privateKey["publicExponent"]
             assert isinstance(e, int)
             p = privateKey["prime1"]
             assert isinstance(p, int)

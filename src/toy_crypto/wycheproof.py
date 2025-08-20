@@ -16,6 +16,8 @@ from jsonschema import validators
 from referencing import Resource, Registry
 from referencing.jsonschema import DRAFT202012
 
+import jsonref  # type: ignore[import-untyped]
+
 # I wouldn't need to have a whole bunch of isinstance instances
 # if I could use the schema to flesh out types. But, alas,
 # I have not figured out a way to do that reasonably.
@@ -334,7 +336,11 @@ class Loader:
         except Exception as e:
             raise Exception(f"JSON validation failed: {e}")
 
-        full_schema = validator.schema
+        schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()
+        full_schema = jsonref.replace_refs(
+            scheme,
+            base_uri=schemata_uri,
+        )
         assert isinstance(full_schema, dict)
         formats = self.collect_formats(full_schema)
         return Data(wycheproof_json, formats)

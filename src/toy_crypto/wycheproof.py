@@ -10,7 +10,11 @@ from collections.abc import Generator, Mapping, Sequence, Set
 from copy import copy
 from pathlib import Path
 import json
-from warnings import deprecated
+
+try:
+    from warnings import deprecated
+except ImportError:
+    from typing_extensions import deprecated
 
 from jsonschema import validators
 from referencing import Resource, Registry

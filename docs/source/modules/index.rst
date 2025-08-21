@@ -23,6 +23,7 @@ Some modules contain utilities which are imported by other modules.
     :caption: Utility modules
     :maxdepth: 2
 
+    wycheproof
     rand
     utils
     bit_utils

@@ -141,7 +141,6 @@ all of your test files:
     from toy_crypto import wycheproof
 
     WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
-    WP_LOADER = wycheproof.Loader(WP_ROOT)
 
 Loading
 ++++++++
@@ -152,6 +151,27 @@ but it also wires in some mechanisms for loading the the various schemata
 used for validating the loaded JSON.
 So ideally this should only be called once.
 
+.. testsetup::
+
+    # Use the str BASE_TEST_DATA from doctest_global_setup
+
+    from pathlib import Path
+
+    WP_ROOT = Path(BASE_TEST_DATA) / "resources" / "wycheproof"
+    assert WP_ROOT.is_dir(), str(WP_ROOT)
+
+Assuming that you have something like ``WP_ROOT`` set up,
+you can set up the test loader by intializing a :class:`Loader`.
+
+.. doctest::
+    from pathlib import Path
+    # WP_ROOT: Path = ... # set up elsewhere
+    loader = wycheproof.Loader(WP_ROOT)
+
+Now we can load some test data.
+
+
 .. autoclass:: Loader
-    
+    :members:
+
 

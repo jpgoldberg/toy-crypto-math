@@ -7,6 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import os
+from pathlib import Path
 import sys
 import tomllib
 from docutils.parsers.rst import Directive
@@ -40,6 +41,16 @@ copyright = f"2024–2025 {author}"
 
 github_username = "jpgoldberg"
 github_repository = "toy-crypto-math"
+
+cwd = os.path.abspath(".")
+test_data_path: str = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "test_data")
+)
+
+doctest_global_setup = f"""
+import os
+BASE_TEST_DATA = '{test_data_path}'
+"""
 
 
 # From

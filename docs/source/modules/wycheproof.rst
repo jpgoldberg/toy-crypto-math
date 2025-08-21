@@ -1,5 +1,10 @@
 .. include:: /../common/unsafe.rst
 
+.. _Wycheproof repository: https://github.com/C2SP/wycheproof/
+.. _Wycheproof README: https://github.com/C2SP/wycheproof/blob/main/README.md
+.. _Wycheproof documentation: https://github.com/C2SP/wycheproof/blob/main/doc/index.md
+
+
 Wycheproof
 =================
 
@@ -15,19 +20,20 @@ Wycheproof
 What is the Wycheproof Project?
 +++++++++++++++++++++++++++++++
 
-From the Wycheproof project [README](https://github.com/C2SP/wycheproof/blob/main/README.md)
+From the Wycheproof project `Wycheproof README`_:
 
-> Project Wycheproof is a
-> [community managed](https://github.com/C2SP) repository of test vectors
-> that can be used by cryptography library developers to test against
-> known attacks, specification inconsistencies,
-> and other various implementation bugs.
->
-> Test vectors are maintained as JSON test vector data,
-> with accompanying JSON schema files
-> that document the structure of the test vector data.
+    Project Wycheproof is a
+    `community managed <https://github.com/C2SP>`_ repository of test vectors
+    that can be used by cryptography library developers to test against
+    known attacks, specification inconsistencies,
+    and other various implementation bugs.
 
-More detail is in that README file and in the [Wycheproof documenation](https://github.com/C2SP/wycheproof/tree/main/doc/index.md).
+    Test vectors are maintained as JSON test vector data,
+    with accompanying JSON schema files
+    that document the structure of the test vector data.
+
+More detail is in that `README <Wycheproof README_>`_ file
+and in the `Wycheproof documentation`_.
 
 Why does my module exist?
 ++++++++++++++++++++++++++
@@ -71,16 +77,23 @@ Never-the-less it seems to work and the API isn't terrible.
 Obtaining the Wycheproof data
 ++++++++++++++++++++++++++++++
 
-This module does not include the
-[Wycheproof](https://github.com/C2SP/wycheproof) itself,
+This module does not include the Wychoproof data itself;
 the user needs to have a copy available to them on their own device.
+The data is available from the `Wycheproof repository`_.
+
+The portions of that repository that are necessary are the
+``testvectors_v1`` directory and its contents,
+the `schemas` directory and its contents,
+and,
+if you wish to use older test data,
+the ``testvectors`` folder and its contents.
 
 For my examples, I will assume that you have copied, cloned, or created
 a submodule in `tests/resources/wycheproof`.
 One way to do that would be (if your project is under git)
 would doing this from within yours ``tests/`` directory.
 
-.. code-block:: console
+.. prompt:: bash
 
     mkdir -p resources
     cd resources
@@ -94,7 +107,7 @@ If your project is not under git, you could use ``git clone`` instead of ``git s
     aren't in a Unix-like command environment or do not use ``git`` at
     all, but I can't advise on what those ways are.
 
-Assuming you have done so, you should have a directory structue something like::
+Assuming you have done so, you should have a tests directory structue something like::
 
 
     tests
@@ -104,29 +117,41 @@ Assuming you have done so, you should have a directory structue something like::
     ...
             ├── schemas
     │       │   ├── aead_test_schema_v1.json
-    │       │   ├── aead_test_schema.json
     ...
     │       ├── testvectors
     │       │   ├── aead_aes_siv_cmac_test.json
-    │       │   ├── aegis128_test.json
     ...
             |── testvectors_v1
     │       │   ├── a128cbc_hs256_test.json
-    │       │   ├── a192cbc_hs384_test.json
     ...
     ├── test_this.py
     ├── test_that.py
     ├── test_other_thing.py
     ...
 
+you could have something like this is the ``__init__.py`` file in
+your ``tests`` that would make the Wycheproof resources available to
+all of your test files:
 
-.. code-block::
+.. code-block:: python
+    :caption: tests/__init__.py
 
     import os
     from pathlib import Path
-
-    from toy_crypto import wycheproof  # noqa: E402
+    from toy_crypto import wycheproof
 
     WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
-    WP_DATA = wycheproof.Loader(WP_ROOT)
+    WP_LOADER = wycheproof.Loader(WP_ROOT)
+
+Loading
+++++++++
+
+To be able to load a Wycheproof JSON data file a loader must first be set up.
+This not only tells the loader where the individual files are,
+but it also wires in some mechanisms for loading the the various schemata
+used for validating the loaded JSON.
+So ideally this should only be called once.
+
+.. autoclass:: Loader
+    
 

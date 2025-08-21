@@ -22,15 +22,9 @@ from referencing.jsonschema import DRAFT202012
 
 import jsonref  # type: ignore[import-untyped]
 
-# I wouldn't need to have a whole bunch of isinstance instances
-# if I could use the schema to flesh out types. But, alas,
-# I have not figured out a way to do that reasonably.
-
-type StrDict = dict[str, object]
-
 
 def deserialize_top_level(
-    properties: StrDict, formats: Mapping[str, str]
+    properties: dict[str, object], formats: Mapping[str, str]
 ) -> None:
     """Mutates. Deserializes root level members according for format
 
@@ -91,40 +85,56 @@ class TestCase:
 
     @property
     def fields(self) -> Mapping[str, object]:
+        """The dict of items in individual test that are test specific."""
         return self._fields
 
     @property
     def tcId(self) -> int:
+        """The test case ID ``"tcId`` of the test case"""
         return self._tcId
 
     @property
     def result(self) -> str:
+        """The expected result of the test
+
+        Should be one of "valid", "invalid", "acceptable"
+        """
         return self._result
 
     @property
     def valid(self) -> bool:
+        """If the test case is expected to be valid."""
         return self._result == "valid"
 
     @property
     def acceptable(self) -> bool:
+        """If the test case is expected to be acceptable."""
         return self._result == "acceptable"
 
     @property
     def invalid(self) -> bool:
+        """If the test case expected to be invalid."""
         return self._result == "invalid"
 
     @property
     def comment(self) -> str:
+        """The comment for the case.
+
+        The comment might be the empty string.
+        """
         return self._comment
 
     @property
     def flags(self) -> Set[str]:
+        """The set of flags that are set for the case."""
         return self._flags
 
     def has_flag(self, flag: str) -> bool:
+        """True if ``flag`` is set for this case."""
         return flag in self._flags
 
     def __repr__(self) -> str:
+        """Designed for useful error messages in tests."""
         s = f"tcId: {self.tcId}"
         if self.comment != "":
             s += f" ({self.comment})"
@@ -137,6 +147,8 @@ class TestCase:
 
 
 class TestGroup:
+    """Data that is common to all tests in the group."""
+
     def __init__(
         self, group: dict[str, object], formats: Mapping[str, str]
     ) -> None:
@@ -156,13 +168,14 @@ class TestGroup:
 
     @property
     def tests(self) -> Generator[TestCase]:
+        """All of the test cases in the group."""
         for t in self._tests:
             deserialize_top_level(t, self._formats)
             yield TestCase(t)
 
 
 class Data:
-    """The Python object that results from loading the JSON source."""
+    """The object that results from loading a wycheproof JSON file."""
 
     def __init__(
         self, data: dict[str, object], formats: Mapping[str, str]
@@ -212,10 +225,10 @@ class Loader:
     """Tools for loading Wycheproof test vectors."""
 
     def __init__(self, path: Path) -> None:
-        """Establishes wycheproof data directory and preregisters schemata.
+        """Establishes wycheproof data directory and pre-registers schemata.
 
         :param path:
-            Path of wycheproof root.
+            Path of wycheproof root directory
 
         Unless you have multiple locations with Wycheproof-like test data,
         you really should just call this constructor once.
@@ -236,18 +249,22 @@ class Loader:
             raise NotADirectoryError("Couldn't find 'schemas' directory")
 
         self.registry = Registry(
-            retrieve=self.retrieve_from_dir,  # type: ignore[call-arg]
+            retrieve=self._retrieve_from_dir,  # type: ignore[call-arg]
         )
 
     @property
     def root_dir(self) -> Path:
+        """The absolute path of the wycheproof root directgory."""
         return self._root_dir
 
     @classmethod
-    def collect_formats(cls, schema: dict[str, object]) -> Mapping[str, str]:
+    def collect_formats(
+        cls, schema: Mapping[str, object]
+    ) -> Mapping[str, str]:
         """Collects format annotation for all string types in schema.
 
-        :param schema: The to collect string format annotations from.
+        :param schema:
+            The schema from which to collect string format annotations.
 
         .. warning::
 
@@ -286,7 +303,7 @@ class Loader:
         return local_dict
 
     # https://python-jsonschema.readthedocs.io/en/stable/referencing/#resolving-references-from-the-file-system
-    def retrieve_from_dir(self, filename: str = "") -> Resource:
+    def _retrieve_from_dir(self, filename: str = "") -> Resource:
         """Retrieves schema from file system directory.
         Retrieval function to be passed to Registry.
 
@@ -305,15 +322,17 @@ class Loader:
         *,
         subdir: str = "testvectors_v1",
     ) -> Data:
-        """Returns the file data and dictionary of property formats
+        """Returns the file data
 
         :param path: relative path to json file with test vectors.
 
-        Raises exceptions if the expected directories and files aren't
-        found or can't be read.
+        :raises Exceptions:
+            if the expected directories and files aren't found
+            or can't be read.
 
-        Raises exception of file doesn't conform to JSON Schema.
+        :raises Exception: if file doesn't conform to its JSON schema.
         """
+
         path = self._root_dir / subdir / path
 
         try:

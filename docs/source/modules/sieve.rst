@@ -1,7 +1,7 @@
 .. include:: /../common/unsafe.rst
 
 Sieve of Eratosthenes
-======================
+######################
 
 .. py:module:: toy_crypto.sieve
     :synopsis: Multiple implementataions for the Sieve of Eratosthenes
@@ -13,7 +13,7 @@ This module is imported with::
 The module contains classes for the factorization of numbers and for creating a sieve of Eratosthenes.
 
 Why three separate implementations?
-------------------------------------
+====================================
 
 It is reasonable to wonder why I have three distinct implementations.
 There are reasons, but first let me give an overview of the major differences.
@@ -80,8 +80,11 @@ and a minute (59.796 seconds) with :class:`IntSieve`.
 So bitaray was nearly 20 times faster than the set-based sieve construction
 and more than 5000 times faster than the integer-based construction for a sieve size of one million.
 
+Abstract bases and overview
+============================
+
 The algorithm
----------------
+--------------
 
 The algoritm for creating the sieve is the same for all three classes
 but has fiddly differences due to how the seive is represented.
@@ -161,9 +164,3 @@ The :class:`IntSieve` class
 .. autoclass:: IntSieve
     :class-doc-from: both
     :members:
-
-
-
-
-
-   

@@ -168,7 +168,17 @@ you can set up the test loader by intializing a :class:`Loader`.
     # WP_ROOT: Path = ... # set up elsewhere
     loader = wycheproof.Loader(WP_ROOT)
 
-Now we can load some test data.
+Now we can load some test data. We will also see that
+we have learned which string values in the data will
+need to be converted to bytes or int.
+
+.. doctest::
+
+    data = loader.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+
+    formats = data.formats
+    assert formats['modulus'] = "BigInt"
+    assert formats["msg", "HexBytes"]
 
 
 .. autoclass:: Loader

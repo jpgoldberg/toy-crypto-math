@@ -7,7 +7,6 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import os
-from pathlib import Path
 import sys
 import tomllib
 from docutils.parsers.rst import Directive

@@ -110,6 +110,7 @@ extensions: list[str] = [
     # "sphinx_toolbox.more_autodoc.variables",
     "sphinx_reredirects",
     "sphinx_prompt",
+    "sphinx_toolbox.collapse",
 ]
 
 autodoc_typehints = "signature"

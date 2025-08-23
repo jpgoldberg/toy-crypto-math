@@ -141,8 +141,78 @@ all of your test files:
 
     WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
 
+Data overview
++++++++++++++
+
+To be able to use Wycheproof data for any specific set of tests,
+you will need to know what is in is in the data and how it structured.
+
+Each data file has a name like ``*_test.json``.
+Those JSON files all contain a key ``"testGroups"``,
+and each test group has a JSON key ``"tests"``
+
+The following :ref:`JSON sample <siv.json>` contains a small portion of what you might see
+in a wycheproof JSON test data file.
+
+.. collapse:: Exerpt of test JSON file
+
+    .. code-block:: json
+        :caption: Sample of "testvectors_v1/aes_gcm_siv_test.json"
+        :name: siv.json
+
+        {  "algorithm" : "AES-GCM-SIV",
+            ...
+            "testGroups" : [ {
+                "ivSize" : 96,
+                "keySize" : 128,
+                "tagSize" : 128,
+                "type" : "AeadTest",
+                "tests" : [
+                    {
+                    "tcId" : 1,
+                    "comment" : "RFC 8452",
+                    "flags" : [ "Ktv" ],
+                    "key" : "01000000000000000000000000000000",
+                    "iv" : "030000000000000000000000",
+                    "aad" : "",
+                    "msg" : "",
+                    "ct" : "",
+                    "tag" : "dc20e2d83f25705bb49e439eca56de25",
+                    "result" : "valid" },
+                    ... ]
+            ...], ... }
+
+The user will need to check for themselves what sorts data
+are in each test group and in each test. 
+
+:func:`Loader.load` loads a and returns a :class:`TestData` object.
+:attr:`TestData.groups` is an
+:class:`~collections.abc.Iterable` of :class:`TestGroup` instances.
+Test groups typically contain information for contructing keys or data
+that will be used for all all of the tests within the group.
+They typically provide equivalent keys in multiple formats.
+
+:attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase` instances. All test cases in the Wycheproof data have
+
+:attr:`TestCase.tcId`
+    The test case Id
+
+:attr:`TestCase.result`
+    The result, which is one of "valid" or "invalid" or "acceptable",
+
+:attr:`TestCase.flags`
+    The set of flags for the case. May be the empty set.
+
+:attr:`TestCase.comment`
+    The comment. May be the empty string.
+
+Each test case will be also have a dictionary of other elements,
+specific to the particular test data.
+This dictionary is available as :attr:`TestCase.fields`.
+
 Usage
 +++++++++++++
+
 
 The structure of one way to use this might look something like
 
@@ -213,7 +283,7 @@ Loading the test data
 ----------------------
 
 The data is loaded using :meth:`Loader.load`.
-The loaded :class:`Data` instance is not the
+The loaded :class:`TestData` instance is not the
 raw result of loading JSON, but many of its internals
 still reflect its origins.
 
@@ -277,20 +347,6 @@ Testing against each :class:`TestCase`
 
 And now we are finally ready for our actial tests.
 
-All test cases in the Wycheproof data have
-
-:attr:`TestCase.tcId`
-    The test case Id
-
-:attr:`TestCase.result`
-    The result, which is one of "valid" or "invalid" or "acceptable",
-
-:attr:`TestCase.flags`
-    The set of flags for the case. May be the empty set.
-
-:attr:`TestCase.comment`
-    The comment. May be the empty string.
-
 And all of the cases for these specific tests have a
 
 "msg"
@@ -351,7 +407,7 @@ Classes
 .. autoclass:: TestGroup
     :members:
 
-.. autoclass:: Data
+.. autoclass:: TestData
     :members:
 
 

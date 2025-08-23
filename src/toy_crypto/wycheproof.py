@@ -174,7 +174,7 @@ class TestGroup:
             yield TestCase(t)
 
 
-class Data:
+class TestData:
     """The object that results from loading a wycheproof JSON file."""
 
     def __init__(
@@ -321,7 +321,7 @@ class Loader:
         path: Path | str,
         *,
         subdir: str = "testvectors_v1",
-    ) -> Data:
+    ) -> TestData:
         """Returns the file data
 
         :param path: relative path to json file with test vectors.
@@ -366,4 +366,4 @@ class Loader:
         )
         assert isinstance(full_schema, dict)
         formats = self.collect_formats(full_schema)
-        return Data(wycheproof_json, formats)
+        return TestData(wycheproof_json, formats)

@@ -138,20 +138,45 @@ all of your test files:
 
     import os
     from pathlib import Path
-    from toy_crypto import wycheproof
 
     WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
 
-Loading
-++++++++
+Usage
++++++++++++++
 
-To be able to load a Wycheproof JSON data file a loader must first be set up.
-This not only tells the loader where the individual files are,
-but it also wires in some mechanisms for loading the the various schemata
-used for validating the loaded JSON.
-So ideally this should only be called once.
+The structure of one way to use this might look something like
 
-.. testsetup::
+.. code-block:: python
+
+    # WP_ROOT: Path = ... # a pathlib.Path for the root wycheproof directory
+    loader = wycheproof.Loader(WP_ROOT)  # This only needs to be done once
+    ...
+
+    # Get test data from one of the data files
+
+    test_data = loader.load("SOME_DATA_FILE_test.json")
+    ... # May wish to get some information from test_data
+        # for loggging or reporting.
+
+    for group in test_.groups:
+        ... # Per TestGroup setup
+        for test in group.tests:
+            ... # set up for specific test
+            ... # perform computation with thing you are testing
+            ... # Check that your results meet expectations
+
+For the example below, we will step through parts of that,
+but will sometimes need to use a different flow so that each
+of the parts actually runs when contructing this document.
+
+We will be testing RSA decryption from ``pycryptodome``
+passes tests for a 2048-bit key with SHA1 as the
+hash algrorithm and MGF1SHA1 as the mask generation function.
+The data file for those tests is in ``testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json`` relative to WP_ROOT.
+
+In what follows, we assume that you have already set up ``WP_ROOT`` :py:class:`pathlib.Path` as discussed above.
+
+.. testsetup:: 
 
     # Use the str BASE_TEST_DATA from doctest_global_setup
 
@@ -160,28 +185,173 @@ So ideally this should only be called once.
     WP_ROOT = Path(BASE_TEST_DATA) / "resources" / "wycheproof"
     assert WP_ROOT.is_dir(), str(WP_ROOT)
 
+Set up loader
+--------------
+
+To be able to load a Wycheproof JSON data file a loader must first be set up.
+This not only tells the loader where the individual files are,
+but it also wires in some mechanisms for loading the the various schemata
+used for validating the loaded JSON.
+So ideally this should only be called once.
+
 Assuming that you have something like ``WP_ROOT`` set up,
 you can set up the test loader by intializing a :class:`Loader`.
 
-.. doctest::
+..  testcode::
+
     from pathlib import Path
+    from toy_crypto import wycheproof
+
+    # And these will be what we are testing
+    from Crypto.PublicKey import RSA
+    from Crypto.Cipher import PKCS1_OAEP
+
     # WP_ROOT: Path = ... # set up elsewhere
     loader = wycheproof.Loader(WP_ROOT)
 
-Now we can load some test data. We will also see that
-we have learned which string values in the data will
-need to be converted to bytes or int.
+Loading the test data
+----------------------
 
-.. doctest::
+The data is loaded using :meth:`Loader.load`.
+The loaded :class:`Data` instance is not the
+raw result of loading JSON, but many of its internals
+still reflect its origins.
 
-    data = loader.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+..  testcode::
+   
+    test_data = loader.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
 
-    formats = data.formats
-    assert formats['modulus'] = "BigInt"
-    assert formats["msg", "HexBytes"]
+    assert test_data.header == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
 
+TestGroup preparation
+------------------------
+
+Test cases are organized into "testGroups" within the raw data.
+In the case of this test data each TestGroup specifies
+a the parameters needed to construct a private RSA key
+that is to be used for all tests in the group.
+So you might normally use something like
+
+.. code-block:: python
+
+    for group in test_data.tests:
+        ... # Per TestGroup setup
+        for test in group.tests: ...
+
+But I can't run that in a doctest, so we will instead
+collect tuples of TestGroup, rsa.PrivateKey pairs.
+
+The TestGroup data in this file includes an RSA private key
+that will be used for all tests in the group.
+The key is offered in several formats.
+In this example, I will use the ``pycryptomdome`` RSA.import_key method
+to get the key from the PEM format.
+
+
+..  testcode::
+
+    group_pairs = [
+        (g, RSA.import_key(g["privateKeyPem"])) for g in test_data.groups
+    ]
+
+    ## Let's do some sanity checks on the private keys
+    for _, sk in group_pairs:
+        assert sk.size_in_bits() == 2048
+        assert sk.has_private()
+
+Each group also has the parameters used for our RSA decryption.
+These are the same for all test groups in this particular data set.
+So let's just do a sanity check on this just for demonstration purposes.
+
+..  testcode::
+
+    for g, _ in group_pairs:
+        assert g["keySize"] == 2048
+        assert g["sha"] == "SHA-1"
+        assert g["mgf"] == "MGF1"
+        assert g["mgfSha"] == "SHA-1"
+        
+
+Testing against each :class:`TestCase`
+--------------------------------------
+
+And now we are finally ready for our actial tests.
+
+All test cases in the Wycheproof data have
+
+:attr:`TestCase.tcId`
+    The test case Id
+
+:attr:`TestCase.result`
+    The result, which is one of "valid" or "invalid" or "acceptable",
+
+:attr:`TestCase.flags`
+    The set of flags for the case. May be the empty set.
+
+:attr:`TestCase.comment`
+    The comment. May be the empty string.
+
+And all of the cases for these specific tests have a
+
+"msg"
+    The plaintext message
+
+"ct"
+    The ciphertext
+
+"label"
+    The OAEP label that is rarely ever used.
+
+Fortunately the default for creating a cryptor with pycryptodome
+uses as hash algoririthm, mask generation function are the ones we
+are testing here, so we won't have to specify them.
+
+..  testcode::
+
+    test_count = 0
+    for g, sk in group_pairs:
+        for case in g.tests:
+            test_count += 1
+        
+            label = case.fields["label"]
+            ciphertext = case.fields["ct"]
+            message = case.fields["msg"]
+
+            cryptor = PKCS1_OAEP.new(
+                key = sk,
+                label = label,
+            )
+
+            our_message: bytes = b''
+            try:
+                our_message = cryptor.decrypt(ciphertext)
+            except ValueError:
+                assert case.invalid
+            else:
+                assert case.valid
+                assert our_message == message
+
+    print(f"Completed a total {test_count} tests in {len(group_pairs)} group(s).")
+
+.. testoutput::
+
+    Completed a total 36 tests in 1 group(s).
+
+
+
+Classes
++++++++++
 
 .. autoclass:: Loader
+    :members:
+
+.. autoclass:: TestCase
+    :members:
+
+.. autoclass:: TestGroup
+    :members:
+
+.. autoclass:: Data
     :members:
 
 

@@ -155,29 +155,33 @@ The following :ref:`JSON sample <siv.json>` contains a small portion of what you
 in a wycheproof JSON test data file.
 
 .. collapse:: Exerpt of test JSON file
+    :open:
 
     .. code-block:: json
         :caption: Sample of "testvectors_v1/aes_gcm_siv_test.json"
         :name: siv.json
+        :force:
 
-        {  "algorithm" : "AES-GCM-SIV",
+        {
+            "algorithm" : "AES-GCM-SIV",
+            ...,
             "testGroups" : [ {
                 "ivSize" : 96,
                 "keySize" : 128,
-                "tagSize" : 128,
-                "type" : "AeadTest",
+                ...,
                 "tests" : [
                     {
-                    "tcId" : 1,
-                    "comment" : "RFC 8452",
-                    "flags" : [ "Ktv" ],
-                    "key" : "01000000000000000000000000000000",
-                    "iv" : "030000000000000000000000",
-                    "aad" : "",
-                    "msg" : "",
-                    "ct" : "",
-                    "tag" : "dc20e2d83f25705bb49e439eca56de25",
-                    "result" : "valid" } ] ] }
+                        "tcId" : 1,
+                        "comment" : "RFC 8452",
+                        "flags" : [ "Ktv" ],
+                        "key" : "01000000000000000000000000000000",
+                        "iv" : "030000000000000000000000",
+                        ...,
+                        "result" : "valid"
+                    }, ...
+                ], ...
+            ]
+        }
 
 The user will need to check for themselves what sorts data
 are in each test group and in each test. 
@@ -193,45 +197,76 @@ Each test group typically contains information for constructing keys or data
 that will be used for all all of the tests within the group.
 They typically provide equivalent keys in multiple formats.
 
-.. code-block::
+.. code-block:: json
+    :force:
+    :caption: Sample test group from "rsa_oaep_2048_sha1_mgf1sha1_test.json"
+    :name: rsa-group.json
 
-    {"testGroups" : [ {
-        "keySize" : 2048,
-        "sha" : "SHA-1",
-        "mgf" : "MGF1",
-        "mgfSha" : "SHA-1",
-        "privateKey" : {
-        "modulus" : ...,
-        "privateExponent" : ...,
-        "publicExponent" : "010001",
-        "prime1" : ...,
-        "prime2" : ...,
-        },
-        "privateKeyPkcs8" : ...,
-        "privateKeyPem" : ...,
-        "privateKeyJwk" : { ... },
-        "tests" : [ ... ]
-    } ] }
+        "testGroups" : [
+            {
+                "keySize" : 2048,
+                "sha" : "SHA-1",
+                "mgf" : "MGF1",
+                "mgfSha" : "SHA-1",
+                "privateKey" : {
+                    "privateExponent" : ...,
+                    "publicExponent" : "010001",
+                    "prime1" : ...,
+                    ...
+                },
+                "privateKeyPkcs8" : ...,
+                "privateKeyPem" : ...,
+                "privateKeyJwk" : ...,
+                ...
+                "tests" : [ ... ]
+            }
+        ]
 
 
 
-:attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase` instances. All test cases in the Wycheproof data have
+:attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase` instances.
 
-:attr:`TestCase.tcId`
+Test cases
+----------
+
+All test cases in the Wycheproof data have the members
+
+:attr:`TestCase.tcId` (JSON keyword: ``"tcID"``)
     The test case Id
 
-:attr:`TestCase.result`
+:attr:`TestCase.result` (JSON keyword: ``"result"``)
     The result, which is one of "valid" or "invalid" or "acceptable",
 
-:attr:`TestCase.flags`
+:attr:`TestCase.flags` (JSON keyword: ``"flags"``)
     The set of flags for the case. May be the empty set.
 
-:attr:`TestCase.comment`
+:attr:`TestCase.comment` (JSON keyword: ``"flags"``)
     The comment. May be the empty string.
 
 Each test case will be also have a dictionary of other elements,
 specific to the particular test data.
-This dictionary is available as :attr:`TestCase.fields`.
+That dictionary is available as :attr:`TestCase.fields`.
+
+.. code-block:: json
+    :force:
+    :caption: Sample test case from "primality_test.json"
+    :name: prime-test.json
+
+    "tests": [
+        ...,
+        {
+            "tcId" : 31,
+            "comment" : "counter example Axiom",
+            "flags" : [
+                "Pinch93",
+                "CarmichaelNumber"
+            ],
+            "value" : "085270bd76a142abc3037d1aab3b",
+            "result" : "invalid"
+        }, ...
+    ]
+    
+
 
 Usage
 +++++++++++++

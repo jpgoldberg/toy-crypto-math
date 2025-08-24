@@ -74,6 +74,8 @@ There really should be a more natural way to do what I did,
 but I failed to find or construct those better ways.
 Never-the-less it seems to work and the API isn't terrible. 
 
+.. _sec-wycheproof-obtain
+
 Obtaining the Wycheproof data
 ++++++++++++++++++++++++++++++
 
@@ -140,6 +142,8 @@ all of your test files:
     from pathlib import Path
 
     WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
+
+.. _sec_wycheproof_data_overview
 
 Data overview
 +++++++++++++
@@ -223,7 +227,6 @@ They typically provide equivalent keys in multiple formats.
         ]
 
 
-
 :attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase` instances.
 
 Test cases
@@ -282,7 +285,7 @@ The structure of one way to use this might look something like
 
     # Get test data from one of the data files
 
-    test_data = loader.load("SOME_DATA_FILE_test.json")
+    test_data = loader.load("SOME_WYCHEPROOF_DATA_FILE_test.json")
     ... # May wish to get some information from test_data
         # for loggging or reporting.
 
@@ -302,7 +305,9 @@ passes tests for a 2048-bit key with SHA1 as the
 hash algrorithm and MGF1SHA1 as the mask generation function.
 The data file for those tests is in ``testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json`` relative to WP_ROOT.
 
-In what follows, we assume that you have already set up ``WP_ROOT`` as a :py:class:`pathlib.Path` with the appropriate file system location.
+In what follows, we assume that you have already set up ``WP_ROOT``
+as a :py:class:`pathlib.Path` with the appropriate file system location.
+See :ref:`sec-wycheproof-obtain` for discusson of ways to do that.
 
 .. testsetup:: 
 
@@ -352,11 +357,17 @@ still reflect its origins.
     assert test_data.header == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
 
 TestGroup preparation
-------------------------
+----------------------
 
-Test cases are organized into "testGroups" within the raw data.
-In the case of this test data each TestGroup specifies
-a the parameters needed to construct a private RSA key
+Test cases are organized into test groups within the raw data.
+See :ref:`sec_wycheproof_data_overview` for more information about
+what kinds of things are typically found in test groups.
+:attr:`TestData.groups` returns an 
+Iterator over :class:`TestGroup`.
+
+In the case of this test data each
+:class:`TestGroup` specifies
+the parameters needed to construct a private RSA key
 that is to be used for all tests in the group.
 So you might normally use something like
 
@@ -403,9 +414,10 @@ So let's just do a sanity check on this just for demonstration purposes.
 Testing against each :class:`TestCase`
 --------------------------------------
 
-And now we are finally ready for our actial tests.
+We are finally ready for our actual tests.
 
-And all of the cases for these specific tests have a
+In addition to the properties that all Wycheproof test cases have,
+the test cases here have. 
 
 "msg"
     The plaintext message
@@ -415,6 +427,9 @@ And all of the cases for these specific tests have a
 
 "label"
     The OAEP label that is rarely ever used.
+
+These are accesible as keys to the directory
+:attr:`TestCase.fields`.
 
 Fortunately the default for creating a cryptor with pycryptodome
 uses as hash algoririthm, mask generation function are the ones we

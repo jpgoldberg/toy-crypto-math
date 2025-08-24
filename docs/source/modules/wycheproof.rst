@@ -177,8 +177,7 @@ in a wycheproof JSON test data file.
                     "msg" : "",
                     "ct" : "",
                     "tag" : "dc20e2d83f25705bb49e439eca56de25",
-                    "result" : "valid"
-                    } ... ] ] ... }
+                    "result" : "valid" } ] ] }
 
 The user will need to check for themselves what sorts data
 are in each test group and in each test. 
@@ -207,7 +206,6 @@ They typically provide equivalent keys in multiple formats.
         "publicExponent" : "010001",
         "prime1" : ...,
         "prime2" : ...,
-        ...
         },
         "privateKeyPkcs8" : ...,
         "privateKeyPem" : ...,

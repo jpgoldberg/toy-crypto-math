@@ -161,7 +161,6 @@ in a wycheproof JSON test data file.
         :name: siv.json
 
         {  "algorithm" : "AES-GCM-SIV",
-            ...
             "testGroups" : [ {
                 "ivSize" : 96,
                 "keySize" : 128,
@@ -178,9 +177,8 @@ in a wycheproof JSON test data file.
                     "msg" : "",
                     "ct" : "",
                     "tag" : "dc20e2d83f25705bb49e439eca56de25",
-                    "result" : "valid" },
-                    ... ]
-            ...], ... }
+                    "result" : "valid"
+                    } ... ] ] ... }
 
 The user will need to check for themselves what sorts data
 are in each test group and in each test. 
@@ -188,9 +186,36 @@ are in each test group and in each test.
 :func:`Loader.load` loads a and returns a :class:`TestData` object.
 :attr:`TestData.groups` is an
 :class:`~collections.abc.Iterable` of :class:`TestGroup` instances.
-Test groups typically contain information for contructing keys or data
+
+Test groups
+------------
+
+Each test group typically contains information for constructing keys or data
 that will be used for all all of the tests within the group.
 They typically provide equivalent keys in multiple formats.
+
+.. code-block::
+
+    {"testGroups" : [ {
+        "keySize" : 2048,
+        "sha" : "SHA-1",
+        "mgf" : "MGF1",
+        "mgfSha" : "SHA-1",
+        "privateKey" : {
+        "modulus" : ...,
+        "privateExponent" : ...,
+        "publicExponent" : "010001",
+        "prime1" : ...,
+        "prime2" : ...,
+        ...
+        },
+        "privateKeyPkcs8" : ...,
+        "privateKeyPem" : ...,
+        "privateKeyJwk" : { ... },
+        "tests" : [ ... ]
+    } ] }
+
+
 
 :attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase` instances. All test cases in the Wycheproof data have
 
@@ -244,7 +269,7 @@ passes tests for a 2048-bit key with SHA1 as the
 hash algrorithm and MGF1SHA1 as the mask generation function.
 The data file for those tests is in ``testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json`` relative to WP_ROOT.
 
-In what follows, we assume that you have already set up ``WP_ROOT`` :py:class:`pathlib.Path` as discussed above.
+In what follows, we assume that you have already set up ``WP_ROOT`` as a :py:class:`pathlib.Path` with the appropriate file system location.
 
 .. testsetup:: 
 
@@ -272,7 +297,7 @@ you can set up the test loader by intializing a :class:`Loader`.
     from pathlib import Path
     from toy_crypto import wycheproof
 
-    # And these will be what we are testing
+    # These imports include the function we will be testing
     from Crypto.PublicKey import RSA
     from Crypto.Cipher import PKCS1_OAEP
 

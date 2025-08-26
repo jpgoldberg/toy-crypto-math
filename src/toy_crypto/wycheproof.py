@@ -146,6 +146,55 @@ class TestCase:
         return s
 
 
+class Note:
+    """Notes on flags for in TestData"""
+
+    def __init__(self, note_name: str, notes: dict[str, object]) -> None:
+        self._flag_name = note_name
+        note = notes[self._flag_name]
+        assert isinstance(note, dict)
+
+        # common.json schema says bugType must exist
+        self._bug_type: str
+        bug_type = note["bugType"]
+        self._bug_type = bug_type["description"]  # type: ignore[assignment]
+
+        self._description: str | None = note.get("description", None)
+        self._effect: str | None = note.get("effect", None)
+        self._links: Sequence[str] = note.get("links", [])
+        self._cves: Sequence[str] = note.get("cves", [])
+
+    @property
+    def bug_type(self) -> str:
+        """The type of the bug tested for"""
+
+        return self._bug_type
+
+    @property
+    def description(self) -> str | None:
+        """A description of the flag"""
+
+        return self._description
+
+    @property
+    def effect(self) -> str | None:
+        """The expected effect of failing the test vector"""
+
+        return self._effect
+
+    @property
+    def links(self) -> Sequence[str]:
+        """A list of potentially related references"""
+
+        return self._links
+
+    @property
+    def cves(self) -> Sequence[str]:
+        """A list of potentially related CVEs"""
+
+        return self._cves
+
+
 class TestGroup:
     """Data that is common to all tests in the group."""
 
@@ -182,6 +231,11 @@ class TestData:
     ) -> None:
         self._formats = formats
         self._groups: Sequence[dict[str, object]]
+        self._algorithm: str
+        self._header: str
+        self._notes: Mapping[str, Note]
+        self._data: dict[str, object]
+        self._test_count: int | None
 
         # Shallow copy should be ok, because everything we
         # pop out of this gets copied.
@@ -192,12 +246,23 @@ class TestData:
         except KeyError:
             raise ValueError('There should be a "testGroups" key in the data')
 
-        header: list[str] = _data.pop("header", "")  # type: ignore[assignment]
-        self._header: str = " ".join(header)
+        self._test_count = _data.pop("numberOfTests", None)  # type: ignore[assignment]
 
-        self._algorithm: str = _data.pop("algorithm", "")  # type: ignore[assignment]
+        # docs say header can be a string as well as a list of strings
+        header: list[str] | str = _data.pop("header", "")  # type: ignore[assignment]
+        if not isinstance(header, str):
+            header = " ".join(header)
+        self._header = header
 
-        self._data: dict[str, object] = _data
+        src_notes: dict[str, dict[str, object]] = _data.get("Notes", dict())  # type: ignore[assignment]
+
+        self._notes = {
+            name: Note(name, note) for name, note in src_notes.items()
+        }
+
+        self._algorithm = _data.pop("algorithm", "")  # type: ignore[assignment]
+
+        self._data = _data
 
     @property
     def header(self) -> str:
@@ -218,7 +283,20 @@ class TestData:
 
     @property
     def formats(self) -> Mapping[str, str]:
+        """JSON keyword to string format annotation.
+
+        .. warning::
+
+            The is not completely reliable.
+        """
+
         return self._formats
+
+    @property
+    def notes(self) -> Mapping[str, Note]:
+        """The notes for each test case flag."""
+
+        return self._notes
 
 
 class Loader:
@@ -254,7 +332,7 @@ class Loader:
 
     @property
     def root_dir(self) -> Path:
-        """The absolute path of the wycheproof root directgory."""
+        """The absolute path of the wycheproof root directory."""
         return self._root_dir
 
     @classmethod

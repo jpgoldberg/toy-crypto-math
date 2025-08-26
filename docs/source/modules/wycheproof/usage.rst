@@ -98,6 +98,9 @@ used for validating the loaded JSON.
 Loading the test data
 ----------------------
 
+Now what we have ``loader``, we can use it
+to load Wycheproof data.
+
 The data is loaded using :meth:`Loader.load`.
 The loaded :class:`TestData` instance is not the
 raw result of loading JSON, but many of its internals

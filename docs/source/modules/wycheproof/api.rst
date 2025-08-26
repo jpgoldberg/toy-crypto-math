@@ -19,4 +19,7 @@ API
 .. autoclass:: TestData
     :members:
 
+.. autoclass:: Note
+    :members:
+
 

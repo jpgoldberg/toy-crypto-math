@@ -124,7 +124,7 @@ autodoc_show_sourcelink = True
 
 extensions.append("sphinx.ext.intersphinx")
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
+    "crypto": ("https://www.pycryptodome.org", None),
 }
 
 extensions.append("sphinxcontrib.bibtex")

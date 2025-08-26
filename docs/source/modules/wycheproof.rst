@@ -3,6 +3,7 @@
 .. _Wycheproof repository: https://github.com/C2SP/wycheproof/
 .. _Wycheproof README: https://github.com/C2SP/wycheproof/blob/main/README.md
 .. _Wycheproof documentation: https://github.com/C2SP/wycheproof/blob/main/doc/index.md
+.. _PyCryptodome: https://www.pycryptodome.org
 
 
 Wycheproof
@@ -74,7 +75,7 @@ There really should be a more natural way to do what I did,
 but I failed to find or construct those better ways.
 Never-the-less it seems to work and the API isn't terrible. 
 
-.. _sec-wycheproof-obtain
+.. _sec-wycheproof-obtain:
 
 Obtaining the Wycheproof data
 ++++++++++++++++++++++++++++++
@@ -143,7 +144,7 @@ all of your test files:
 
     WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
 
-.. _sec_wycheproof_data_overview
+.. _sec_wycheproof_data_overview:
 
 Data overview
 +++++++++++++
@@ -300,10 +301,11 @@ For the example below, we will step through parts of that,
 but will sometimes need to use a different flow so that each
 of the parts actually runs when contructing this document.
 
-We will be testing RSA decryption from ``pycryptodome``
-passes tests for a 2048-bit key with SHA1 as the
+We will be testing RSA decryption from PyCryptodome_
+against the Wycheproof OAEP test data for 2048-bit keys with SHA1 as the
 hash algrorithm and MGF1SHA1 as the mask generation function.
-The data file for those tests is in ``testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json`` relative to WP_ROOT.
+The data file for those tests is in
+``testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json`` relative to WP_ROOT.
 
 In what follows, we assume that you have already set up ``WP_ROOT``
 as a :py:class:`pathlib.Path` with the appropriate file system location.
@@ -356,14 +358,14 @@ still reflect its origins.
 
     assert test_data.header == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
 
-TestGroup preparation
-----------------------
+For each :class:`TestGroup`
+-----------------------------------
 
 Test cases are organized into test groups within the raw data.
 See :ref:`sec_wycheproof_data_overview` for more information about
 what kinds of things are typically found in test groups.
 :attr:`TestData.groups` returns an 
-Iterator over :class:`TestGroup`.
+Iterator of :class:`TestGroup\s`.
 
 In the case of this test data each
 :class:`TestGroup` specifies
@@ -383,8 +385,9 @@ collect tuples of TestGroup, rsa.PrivateKey pairs.
 The TestGroup data in this file includes an RSA private key
 that will be used for all tests in the group.
 The key is offered in several formats.
-In this example, I will use the ``pycryptomdome`` RSA.import_key method
-to get the key from the PEM format.
+In this example,
+I will use the :external+crypto:func:`Crypto.PublicKey.RSA.import_key` method
+to get the key information from the PEM format.
 
 
 ..  testcode::
@@ -411,7 +414,7 @@ So let's just do a sanity check on this just for demonstration purposes.
         assert g["mgfSha"] == "SHA-1"
         
 
-Testing against each :class:`TestCase`
+For each :class:`TestCase`
 --------------------------------------
 
 We are finally ready for our actual tests.
@@ -428,12 +431,22 @@ the test cases here have.
 "label"
     The OAEP label that is rarely ever used.
 
-These are accesible as keys to the directory
+These are accesible as keys to the dictionary
 :attr:`TestCase.fields`.
 
-Fortunately the default for creating a cryptor with pycryptodome
+Fortunately the defaults for creating a cryptor,
+:external+crypto:func:`Crypto.Cipher.PKCS1_OAEP.new`
+cryptor with PyCryptodome_
 uses as hash algoririthm, mask generation function are the ones we
 are testing here, so we won't have to specify them.
+We can create the cryptor we wish to test with
+
+.. code-block:: python
+
+    cryptor = PKCS1_OAEP.new(key = sk, label = label)
+
+where ``sk`` is the private key we set up for the test group,
+and ``label`` is from each test.
 
 ..  testcode::
 
@@ -446,10 +459,7 @@ are testing here, so we won't have to specify them.
             ciphertext = case.fields["ct"]
             message = case.fields["msg"]
 
-            cryptor = PKCS1_OAEP.new(
-                key = sk,
-                label = label,
-            )
+            cryptor = PKCS1_OAEP.new(key=sk, label=label)
 
             our_message: bytes = b''
             try:

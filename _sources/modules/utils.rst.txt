@@ -43,6 +43,19 @@ would otherwise fail.
 >>> digit_count(-10_000)
 5
 
+.. autofunction:: next_power2
+
+This is yet another function where talking a logarithm (base 2 this time)
+would be the mathematically nice way to do things,
+
+..   math:: p = \lceil \log_2(n) \rceil
+
+but because we may want to use this with large numbers,
+we have to worry floating point precision.
+
+Becausew we are dealing with base 2,
+we can do all of our multiplications and and divisions by powers of 2
+using bit shifts. I am not sure how Pythonic that leaves things.
 
 xor
 -----

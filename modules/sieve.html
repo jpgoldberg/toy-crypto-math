@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sieve of Eratosthenes &#8212; ToyCrypto 0.4.4 documentation</title>
+    <title>Sieve of Eratosthenes &#8212; ToyCrypto 0.5.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=90733dfc"></script>
+    <script src="../_static/documentation_options.js?v=1dd76d02"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules/sieve';</script>
@@ -48,7 +48,7 @@
     <link rel="prev" title="Number Theory" href="nt.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4.4" />
+  <meta name="docsearch:version" content="0.5.0" />
   </head>
   
   
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.4.4)</p>
+    <p class="title logo__title">ToyCrypto (0.5.0)</p>
   
 </a></div>
     
@@ -336,7 +336,6 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="nt.html">Number Theory</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Sieve of Eratosthenes</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="birthday.html">Birthday Paradox Computations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="rsa/index.html">RSA</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="rsa/primitive.html">Primitive RSA</a></li>
@@ -350,6 +349,12 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="wycheproof/index.html">Wycheproof</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/api.html">API</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utiltieis</a></li>
@@ -457,7 +462,7 @@ and as a consequence it cannot be installed in certain environments.</p>
 </li>
 <li><p>The <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a> class</p>
 <blockquote>
-<div><p>This is a pure Python implementation that uses <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a> when creating the sieve.
+<div><p>This is a pure Python implementation that uses <code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code> when creating the sieve.
 This consumes a lot of memmory.
 For a brief time during initialization there will be a set with all integers from 2 through n.
 The set will rapidly have elements removed from it,
@@ -471,7 +476,7 @@ but the end results will still contain all of the primes as Python integers.</p>
 </li>
 </ul>
 <p>Roughly speaking, the reasons for having three (so far) implementations is that I wanted to be able to run things in environments in which <a class="reference external" href="https://github.com/ilanschnell/bitarray">bitarray</a> is not available. That led the to <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSeive</span></code>.
-An off-hand comment I made in some discussion about how immutable <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> means that a seive implement with <code class="docutils literal notranslate"><span class="pre">int</span></code> would be slow was challanged. I was curious to see whether an <code class="docutils literal notranslate"><span class="pre">int</span></code>-based implementation would work, so that led to <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.</p>
+An off-hand comment I made in some discussion about how immutable <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> means that a seive implement with <code class="docutils literal notranslate"><span class="pre">int</span></code> would be slow was challanged. I was curious to see whether an <code class="docutils literal notranslate"><span class="pre">int</span></code>-based implementation would work, so that led to <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.</p>
 <p>It turns out that using native Python integers was enormously slower than I could have imagined.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -508,8 +513,10 @@ and a minute (59.796 seconds) with <a class="reference internal" href="#toy_cryp
 So bitaray was nearly 20 times faster than the set-based sieve construction
 and more than 5000 times faster than the integer-based construction for a sieve size of one million.</p>
 </section>
+<section id="abstract-bases-and-overview">
+<h2>Abstract bases and overview<a class="headerlink" href="#abstract-bases-and-overview" title="Link to this heading">#</a></h2>
 <section id="the-algorithm">
-<h2>The algorithm<a class="headerlink" href="#the-algorithm" title="Link to this heading">#</a></h2>
+<h3>The algorithm<a class="headerlink" href="#the-algorithm" title="Link to this heading">#</a></h3>
 <p>The algoritm for creating the sieve is the same for all three classes
 but has fiddly differences due to how the seive is represented.
 This, pared down and modified so as to work all by itself,
@@ -552,7 +559,7 @@ readable.</p>
 </div>
 </section>
 <section id="the-sievish-abc">
-<h2>The <a class="reference internal" href="#toy_crypto.sieve.Sievish" title="toy_crypto.sieve.Sievish"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sievish</span></code></a> ABC<a class="headerlink" href="#the-sievish-abc" title="Link to this heading">#</a></h2>
+<h3>The <a class="reference internal" href="#toy_crypto.sieve.Sievish" title="toy_crypto.sieve.Sievish"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sievish</span></code></a> ABC<a class="headerlink" href="#the-sievish-abc" title="Link to this heading">#</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">Sievish</span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish" title="Link to this definition">#</a></dt>
@@ -563,100 +570,100 @@ This also would probably make more sense as an abstract class
 instead of a Protocol.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.count">
-<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.Sievish.count" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.Sievish.count" title="Link to this definition">#</a></dt>
 <dd><p>The total number of primes in the sieve</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.from_int">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">S</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.from_int" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">S</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.from_int" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code></a>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.from_list">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">S</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.from_list" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">S</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.from_list" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from list.</p>
 <p>If size is not specified it will be set to the largest value in primes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if primes is empty</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if primes is empty</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code></a>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.from_size">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">S</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.from_size" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">S</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.from_size" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeVar" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code></a>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.n">
-<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.Sievish.n" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.Sievish.n" title="Link to this definition">#</a></dt>
 <dd><p>The size of the sieve, including composites.</p>
 <p>The number n such that the sieve contains all primes &lt;= n.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.nth_prime">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.nth_prime" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.nth_prime" title="Link to this definition">#</a></dt>
 <dd><p>Returns n-th prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if n exceeds count.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – n &lt; 1</p></li>
+<li><p><strong>ValueError</strong> – if n exceeds count.</p></li>
+<li><p><strong>ValueError</strong> – n &lt; 1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sievish.primes">
-<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.primes" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#Sievish.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.Sievish.primes" title="Link to this definition">#</a></dt>
 <dd><p>Iterator of primes starting at start-th prime.</p>
 <p>The 1st prime is 2. There is no zeroth prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if start &lt; 1</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -665,7 +672,7 @@ instead of a Protocol.</p>
 
 </section>
 <section id="the-sieve-alias">
-<h2>The <a class="reference internal" href="#toy_crypto.sieve.Sieve" title="toy_crypto.sieve.Sieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sieve</span></code></a> alias<a class="headerlink" href="#the-sieve-alias" title="Link to this heading">#</a></h2>
+<h3>The <a class="reference internal" href="#toy_crypto.sieve.Sieve" title="toy_crypto.sieve.Sieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sieve</span></code></a> alias<a class="headerlink" href="#the-sieve-alias" title="Link to this heading">#</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.sieve.Sieve">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">Sieve</span></span><a class="headerlink" href="#toy_crypto.sieve.Sieve" title="Link to this definition">#</a></dt>
@@ -675,12 +682,12 @@ instead of a Protocol.</p>
 </section>
 </section>
 <section id="the-concrete-classes">
-<h1>The concrete classes<a class="headerlink" href="#the-concrete-classes" title="Link to this heading">#</a></h1>
+<h2>The concrete classes<a class="headerlink" href="#the-concrete-classes" title="Link to this heading">#</a></h2>
 <section id="the-basieve-class">
-<h2>The <a class="reference internal" href="#toy_crypto.sieve.BaSieve" title="toy_crypto.sieve.BaSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code></a> class<a class="headerlink" href="#the-basieve-class" title="Link to this heading">#</a></h2>
+<h3>The <a class="reference internal" href="#toy_crypto.sieve.BaSieve" title="toy_crypto.sieve.BaSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code></a> class<a class="headerlink" href="#the-basieve-class" title="Link to this heading">#</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">BaSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bitarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">BaSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bitarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve" title="Link to this definition">#</a></dt>
 <dd><p>Sieve of Eratosthenes.</p>
 <p>The good parts of this implementation are lifted from the example provided
 with the <a class="reference external" href="https://pypi.org/project/bitarray/">bitarray package</a> source.</p>
@@ -689,35 +696,35 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code></span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p></li>
 </ul>
 </dd>
 </dl>
 <p>Sieve from bitarray, treated as up to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if size &gt; <code class="docutils literal notranslate"><span class="pre">len(data)</span></code></p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if size &gt; <code class="docutils literal notranslate"><span class="pre">len(data)</span></code></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code></span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.count">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.BaSieve.count" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.BaSieve.count" title="Link to this definition">#</a></dt>
 <dd><p>The number of primes in the sieve.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.from_int">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.from_int" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.from_int" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -727,17 +734,17 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.from_list">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.from_list" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.from_list" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from list.</p>
 <p>If size is not specified it will be set to the largest value in primes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if primes is empty</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if primes is empty</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -748,11 +755,11 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.from_size">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.from_size" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.from_size" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -762,45 +769,45 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.n">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.BaSieve.n" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.BaSieve.n" title="Link to this definition">#</a></dt>
 <dd><p>The size of the sieve, including composites.</p>
 <p>The number n such that the sieve contains all primes &lt;= n.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.nth_prime">
-<span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.nth_prime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.nth_prime" title="Link to this definition">#</a></dt>
 <dd><p>Returns n-th prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if n exceeds count.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – n &lt; 1</p></li>
+<li><p><strong>ValueError</strong> – if n exceeds count.</p></li>
+<li><p><strong>ValueError</strong> – n &lt; 1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.BaSieve.primes">
-<span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.primes" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#BaSieve.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.BaSieve.primes" title="Link to this definition">#</a></dt>
 <dd><p>Iterator of primes starting at start-th prime.</p>
 <p>The 1st prime is 2. There is no zeroth prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if start &lt; 1</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -809,10 +816,10 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 
 </section>
 <section id="the-setsieve-class">
-<h2>The <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a> class<a class="headerlink" href="#the-setsieve-class" title="Link to this heading">#</a></h2>
+<h3>The <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a> class<a class="headerlink" href="#the-setsieve-class" title="Link to this heading">#</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">SetSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">SetSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve" title="Link to this definition">#</a></dt>
 <dd><p>Sieve of Eratosthenes using a native python set</p>
 <p>This consumes an enormous amount of early in initialization,
 and a SetSieve object will contain a list of prime integers,
@@ -821,8 +828,8 @@ the integer or bitarray sieves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -833,24 +840,24 @@ illustrate the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.count">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.SetSieve.count" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.SetSieve.count" title="Link to this definition">#</a></dt>
 <dd><p>The total number of primes in the sieve</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.from_int">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.from_int" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.from_int" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -860,17 +867,17 @@ illustrate the algorithm.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.from_list">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.from_list" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.from_list" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from list.</p>
 <p>If size is not specified it will be set to the largest value in primes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if primes is empty</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if primes is empty</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -881,11 +888,11 @@ illustrate the algorithm.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.from_size">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><span class="pre">SetSieve</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.from_size" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><span class="pre">SetSieve</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.from_size" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a></span></p>
@@ -895,45 +902,45 @@ illustrate the algorithm.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.n">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.SetSieve.n" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.SetSieve.n" title="Link to this definition">#</a></dt>
 <dd><p>The size of the sieve, including composites.</p>
 <p>The number n such that the sieve contains all primes &lt;= n.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.nth_prime">
-<span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.nth_prime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.nth_prime" title="Link to this definition">#</a></dt>
 <dd><p>Returns n-th prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if n exceeds count.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – n &lt; 1</p></li>
+<li><p><strong>ValueError</strong> – if n exceeds count.</p></li>
+<li><p><strong>ValueError</strong> – n &lt; 1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.SetSieve.primes">
-<span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.primes" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#SetSieve.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.SetSieve.primes" title="Link to this definition">#</a></dt>
 <dd><p>Iterator of primes starting at start-th prime.</p>
 <p>The 1st prime is 2. There is no zeroth prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if start &lt; 1</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -942,29 +949,29 @@ illustrate the algorithm.</p>
 
 </section>
 <section id="the-intsieve-class">
-<h2>The <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a> class<a class="headerlink" href="#the-intsieve-class" title="Link to this heading">#</a></h2>
+<h3>The <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a> class<a class="headerlink" href="#the-intsieve-class" title="Link to this heading">#</a></h3>
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">IntSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">IntSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve" title="Link to this definition">#</a></dt>
 <dd><p>A pure Python (using a large int) Sieve of Eratosthenes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.count">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.IntSieve.count" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.IntSieve.count" title="Link to this definition">#</a></dt>
 <dd><p>The total number of primes in the sieve</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.from_int">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_int" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_int" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -974,17 +981,17 @@ illustrate the algorithm.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.from_list">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Self" title="(in Python v3.13)"><span class="pre">Self</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_list" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_list" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from list.</p>
 <p>If size is not specified it will be set to the largest value in primes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if primes is empty</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if primes is empty</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -995,11 +1002,11 @@ illustrate the algorithm.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.from_size">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><span class="pre">IntSieve</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_size" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><span class="pre">IntSieve</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_size" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a></span></p>
@@ -1009,51 +1016,52 @@ illustrate the algorithm.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.n">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#toy_crypto.sieve.IntSieve.n" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#toy_crypto.sieve.IntSieve.n" title="Link to this definition">#</a></dt>
 <dd><p>The size of the sieve, including composites.</p>
 <p>The number n such that the sieve contains all primes &lt;= n.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.nth_prime">
-<span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.nth_prime" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">nth_prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.nth_prime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.nth_prime" title="Link to this definition">#</a></dt>
 <dd><p>Returns n-th prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if n exceeds count.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – n &lt; 1</p></li>
+<li><p><strong>ValueError</strong> – if n exceeds count.</p></li>
+<li><p><strong>ValueError</strong> – n &lt; 1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p>
+<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.primes">
-<span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.primes" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.primes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.primes" title="Link to this definition">#</a></dt>
 <dd><p>Iterator of primes starting at start-th prime.</p>
 <p>The 1st prime is 2. There is no zeroth prime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if start &lt; 1</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
+</section>
 </section>
 </section>
 
@@ -1104,64 +1112,64 @@ illustrate the algorithm.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Sieve of Eratosthenes</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-three-separate-implementations">Why three separate implementations?</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-algorithm">The algorithm</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sievish-abc">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sievish</span></code> ABC</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish"><code class="docutils literal notranslate"><span class="pre">Sievish</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.count"><code class="docutils literal notranslate"><span class="pre">Sievish.count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.from_int"><code class="docutils literal notranslate"><span class="pre">Sievish.from_int()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.from_list"><code class="docutils literal notranslate"><span class="pre">Sievish.from_list()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.from_size"><code class="docutils literal notranslate"><span class="pre">Sievish.from_size()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.n"><code class="docutils literal notranslate"><span class="pre">Sievish.n</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.nth_prime"><code class="docutils literal notranslate"><span class="pre">Sievish.nth_prime()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.primes"><code class="docutils literal notranslate"><span class="pre">Sievish.primes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#abstract-bases-and-overview">Abstract bases and overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-algorithm">The algorithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sievish-abc">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sievish</span></code> ABC</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish"><code class="docutils literal notranslate"><span class="pre">Sievish</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.count"><code class="docutils literal notranslate"><span class="pre">Sievish.count</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.from_int"><code class="docutils literal notranslate"><span class="pre">Sievish.from_int()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.from_list"><code class="docutils literal notranslate"><span class="pre">Sievish.from_list()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.from_size"><code class="docutils literal notranslate"><span class="pre">Sievish.from_size()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.n"><code class="docutils literal notranslate"><span class="pre">Sievish.n</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.nth_prime"><code class="docutils literal notranslate"><span class="pre">Sievish.nth_prime()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sievish.primes"><code class="docutils literal notranslate"><span class="pre">Sievish.primes()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sieve-alias">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sieve</span></code> alias</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sieve"><code class="docutils literal notranslate"><span class="pre">Sieve</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sieve-alias">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sieve</span></code> alias</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.Sieve"><code class="docutils literal notranslate"><span class="pre">Sieve</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#the-concrete-classes">The concrete classes</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code> class</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve"><code class="docutils literal notranslate"><span class="pre">BaSieve</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.count"><code class="docutils literal notranslate"><span class="pre">BaSieve.count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.from_int"><code class="docutils literal notranslate"><span class="pre">BaSieve.from_int()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.from_list"><code class="docutils literal notranslate"><span class="pre">BaSieve.from_list()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.from_size"><code class="docutils literal notranslate"><span class="pre">BaSieve.from_size()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.n"><code class="docutils literal notranslate"><span class="pre">BaSieve.n</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.nth_prime"><code class="docutils literal notranslate"><span class="pre">BaSieve.nth_prime()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.primes"><code class="docutils literal notranslate"><span class="pre">BaSieve.primes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-concrete-classes">The concrete classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-basieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code> class</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve"><code class="docutils literal notranslate"><span class="pre">BaSieve</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.count"><code class="docutils literal notranslate"><span class="pre">BaSieve.count</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.from_int"><code class="docutils literal notranslate"><span class="pre">BaSieve.from_int()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.from_list"><code class="docutils literal notranslate"><span class="pre">BaSieve.from_list()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.from_size"><code class="docutils literal notranslate"><span class="pre">BaSieve.from_size()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.n"><code class="docutils literal notranslate"><span class="pre">BaSieve.n</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.nth_prime"><code class="docutils literal notranslate"><span class="pre">BaSieve.nth_prime()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.BaSieve.primes"><code class="docutils literal notranslate"><span class="pre">BaSieve.primes()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-setsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code> class</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve"><code class="docutils literal notranslate"><span class="pre">SetSieve</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.count"><code class="docutils literal notranslate"><span class="pre">SetSieve.count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.from_int"><code class="docutils literal notranslate"><span class="pre">SetSieve.from_int()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.from_list"><code class="docutils literal notranslate"><span class="pre">SetSieve.from_list()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.from_size"><code class="docutils literal notranslate"><span class="pre">SetSieve.from_size()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.n"><code class="docutils literal notranslate"><span class="pre">SetSieve.n</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.nth_prime"><code class="docutils literal notranslate"><span class="pre">SetSieve.nth_prime()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.primes"><code class="docutils literal notranslate"><span class="pre">SetSieve.primes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-setsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code> class</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve"><code class="docutils literal notranslate"><span class="pre">SetSieve</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.count"><code class="docutils literal notranslate"><span class="pre">SetSieve.count</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.from_int"><code class="docutils literal notranslate"><span class="pre">SetSieve.from_int()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.from_list"><code class="docutils literal notranslate"><span class="pre">SetSieve.from_list()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.from_size"><code class="docutils literal notranslate"><span class="pre">SetSieve.from_size()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.n"><code class="docutils literal notranslate"><span class="pre">SetSieve.n</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.nth_prime"><code class="docutils literal notranslate"><span class="pre">SetSieve.nth_prime()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.SetSieve.primes"><code class="docutils literal notranslate"><span class="pre">SetSieve.primes()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-intsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code> class</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve"><code class="docutils literal notranslate"><span class="pre">IntSieve</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.count"><code class="docutils literal notranslate"><span class="pre">IntSieve.count</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.from_int"><code class="docutils literal notranslate"><span class="pre">IntSieve.from_int()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.from_list"><code class="docutils literal notranslate"><span class="pre">IntSieve.from_list()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.from_size"><code class="docutils literal notranslate"><span class="pre">IntSieve.from_size()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.n"><code class="docutils literal notranslate"><span class="pre">IntSieve.n</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.nth_prime"><code class="docutils literal notranslate"><span class="pre">IntSieve.nth_prime()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.primes"><code class="docutils literal notranslate"><span class="pre">IntSieve.primes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-intsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code> class</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve"><code class="docutils literal notranslate"><span class="pre">IntSieve</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.count"><code class="docutils literal notranslate"><span class="pre">IntSieve.count</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.from_int"><code class="docutils literal notranslate"><span class="pre">IntSieve.from_int()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.from_list"><code class="docutils literal notranslate"><span class="pre">IntSieve.from_list()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.from_size"><code class="docutils literal notranslate"><span class="pre">IntSieve.from_size()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.n"><code class="docutils literal notranslate"><span class="pre">IntSieve.n</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.nth_prime"><code class="docutils literal notranslate"><span class="pre">IntSieve.nth_prime()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.sieve.IntSieve.primes"><code class="docutils literal notranslate"><span class="pre">IntSieve.primes()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1169,7 +1177,6 @@ illustrate the algorithm.</p>
 </ul>
 </li>
 </ul>
-
   </nav></div>
 
   <div class="sidebar-secondary-item">

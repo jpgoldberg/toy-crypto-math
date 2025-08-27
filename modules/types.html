@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Types &#8212; ToyCrypto 0.4.4 documentation</title>
+    <title>Types &#8212; ToyCrypto 0.5.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=90733dfc"></script>
+    <script src="../_static/documentation_options.js?v=1dd76d02"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules/types';</script>
@@ -48,7 +48,7 @@
     <link rel="prev" title="Bit manipulation utiltieis" href="bit_utils.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4.4" />
+  <meta name="docsearch:version" content="0.5.0" />
   </head>
   
   
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.4.4)</p>
+    <p class="title logo__title">ToyCrypto (0.5.0)</p>
   
 </a></div>
     
@@ -336,7 +336,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="nt.html">Number Theory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sieve.html">Sieve of Eratosthenes</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="birthday.html">Birthday Paradox Computations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="rsa/index.html">RSA</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="rsa/primitive.html">Primitive RSA</a></li>
@@ -350,6 +349,12 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="wycheproof/index.html">Wycheproof</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/api.html">API</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utiltieis</a></li>
@@ -458,28 +463,28 @@ cases where an int out of the range of a byte is used.</p>
 <dt class="sig sig-object py" id="toy_crypto.types.PositiveInt">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">PositiveInt</span></span><a class="headerlink" href="#toy_crypto.types.PositiveInt" title="Link to this definition">#</a></dt>
 <dd><p>Positive integer.</p>
-<p>alias of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.types.Prob">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">Prob</span></span><a class="headerlink" href="#toy_crypto.types.Prob" title="Link to this definition">#</a></dt>
 <dd><p>Probability: A float between 0.0 and 1.0</p>
-<p>alias of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd></dl>
 
 <dl class="py class protocol">
 <dt class="sig sig-object py" id="toy_crypto.types.SupportsBool">
 <em class="property"><span class="k"><span class="pre">protocol</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">SupportsBool</span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#SupportsBool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.SupportsBool" title="Link to this definition">#</a></dt>
-<dd><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code></a>.</p>
+<dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Protocol</span></code>.</p>
 <p>This protocol is <a class="reference external" href="https://www.python.org/dev/peps/pep-0544/#runtime-checkable-decorator-and-narrowing-types-by-isinstance">runtime checkable</a>.</p>
 <p>Classes that implement this protocol must have the following methods / attributes:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.types.SupportsBool.__bool__">
-<span class="sig-name descname"><span class="pre">__bool__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#SupportsBool.__bool__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.SupportsBool.__bool__" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__bool__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#SupportsBool.__bool__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.SupportsBool.__bool__" title="Link to this definition">#</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -488,42 +493,42 @@ cases where an int out of the range of a byte is used.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="toy_crypto.types.is_byte">
-<span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">is_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#is_byte"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.is_byte" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">is_byte</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#is_byte"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.is_byte" title="Link to this definition">#</a></dt>
 <dd><p>True iff val is int s.t. 0 &lt;= val &lt; 256.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>val</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>val</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="toy_crypto.types.is_positive_int">
-<span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">is_positive_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.13)"><span class="pre">TypeGuard</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#toy_crypto.types.PositiveInt" title="toy_crypto.types.PositiveInt"><span class="pre">PositiveInt</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#is_positive_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.is_positive_int" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">is_positive_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#toy_crypto.types.PositiveInt" title="toy_crypto.types.PositiveInt"><span class="pre">PositiveInt</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#is_positive_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.is_positive_int" title="Link to this definition">#</a></dt>
 <dd><p>true if val is a float, s.t. 0.0 &lt;= val &lt;= 1.0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>val</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>val</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeGuard</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NewType" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NewType</span></code></a>(<code class="docutils literal notranslate"><span class="pre">PositiveInt</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>)]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeGuard</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">NewType</span></code>(<code class="docutils literal notranslate"><span class="pre">PositiveInt</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="toy_crypto.types.is_prob">
-<span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">is_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.13)"><span class="pre">TypeGuard</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#toy_crypto.types.Prob" title="toy_crypto.types.Prob"><span class="pre">Prob</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#is_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.is_prob" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.types.</span></span><span class="sig-name descname"><span class="pre">is_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#toy_crypto.types.Prob" title="toy_crypto.types.Prob"><span class="pre">Prob</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/toy_crypto/types.html#is_prob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.types.is_prob" title="Link to this definition">#</a></dt>
 <dd><p>true if val is a float, s.t. 0.0 &lt;= va &lt;= 1.0</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>val</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></span>)</p>
+<dd class="field-odd"><p><strong>val</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeGuard</span></code>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NewType" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NewType</span></code></a>(<code class="docutils literal notranslate"><span class="pre">Prob</span></code>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>)]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeGuard</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">NewType</span></code>(<code class="docutils literal notranslate"><span class="pre">Prob</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)]</span></p>
 </dd>
 </dl>
 </dd></dl>

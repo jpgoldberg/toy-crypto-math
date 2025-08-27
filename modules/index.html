@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The modules &#8212; ToyCrypto 0.4.4 documentation</title>
+    <title>The modules &#8212; ToyCrypto 0.5.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=90733dfc"></script>
+    <script src="../_static/documentation_options.js?v=1dd76d02"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules/index';</script>
@@ -48,7 +48,7 @@
     <link rel="prev" title="Motiviation" href="../why/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4.4" />
+  <meta name="docsearch:version" content="0.5.0" />
   </head>
   
   
@@ -110,7 +110,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.4.4)</p>
+    <p class="title logo__title">ToyCrypto (0.5.0)</p>
   
 </a></div>
     
@@ -336,7 +336,6 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="nt.html">Number Theory</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sieve.html">Sieve of Eratosthenes</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="birthday.html">Birthday Paradox Computations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="rsa/index.html">RSA</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="rsa/primitive.html">Primitive RSA</a></li>
@@ -350,6 +349,12 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="wycheproof/index.html">Wycheproof</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/api.html">API</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utiltieis</a></li>
@@ -437,15 +442,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sieve.html">Sieve of Eratosthenes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sieve.html#why-three-separate-implementations">Why three separate implementations?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-algorithm">The algorithm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-sievish-abc">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sievish</span></code> ABC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-sieve-alias">The <code class="xref py py-class docutils literal notranslate"><span class="pre">Sieve</span></code> alias</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="sieve.html#the-concrete-classes">The concrete classes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-basieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code> class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-setsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code> class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-intsieve-class">The <code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code> class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#abstract-bases-and-overview">Abstract bases and overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sieve.html#the-concrete-classes">The concrete classes</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="birthday.html">Birthday Paradox Computations</a><ul>
@@ -484,12 +482,21 @@
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="wycheproof/index.html">Wycheproof</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html#what-is-the-wycheproof-project">What is the Wycheproof Project?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html#why-does-my-module-exist">Why does my module exist?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html#obtaining-the-wycheproof-data">Obtaining the Wycheproof data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html#data-overview">Data overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wycheproof/index.html#table-of-contents">Table of contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="rand.html#module-toy_crypto.rand">The <code class="xref py py-mod docutils literal notranslate"><span class="pre">rand</span></code> functions</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#toy_crypto.utils.digit_count"><code class="docutils literal notranslate"><span class="pre">digit_count()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#toy_crypto.utils.next_power2"><code class="docutils literal notranslate"><span class="pre">next_power2()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#xor">xor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#encodings-for-the-rsa-129-challenge">Encodings for the RSA 129 challenge</a></li>
 </ul>

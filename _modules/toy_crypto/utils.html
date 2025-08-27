@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>toy_crypto.utils &#8212; ToyCrypto 0.4.4 documentation</title>
+    <title>toy_crypto.utils &#8212; ToyCrypto 0.5.0 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=90733dfc"></script>
+    <script src="../../_static/documentation_options.js?v=1dd76d02"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/toy_crypto/utils';</script>
@@ -45,7 +45,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.4.4" />
+  <meta name="docsearch:version" content="0.5.0" />
   </head>
   
   
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.4.4)</p>
+    <p class="title logo__title">ToyCrypto (0.5.0)</p>
   
 </a></div>
     
@@ -538,6 +538,36 @@
     <span class="n">h</span> <span class="o">=</span> <span class="n">blake2b</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">digest_size</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
     <span class="n">t</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">a85encode</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">t</span>
+
+
+<div class="viewcode-block" id="next_power2">
+<a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.next_power2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">next_power2</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns smallest *p* such that :math:`2^p \\geq n`.</span>
+
+<span class="sd">    :raises ValueError: if n is less than 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n must be positive&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="c1"># I don&#39;t want to use log2 because the floating point approximation</span>
+    <span class="c1"># might get this wrong for large values, so bit fiddling instead.</span>
+
+    <span class="c1"># if n is a power of 2, then only its leading bit will be 1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># we have covered the p = 1 cases</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="k">while</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
 </pre></div>
 
                 </article>

@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Usage &#8212; ToyCrypto 0.5.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=1dd76d02"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'modules/wycheproof/usage';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Wycheproof" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.5.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ToyCrypto (0.5.0)</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../intro/quickstart.html">
+    Installing & Importing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../why/index.html">
+    Motiviation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    The modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../bibliography.html">
+    Bibliography
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/toycrypto/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/pypi-logo-no-text.svg" class="icon-link-image" alt="PyPI"/></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jpgoldberg/toy-crypto-math" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../intro/quickstart.html">
+    Installing & Importing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../why/index.html">
+    Motiviation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    The modules
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../bibliography.html">
+    Bibliography
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/toycrypto/" title="PyPI" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../_static/pypi-logo-no-text.svg" class="icon-link-image" alt="PyPI"/></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jpgoldberg/toy-crypto-math" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Main modules</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../nt.html">Number Theory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sieve.html">Sieve of Eratosthenes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../birthday.html">Birthday Paradox Computations</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../rsa/index.html">RSA</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../rsa/primitive.html">Primitive RSA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rsa/keygen.html">RSA Key Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rsa/oaep.html">OAEP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../ec.html">Elliptic curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../games.html">Security games</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../vigenere.html">Vigenère cipher</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Utility modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Wycheproof</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../rand.html">Random Numbers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../types.html">Types</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item"><nav class="sidebar-indices-items" aria-labelledby="pst-indices-navigation-heading-2">
+  <p id="pst-indices-navigation-heading-2" class="sidebar-indices-items__title" role="heading" aria-level="1">Indices</p>
+  <ul class="indices-link">
+        <li class="toctree-l1">
+          <a class="reference internal"
+             href="../../genindex.html"
+             accesskey="I">General Index</a>
+        </li>
+        <li class="toctree-l1">
+          <a class="reference internal" href="../../py-modindex.html">Python Module Index</a>
+        </li>
+  </ul>
+</nav></div>
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">The modules</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Wycheproof</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Usage</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>Nothing here should be used for any security purposes.</p>
+<ul class="simple">
+<li><p>If you need cryptographic tools in a Python environment use <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> or <a class="reference external" href="https://pynacl.readthedocs.io/en/latest/">PyNaCl</a>.</p></li>
+<li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
+</ul>
+</div>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h1>
+<p>This document walks through a concrete example.
+It assumes that you have
+obtained the wcyhoproof data as discussed in
+<a class="reference internal" href="index.html#sec-wycheproof-obtain"><span class="std std-ref">Obtaining the Wycheproof data</span></a>,
+and that you have at least glanced the
+<a class="reference internal" href="index.html#sec-wycheproof-data-overview"><span class="std std-ref">data overview section</span></a>.</p>
+<section id="structure-of-use">
+<h2>Structure of use<a class="headerlink" href="#structure-of-use" title="Link to this heading">#</a></h2>
+<p>The structure of one way to use this module might look something like</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">wycheproof</span>
+<span class="c1"># import ... # the modules with the things you will be testing</span>
+
+<span class="c1"># WP_ROOT: Path = ... # a pathlib.Path for the root wycheproof directory</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">wycheproof</span><span class="o">.</span><span class="n">Loader</span><span class="p">(</span><span class="n">WP_ROOT</span><span class="p">)</span>  <span class="c1"># This only needs to be done once</span>
+<span class="o">...</span>
+
+<span class="c1"># Get test data from one of the data files</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;SOME_WYCHEPROOF_DATA_FILE_test.json&quot;</span><span class="p">)</span>
+<span class="o">...</span> <span class="c1"># May wish to get some information from test_data</span>
+    <span class="c1"># for loggging or reporting.</span>
+
+<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">test_</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+    <span class="o">...</span> <span class="c1"># Per TestGroup setup</span>
+    <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
+        <span class="o">...</span> <span class="c1"># set up for specific test</span>
+        <span class="o">...</span> <span class="c1"># perform computation with thing you are testing</span>
+        <span class="o">...</span> <span class="c1"># Check that your results meet expectations</span>
+</pre></div>
+</div>
+<p>For the example below, we will step through parts of that,
+but will sometimes need to use a different flow so that each
+of the parts actually runs when contructing this document.</p>
+</section>
+<section id="an-example">
+<h2>An example<a class="headerlink" href="#an-example" title="Link to this heading">#</a></h2>
+<p>We will be testing RSA decryption from <a class="reference external" href="https://www.pycryptodome.org">PyCryptodome</a>
+against the Wycheproof OAEP test data for 2048-bit keys with SHA1 as the
+hash algrorithm and MGF1SHA1 as the mask generation function.
+The data file for those tests is in
+<code class="docutils literal notranslate"><span class="pre">testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json</span></code> relative to WP_ROOT.</p>
+<p>In what follows, we assume that you have already set up <code class="docutils literal notranslate"><span class="pre">WP_ROOT</span></code>
+as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code> with the appropriate file system location.
+See <a class="reference internal" href="index.html#sec-wycheproof-obtain"><span class="std std-ref">Obtaining the Wycheproof data</span></a> for discusson of ways to do that.</p>
+<section id="set-up-loader">
+<h3>Set up loader<a class="headerlink" href="#set-up-loader" title="Link to this heading">#</a></h3>
+<p>This assumes that you have already set up <code class="docutils literal notranslate"><span class="pre">WP_ROOT</span></code>
+(or whatever you wish to call it)
+as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code> with the appropriate file system location
+as discussed <a class="reference internal" href="index.html#sec-wycheproof-obtain"><span class="std std-ref">Obtaining the Wycheproof data</span></a>.</p>
+<p>To be able to load a wycheproof JSON data file a loader must first be set up.
+The <code class="xref py py-class docutils literal notranslate"><span class="pre">Loader`</span></code> you create will not only know where the data files are,
+but it will have internal mechanisms set up for constructing the schemata
+used for validating the loaded JSON.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">wycheproof</span>
+
+<span class="c1"># These imports include the function we will be testing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Crypto.PublicKey</span><span class="w"> </span><span class="kn">import</span> <span class="n">RSA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Crypto.Cipher</span><span class="w"> </span><span class="kn">import</span> <span class="n">PKCS1_OAEP</span>
+
+<span class="c1"># WP_ROOT: Path = ... # set up elsewhere</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">wycheproof</span><span class="o">.</span><span class="n">Loader</span><span class="p">(</span><span class="n">WP_ROOT</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-the-test-data">
+<h3>Loading the test data<a class="headerlink" href="#loading-the-test-data" title="Link to this heading">#</a></h3>
+<p>Now what we have <code class="docutils literal notranslate"><span class="pre">loader</span></code>, we can use it
+to load Wycheproof data.</p>
+<p>The data is loaded using <a class="reference internal" href="api.html#toy_crypto.wycheproof.Loader.load" title="toy_crypto.wycheproof.Loader.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Loader.load()</span></code></a>.
+The loaded <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestData" title="toy_crypto.wycheproof.TestData"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestData</span></code></a> instance is not the
+raw result of loading JSON, but many of its internals
+still reflect its origins.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;rsa_oaep_2048_sha1_mgf1sha1_test.json&quot;</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">test_data</span><span class="o">.</span><span class="n">header</span> <span class="o">==</span> <span class="s2">&quot;Test vectors of type RsaOeapDecrypt check decryption with OAEP.&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="for-each-testgroup">
+<h3>For each <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a><a class="headerlink" href="#for-each-testgroup" title="Link to this heading">#</a></h3>
+<p>Test cases are organized into test groups within the raw data.
+See <a class="reference internal" href="index.html#sec-wycheproof-data-overview"><span class="std std-ref">Data overview</span></a> for more information about
+what kinds of things are typically found in test groups.
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.groups</span></code> returns an
+Iterator of <code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroups</span></code>.</p>
+<p>In the case of this test data each
+<a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a> specifies
+the parameters needed to construct a private RSA key
+that is to be used for all tests in the group.</p>
+<p>The private key is offered in several formats.
+In this example,
+I will use the <a class="reference external" href="https://www.pycryptodome.org/src/public_key/rsa.html#Crypto.PublicKey.RSA.import_key" title="(in PyCryptodome v3.24)"><code class="xref py py-func docutils literal notranslate"><span class="pre">Crypto.PublicKey.RSA.import_key()</span></code></a> method
+to get the key information from the PEM format.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">test_data</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+    <span class="n">pem</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;privateKeyPem&quot;</span><span class="p">]</span>
+    <span class="n">sk</span> <span class="o">=</span> <span class="n">RSA</span><span class="o">.</span><span class="n">import_key</span><span class="p">(</span><span class="n">pem</span><span class="p">)</span>
+
+    <span class="c1">## Let&#39;s do some sanity checks on the private keys</span>
+
+    <span class="k">assert</span> <span class="n">sk</span><span class="o">.</span><span class="n">size_in_bits</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2048</span>
+    <span class="k">assert</span> <span class="n">sk</span><span class="o">.</span><span class="n">has_private</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Each group also has the parameters used for our RSA decryption.
+These are the same for all test groups in this particular data set.
+So let’s just do a sanity check on this just for demonstration purposes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">test_data</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;keySize&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2048</span>
+    <span class="k">assert</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;sha&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;SHA-1&quot;</span>
+    <span class="k">assert</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;mgf&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MGF1&quot;</span>
+    <span class="k">assert</span> <span class="n">g</span><span class="p">[</span><span class="s2">&quot;mgfSha&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;SHA-1&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="for-each-testcase">
+<h3>For each <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase" title="toy_crypto.wycheproof.TestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a><a class="headerlink" href="#for-each-testcase" title="Link to this heading">#</a></h3>
+<p>We are finally ready for our actual tests.</p>
+<p>In addition to the properties that all Wycheproof test cases have,
+the test cases here have.</p>
+<dl class="simple">
+<dt>“msg”</dt><dd><p>The plaintext message</p>
+</dd>
+<dt>“ct”</dt><dd><p>The ciphertext</p>
+</dd>
+<dt>“label”</dt><dd><p>The OAEP label that is rarely ever used.</p>
+</dd>
+</dl>
+<p>These are accesible as keys to the dictionary
+<a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase.other_data" title="toy_crypto.wycheproof.TestCase.other_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestCase.other_data</span></code></a>.</p>
+<p>Fortunately the defaults for creating a cryptor,
+<a class="reference external" href="https://www.pycryptodome.org/src/cipher/oaep.html#Crypto.Cipher.PKCS1_OAEP.new" title="(in PyCryptodome v3.24)"><code class="xref py py-func docutils literal notranslate"><span class="pre">Crypto.Cipher.PKCS1_OAEP.new()</span></code></a>
+cryptor with <a class="reference external" href="https://www.pycryptodome.org">PyCryptodome</a>
+uses as hash algoririthm, mask generation function are the ones we
+are testing here, so we won’t have to specify them.
+We can create the cryptor we wish to test with</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cryptor</span> <span class="o">=</span> <span class="n">PKCS1_OAEP</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="n">sk</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">sk</span></code> is the private key we set up for the test group,
+and <code class="docutils literal notranslate"><span class="pre">label</span></code> is from each test.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">group_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">test_data</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+    <span class="n">group_count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">pem</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;privateKeyPem&quot;</span><span class="p">]</span>
+    <span class="n">sk</span> <span class="o">=</span> <span class="n">RSA</span><span class="o">.</span><span class="n">import_key</span><span class="p">(</span><span class="n">pem</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
+        <span class="n">test_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">label</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+        <span class="n">ciphertext</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;ct&quot;</span><span class="p">]</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;msg&quot;</span><span class="p">]</span>
+
+        <span class="n">cryptor</span> <span class="o">=</span> <span class="n">PKCS1_OAEP</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">sk</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="n">decrypted</span><span class="p">:</span> <span class="nb">bytes</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">decrypted</span> <span class="o">=</span> <span class="n">cryptor</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">case</span><span class="o">.</span><span class="n">invalid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">case</span><span class="o">.</span><span class="n">valid</span>
+            <span class="k">assert</span> <span class="n">decrypted</span> <span class="o">==</span> <span class="n">message</span>
+
+<span class="k">assert</span> <span class="n">test_count</span> <span class="o">==</span> <span class="n">test_data</span><span class="o">.</span><span class="n">test_count</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed a total </span><span class="si">{</span><span class="n">test_count</span><span class="si">}</span><span class="s2"> tests in </span><span class="si">{</span><span class="n">group_count</span><span class="si">}</span><span class="s2"> group(s).&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Completed a total 36 tests in 1 group(s).
+</pre></div>
+</div>
+</section>
+</section>
+<section id="data-conversion">
+<span id="sec-wycheproof-data-conversion"></span><h2>Data conversion<a class="headerlink" href="#data-conversion" title="Link to this heading">#</a></h2>
+<p>The TLDR for this section is that you are advised to make sure that
+things like <code class="docutils literal notranslate"><span class="pre">case.other_data[&quot;ct&quot;]</span></code> are of the data types you expect
+when you run tests.
+Be familiar with the data you are importing, and do not relie
+on the fully automatic conversion from hex strings to bytes or integers
+to always get things right.</p>
+<p>We will continue with the same example as above for this discussion.</p>
+<p>In some of the test cases in the test data we used,
+the <code class="docutils literal notranslate"><span class="pre">&quot;ct&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;msg&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;label&quot;</span></code> JSON keywords
+have values that are strings.
+In all of those cases, the strings are hex encoded byte sequences.
+Consider this exceprt from test case 9:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;tcId&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;comment&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;flags&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;EncryptionWithLabel&quot;</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;msg&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;313233343030&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// That is actually hex encoded</span>
+<span class="w">    </span><span class="nt">&quot;ct&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="err">...</span><span class="p">,</span><span class="w"> </span><span class="c1">// A longer string of hex digits was here</span>
+<span class="w">    </span><span class="nt">&quot;label&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;000102030405060708090a0b0c0d0e0f10111213&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;result&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;valid&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>But when we ran our tests we were able to use code like</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">label</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+<span class="n">ciphertext</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;ct&quot;</span><span class="p">]</span>
+<span class="n">message</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="n">case</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;msg&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>and those things really were bytes.</p>
+<p>The initiallizers for <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a> and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase" title="toy_crypto.wycheproof.TestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a>
+automatically perform <em>some</em> necessary conversions from hexidecimal
+strings to <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> as appropriate.
+It does this using the data from <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestData.formats" title="toy_crypto.wycheproof.TestData.formats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.formats</span></code></a>,
+which is a mapping from JSON keywords to information about how
+the string is formated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We have already loaded test_data with:</span>
+<span class="c1"># test_data = loader.load(&quot;rsa_oaep_2048_sha1_mgf1sha1_test.json&quot;)</span>
+
+<span class="n">formats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">formats</span>
+
+<span class="k">assert</span> <span class="n">formats</span><span class="p">[</span><span class="s2">&quot;ct&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;HexBytes&quot;</span>
+<span class="k">assert</span> <span class="n">formats</span><span class="p">[</span><span class="s2">&quot;publicExponent&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;BigInt&quot;</span> <span class="c1"># Not used yet</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="api.html#toy_crypto.wycheproof.TestData.formats" title="toy_crypto.wycheproof.TestData.formats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.formats</span></code></a> is constructed by inspecting the schema associated with
+with the JSON file requesting during loading.
+That may give incorrect results when there are multiple places a particular
+JSON keyword might exist in the data.
+As a consequence, the automatic conversion is conservative and only
+acts on the keywords in the top-most level of a test group or test case.</p>
+<section id="semi-automatic-conversion">
+<h3>Semi-automatic conversion<a class="headerlink" href="#semi-automatic-conversion" title="Link to this heading">#</a></h3>
+<p>As mentioned above,
+the fully automatic conversation using <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestData.formats" title="toy_crypto.wycheproof.TestData.formats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.formats</span></code></a>
+is only performed at the top leve of
+each <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a> and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase" title="toy_crypto.wycheproof.TestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a>.</p>
+<p>Suppose in our OAEP test, instead of creating the
+private key from the PEM format in each test group
+we created it through the information in <code class="docutils literal notranslate"><span class="pre">other_data[&quot;privateKey&quot;]</span></code>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="nt">&quot;testGroups&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="err">...</span>
+<span class="w">            </span><span class="nt">&quot;privateKey&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;privateExponent&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="err">...</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;publicExponent&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;010001&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// that is a hex string</span>
+<span class="w">                </span><span class="nt">&quot;prime1&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="err">...</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;prime2&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="err">...</span><span class="p">,</span>
+<span class="w">                </span><span class="err">...</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;privateKeyPem&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="err">...</span><span class="p">,</span>
+<span class="w">            </span><span class="err">...</span>
+<span class="w">            </span><span class="nt">&quot;tests&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+</pre></div>
+</div>
+<p>we might need to extract the values of
+<code class="docutils literal notranslate"><span class="pre">&quot;publicExponent&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;prime1&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;prime2&quot;</span></code>
+in each test group.
+But these are not top-level keys within the test group,
+and so they will remain as hex strings.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We will test for just the first group</span>
+<span class="n">group</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+
+<span class="n">priv_key_data</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;privateKey&quot;</span><span class="p">]</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">priv_key_data</span><span class="p">[</span><span class="s2">&quot;publicExponent&quot;</span><span class="p">]</span>
+
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>010001
+</pre></div>
+</div>
+<p>But because <code class="docutils literal notranslate"><span class="pre">formats</span></code> does contain information for the relevant
+members of <code class="docutils literal notranslate"><span class="pre">group.other_data[&quot;privateKey&quot;]</span></code> we can manually
+call automatic conversion using <a class="reference internal" href="api.html#toy_crypto.wycheproof.deserialize_top_level" title="toy_crypto.wycheproof.deserialize_top_level"><code class="xref py py-func docutils literal notranslate"><span class="pre">deserialize_top_level()</span></code></a>.
+Note that this mutates the dictionary it is given.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">group</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+
+<span class="n">priv_key_data</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">other_data</span><span class="p">[</span><span class="s2">&quot;privateKey&quot;</span><span class="p">]</span>
+
+<span class="n">wycheproof</span><span class="o">.</span><span class="n">deserialize_top_level</span><span class="p">(</span><span class="n">priv_key_data</span><span class="p">,</span> <span class="n">test_data</span><span class="o">.</span><span class="n">formats</span><span class="p">)</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">priv_key_data</span><span class="p">[</span><span class="s2">&quot;publicExponent&quot;</span><span class="p">]</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">priv_key_data</span><span class="p">[</span><span class="s2">&quot;prime1&quot;</span><span class="p">]</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">priv_key_data</span><span class="p">[</span><span class="s2">&quot;prime2&quot;</span><span class="p">]</span>
+<span class="n">N</span> <span class="o">=</span> <span class="n">priv_key_data</span><span class="p">[</span><span class="s2">&quot;modulus&quot;</span><span class="p">]</span>
+
+<span class="k">assert</span> <span class="n">p</span> <span class="o">*</span> <span class="n">q</span> <span class="o">==</span> <span class="n">N</span>
+
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>65537
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gotchas">
+<h2>Gotchas<a class="headerlink" href="#gotchas" title="Link to this heading">#</a></h2>
+<p>Pretty much all of the many ways this can break are a consequence
+of the fact that I haver not found a way to make use of JSON schemata
+the way I feel they should be able to be used.
+When I started working on this module, I had assumed that there
+would be a fairly straigthforward way to make use of the JSON schema
+loaded for each test file to reason about the loaded JSON within Python code.</p>
+<section id="hard-coded-data-assmptions">
+<h3>Hard-coded data assmptions<a class="headerlink" href="#hard-coded-data-assmptions" title="Link to this heading">#</a></h3>
+<p>The code here makes assumptions about things that will be common
+to all of the wycheproof JSON test files. Similarly it makes assumptions
+about what each test group within those files will have.
+I have yet to write tests to see if those actually hold of each test file.
+It is more likely that these assumptions will fail in with test vectors from the
+older <code class="docutils literal notranslate"><span class="pre">wycheproof/testvectors</span></code> directory than in the (default)
+<code class="docutils literal notranslate"><span class="pre">wycheproof/testvectors</span></code>.</p>
+<p>If you find that the assumptions fail for things in <code class="docutils literal notranslate"><span class="pre">wycheproof/testvectors</span></code> definitely let me know.</p>
+</section>
+<section id="id1">
+<h3>Data conversion<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>As discussed in <a class="reference internal" href="#sec-wycheproof-data-conversion"><span class="std std-ref">Data conversion</span></a>
+the automatic data conversion of hexidecimal strings
+to <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>s will miss things
+that you will need to manually handle, perhaps with the help of
+<a class="reference internal" href="api.html#toy_crypto.wycheproof.deserialize_top_level" title="toy_crypto.wycheproof.deserialize_top_level"><code class="xref py py-func docutils literal notranslate"><span class="pre">deserialize_top_level()</span></code></a>.</p>
+<p>But it is also possible that it will attempt to convert things
+it shouldn’t or be mistaken about which conversion to use.
+If you find that this occurs, please let me know.</p>
+</section>
+<section id="other-data-is-just-the-left-overs">
+<h3>Other data is just the left overs<a class="headerlink" href="#other-data-is-just-the-left-overs" title="Link to this heading">#</a></h3>
+<p>The dictionares
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.other_data</span></code>,
+<a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup.other_data" title="toy_crypto.wycheproof.TestGroup.other_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestGroup.other_data</span></code></a>,
+and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase.other_data" title="toy_crypto.wycheproof.TestCase.other_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestCase.other_data</span></code></a>
+exclude things for which those classes automatically offer as properties.
+For example, the existence of <code class="xref py py-attr docutils literal notranslate"><span class="pre">TestGroup.algorithm</span></code> means that
+trying something like <code class="docutils literal notranslate"><span class="pre">test_data.other_data[&quot;algorithm&quot;]</span></code> will result
+in a <code class="xref py py-class docutils literal notranslate"><span class="pre">KeyError</span></code>.</p>
+<p>There are reasons for my choice here.
+Perhaps not good reasons, but reasons none the less.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Wycheproof</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">API</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-of-use">Structure of use</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example">An example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-loader">Set up loader</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-the-test-data">Loading the test data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-each-testgroup">For each <code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-each-testcase">For each <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-conversion">Data conversion</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#semi-automatic-conversion">Semi-automatic conversion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gotchas">Gotchas</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hard-coded-data-assmptions">Hard-coded data assmptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Data conversion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-data-is-just-the-left-overs">Other data is just the left overs</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/modules/wycheproof/usage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024–2025 Jeffrey Goldberg.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -267,7 +267,7 @@ class TestPrimeTesting(unittest.TestCase):
                     continue
                 with self.subTest(msg=f"tcID: {case.tcId}"):
                     expected: bool = case.valid
-                    value = case.fields["value"]
+                    value = case.other_data["value"]
                     assert isinstance(value, int)
 
                     try:
@@ -295,7 +295,7 @@ class TestPrimeTesting(unittest.TestCase):
 
                 with self.subTest(msg=f"tcID: {case.tcId}"):
                     expected: bool = case.valid
-                    value = case.fields["value"]
+                    value = case.other_data["value"]
                     assert isinstance(value, int)
 
                     try:

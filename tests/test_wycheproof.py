@@ -68,7 +68,9 @@ class TestTests:
                         assert tc.comment == ""
                         assert tc.valid
                         assert "Normal" in tc.flags
-                        assert tc.fields["msg"] == bytes.fromhex("54657374")
+                        assert tc.other_data["msg"] == bytes.fromhex(
+                            "54657374"
+                        )
 
                     case 12:
                         assert tc.comment == "first byte of l_hash modified"
@@ -88,7 +90,7 @@ class TestTests:
                     case 34:
                         assert tc.comment == "em has a large hamming weight"
                         assert tc.valid
-                        label = tc.fields["label"]
+                        label = tc.other_data["label"]
                         assert isinstance(label, bytes)
                         assert len(label) == 24
                         assert not tc.has_flag("InvalidOaepPadding")
@@ -97,8 +99,8 @@ class TestTests:
 
                     case _:
                         assert tc.result in ("valid", "invalid", "acceptable")
-                        assert isinstance(tc.fields["ct"], bytes)
-                        assert isinstance(tc.fields["msg"], bytes)
+                        assert isinstance(tc.other_data["ct"], bytes)
+                        assert isinstance(tc.other_data["msg"], bytes)
 
 
 if __name__ == "__main__":

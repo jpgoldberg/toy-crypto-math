@@ -345,11 +345,11 @@ class TestOaep(unittest.TestCase):
             # And now on to the tests
             for t in group.tests:
                 with self.subTest(msg=f"tcId: {t.tcId}"):
-                    ct = t.fields["ct"]
+                    ct = t.other_data["ct"]
                     assert isinstance(ct, bytes)
-                    msg = t.fields["msg"]
+                    msg = t.other_data["msg"]
                     assert isinstance(msg, bytes)
-                    label = t.fields["label"]
+                    label = t.other_data["label"]
                     assert isinstance(label, bytes)
 
                     match t.result:

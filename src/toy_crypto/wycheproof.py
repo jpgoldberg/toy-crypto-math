@@ -84,8 +84,8 @@ class TestCase:
         return self._fields[key]
 
     @property
-    def fields(self) -> Mapping[str, object]:
-        """The dict of items in individual test that are test specific."""
+    def other_data(self) -> Mapping[str, object]:
+        """The test case data that isn't captured by known properties."""
         return self._fields
 
     @property
@@ -201,19 +201,27 @@ class TestGroup:
     def __init__(
         self, group: dict[str, object], formats: Mapping[str, str]
     ) -> None:
-        self._formats = formats
-        self.group: dict[str, object] = copy(group)
-
-        deserialize_top_level(self.group, formats)
-
+        # These will be accessed as properties
+        self._data: Mapping[str, object]
         self._tests: Sequence[dict[str, object]]
+        self._type: str | None
+
+        self._formats = formats
+        data: dict[str, object] = copy(group)
+
         try:
-            self._tests = self.group.pop("tests")  # type: ignore[assignment]
+            self._tests = data.pop("tests")  # type: ignore[assignment]
         except KeyError:
             raise ValueError('Group must have "tests')
 
+        self._type = data.pop("type", None)  # type: ignore[assignment]
+
+        deserialize_top_level(data, formats)
+
+        self._data = data
+
     def __getitem__(self, key: str) -> object:
-        return self.group[key]
+        return self._data[key]
 
     @property
     def tests(self) -> Generator[TestCase]:
@@ -221,6 +229,17 @@ class TestGroup:
         for t in self._tests:
             deserialize_top_level(t, self._formats)
             yield TestCase(t)
+
+    @property
+    def type(self) -> str | None:
+        """The test group type."""
+
+        return self._type
+
+    @property
+    def other_data(self) -> Mapping[str, object]:
+        """The data that isn't captured by known properties."""
+        return self._data
 
 
 class TestData:
@@ -278,7 +297,7 @@ class TestData:
         return self._algorithm
 
     @property
-    def data(self) -> Mapping[str, object]:
+    def other_data(self) -> Mapping[str, object]:
         return self._data
 
     @property

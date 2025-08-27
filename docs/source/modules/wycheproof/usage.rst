@@ -186,7 +186,7 @@ the test cases here have.
     The OAEP label that is rarely ever used.
 
 These are accesible as keys to the dictionary
-:attr:`TestCase.fields`.
+:attr:`TestCase.other_data`.
 
 Fortunately the defaults for creating a cryptor,
 :external+crypto:func:`Crypto.Cipher.PKCS1_OAEP.new`
@@ -209,9 +209,9 @@ and ``label`` is from each test.
         for case in g.tests:
             test_count += 1
         
-            label = case.fields["label"]
-            ciphertext = case.fields["ct"]
-            message = case.fields["msg"]
+            label = case.other_data["label"]
+            ciphertext = case.other_data["ct"]
+            message = case.other_data["msg"]
 
             cryptor = PKCS1_OAEP.new(key=sk, label=label)
 

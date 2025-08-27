@@ -46,14 +46,14 @@ class TestTests:
         )
 
         for group in data.groups:
-            privateKey = group["privateKey"]
+            privateKey = group.other_data["privateKey"]
             assert isinstance(privateKey, dict)
 
             wycheproof.deserialize_top_level(privateKey, data.formats)
             d = privateKey["privateExponent"]
             assert isinstance(d, int)
-            assert isinstance(group["keySize"], int)
-            assert isinstance(group["mgf"], str)
+            assert isinstance(group.other_data["keySize"], int)
+            assert isinstance(group.other_data["mgf"], str)
 
             for tc in group.tests:
                 assert tc.tcId > 0

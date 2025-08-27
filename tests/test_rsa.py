@@ -322,7 +322,7 @@ class TestOaep(unittest.TestCase):
     def test_wycheproof_2048_sha1_mfg1_sha1(self) -> None:
         data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
         for group in data.groups:
-            privateKey: dict[str, object] = group["privateKey"]  # type: ignore[assignment]
+            privateKey: dict[str, object] = group.other_data["privateKey"]  # type: ignore[assignment]
             wycheproof.deserialize_top_level(privateKey, data.formats)
             d = privateKey["privateExponent"]
             assert isinstance(d, int)

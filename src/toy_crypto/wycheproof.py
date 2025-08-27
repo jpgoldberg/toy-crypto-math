@@ -79,7 +79,7 @@ class TestCase:
 
         self._fields = data
 
-    @deprecated("Use 'fields' instead")
+    @deprecated("Use 'other_data' instead")
     def __getitem__(self, key: str) -> object:
         return self._fields[key]
 
@@ -220,6 +220,7 @@ class TestGroup:
 
         self._data = data
 
+    @deprecated("Use 'other_data' instead")
     def __getitem__(self, key: str) -> object:
         return self._data[key]
 
@@ -295,6 +296,10 @@ class TestData:
     @property
     def algorithm(self) -> str:
         return self._algorithm
+
+    @deprecated("Use 'other_data' instead")
+    def __getitem__(self, key: str) -> object:
+        return self._data[key]
 
     @property
     def other_data(self) -> Mapping[str, object]:

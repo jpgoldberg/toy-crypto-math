@@ -230,6 +230,7 @@ and ``label`` is from each test.
 
     Completed a total 36 tests in 1 group(s).
 
+.. _sec_wycheproof_data_conversion:
 
 Data conversion
 ++++++++++++++++++++++++++++
@@ -318,7 +319,7 @@ we created it through the information in ``other_data["privateKey"]``.
                 ...
                 "privateKey" : {
                     "privateExponent" : ...,
-                    "publicExponent" : "010001",
+                    "publicExponent" : "010001", // that is a hex string
                     "prime1" : ...,
                     "prime2" : ...,
                     ...
@@ -336,8 +337,6 @@ But these are not top-level keys within the test group,
 and so they will remain as hex strings.
 
 .. testcode::
-
-    from itertools import islice
 
     # We will test for just the first group
     group = next(test_data.groups)
@@ -379,4 +378,58 @@ Note that this mutates the dictionary it is given.
 .. testoutput::
 
     65537
+
+Gotchas
+++++++++
+
+Pretty much all of the many ways this can break are a consequence
+of the fact that I haver not found a way to make use of JSON schemata
+the way I feel they should be able to be used.
+When I started working on this module, I had assumed that there
+would be a fairly straigthforward way to make use of the JSON schema
+loaded for each test file to reason about the loaded JSON within Python code.
+
+Hard-coded data assmptions
+--------------------------
+
+The code here makes assumptions about things that will be common
+to all of the wycheproof JSON test files. Similarly it makes assumptions
+about what each test group within those files will have.
+I have yet to write tests to see if those actually hold of each test file.
+It is more likely that these assumptions will fail in with test vectors from the
+older ``wycheproof/testvectors`` directory than in the (default) 
+``wycheproof/testvectors``.
+
+If you find that the assumptions fail for things in ``wycheproof/testvectors`` definitely let me know.
+
+Data conversion
+----------------
+
+As discussed in :ref:`sec_wycheproof_data_conversion`
+the automatic data conversion of hexidecimal strings
+to :py:class:`bytes` or :py:class:`int`\s will miss things
+that you will need to manually handle, perhaps with the help of
+:func:`deserialize_top_level`.
+
+But it is also possible that it will attempt to convert things
+it shouldn't or be mistaken about which conversion to use.
+If you find that this occurs, please let me know.
+
+Other data is just the left overs
+----------------------------------
+
+The dictionares
+:attr:`TestData.other_data`,
+:attr:`TestGroup.other_data`,
+and :attr:`TestCase.other_data`
+exclude things for which those classes automatically offer as properties.
+For example, the existence of :attr:`TestGroup.algorithm` means that
+trying something like ``test_data.other_data["algorithm"]`` will result
+in a :py:class:`KeyError`.
+
+There are reasons for my choice here.
+Perhaps not good reasons, but reasons none the less.
+
+
+
 

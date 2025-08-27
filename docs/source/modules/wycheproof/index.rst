@@ -287,6 +287,6 @@ Table of contents
     :caption: Wycheproof
     :maxdepth: 2
 
-    self
+    Overview <self>
     usage
     api

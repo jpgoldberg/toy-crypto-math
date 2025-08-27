@@ -23,7 +23,7 @@ The structure of one way to use this module might look something like
 
 .. code-block:: python
 
-    import toy_crypto.wycheproof
+    from toy_crypto import wycheproof
     # import ... # the modules with the things you will be testing
 
     # WP_ROOT: Path = ... # a pathlib.Path for the root wycheproof directory
@@ -125,20 +125,8 @@ In the case of this test data each
 :class:`TestGroup` specifies
 the parameters needed to construct a private RSA key
 that is to be used for all tests in the group.
-So you might normally use something like
 
-.. code-block:: python
-
-    for group in test_data.tests:
-        ... # Per TestGroup setup
-        for test in group.tests: ...
-
-But I can't run that in a doctest, so we will instead
-collect tuples of TestGroup, rsa.PrivateKey pairs.
-
-The TestGroup data in this file includes an RSA private key
-that will be used for all tests in the group.
-The key is offered in several formats.
+The private key is offered in several formats.
 In this example,
 I will use the :external+crypto:func:`Crypto.PublicKey.RSA.import_key` method
 to get the key information from the PEM format.
@@ -146,12 +134,12 @@ to get the key information from the PEM format.
 
 ..  testcode::
 
-    group_pairs = [
-        (g, RSA.import_key(g["privateKeyPem"])) for g in test_data.groups
-    ]
+    for group in test_data.groups:
+        pem = group.other_data["privateKeyPem"]
+        sk = RSA.import_key(pem)
 
-    ## Let's do some sanity checks on the private keys
-    for _, sk in group_pairs:
+        ## Let's do some sanity checks on the private keys
+    
         assert sk.size_in_bits() == 2048
         assert sk.has_private()
 
@@ -161,7 +149,7 @@ So let's just do a sanity check on this just for demonstration purposes.
 
 ..  testcode::
 
-    for g, _ in group_pairs:
+    for g in test_data.groups:
         assert g["keySize"] == 2048
         assert g["sha"] == "SHA-1"
         assert g["mgf"] == "MGF1"
@@ -205,7 +193,12 @@ and ``label`` is from each test.
 ..  testcode::
 
     test_count = 0
-    for g, sk in group_pairs:
+    group_count = 0
+    for g in test_data.groups:
+        group_count += 1
+        pem = group.other_data["privateKeyPem"]
+        sk = RSA.import_key(pem)
+
         for case in g.tests:
             test_count += 1
         
@@ -224,7 +217,8 @@ and ``label`` is from each test.
                 assert case.valid
                 assert decrypted == message
 
-    print(f"Completed a total {test_count} tests in {len(group_pairs)} group(s).")
+    assert test_count == test_data.test_count
+    print(f"Completed a total {test_count} tests in {group_count} group(s).")
 
 .. testoutput::
 

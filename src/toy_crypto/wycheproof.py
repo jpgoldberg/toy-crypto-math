@@ -322,6 +322,12 @@ class TestData:
 
         return self._notes
 
+    @property
+    def test_count(self) -> int | None:
+        """The test count from the JSON "numberOfTests" value."""
+
+        return self._test_count
+
 
 class Loader:
     """Tools for loading Wycheproof test vectors."""

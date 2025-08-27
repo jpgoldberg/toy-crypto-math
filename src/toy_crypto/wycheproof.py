@@ -6,7 +6,7 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
-from collections.abc import Generator, Mapping, Sequence, Set
+from collections.abc import Iterator, Mapping, Sequence, Set
 from copy import copy
 from pathlib import Path
 import json
@@ -224,7 +224,7 @@ class TestGroup:
         return self._data[key]
 
     @property
-    def tests(self) -> Generator[TestCase]:
+    def tests(self) -> Iterator[TestCase]:
         """All of the test cases in the group."""
         for t in self._tests:
             deserialize_top_level(t, self._formats)
@@ -288,7 +288,7 @@ class TestData:
         return self._header
 
     @property
-    def groups(self) -> Generator[TestGroup]:
+    def groups(self) -> Iterator[TestGroup]:
         for g in self._groups:
             yield TestGroup(g, self._formats)
 

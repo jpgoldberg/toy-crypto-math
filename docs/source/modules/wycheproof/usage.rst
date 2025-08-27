@@ -209,23 +209,174 @@ and ``label`` is from each test.
         for case in g.tests:
             test_count += 1
         
-            label = case.other_data["label"]
-            ciphertext = case.other_data["ct"]
-            message = case.other_data["msg"]
+            label: bytes = case.other_data["label"]
+            ciphertext: bytes = case.other_data["ct"]
+            message: bytes = case.other_data["msg"]
 
             cryptor = PKCS1_OAEP.new(key=sk, label=label)
 
-            our_message: bytes = b''
+            decrypted: bytes
             try:
-                our_message = cryptor.decrypt(ciphertext)
+                decrypted = cryptor.decrypt(ciphertext)
             except ValueError:
                 assert case.invalid
             else:
                 assert case.valid
-                assert our_message == message
+                assert decrypted == message
 
     print(f"Completed a total {test_count} tests in {len(group_pairs)} group(s).")
 
 .. testoutput::
 
     Completed a total 36 tests in 1 group(s).
+
+
+Data conversion
+++++++++++++++++++++++++++++
+
+The TLDR for this section is that you are advised to make sure that
+things like ``case.other_data["ct"]`` are of the data types you expect
+when you run tests.
+Be familiar with the data you are importing, and do not relie
+on the fully automatic conversion from hex strings to bytes or integers
+to always get things right.
+
+We will continue with the same example as above for this discussion.
+
+In some of the test cases in the test data we used,
+the ``"ct"``, ``"msg"``, and ``"label"`` JSON keywords
+have values that are strings.
+In all of those cases, the strings are hex encoded byte sequences.
+Consider this exceprt from test case 9:
+
+.. code-block:: json
+    :force:
+
+    {
+        "tcId" : 9,
+        "comment" : "",
+        "flags" : [
+            "EncryptionWithLabel"
+        ],
+        "msg" : "313233343030",  // That is actually hex encoded
+        "ct" : ..., // A longer string of hex digits was here
+        "label" : "000102030405060708090a0b0c0d0e0f10111213",
+        "result" : "valid"
+    }
+
+But when we ran our tests we were able to use code like
+
+.. code-block:: python
+
+    label: bytes = case.other_data["label"]
+    ciphertext: bytes = case.other_data["ct"]
+    message: bytes = case.other_data["msg"]
+
+and those things really were bytes.
+
+The initiallizers for :class:`TestGroup` and :class:`TestCase`
+automatically perform *some* necessary conversions from hexidecimal
+strings to :py:class:`bytes` or :py:class:`int` as appropriate.
+It does this using the data from :attr:`TestData.formats`,
+which is a mapping from JSON keywords to information about how
+the string is formated.
+
+.. testcode::
+
+    # We have already loaded test_data with:
+    # test_data = loader.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+
+    formats: dict[str, str] = test_data.formats
+
+    assert formats["ct"] == "HexBytes"
+    assert formats["publicExponent"] == "BigInt" # Not used yet
+
+:attr:`TestData.formats` is constructed by inspecting the schema associated with
+with the JSON file requesting during loading.
+That may give incorrect results when there are multiple places a particular
+JSON keyword might exist in the data.
+As a consequence, the automatic conversion is conservative and only
+acts on the keywords in the top-most level of a test group or test case.
+
+Semi-automatic conversion
+-------------------------
+
+As mentioned above,
+the fully automatic conversation using :attr:`TestData.formats`
+is only performed at the top leve of
+each :class:`TestGroup` and :class:`TestCase`.
+
+Suppose in our OAEP test, instead of creating the
+private key from the PEM format in each test group
+we created it through the information in ``other_data["privateKey"]``.
+
+.. code-block:: json
+    :force:
+
+        "testGroups" : [
+            {
+                ...
+                "privateKey" : {
+                    "privateExponent" : ...,
+                    "publicExponent" : "010001",
+                    "prime1" : ...,
+                    "prime2" : ...,
+                    ...
+                },
+                "privateKeyPem" : ...,
+                ...
+                "tests" : [ ... ]
+            }
+        ]
+
+we might need to extract the values of
+``"publicExponent"``, ``"prime1"``, and ``"prime2"``
+in each test group.
+But these are not top-level keys within the test group,
+and so they will remain as hex strings.
+
+.. testcode::
+
+    from itertools import islice
+
+    # We will test for just the first group
+    group = next(test_data.groups)
+
+    priv_key_data = group.other_data["privateKey"]
+    e = priv_key_data["publicExponent"]
+
+    assert isinstance(e, str)
+    print(e)
+
+.. testoutput::
+
+    010001
+
+But because ``formats`` does contain information for the relevant
+members of ``group.other_data["privateKey"]`` we can manually
+call automatic conversion using :func:`deserialize_top_level`.
+Note that this mutates the dictionary it is given.
+
+.. testcode::
+
+    group = next(test_data.groups)
+
+    priv_key_data = group.other_data["privateKey"]
+    
+    wycheproof.deserialize_top_level(priv_key_data, test_data.formats)
+
+    e = priv_key_data["publicExponent"]
+    p = priv_key_data["prime1"]
+    q = priv_key_data["prime2"]
+    N = priv_key_data["modulus"]
+
+    assert p * q == N
+
+    assert isinstance(e, int)
+
+    print(e)
+
+.. testoutput::
+
+    65537
+

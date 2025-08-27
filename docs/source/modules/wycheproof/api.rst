@@ -22,4 +22,6 @@ API
 .. autoclass:: Note
     :members:
 
+.. autofunction:: deserialize_top_level
+    
 

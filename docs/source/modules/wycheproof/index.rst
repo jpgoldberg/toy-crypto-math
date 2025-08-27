@@ -232,7 +232,12 @@ They typically provide equivalent keys in multiple formats.
         ]
 
 
-:attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase` instances.
+:attr:`TestGroup.tests` is an an :class:`~collections.abc.Iterable` of :class:`TestCase`\s,
+:attr:`TestGroup.type` is the given type of the test group,
+and 
+:attr:`TestGroup.other_data` is a dictionary giving access to
+all other things in the test group.
+
 
 Test cases
 ----------
@@ -253,7 +258,7 @@ All test cases in the Wycheproof data have the members
 
 Each test case will be also have a dictionary of other elements,
 specific to the particular test data.
-That dictionary is available as :attr:`TestCase.fields`.
+That dictionary is available as :attr:`TestCase.other_data`.
 
 .. code-block:: json
     :force:

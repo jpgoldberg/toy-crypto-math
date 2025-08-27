@@ -5,7 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.5.0 2025-08-27
+
 ### Added
+
+- The `wycheproof` module is now a thing
 
 - `utils.next_power2`
 

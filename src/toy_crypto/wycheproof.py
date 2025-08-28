@@ -10,6 +10,7 @@ from collections.abc import Iterator, Mapping, Sequence, Set
 from copy import copy
 from pathlib import Path
 import json
+import warnings
 
 try:
     from warnings import deprecated
@@ -247,7 +248,11 @@ class TestData:
     """The object that results from loading a wycheproof JSON file."""
 
     def __init__(
-        self, data: dict[str, object], formats: Mapping[str, str]
+        self,
+        data: dict[str, object],
+        formats: Mapping[str, str],
+        schema_path: Path,
+        schema_status: str = "valid",
     ) -> None:
         self._formats = formats
         self._groups: Sequence[dict[str, object]]
@@ -256,6 +261,11 @@ class TestData:
         self._notes: Mapping[str, Note]
         self._data: dict[str, object]
         self._test_count: int | None
+
+        self._schema_file = schema_path
+
+        assert schema_status in ("valid", "loaded", "not-loaded")
+        self._schema_status = schema_status
 
         # Shallow copy should be ok, because everything we
         # pop out of this gets copied.
@@ -327,6 +337,33 @@ class TestData:
         """The test count from the JSON "numberOfTests" value."""
 
         return self._test_count
+
+    @property
+    def schema_file(self) -> Path:
+        """The path where the schema file was expected.
+
+        The existence of this path does not mean that
+        the file exists at that location.
+        """
+
+        return self.schema_file
+
+    def schema_is_valid(self) -> bool:
+        """True iff the JSON data properly validated against a valid schema.
+
+        Note that this can be False if the schema failed to load.
+        """
+
+        return self._schema_status == "valid"
+
+    def schema_is_loaded(self) -> bool:
+        """True iff the schema file was found and read.
+
+        That will be true even if the schema file is itself
+        invalid.
+        """
+
+        return self._schema_status != "not-loaded"
 
 
 class Loader:
@@ -452,26 +489,39 @@ class Loader:
         scheme_file = wycheproof_json["schema"]
         scheme_path = Path(self._schemata_dir / scheme_file)
 
+        scheme: Mapping[str, object] = dict()
+        schema_status: str = "not-loaded"
+        formats: Mapping[str, str] = dict()
         try:
             with open(scheme_path, "r") as s:
                 scheme = json.load(s)
+                schema_status = "loaded"
         except Exception as e:
-            raise Exception(f"failed to load schema: {e}")
+            warnings.warn(f"Schema loading failed: {e}")
 
-        validator = validators.Draft202012Validator(
-            schema=scheme,
-            registry=self.registry,
-        )  # type: ignore[misc]
-        try:
-            validator.validate(wycheproof_json)
-        except Exception as e:
-            raise Exception(f"JSON validation failed: {e}")
+        if schema_status == "loaded":
+            validator = validators.Draft202012Validator(
+                schema=scheme,
+                registry=self.registry,
+            )  # type: ignore[misc]
+            try:
+                validator.validate(wycheproof_json)
+                schema_status = "valid"
+            except Exception as e:
+                warnings.warn(f"JSON validation failed: {e}")
 
-        schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()
-        full_schema = jsonref.replace_refs(
-            scheme,
-            base_uri=schemata_uri,
+            if schema_status == "valid":
+                schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()
+                full_schema = jsonref.replace_refs(
+                    scheme,
+                    base_uri=schemata_uri,
+                )
+                assert isinstance(full_schema, dict)
+                formats = self.collect_formats(full_schema)
+
+        return TestData(
+            wycheproof_json,
+            formats,
+            schema_path=scheme_path,
+            schema_status=schema_status,
         )
-        assert isinstance(full_schema, dict)
-        formats = self.collect_formats(full_schema)
-        return TestData(wycheproof_json, formats)

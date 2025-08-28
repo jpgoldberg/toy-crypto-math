@@ -10,7 +10,6 @@ from collections.abc import Iterator, Mapping, Sequence, Set
 from copy import copy
 from pathlib import Path
 import json
-import warnings
 
 try:
     from warnings import deprecated
@@ -22,6 +21,10 @@ from referencing import Resource, Registry
 from referencing.jsonschema import DRAFT202012
 
 import jsonref  # type: ignore[import-untyped]
+
+import logging
+
+logging.getLogger(__name__)
 
 
 def deserialize_top_level(
@@ -48,11 +51,14 @@ def deserialize_top_level(
                 properties[p] = int.from_bytes(
                     bytes.fromhex(s), byteorder="big", signed=True
                 )
-            case "Asn" | "Jwk" | "Pem" | "Der":
-                # Leave as string, as it might be invalid
+            case "Asn" | "Pem" | "Der":
+                # Leave as string. Some might be deliberately invalid
+                pass
+            case "EcCurve" | "MdName":
+                # These are meant to be strings
                 pass
             case _:
-                # TODO: Should warn of unknown format
+                logging.info(f"'{p}' has unexpected format: {formats[p]}")
                 pass
 
 
@@ -346,7 +352,7 @@ class TestData:
         the file exists at that location.
         """
 
-        return self.schema_file
+        return self._schema_file
 
     def schema_is_valid(self) -> bool:
         """True iff the JSON data properly validated against a valid schema.
@@ -466,16 +472,20 @@ class Loader:
         path: Path | str,
         *,
         subdir: str = "testvectors_v1",
+        strict_validation: bool = False,
     ) -> TestData:
         """Returns the file data
 
         :param path: relative path to json file with test vectors.
+        :param subdir:
+            The the subdirectory of wycheproof with the test vector to load.
+        :param strict_validation: If true, fail if schema validation fails.
 
         :raises Exceptions:
-            if the expected directories and files aren't found
-            or can't be read.
+            if the expected data file can't be found or read.
 
-        :raises Exception: if file doesn't conform to its JSON schema.
+        :raises Exception:
+            if strict_validation is True and schema validation fails.
         """
 
         path = self._root_dir / subdir / path
@@ -497,7 +507,10 @@ class Loader:
                 scheme = json.load(s)
                 schema_status = "loaded"
         except Exception as e:
-            warnings.warn(f"Schema loading failed: {e}")
+            msg = f"Schema loading failed: {e}"
+            if strict_validation:
+                raise Exception(msg)
+            logging.warning(msg)
 
         if schema_status == "loaded":
             validator = validators.Draft202012Validator(
@@ -508,7 +521,10 @@ class Loader:
                 validator.validate(wycheproof_json)
                 schema_status = "valid"
             except Exception as e:
-                warnings.warn(f"JSON validation failed: {e}")
+                msg = f"JSON validation failed: {e}"
+                if strict_validation:
+                    raise Exception(msg)
+                logging.warning(f"JSON validation failed: {e}")
 
             if schema_status == "valid":
                 schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()

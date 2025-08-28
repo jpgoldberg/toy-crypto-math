@@ -4,10 +4,12 @@ Because other tests make use of the module, those tests would fail
 if data could not be loaded correctly or contained bad data.
 """
 
+from collections.abc import Sequence
 import os
 from pathlib import Path
 import sys
 
+import unittest
 import pytest
 from toy_crypto import wycheproof
 
@@ -34,14 +36,17 @@ class TestLoading:
             assert False, f"Resolution failed: {e}"
 
 
-class TestAssumptions:
+class TestAssumptions(unittest.TestCase):
     """Do all "testvectors_v1/*_test.json" files meet assumptions?"""
+
+    # I need to learn how to use fixtures
+    test_files: Sequence[Path] = list(
+        WP_ROOT.glob("testvectors_v1/*_test.json")
+    )
 
     @pytest.mark.skip(reason="Slow")
     def test_data(self) -> None:
-        # I need to learn how to use fixtures
-        test_files = WP_ROOT.glob("testvectors_v1/*_test.json")
-        for file in test_files:
+        for file in self.test_files:
             file_name = file.name
             stem = file.stem
             try:
@@ -63,6 +68,29 @@ class TestAssumptions:
                     assert tc.tcId > 0, f"weird tcID ({tc.tcId}) in {stem}"
                     assert tc.result in ("valid", "invalid", "acceptable"), (
                         f"weird result ({tc.result}) in {stem}"
+                    )
+
+    @pytest.mark.skip(reason="Slow")
+    def test_formats(self) -> None:
+        # Documented formats
+        # https://github.com/C2SP/wycheproof/blob/main/doc/formats.md#data-types
+        known = [
+            "HexBytes", "BigInt", "Der", "Pem",
+            "Asn", "EcCurve", "MdName",
+            ]  # fmt: skip
+
+        # Until https://github.com/C2SP/wycheproof/issues/165 is resolved
+        known.append("Hex")
+        for file in self.test_files:
+            with self.subTest(file.stem):
+                data = LOADER.load(file.name)
+                if not data.schema_is_valid():
+                    continue
+                s_name: str = data.schema_file.name
+                for p, f in data.formats.items():
+                    # just to identify other problems
+                    assert f in known, (
+                        f"'{p}' has unknown format '{f}' in {s_name}"
                     )
 
 

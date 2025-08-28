@@ -112,6 +112,13 @@ still reflect its origins.
 
     assert test_data.header == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
 
+If for some reason the JSON does not validate against the expected schema,
+warnings will be logged at the
+|WARNING|_ level.
+
+.. |WARNING| replace:: ``logging.WARNING``
+.. _WARNING: https://docs.python.org/3/library/logging.html#logging.WARNING
+
 For each :class:`TestGroup`
 -----------------------------------
 
@@ -292,6 +299,10 @@ That may give incorrect results when there are multiple places a particular
 JSON keyword might exist in the data.
 As a consequence, the automatic conversion is conservative and only
 acts on the keywords in the top-most level of a test group or test case.
+
+Additionally, the :attr:`TestData.formats` dictionary will be empty
+when the loaded JSON was successfully validated when the JSON was loaded.
+
 
 Semi-automatic conversion
 -------------------------

@@ -302,6 +302,10 @@ acts on the keywords in the top-most level of a test group or test case.
 
 Additionally, the :attr:`TestData.formats` dictionary will be empty
 when the loaded JSON was successfully validated when the JSON was loaded.
+Users can use :func:`TestData.schema_is_valid` to check
+whether the JSON test file was successfully validated
+against its JSON schema.
+When that validation fails, 
 
 
 Semi-automatic conversion
@@ -384,6 +388,9 @@ Note that this mutates the dictionary it is given.
 
     65537
 
+Note again that schema loading and validation can fail
+
+
 Gotchas
 ++++++++
 
@@ -416,7 +423,15 @@ to :py:class:`bytes` or :py:class:`int`\s will miss things
 that you will need to manually handle, perhaps with the help of
 :func:`deserialize_top_level`.
 
-But it is also possible that it will attempt to convert things
+Additionally there are currently (August 29, 2025)
+52 test files in the wycheproof project that are missing schemas.
+In these cases, no automatic conversion will be attempted
+and :attr:`TestData.formats` will be empty.
+:func:`TestData.schema_is_valid` can be used to check
+if there was a problem during schema loading and validation.
+:attr:`TestData.schema_file` can be used for further debugging.
+
+It is also possible that it will attempt to convert things
 it shouldn't or be mistaken about which conversion to use.
 If you find that this occurs, please let me know.
 
@@ -434,6 +449,10 @@ in a :py:class:`KeyError`.
 
 There are reasons for my choice here.
 Perhaps not good reasons, but reasons none the less.
+
+
+
+
 
 
 

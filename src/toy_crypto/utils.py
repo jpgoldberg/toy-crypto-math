@@ -5,6 +5,7 @@ import itertools
 from hashlib import blake2b
 from base64 import a85encode
 from typing import Optional, Self
+import math
 from toy_crypto.types import Byte
 
 
@@ -154,3 +155,72 @@ def next_power2(n: int) -> int:
         t *= 2
         p += 1
     return p
+
+
+def nearest_multiple(n: int, factor: int, direction: str = "round") -> int:
+    """Returns multiple of factor that is near ``n``.
+
+    Given an input number, *n* and a factor *f* returns *m* such that
+
+    - :math:`f|m` (*f* divides *n*);
+    - :math:`\\left|n - m\\right| < f`
+        (There is no multiples of *f* between *n* and *m*);
+
+    As a consequence this always returns n if n is a multiple of factor.
+
+    When *n* is not a multiple of factor,
+    which of the two possible solutions to those conditions is returned
+    depends on the value of of the ``direction`` parameter.
+
+    :param n: The integer get a nearby multiple of factor of
+    :param factor: The number that the returned values must be a multiple of.
+    :param direction:
+        Direction in which to round when n is not a multiple of factor
+
+        "next"
+            returns nearest multiple further from 0;
+
+        "previous"
+            returns nearest multiple toward 0;
+
+        "round"
+            returns nearest multiple and
+            behaves like "previous" is if nearest multiples are
+            equidistant from n
+
+    :raises ValueError: if direction is not one of 'next', 'previous', 'round'.
+    """
+
+    factor = abs(factor)
+    # special cases
+    if factor == 0:
+        return 0
+
+    if factor == 1:
+        return n
+
+    if n == 0:
+        return 0
+
+    if n % factor == 0:
+        return n
+
+    # Now we have to deal with rounding and our three ways to do it
+    sign = -1 if n < 0 else 1
+    n = abs(n)
+
+    q, r = divmod(n, factor)
+    prev: int = int(q) * factor
+    next: int = prev + factor
+
+    match direction:
+        case "previous":
+            return sign * prev
+        case "next":
+            return sign * next
+        case "round":
+            if r > math.ceil(factor / 2) - 1:
+                return sign * next
+            return sign * prev
+        case _:
+            raise ValueError(f"Invalid direction: '{direction}'")

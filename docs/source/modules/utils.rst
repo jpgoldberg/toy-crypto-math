@@ -57,6 +57,8 @@ Becausew we are dealing with base 2,
 we can do all of our multiplications and and divisions by powers of 2
 using bit shifts. I am not sure how Pythonic that leaves things.
 
+.. autofunction:: nearest_multiple
+
 xor
 -----
 

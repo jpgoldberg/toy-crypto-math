@@ -22,6 +22,10 @@ from referencing.jsonschema import DRAFT202012
 
 import jsonref  # type: ignore[import-untyped]
 
+import logging
+
+logging.getLogger(__name__)
+
 
 def deserialize_top_level(
     properties: dict[str, object], formats: Mapping[str, str]
@@ -47,11 +51,14 @@ def deserialize_top_level(
                 properties[p] = int.from_bytes(
                     bytes.fromhex(s), byteorder="big", signed=True
                 )
-            case "Asn" | "Jwk" | "Pem" | "Der":
-                # Leave as string, as it might be invalid
+            case "Asn" | "Pem" | "Der":
+                # Leave as string. Some might be deliberately invalid
+                pass
+            case "EcCurve" | "MdName":
+                # These are meant to be strings
                 pass
             case _:
-                # TODO: Should warn of unknown format
+                logging.info(f"'{p}' has unexpected format: {formats[p]}")
                 pass
 
 
@@ -247,7 +254,11 @@ class TestData:
     """The object that results from loading a wycheproof JSON file."""
 
     def __init__(
-        self, data: dict[str, object], formats: Mapping[str, str]
+        self,
+        data: dict[str, object],
+        formats: Mapping[str, str],
+        schema_path: Path,
+        schema_status: str = "valid",
     ) -> None:
         self._formats = formats
         self._groups: Sequence[dict[str, object]]
@@ -256,6 +267,11 @@ class TestData:
         self._notes: Mapping[str, Note]
         self._data: dict[str, object]
         self._test_count: int | None
+
+        self._schema_file = schema_path
+
+        assert schema_status in ("valid", "loaded", "not-loaded")
+        self._schema_status = schema_status
 
         # Shallow copy should be ok, because everything we
         # pop out of this gets copied.
@@ -327,6 +343,33 @@ class TestData:
         """The test count from the JSON "numberOfTests" value."""
 
         return self._test_count
+
+    @property
+    def schema_file(self) -> Path:
+        """The path where the schema file was expected.
+
+        The existence of this path does not mean that
+        the file exists at that location.
+        """
+
+        return self._schema_file
+
+    def schema_is_valid(self) -> bool:
+        """True iff the JSON data properly validated against a valid schema.
+
+        Note that this can be False if the schema failed to load.
+        """
+
+        return self._schema_status == "valid"
+
+    def schema_is_loaded(self) -> bool:
+        """True iff the schema file was found and read.
+
+        That will be true even if the schema file is itself
+        invalid.
+        """
+
+        return self._schema_status != "not-loaded"
 
 
 class Loader:
@@ -429,16 +472,20 @@ class Loader:
         path: Path | str,
         *,
         subdir: str = "testvectors_v1",
+        strict_validation: bool = False,
     ) -> TestData:
         """Returns the file data
 
         :param path: relative path to json file with test vectors.
+        :param subdir:
+            The the subdirectory of wycheproof with the test vector to load.
+        :param strict_validation: If true, fail if schema validation fails.
 
         :raises Exceptions:
-            if the expected directories and files aren't found
-            or can't be read.
+            if the expected data file can't be found or read.
 
-        :raises Exception: if file doesn't conform to its JSON schema.
+        :raises Exception:
+            if strict_validation is True and schema validation fails.
         """
 
         path = self._root_dir / subdir / path
@@ -452,26 +499,45 @@ class Loader:
         scheme_file = wycheproof_json["schema"]
         scheme_path = Path(self._schemata_dir / scheme_file)
 
+        scheme: Mapping[str, object] = dict()
+        schema_status: str = "not-loaded"
+        formats: Mapping[str, str] = dict()
         try:
             with open(scheme_path, "r") as s:
                 scheme = json.load(s)
+                schema_status = "loaded"
         except Exception as e:
-            raise Exception(f"failed to load schema: {e}")
+            msg = f"Schema loading failed: {e}"
+            if strict_validation:
+                raise Exception(msg)
+            logging.warning(msg)
 
-        validator = validators.Draft202012Validator(
-            schema=scheme,
-            registry=self.registry,
-        )  # type: ignore[misc]
-        try:
-            validator.validate(wycheproof_json)
-        except Exception as e:
-            raise Exception(f"JSON validation failed: {e}")
+        if schema_status == "loaded":
+            validator = validators.Draft202012Validator(
+                schema=scheme,
+                registry=self.registry,
+            )  # type: ignore[misc]
+            try:
+                validator.validate(wycheproof_json)
+                schema_status = "valid"
+            except Exception as e:
+                msg = f"JSON validation failed: {e}"
+                if strict_validation:
+                    raise Exception(msg)
+                logging.warning(f"JSON validation failed: {e}")
 
-        schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()
-        full_schema = jsonref.replace_refs(
-            scheme,
-            base_uri=schemata_uri,
+            if schema_status == "valid":
+                schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()
+                full_schema = jsonref.replace_refs(
+                    scheme,
+                    base_uri=schemata_uri,
+                )
+                assert isinstance(full_schema, dict)
+                formats = self.collect_formats(full_schema)
+
+        return TestData(
+            wycheproof_json,
+            formats,
+            schema_path=scheme_path,
+            schema_status=schema_status,
         )
-        assert isinstance(full_schema, dict)
-        formats = self.collect_formats(full_schema)
-        return TestData(wycheproof_json, formats)

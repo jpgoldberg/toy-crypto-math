@@ -4,28 +4,30 @@ Because other tests make use of the module, those tests would fail
 if data could not be loaded correctly or contained bad data.
 """
 
+from collections.abc import Sequence
 import os
 from pathlib import Path
 import sys
 
+import unittest
 import pytest
 from toy_crypto import wycheproof
 
 from referencing.exceptions import Unresolvable
 
 WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
-WP_DATA = wycheproof.Loader(WP_ROOT)
+LOADER = wycheproof.Loader(WP_ROOT)
 
 
 class TestLoading:
     def test_is_loader(self) -> None:
-        assert isinstance(WP_DATA, wycheproof.Loader)
+        assert isinstance(LOADER, wycheproof.Loader)
 
     def test_root_dir(self) -> None:
-        assert WP_ROOT == WP_DATA._root_dir
+        assert WP_ROOT == LOADER._root_dir
 
     def test_registry(self) -> None:
-        registry = WP_DATA.registry
+        registry = LOADER.registry
         resolver = registry.resolver()
 
         try:
@@ -34,9 +36,67 @@ class TestLoading:
             assert False, f"Resolution failed: {e}"
 
 
+class TestAssumptions(unittest.TestCase):
+    """Do all "testvectors_v1/*_test.json" files meet assumptions?"""
+
+    # I need to learn how to use fixtures
+    test_files: Sequence[Path] = list(
+        WP_ROOT.glob("testvectors_v1/*_test.json")
+    )
+
+    @pytest.mark.skip(reason="Slow")
+    def test_data(self) -> None:
+        for file in self.test_files:
+            file_name = file.name
+            stem = file.stem
+            try:
+                data = LOADER.load(file_name)
+            except Exception as e:
+                assert False, f"loading error for {file_name}: {e}"
+
+            # Are any of these empty?
+            # (Ok, truthiness can be useful)
+            assert data.algorithm, f"no algorithm in {stem}"
+            # assert data.notes. # Notes can be empty
+            assert data.groups, f"no groups in {stem}"
+            assert data.test_count is not None, f"no count in {stem}"
+
+            for g in data.groups:
+                assert g.type is not None, f"missing group type in {stem}"
+
+                for tc in g.tests:
+                    assert tc.tcId > 0, f"weird tcID ({tc.tcId}) in {stem}"
+                    assert tc.result in ("valid", "invalid", "acceptable"), (
+                        f"weird result ({tc.result}) in {stem}"
+                    )
+
+    @pytest.mark.skip(reason="Slow")
+    def test_formats(self) -> None:
+        # Documented formats
+        # https://github.com/C2SP/wycheproof/blob/main/doc/formats.md#data-types
+        known = [
+            "HexBytes", "BigInt", "Der", "Pem",
+            "Asn", "EcCurve", "MdName",
+            ]  # fmt: skip
+
+        # Until https://github.com/C2SP/wycheproof/issues/165 is resolved
+        known.append("Hex")
+        for file in self.test_files:
+            with self.subTest(file.stem):
+                data = LOADER.load(file.name)
+                if not data.schema_is_valid():
+                    continue
+                s_name: str = data.schema_file.name
+                for p, f in data.formats.items():
+                    # just to identify other problems
+                    assert f in known, (
+                        f"'{p}' has unknown format '{f}' in {s_name}"
+                    )
+
+
 class TestTests:
     def test_rsa_oaep_2046_sha1(self) -> None:
-        data = WP_DATA.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
+        data = LOADER.load("rsa_oaep_2048_sha1_mgf1sha1_test.json")
 
         formats = data.formats
         assert "privateExponent" in formats

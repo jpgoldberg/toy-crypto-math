@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Utility functions &#8212; ToyCrypto 0.5.0 documentation</title>
+    <title>Utility functions &#8212; ToyCrypto 0.5.1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=1dd76d02"></script>
+    <script src="../_static/documentation_options.js?v=b9afe91b"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -49,7 +49,7 @@
     <link rel="prev" title="Random Numbers" href="rand.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.0" />
+  <meta name="docsearch:version" content="0.5.1" />
   </head>
   
   
@@ -111,7 +111,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.0)</p>
+    <p class="title logo__title">ToyCrypto (0.5.1)</p>
   
 </a></div>
     
@@ -523,6 +523,51 @@ we have to worry floating point precision.</p>
 <p>Becausew we are dealing with base 2,
 we can do all of our multiplications and and divisions by powers of 2
 using bit shifts. I am not sure how Pythonic that leaves things.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="toy_crypto.utils.nearest_multiple">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.utils.</span></span><span class="sig-name descname"><span class="pre">nearest_multiple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'round'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../_modules/toy_crypto/utils.html#nearest_multiple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.utils.nearest_multiple" title="Link to this definition">#</a></dt>
+<dd><p>Returns multiple of factor that is near <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+<p>Given an input number, <em>n</em> and a factor <em>f</em> returns <em>m</em> such that</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(f|m\)</span> (<em>f</em> divides <em>n</em>);</p></li>
+<li><dl class="simple">
+<dt><span class="math notranslate nohighlight">\(\left|n - m\right| &lt; f\)</span></dt><dd><p>(There is no multiples of <em>f</em> between <em>n</em> and <em>m</em>);</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>As a consequence this always returns n if n is a multiple of factor.</p>
+<p>When <em>n</em> is not a multiple of factor,
+which of the two possible solutions to those conditions is returned
+depends on the value of of the <code class="docutils literal notranslate"><span class="pre">direction</span></code> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The integer get a nearby multiple of factor of</p></li>
+<li><p><strong>factor</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number that the returned values must be a multiple of.</p></li>
+<li><p><strong>direction</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'round'</span></code>) – <p>Direction in which to round when n is not a multiple of factor</p>
+<dl class="simple">
+<dt>”next”</dt><dd><p>returns nearest multiple further from 0;</p>
+</dd>
+<dt>”previous”</dt><dd><p>returns nearest multiple toward 0;</p>
+</dd>
+<dt>”round”</dt><dd><p>returns nearest multiple and
+behaves like “previous” is if nearest multiples are
+equidistant from n</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if direction is not one of ‘next’, ‘previous’, ‘round’.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <section id="xor">
 <h2>xor<a class="headerlink" href="#xor" title="Link to this heading">#</a></h2>
 <p>The <code class="xref py py-func docutils literal notranslate"><span class="pre">utils.xor()</span></code> and the class <code class="xref py py-class docutils literal notranslate"><span class="pre">utils.Xor</span></code> provide utilities for xoring strings of bytes together. There is some assymetry between the two arguments. The <code class="docutils literal notranslate"><span class="pre">message</span></code> can be an <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterator</span></code> as well as <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>. The <code class="docutils literal notranslate"><span class="pre">pad</span></code> arguement on the other hand, is expected to be <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> only (in this version.) The <code class="docutils literal notranslate"><span class="pre">pad</span></code> argument is will be repeated if it is shorter than the message.</p>
@@ -689,6 +734,7 @@ from that challenge for our example:</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.utils.digit_count"><code class="docutils literal notranslate"><span class="pre">digit_count()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.utils.next_power2"><code class="docutils literal notranslate"><span class="pre">next_power2()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.utils.nearest_multiple"><code class="docutils literal notranslate"><span class="pre">nearest_multiple()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#xor">xor</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.utils.Xor"><code class="docutils literal notranslate"><span class="pre">Xor</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.utils.xor"><code class="docutils literal notranslate"><span class="pre">xor()</span></code></a></li>

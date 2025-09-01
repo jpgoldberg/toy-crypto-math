@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>toy_crypto.utils &#8212; ToyCrypto 0.5.0 documentation</title>
+    <title>toy_crypto.utils &#8212; ToyCrypto 0.5.1 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1dd76d02"></script>
+    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/toy_crypto/utils';</script>
@@ -45,7 +45,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.0" />
+  <meta name="docsearch:version" content="0.5.1" />
   </head>
   
   
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.0)</p>
+    <p class="title logo__title">ToyCrypto (0.5.1)</p>
   
 </a></div>
     
@@ -398,6 +398,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">hashlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">blake2b</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">base64</span><span class="w"> </span><span class="kn">import</span> <span class="n">a85encode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Self</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Byte</span>
 
 
@@ -567,6 +568,78 @@
         <span class="n">t</span> <span class="o">*=</span> <span class="mi">2</span>
         <span class="n">p</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">p</span></div>
+
+
+
+<div class="viewcode-block" id="nearest_multiple">
+<a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.nearest_multiple">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nearest_multiple</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;round&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns multiple of factor that is near ``n``.</span>
+
+<span class="sd">    Given an input number, *n* and a factor *f* returns *m* such that</span>
+
+<span class="sd">    - :math:`f|m` (*f* divides *n*);</span>
+<span class="sd">    - :math:`\\left|n - m\\right| &lt; f`</span>
+<span class="sd">        (There is no multiples of *f* between *n* and *m*);</span>
+
+<span class="sd">    As a consequence this always returns n if n is a multiple of factor.</span>
+
+<span class="sd">    When *n* is not a multiple of factor,</span>
+<span class="sd">    which of the two possible solutions to those conditions is returned</span>
+<span class="sd">    depends on the value of of the ``direction`` parameter.</span>
+
+<span class="sd">    :param n: The integer get a nearby multiple of factor of</span>
+<span class="sd">    :param factor: The number that the returned values must be a multiple of.</span>
+<span class="sd">    :param direction:</span>
+<span class="sd">        Direction in which to round when n is not a multiple of factor</span>
+
+<span class="sd">        &quot;next&quot;</span>
+<span class="sd">            returns nearest multiple further from 0;</span>
+
+<span class="sd">        &quot;previous&quot;</span>
+<span class="sd">            returns nearest multiple toward 0;</span>
+
+<span class="sd">        &quot;round&quot;</span>
+<span class="sd">            returns nearest multiple and</span>
+<span class="sd">            behaves like &quot;previous&quot; is if nearest multiples are</span>
+<span class="sd">            equidistant from n</span>
+
+<span class="sd">    :raises ValueError: if direction is not one of &#39;next&#39;, &#39;previous&#39;, &#39;round&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">factor</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+    <span class="c1"># special cases</span>
+    <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">n</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">n</span>
+
+    <span class="c1"># Now we have to deal with rounding and our three ways to do it</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="n">q</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+    <span class="n">prev</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">factor</span>
+    <span class="nb">next</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">prev</span> <span class="o">+</span> <span class="n">factor</span>
+
+    <span class="k">match</span> <span class="n">direction</span><span class="p">:</span>
+        <span class="k">case</span> <span class="s2">&quot;previous&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">prev</span>
+        <span class="k">case</span> <span class="s2">&quot;next&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="nb">next</span>
+        <span class="k">case</span> <span class="s2">&quot;round&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">factor</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="nb">next</span>
+            <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">prev</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid direction: &#39;</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 

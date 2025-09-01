@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>toy_crypto.wycheproof &#8212; ToyCrypto 0.5.0 documentation</title>
+    <title>toy_crypto.wycheproof &#8212; ToyCrypto 0.5.1 documentation</title>
   
   
   
@@ -37,7 +37,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=1dd76d02"></script>
+    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/toy_crypto/wycheproof';</script>
@@ -45,7 +45,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.0" />
+  <meta name="docsearch:version" content="0.5.1" />
   </head>
   
   
@@ -107,7 +107,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.0)</p>
+    <p class="title logo__title">ToyCrypto (0.5.1)</p>
   
 </a></div>
     
@@ -415,6 +415,10 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">jsonref</span>  <span class="c1"># type: ignore[import-untyped]</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="deserialize_top_level">
 <a class="viewcode-back" href="../../modules/wycheproof/api.html#toy_crypto.wycheproof.deserialize_top_level">[docs]</a>
@@ -442,11 +446,14 @@
                 <span class="n">properties</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span>
                     <span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">byteorder</span><span class="o">=</span><span class="s2">&quot;big&quot;</span><span class="p">,</span> <span class="n">signed</span><span class="o">=</span><span class="kc">True</span>
                 <span class="p">)</span>
-            <span class="k">case</span> <span class="s2">&quot;Asn&quot;</span> <span class="o">|</span> <span class="s2">&quot;Jwk&quot;</span> <span class="o">|</span> <span class="s2">&quot;Pem&quot;</span> <span class="o">|</span> <span class="s2">&quot;Der&quot;</span><span class="p">:</span>
-                <span class="c1"># Leave as string, as it might be invalid</span>
+            <span class="k">case</span> <span class="s2">&quot;Asn&quot;</span> <span class="o">|</span> <span class="s2">&quot;Pem&quot;</span> <span class="o">|</span> <span class="s2">&quot;Der&quot;</span><span class="p">:</span>
+                <span class="c1"># Leave as string. Some might be deliberately invalid</span>
+                <span class="k">pass</span>
+            <span class="k">case</span> <span class="s2">&quot;EcCurve&quot;</span> <span class="o">|</span> <span class="s2">&quot;MdName&quot;</span><span class="p">:</span>
+                <span class="c1"># These are meant to be strings</span>
                 <span class="k">pass</span>
             <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-                <span class="c1"># TODO: Should warn of unknown format</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&#39; has unexpected format: </span><span class="si">{</span><span class="n">formats</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">pass</span></div>
 
 
@@ -657,7 +664,11 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The object that results from loading a wycheproof JSON file.&quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span> <span class="n">formats</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">],</span>
+        <span class="n">formats</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">schema_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">schema_status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_formats</span> <span class="o">=</span> <span class="n">formats</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_groups</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]</span>
@@ -666,6 +677,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Note</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_test_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_file</span> <span class="o">=</span> <span class="n">schema_path</span>
+
+        <span class="k">assert</span> <span class="n">schema_status</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="s2">&quot;loaded&quot;</span><span class="p">,</span> <span class="s2">&quot;not-loaded&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_schema_status</span> <span class="o">=</span> <span class="n">schema_status</span>
 
         <span class="c1"># Shallow copy should be ok, because everything we</span>
         <span class="c1"># pop out of this gets copied.</span>
@@ -736,7 +752,40 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">test_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The test count from the JSON &quot;numberOfTests&quot; value.&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_count</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_count</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">schema_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The path where the schema file was expected.</span>
+
+<span class="sd">        The existence of this path does not mean that</span>
+<span class="sd">        the file exists at that location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema_file</span>
+
+<div class="viewcode-block" id="TestData.schema_is_valid">
+<a class="viewcode-back" href="../../modules/wycheproof/api.html#toy_crypto.wycheproof.TestData.schema_is_valid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">schema_is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True iff the JSON data properly validated against a valid schema.</span>
+
+<span class="sd">        Note that this can be False if the schema failed to load.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema_status</span> <span class="o">==</span> <span class="s2">&quot;valid&quot;</span></div>
+
+
+<div class="viewcode-block" id="TestData.schema_is_loaded">
+<a class="viewcode-back" href="../../modules/wycheproof/api.html#toy_crypto.wycheproof.TestData.schema_is_loaded">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">schema_is_loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True iff the schema file was found and read.</span>
+
+<span class="sd">        That will be true even if the schema file is itself</span>
+<span class="sd">        invalid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema_status</span> <span class="o">!=</span> <span class="s2">&quot;not-loaded&quot;</span></div>
+</div>
 
 
 
@@ -847,16 +896,20 @@
         <span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">subdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;testvectors_v1&quot;</span><span class="p">,</span>
+        <span class="n">strict_validation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TestData</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the file data</span>
 
 <span class="sd">        :param path: relative path to json file with test vectors.</span>
+<span class="sd">        :param subdir:</span>
+<span class="sd">            The the subdirectory of wycheproof with the test vector to load.</span>
+<span class="sd">        :param strict_validation: If true, fail if schema validation fails.</span>
 
 <span class="sd">        :raises Exceptions:</span>
-<span class="sd">            if the expected directories and files aren&#39;t found</span>
-<span class="sd">            or can&#39;t be read.</span>
+<span class="sd">            if the expected data file can&#39;t be found or read.</span>
 
-<span class="sd">        :raises Exception: if file doesn&#39;t conform to its JSON schema.</span>
+<span class="sd">        :raises Exception:</span>
+<span class="sd">            if strict_validation is True and schema validation fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_dir</span> <span class="o">/</span> <span class="n">subdir</span> <span class="o">/</span> <span class="n">path</span>
@@ -870,29 +923,48 @@
         <span class="n">scheme_file</span> <span class="o">=</span> <span class="n">wycheproof_json</span><span class="p">[</span><span class="s2">&quot;schema&quot;</span><span class="p">]</span>
         <span class="n">scheme_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_schemata_dir</span> <span class="o">/</span> <span class="n">scheme_file</span><span class="p">)</span>
 
+        <span class="n">scheme</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">schema_status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;not-loaded&quot;</span>
+        <span class="n">formats</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">scheme_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
                 <span class="n">scheme</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="n">schema_status</span> <span class="o">=</span> <span class="s2">&quot;loaded&quot;</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;failed to load schema: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Schema loading failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">strict_validation</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="n">validator</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">Draft202012Validator</span><span class="p">(</span>
-            <span class="n">schema</span><span class="o">=</span><span class="n">scheme</span><span class="p">,</span>
-            <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">,</span>
-        <span class="p">)</span>  <span class="c1"># type: ignore[misc]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">wycheproof_json</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JSON validation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">schema_status</span> <span class="o">==</span> <span class="s2">&quot;loaded&quot;</span><span class="p">:</span>
+            <span class="n">validator</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">Draft202012Validator</span><span class="p">(</span>
+                <span class="n">schema</span><span class="o">=</span><span class="n">scheme</span><span class="p">,</span>
+                <span class="n">registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">,</span>
+            <span class="p">)</span>  <span class="c1"># type: ignore[misc]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">wycheproof_json</span><span class="p">)</span>
+                <span class="n">schema_status</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;JSON validation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">strict_validation</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;JSON validation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="n">schemata_uri</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_schemata_dir</span> <span class="o">/</span> <span class="s2">&quot;ALL_YOUR_BASE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_uri</span><span class="p">()</span>
-        <span class="n">full_schema</span> <span class="o">=</span> <span class="n">jsonref</span><span class="o">.</span><span class="n">replace_refs</span><span class="p">(</span>
-            <span class="n">scheme</span><span class="p">,</span>
-            <span class="n">base_uri</span><span class="o">=</span><span class="n">schemata_uri</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">full_schema</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">formats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_formats</span><span class="p">(</span><span class="n">full_schema</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">TestData</span><span class="p">(</span><span class="n">wycheproof_json</span><span class="p">,</span> <span class="n">formats</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">schema_status</span> <span class="o">==</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span>
+                <span class="n">schemata_uri</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_schemata_dir</span> <span class="o">/</span> <span class="s2">&quot;ALL_YOUR_BASE&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_uri</span><span class="p">()</span>
+                <span class="n">full_schema</span> <span class="o">=</span> <span class="n">jsonref</span><span class="o">.</span><span class="n">replace_refs</span><span class="p">(</span>
+                    <span class="n">scheme</span><span class="p">,</span>
+                    <span class="n">base_uri</span><span class="o">=</span><span class="n">schemata_uri</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">full_schema</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="n">formats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">collect_formats</span><span class="p">(</span><span class="n">full_schema</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">TestData</span><span class="p">(</span>
+            <span class="n">wycheproof_json</span><span class="p">,</span>
+            <span class="n">formats</span><span class="p">,</span>
+            <span class="n">schema_path</span><span class="o">=</span><span class="n">scheme_path</span><span class="p">,</span>
+            <span class="n">schema_status</span><span class="o">=</span><span class="n">schema_status</span><span class="p">,</span>
+        <span class="p">)</span></div>
 </div>
 
 </pre></div>

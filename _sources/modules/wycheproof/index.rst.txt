@@ -68,7 +68,7 @@ test data need to be converted from hex strings to integers or bytes.
 That information is in the JSON schema assocatied with each JSON test data file.
 I assumed there would be established techneques to use that information to
 automate the necessary data conversions.
-I did not find such tools, so I eventually rolled my own.
+I did not find such tools, so I made do with what I could do.
 
 Ugly solutions
 ---------------------

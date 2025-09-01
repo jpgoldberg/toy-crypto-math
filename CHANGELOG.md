@@ -5,6 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `utils.nearest_multiple()`
+
+### Changed
+
+- `wycheproof.Loader.load()` does not insist on JSON schema validation
+
 ## 0.5.0 2025-08-27
 
 ### Added
@@ -15,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Change in `rsa.fips186_prime_gen()` different _p_ and _q_ must be when keys are smaller than 2048 bits.
+- Change `rsa.fips186_prime_gen()` to allow for smaller differences between _p_ and _q_  when keys are smaller than 2048 bits.
 
 ## 0.4.4 2025-07-31
 

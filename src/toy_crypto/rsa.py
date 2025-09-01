@@ -764,10 +764,4 @@ def estimate_strength(key_size: int) -> int:
 
     estimate = (1.923 * croot_bln2 * croot_log_squared - 4.69) / ln2
 
-    # round to nearest multiple of 8
-    q, r = divmod(estimate, 8)
-    i_estimate: int = int(q) * 8
-    if r > 3:
-        i_estimate += 8
-
-    return i_estimate
+    return utils.nearest_multiple(round(estimate), 8)

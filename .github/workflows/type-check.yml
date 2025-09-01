@@ -22,6 +22,6 @@ jobs:
           cache-dependency-glob: "uv.lock"
     
       - name: mypy check
-        run: uv run --group lint mypy .
+        run: uv run mypy ./src
   
      

@@ -36,7 +36,7 @@ Dependencies
 although some *optional* third party dependencies may
 non-Python bindings.
 
-The only required depedency is primefac_, which many utilities here wrap.
+The only required dependency is primefac_, which many utilities here wrap.
 Though I might change that to SymPy_, now that I have learned it is pure python.
 
 bitarray_ is an optional third party dependency that involves C bindings.

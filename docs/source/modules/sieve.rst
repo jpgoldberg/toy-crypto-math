@@ -4,7 +4,7 @@ Sieve of Eratosthenes
 ######################
 
 .. py:module:: toy_crypto.sieve
-    :synopsis: Multiple implementataions for the Sieve of Eratosthenes
+    :synopsis: Multiple implementations for the Sieve of Eratosthenes
 
 This module is imported with::
 
@@ -28,7 +28,7 @@ There are reasons, but first let me give an overview of the major differences.
 - The :class:`SetSieve` class
 
    This is a pure Python implementation that uses :py:class:`set` when creating the sieve.
-   This consumes a lot of memmory.
+   This consumes a lot of memory.
    For a brief time during initialization there will be a set with all integers from 2 through n.
    The set will rapidly have elements removed from it,
    but the end results will still contain all of the primes as Python integers.
@@ -38,7 +38,7 @@ There are reasons, but first let me give an overview of the major differences.
     This is also a pure Python implementation that uses a Python integer as the sieve and uses bit twidling when creating the sieve. This makes it memory efficient, but it is excruciatingly slow.
 
 Roughly speaking, the reasons for having three (so far) implementations is that I wanted to be able to run things in environments in which bitarray_ is not available. That led the to :class:`SetSeive`.
-An off-hand comment I made in some discussion about how immutable :py:class:`int` means that a seive implement with ``int`` would be slow was challanged. I was curious to see whether an ``int``-based implementation would work, so that led to :class:`IntSieve`.
+An off-hand comment I made in some discussion about how immutable :py:class:`int` means that a sieve implement with ``int`` would be slow was challanged. I was curious to see whether an ``int``-based implementation would work, so that led to :class:`IntSieve`.
 
 It turns out that using native Python integers was enormously slower than I could have imagined.
 
@@ -50,7 +50,7 @@ It turns out that using native Python integers was enormously slower than I coul
     I don't have to go to a big integeer library when numbers get too
     large.
     
-    My observation about ineffiencies of bit twidling in Python acknowleging
+    My observation about inefficiencies of bit twiddling in Python acknowledging
     a limitation that follows from a very reasonable design choice.
 
 .. _all_figure:
@@ -70,14 +70,14 @@ So here is a graph showing the times just for :class:`BaSieve` and a :class:`Set
 .. _sans_int_figure: 
 
 .. figure:: /images/sans_int.png
-    :alt: Graph showing that Sieve is more efficient than SetSeive
+    :alt: Graph showing that Sieve is more efficient than SetSieve
 
     Seconds to create sieves (without IntSieve).
 
 Specifically on my system it took approximately 0.011 seconds to create a sieve of all numbers less than or equal to 1 million using the bitarray-based :class:`BaSieve`,
-0.198 seconds with :class:`SetSeive`,
+0.198 seconds with :class:`SetSieve`,
 and a minute (59.796 seconds) with :class:`IntSieve`.
-So bitaray was nearly 20 times faster than the set-based sieve construction
+So bitarray was nearly 20 times faster than the set-based sieve construction
 and more than 5000 times faster than the integer-based construction for a sieve size of one million.
 
 Abstract bases and overview
@@ -86,8 +86,8 @@ Abstract bases and overview
 The algorithm
 --------------
 
-The algoritm for creating the sieve is the same for all three classes
-but has fiddly differences due to how the seive is represented.
+The algorithm for creating the sieve is the same for all three classes
+but has fiddly differences due to how the sieve is represented.
 This, pared down and modified so as to work all by itself,
 version from the :class:`SetSieve` is probably the most
 readable.

@@ -20,7 +20,7 @@ games for symmetric encryption.
 General Structure
 ==================
 
-Indisitinguisibility games are set up as an adversary
+Indistinguishability games are set up as an adversary
 playing against a game (or Challenger).
 The game is given an encryption scheme and a key generation function.
 So creating a game will often look like
@@ -61,8 +61,8 @@ The only thing the adversary can do with the game after finalizing is
 to tell it to re-initialize [#reinit]_ , which will generate a fresh key and value for the bit, **b**.
 
 Between initialization and finalization the adversary can ask the game to
-to perform certain computions, which may include encrypting or decrypting
-data of the adversary's chosing.
+to perform certain computations, which may include encrypting or decrypting
+data of the adversary's choosing.
 Which methods are available and in what sequences they can be called
 depends on the specific game.
 
@@ -91,7 +91,7 @@ Examples
 ==========
 
 For testing it is useful to have a challenge that the adversary can always
-win, so we will use a shift ciper for testing IND-EAV
+win, so we will use a shift cipher for testing IND-EAV
 and a reused pad (N-time-pad) for testing IND-CPA.
 
 .. testcode::
@@ -143,7 +143,7 @@ Let's use a stronger cipher, the N-Time-Pad for our IND-CPA example.
 
 The N-Time-Pad (up to limited message length) is semantically secure.
 One can prove that any adversary that can reliability win the IND-EAV game
-can reliabily predict bits from the (presumedly secure) random number generator.
+can reliably predict bits from the (presumedly secure) random number generator.
 Thus the NTP is at least as secure as the random number generator.
 
 But because the NTP is deterministic it will fail IND-CPA security.
@@ -200,7 +200,7 @@ All of the specific game classes are subclasses of the :class:`Ind` class.
     :members: TRACK_CHALLENGE_CTEXTS
 
 The classes optionally differ in which methods they offer and the sequence in which they are called.
-That ordiering defined by the transition tables in :data:`T_TABLE`
+That ordering defined by the transition tables in :data:`T_TABLE`
 with the initial stated being :data:`State.STARTED`.
 
 
@@ -300,7 +300,7 @@ The challenge ciphertext cannot be given to :func:`~IndCca2.decrypt`.
 State management tools
 ==============================
 
-As described above, the difference between the particular gaves is defined
+As described above, the difference between the particular games is defined
 by what action the adversary can take when.
 This is specified within the :class:`TransitionTable` for each.
 

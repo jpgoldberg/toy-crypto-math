@@ -16,7 +16,7 @@ Utility functions
 .. autofunction:: digit_count
 
 Coding this is a math problem, not a string representation problem.
-Idetally the solution would be to use
+Ideally the solution would be to use
 
 ..  math:: d = \lfloor\log_b \| x \| + 1\rfloor
 
@@ -53,7 +53,7 @@ would be the mathematically nice way to do things,
 but because we may want to use this with large numbers,
 we have to worry floating point precision.
 
-Becausew we are dealing with base 2,
+Because we are dealing with base 2,
 we can do all of our multiplications and and divisions by powers of 2
 using bit shifts. I am not sure how Pythonic that leaves things.
 
@@ -62,7 +62,7 @@ using bit shifts. I am not sure how Pythonic that leaves things.
 xor
 -----
 
-The :func:`utils.xor` and the class :class:`utils.Xor` provide utilities for xoring strings of bytes together. There is some assymetry between the two arguments. The ``message`` can be an :py:class:`collections.abc.Iterator` as well as :py:class:`bytes`. The ``pad`` arguement on the other hand, is expected to be :py:class:`bytes` only (in this version.) The ``pad`` argument is will be repeated if it is shorter than the message.
+The :func:`utils.xor` and the class :class:`utils.Xor` provide utilities for xoring strings of bytes together. There is some asymmetry between the two arguments. The ``message`` can be an :py:class:`collections.abc.Iterator` as well as :py:class:`bytes`. The ``pad`` arguement on the other hand, is expected to be :py:class:`bytes` only (in this version.) The ``pad`` argument is will be repeated if it is shorter than the message.
 
 .. warning::
 

@@ -25,7 +25,7 @@ some of the conditions that should hold of them are
 
 The prime generation function defined in 
 appendix A.1.3 FIPS 186-B :cite:`FIPS-186-5`
-guarentees those conditions are met.
+guarantees those conditions are met.
 It is clever in that it checks those conditions on candidate primes
 before testing whether those candidates are prime,
 which is a much more computationally expensive test.

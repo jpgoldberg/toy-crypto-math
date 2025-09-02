@@ -1,11 +1,11 @@
 .. include:: /../common/unsafe.rst
 
-Bit manipulation utiltieis
+Bit manipulation utilities
 ===========================
 
 .. py:module:: toy_crypto.bit_utils
     :no-index:
-    :synopsis: Various utilities for manipulationg bit-like things
+    :synopsis: Various utilities for manipulating bit-like things
 
     This module is imported with:
 
@@ -35,7 +35,7 @@ Let's illustrate :func:`~toy_crypto.bit_utils.hamming_distance` with an `example
 37
 
 
-The publically available parts
+The publicly available parts
 -------------------------------
 
 Note again that this module is most subject to change.

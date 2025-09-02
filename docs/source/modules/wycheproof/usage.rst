@@ -10,7 +10,7 @@ Usage
 
 This document walks through a concrete example.
 It assumes that you have
-obtained the wcyhoproof data as discussed in
+obtained the wcyheproof data as discussed in
 :ref:`sec-wycheproof-obtain`,
 and that you have at least glanced the
 :ref:`data overview section <sec_wycheproof_data_overview>`.
@@ -36,7 +36,7 @@ The structure of one way to use this module might look something like
     ... # May wish to get some information from test_data
         # for loggging or reporting.
 
-    for group in test_.groups:
+    for group in test.groups:
         ... # Per TestGroup setup
         for test in group.tests:
             ... # set up for specific test
@@ -45,20 +45,20 @@ The structure of one way to use this module might look something like
 
 For the example below, we will step through parts of that,
 but will sometimes need to use a different flow so that each
-of the parts actually runs when contructing this document.
+of the parts actually runs when constructing this document.
 
 An example
 +++++++++++
 
 We will be testing RSA decryption from PyCryptodome_
 against the Wycheproof OAEP test data for 2048-bit keys with SHA1 as the
-hash algrorithm and MGF1SHA1 as the mask generation function.
+hash algorithm and MGF1SHA1 as the mask generation function.
 The data file for those tests is in
 ``testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json`` relative to WP_ROOT.
 
 In what follows, we assume that you have already set up ``WP_ROOT``
 as a :py:class:`pathlib.Path` with the appropriate file system location.
-See :ref:`sec-wycheproof-obtain` for discusson of ways to do that.
+See :ref:`sec-wycheproof-obtain` for discussion of ways to do that.
 
 Set up loader
 --------------
@@ -180,13 +180,13 @@ the test cases here have.
 "label"
     The OAEP label that is rarely ever used.
 
-These are accesible as keys to the dictionary
+These are accessible as keys to the dictionary
 :attr:`TestCase.other_data`.
 
 Fortunately the defaults for creating a cryptor,
 :external+crypto:func:`Crypto.Cipher.PKCS1_OAEP.new`
 cryptor with PyCryptodome_
-uses as hash algoririthm, mask generation function are the ones we
+uses as hash algorithm, mask generation function are the ones we
 are testing here, so we won't have to specify them.
 We can create the cryptor we wish to test with
 
@@ -239,7 +239,7 @@ Data conversion
 The TLDR for this section is that you are advised to make sure that
 things like ``case.other_data["ct"]`` are of the data types you expect
 when you run tests.
-Be familiar with the data you are importing, and do not relie
+Be familiar with the data you are importing, and do not rely
 on the fully automatic conversion from hex strings to bytes or integers
 to always get things right.
 
@@ -249,7 +249,7 @@ In some of the test cases in the test data we used,
 the ``"ct"``, ``"msg"``, and ``"label"`` JSON keywords
 have values that are strings.
 In all of those cases, the strings are hex encoded byte sequences.
-Consider this exceprt from test case 9:
+Consider this excerpt from test case 9:
 
 .. code-block:: json
     :force:
@@ -276,12 +276,12 @@ But when we ran our tests we were able to use code like
 
 and those things really were bytes.
 
-The initiallizers for :class:`TestGroup` and :class:`TestCase`
-automatically perform *some* necessary conversions from hexidecimal
+The initializers for :class:`TestGroup` and :class:`TestCase`
+automatically perform *some* necessary conversions from hexadecimal
 strings to :py:class:`bytes` or :py:class:`int` as appropriate.
 It does this using the data from :attr:`TestData.formats`,
 which is a mapping from JSON keywords to information about how
-the string is formated.
+the string is formatted.
 
 .. testcode::
 
@@ -313,7 +313,7 @@ Semi-automatic conversion
 
 As mentioned above,
 the fully automatic conversation using :attr:`TestData.formats`
-is only performed at the top leve of
+is only performed at the top level of
 each :class:`TestGroup` and :class:`TestCase`.
 
 Suppose in our OAEP test, instead of creating the
@@ -395,14 +395,14 @@ Gotchas
 ++++++++
 
 Pretty much all of the many ways this can break are a consequence
-of the fact that I haver not found a way to make use of JSON schemata
+of the fact that I have not found a way to make use of JSON schemata
 the way I feel they should be able to be used.
 When I started working on this module, I had assumed that there
-would be a fairly straigthforward way to make use of the JSON schema
+would be a fairly straightforward way to make use of the JSON schema
 loaded for each test file to reason about the loaded JSON within Python code.
 
-Hard-coded data assmptions
---------------------------
+Hard-coded data assumptions
+---------------------------
 
 The code here makes assumptions about things that will be common
 to all of the wycheproof JSON test files. Similarly it makes assumptions
@@ -418,7 +418,7 @@ Data conversion
 ----------------
 
 As discussed in :ref:`sec_wycheproof_data_conversion`
-the automatic data conversion of hexidecimal strings
+the automatic data conversion of hexadecimal strings
 to :py:class:`bytes` or :py:class:`int`\s will miss things
 that you will need to manually handle, perhaps with the help of
 :func:`deserialize_top_level`.
@@ -438,7 +438,7 @@ If you find that this occurs, please let me know.
 Other data is just the left overs
 ----------------------------------
 
-The dictionares
+The dictionaries
 :attr:`TestData.other_data`,
 :attr:`TestGroup.other_data`,
 and :attr:`TestCase.other_data`
@@ -449,11 +449,3 @@ in a :py:class:`KeyError`.
 
 There are reasons for my choice here.
 Perhaps not good reasons, but reasons none the less.
-
-
-
-
-
-
-
-

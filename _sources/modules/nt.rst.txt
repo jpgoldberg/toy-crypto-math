@@ -4,7 +4,7 @@ Number Theory
 ==============
 
 .. py:module:: toy_crypto.nt
-    :synopsis: Number theorertic utilities and integer factorization tools
+    :synopsis: Number theoretic utilities and integer factorization tools
 
 This module is imported with::
 

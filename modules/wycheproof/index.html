@@ -357,7 +357,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../types.html">Types</a></li>
 </ul>
 </div>
@@ -473,21 +473,21 @@ and so testing against Wycheproof RSA OAEP test data
 seemed like the best approach.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Implementating it “correctly” for my purposes does not mean that it is a secure implementation. It is not.</p>
+<p>Implementing RSA OAEP “correctly” for my purposes does not mean that it is a secure implementation. It is not.</p>
 </div>
 <p>I had incorrectly assumed that there would be tooling
 available to do that for running tests in Python.
-So I hacked togther a special case for the tests I wanted to use,
+So I hacked together a special case for the tests I wanted to use,
 lifting heavily from the tools used internally by <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a>.
-While that helped me spot a bug in my implemenation (tcID 19),
+While that helped me spot a bug in my implementation (tcID 19),
 there were two things about it were unsatisfying.</p>
 <p>First of all, it was hard to generalize without taking on board all
 of the <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> testing framework. Sure, their testing framework is better than
 mine, but I wasn’t ready to restructure so many of my tests.</p>
 <p>The second annoyance is that they manually determine which which values in the
 test data need to be converted from hex strings to integers or bytes.
-That information is in the JSON schema assocatied with each JSON test data file.
-I assumed there would be established techneques to use that information to
+That information is in the JSON schema associated with each JSON test data file.
+I assumed there would be established techniques to use that information to
 automate the necessary data conversions.
 I did not find such tools, so I made do with what I could do.</p>
 <section id="ugly-solutions">
@@ -501,7 +501,7 @@ Never-the-less it seems to work and the API isn’t terrible.</p>
 </section>
 <section id="obtaining-the-wycheproof-data">
 <span id="sec-wycheproof-obtain"></span><h2>Obtaining the Wycheproof data<a class="headerlink" href="#obtaining-the-wycheproof-data" title="Link to this heading">#</a></h2>
-<p>This module does not include the Wychoproof data itself;
+<p>This module does not include the Wycheproof data itself;
 the user needs to have a copy available to them on their own device.
 The data is available from the <a class="reference external" href="https://github.com/C2SP/wycheproof/">Wycheproof repository</a>.</p>
 <p>The portions of that repository that are necessary are the
@@ -528,7 +528,7 @@ span.prompt1:before {
 aren’t in a Unix-like command environment or do not use <code class="docutils literal notranslate"><span class="pre">git</span></code> at
 all, but I can’t advise on what those ways are.</p>
 </div>
-<p>Assuming you have done so, you should have a tests directory structue something like:</p>
+<p>Assuming you have done so, you should have a tests directory structure something like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tests
 ├── __init__.py
 ├── resources
@@ -571,8 +571,8 @@ Those JSON files all contain a key <code class="docutils literal notranslate"><s
 and each test group has a JSON key <code class="docutils literal notranslate"><span class="pre">&quot;tests&quot;</span></code></p>
 <p>The following <a class="reference internal" href="#siv-json"><span class="std std-ref">JSON sample</span></a> contains a small portion of what you might see
 in a wycheproof JSON test data file.</p>
-<details class="summary-exerpt-of-test-json-file" open>
-<summary>Exerpt of test JSON file</summary><div class="literal-block-wrapper docutils container" id="siv-json">
+<details class="summary-excerpt-of-test-json-file" open>
+<summary>Excerpt of test JSON file</summary><div class="literal-block-wrapper docutils container" id="siv-json">
 <div class="code-block-caption"><span class="caption-text">Sample of “testvectors_v1/aes_gcm_siv_test.json”</span><a class="headerlink" href="#siv-json" title="Link to this code">#</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;algorithm&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;AES-GCM-SIV&quot;</span><span class="p">,</span>

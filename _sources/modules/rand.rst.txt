@@ -16,5 +16,5 @@ The :mod:`rand` functions
 --------------------------
 
 .. automodule:: toy_crypto.rand
-    :synopsis: Randon number utitilities
+    :synopsis: Random number utilities
     :members:

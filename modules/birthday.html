@@ -357,7 +357,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Types</a></li>
 </ul>
 </div>
@@ -450,7 +450,7 @@
 to estimate the number of individuals
 (whose birthdays are uniformly distributed among 365 days of the year)
 for there to be at least a 0.5 probability of there being at least one pair of individuals who share the same birthday.</p>
-<p>The function that returns a propbably is named <a class="reference internal" href="#toy_crypto.birthday.P" title="toy_crypto.birthday.P"><code class="xref py py-func docutils literal notranslate"><span class="pre">P()</span></code></a>,
+<p>The function that returns a probability is named <a class="reference internal" href="#toy_crypto.birthday.P" title="toy_crypto.birthday.P"><code class="xref py py-func docutils literal notranslate"><span class="pre">P()</span></code></a>,
 and the one that returns a quantile is named <a class="reference internal" href="#toy_crypto.birthday.Q" title="toy_crypto.birthday.Q"><code class="xref py py-func docutils literal notranslate"><span class="pre">Q()</span></code></a>.
 This follows the R conventions
 [<span id="id1"><a class="reference internal" href="../bibliography.html#id4" title="R Core Team. R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing, Vienna, Austria, 2024. URL: https://www.R-project.org/.">RCTeam24</a></span>]
@@ -464,7 +464,7 @@ as reflected in R’s <code class="docutils literal notranslate"><span class="pr
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>23
 </pre></div>
 </div>
-<p>Birthday computations are useful for computing collision probabilites.
+<p>Birthday computations are useful for computing collision probabilities.
 Suppose you had a hash function (truncated to ) returning 32 bit hashes
 and you wished to know the probability of a collision if you hashed ten thousand items.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto</span><span class="w"> </span><span class="kn">import</span> <span class="n">birthday</span>
@@ -549,8 +549,8 @@ produces reasonable approximations in a reasonably efficient way for the
 ranges of numbers I wished to consider.
 Eventually I found the solution used by <span id="id2">R Core Team [<a class="reference internal" href="../bibliography.html#id4" title="R Core Team. R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing, Vienna, Austria, 2024. URL: https://www.R-project.org/.">2024</a>]</span>
 in <a class="reference external" href="https://github.com/wch/r-source/blob/trunk/src/library/stats/R/birthday.R">R’s birthday.R source</a>, which credits <span id="id3">Diaconis and Mosteller [<a class="reference internal" href="../bibliography.html#id5" title="Persi Diaconis and Frederick Mosteller. Methods for studying coincidences. Journal of the American Statistical Association: Applications &amp; Case Studies, December 1989. doi:10.1080/01621459.1989.10478847.">1989</a>]</span>.</p>
-<p>My port of that implementation to Python only changes the conditions underwhich
-the approximate method is used along with some internal variable naming and commenting to help me better understand the algorithm and its implementation.</p>
+<p>My port of that implementation to Python only changes the conditions under which the approximate method is used along with some internal variable
+naming and commenting to help me better understand the algorithm and its implementation.</p>
 </section>
 </section>
 

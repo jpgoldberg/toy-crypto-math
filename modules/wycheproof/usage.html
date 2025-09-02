@@ -357,7 +357,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../types.html">Types</a></li>
 </ul>
 </div>
@@ -447,7 +447,7 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h1>
 <p>This document walks through a concrete example.
 It assumes that you have
-obtained the wcyhoproof data as discussed in
+obtained the wcyheproof data as discussed in
 <a class="reference internal" href="index.html#sec-wycheproof-obtain"><span class="std std-ref">Obtaining the Wycheproof data</span></a>,
 and that you have at least glanced the
 <a class="reference internal" href="index.html#sec-wycheproof-data-overview"><span class="std std-ref">data overview section</span></a>.</p>
@@ -467,7 +467,7 @@ and that you have at least glanced the
 <span class="o">...</span> <span class="c1"># May wish to get some information from test_data</span>
     <span class="c1"># for loggging or reporting.</span>
 
-<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">test_</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">test</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
     <span class="o">...</span> <span class="c1"># Per TestGroup setup</span>
     <span class="k">for</span> <span class="n">test</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">tests</span><span class="p">:</span>
         <span class="o">...</span> <span class="c1"># set up for specific test</span>
@@ -477,18 +477,18 @@ and that you have at least glanced the
 </div>
 <p>For the example below, we will step through parts of that,
 but will sometimes need to use a different flow so that each
-of the parts actually runs when contructing this document.</p>
+of the parts actually runs when constructing this document.</p>
 </section>
 <section id="an-example">
 <h2>An example<a class="headerlink" href="#an-example" title="Link to this heading">#</a></h2>
 <p>We will be testing RSA decryption from <a class="reference external" href="https://www.pycryptodome.org">PyCryptodome</a>
 against the Wycheproof OAEP test data for 2048-bit keys with SHA1 as the
-hash algrorithm and MGF1SHA1 as the mask generation function.
+hash algorithm and MGF1SHA1 as the mask generation function.
 The data file for those tests is in
 <code class="docutils literal notranslate"><span class="pre">testvectors_v1/rsa_oaep_2048_sha1_mgf1sha1_test.json</span></code> relative to WP_ROOT.</p>
 <p>In what follows, we assume that you have already set up <code class="docutils literal notranslate"><span class="pre">WP_ROOT</span></code>
 as a <code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code> with the appropriate file system location.
-See <a class="reference internal" href="index.html#sec-wycheproof-obtain"><span class="std std-ref">Obtaining the Wycheproof data</span></a> for discusson of ways to do that.</p>
+See <a class="reference internal" href="index.html#sec-wycheproof-obtain"><span class="std std-ref">Obtaining the Wycheproof data</span></a> for discussion of ways to do that.</p>
 <section id="set-up-loader">
 <h3>Set up loader<a class="headerlink" href="#set-up-loader" title="Link to this heading">#</a></h3>
 <p>This assumes that you have already set up <code class="docutils literal notranslate"><span class="pre">WP_ROOT</span></code>
@@ -577,12 +577,12 @@ the test cases here have.</p>
 <dt>“label”</dt><dd><p>The OAEP label that is rarely ever used.</p>
 </dd>
 </dl>
-<p>These are accesible as keys to the dictionary
+<p>These are accessible as keys to the dictionary
 <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase.other_data" title="toy_crypto.wycheproof.TestCase.other_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestCase.other_data</span></code></a>.</p>
 <p>Fortunately the defaults for creating a cryptor,
 <a class="reference external" href="https://www.pycryptodome.org/src/cipher/oaep.html#Crypto.Cipher.PKCS1_OAEP.new" title="(in PyCryptodome v3.24)"><code class="xref py py-func docutils literal notranslate"><span class="pre">Crypto.Cipher.PKCS1_OAEP.new()</span></code></a>
 cryptor with <a class="reference external" href="https://www.pycryptodome.org">PyCryptodome</a>
-uses as hash algoririthm, mask generation function are the ones we
+uses as hash algorithm, mask generation function are the ones we
 are testing here, so we won’t have to specify them.
 We can create the cryptor we wish to test with</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cryptor</span> <span class="o">=</span> <span class="n">PKCS1_OAEP</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="n">sk</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">label</span><span class="p">)</span>
@@ -629,7 +629,7 @@ and <code class="docutils literal notranslate"><span class="pre">label</span></c
 <p>The TLDR for this section is that you are advised to make sure that
 things like <code class="docutils literal notranslate"><span class="pre">case.other_data[&quot;ct&quot;]</span></code> are of the data types you expect
 when you run tests.
-Be familiar with the data you are importing, and do not relie
+Be familiar with the data you are importing, and do not rely
 on the fully automatic conversion from hex strings to bytes or integers
 to always get things right.</p>
 <p>We will continue with the same example as above for this discussion.</p>
@@ -637,7 +637,7 @@ to always get things right.</p>
 the <code class="docutils literal notranslate"><span class="pre">&quot;ct&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;msg&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;label&quot;</span></code> JSON keywords
 have values that are strings.
 In all of those cases, the strings are hex encoded byte sequences.
-Consider this exceprt from test case 9:</p>
+Consider this excerpt from test case 9:</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;tcId&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
 <span class="w">    </span><span class="nt">&quot;comment&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -658,12 +658,12 @@ Consider this exceprt from test case 9:</p>
 </pre></div>
 </div>
 <p>and those things really were bytes.</p>
-<p>The initiallizers for <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a> and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase" title="toy_crypto.wycheproof.TestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a>
-automatically perform <em>some</em> necessary conversions from hexidecimal
+<p>The initializers for <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a> and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase" title="toy_crypto.wycheproof.TestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a>
+automatically perform <em>some</em> necessary conversions from hexadecimal
 strings to <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> as appropriate.
 It does this using the data from <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestData.formats" title="toy_crypto.wycheproof.TestData.formats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.formats</span></code></a>,
 which is a mapping from JSON keywords to information about how
-the string is formated.</p>
+the string is formatted.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We have already loaded test_data with:</span>
 <span class="c1"># test_data = loader.load(&quot;rsa_oaep_2048_sha1_mgf1sha1_test.json&quot;)</span>
 
@@ -689,7 +689,7 @@ When that validation fails,</p>
 <h3>Semi-automatic conversion<a class="headerlink" href="#semi-automatic-conversion" title="Link to this heading">#</a></h3>
 <p>As mentioned above,
 the fully automatic conversation using <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestData.formats" title="toy_crypto.wycheproof.TestData.formats"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.formats</span></code></a>
-is only performed at the top leve of
+is only performed at the top level of
 each <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup" title="toy_crypto.wycheproof.TestGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestGroup</span></code></a> and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase" title="toy_crypto.wycheproof.TestCase"><code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></a>.</p>
 <p>Suppose in our OAEP test, instead of creating the
 private key from the PEM format in each test group
@@ -760,13 +760,13 @@ Note that this mutates the dictionary it is given.</p>
 <section id="gotchas">
 <h2>Gotchas<a class="headerlink" href="#gotchas" title="Link to this heading">#</a></h2>
 <p>Pretty much all of the many ways this can break are a consequence
-of the fact that I haver not found a way to make use of JSON schemata
+of the fact that I have not found a way to make use of JSON schemata
 the way I feel they should be able to be used.
 When I started working on this module, I had assumed that there
-would be a fairly straigthforward way to make use of the JSON schema
+would be a fairly straightforward way to make use of the JSON schema
 loaded for each test file to reason about the loaded JSON within Python code.</p>
-<section id="hard-coded-data-assmptions">
-<h3>Hard-coded data assmptions<a class="headerlink" href="#hard-coded-data-assmptions" title="Link to this heading">#</a></h3>
+<section id="hard-coded-data-assumptions">
+<h3>Hard-coded data assumptions<a class="headerlink" href="#hard-coded-data-assumptions" title="Link to this heading">#</a></h3>
 <p>The code here makes assumptions about things that will be common
 to all of the wycheproof JSON test files. Similarly it makes assumptions
 about what each test group within those files will have.
@@ -779,7 +779,7 @@ older <code class="docutils literal notranslate"><span class="pre">wycheproof/te
 <section id="id1">
 <h3>Data conversion<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <p>As discussed in <a class="reference internal" href="#sec-wycheproof-data-conversion"><span class="std std-ref">Data conversion</span></a>
-the automatic data conversion of hexidecimal strings
+the automatic data conversion of hexadecimal strings
 to <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>s will miss things
 that you will need to manually handle, perhaps with the help of
 <a class="reference internal" href="api.html#toy_crypto.wycheproof.deserialize_top_level" title="toy_crypto.wycheproof.deserialize_top_level"><code class="xref py py-func docutils literal notranslate"><span class="pre">deserialize_top_level()</span></code></a>.</p>
@@ -796,7 +796,7 @@ If you find that this occurs, please let me know.</p>
 </section>
 <section id="other-data-is-just-the-left-overs">
 <h3>Other data is just the left overs<a class="headerlink" href="#other-data-is-just-the-left-overs" title="Link to this heading">#</a></h3>
-<p>The dictionares
+<p>The dictionaries
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">TestData.other_data</span></code>,
 <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestGroup.other_data" title="toy_crypto.wycheproof.TestGroup.other_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestGroup.other_data</span></code></a>,
 and <a class="reference internal" href="api.html#toy_crypto.wycheproof.TestCase.other_data" title="toy_crypto.wycheproof.TestCase.other_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">TestCase.other_data</span></code></a>
@@ -870,7 +870,7 @@ Perhaps not good reasons, but reasons none the less.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gotchas">Gotchas</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hard-coded-data-assmptions">Hard-coded data assmptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hard-coded-data-assumptions">Hard-coded data assumptions</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Data conversion</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-data-is-just-the-left-overs">Other data is just the left overs</a></li>
 </ul>

@@ -14,7 +14,7 @@ to estimate the number of individuals
 (whose birthdays are uniformly distributed among 365 days of the year)
 for there to be at least a 0.5 probability of there being at least one pair of individuals who share the same birthday.
 
-The function that returns a propbably is named :func:`P`,
+The function that returns a probability is named :func:`P`,
 and the one that returns a quantile is named :func:`Q`.
 This follows the R conventions
 [:cite:label:`RProject`]
@@ -31,7 +31,7 @@ as reflected in R's ``qbirthday`` and ``pbirthday`` functions.
 
     23
         
-Birthday computations are useful for computing collision probabilites.
+Birthday computations are useful for computing collision probabilities.
 Suppose you had a hash function (truncated to ) returning 32 bit hashes
 and you wished to know the probability of a collision if you hashed ten thousand items.
 
@@ -63,6 +63,6 @@ ranges of numbers I wished to consider.
 Eventually I found the solution used by :cite:t:`RProject`
 in `R's birthday.R source <https://github.com/wch/r-source/blob/trunk/src/library/stats/R/birthday.R>`__, which credits :cite:t:`DiaconisMosteller1989`.
 
-My port of that implementation to Python only changes the conditions underwhich 
-the approximate method is used along with some internal variable naming and commenting to help me better understand the algorithm and its implementation.
+My port of that implementation to Python only changes the conditions under which the approximate method is used along with some internal variable
+naming and commenting to help me better understand the algorithm and its implementation.
 

@@ -50,13 +50,13 @@ seemed like the best approach.
 
 .. note::
     
-    Implementating it "correctly" for my purposes does not mean that it is a secure implementation. It is not.
+    Implementing RSA OAEP "correctly" for my purposes does not mean that it is a secure implementation. It is not.
 
 I had incorrectly assumed that there would be tooling
 available to do that for running tests in Python.
-So I hacked togther a special case for the tests I wanted to use,
+So I hacked together a special case for the tests I wanted to use,
 lifting heavily from the tools used internally by pyca_.
-While that helped me spot a bug in my implemenation (tcID 19),
+While that helped me spot a bug in my implementation (tcID 19),
 there were two things about it were unsatisfying.
 
 First of all, it was hard to generalize without taking on board all
@@ -65,8 +65,8 @@ mine, but I wasn't ready to restructure so many of my tests.
 
 The second annoyance is that they manually determine which which values in the
 test data need to be converted from hex strings to integers or bytes.
-That information is in the JSON schema assocatied with each JSON test data file.
-I assumed there would be established techneques to use that information to
+That information is in the JSON schema associated with each JSON test data file.
+I assumed there would be established techniques to use that information to
 automate the necessary data conversions.
 I did not find such tools, so I made do with what I could do.
 
@@ -84,7 +84,7 @@ Never-the-less it seems to work and the API isn't terrible.
 Obtaining the Wycheproof data
 ++++++++++++++++++++++++++++++
 
-This module does not include the Wychoproof data itself;
+This module does not include the Wycheproof data itself;
 the user needs to have a copy available to them on their own device.
 The data is available from the `Wycheproof repository`_.
 
@@ -114,7 +114,7 @@ If your project is not under git, you could use ``git clone`` instead of ``git s
     aren't in a Unix-like command environment or do not use ``git`` at
     all, but I can't advise on what those ways are.
 
-Assuming you have done so, you should have a tests directory structue something like::
+Assuming you have done so, you should have a tests directory structure something like::
 
 
     tests
@@ -163,7 +163,7 @@ and each test group has a JSON key ``"tests"``
 The following :ref:`JSON sample <siv.json>` contains a small portion of what you might see
 in a wycheproof JSON test data file.
 
-.. collapse:: Exerpt of test JSON file
+.. collapse:: Excerpt of test JSON file
     :open:
 
     .. code-block:: json

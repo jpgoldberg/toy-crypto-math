@@ -357,7 +357,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utility functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bit_utils.html">Bit manipulation utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="types.html">Types</a></li>
 </ul>
 </div>
@@ -463,7 +463,7 @@ and as a consequence it cannot be installed in certain environments.</p>
 <li><p>The <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a> class</p>
 <blockquote>
 <div><p>This is a pure Python implementation that uses <code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code> when creating the sieve.
-This consumes a lot of memmory.
+This consumes a lot of memory.
 For a brief time during initialization there will be a set with all integers from 2 through n.
 The set will rapidly have elements removed from it,
 but the end results will still contain all of the primes as Python integers.</p>
@@ -476,7 +476,7 @@ but the end results will still contain all of the primes as Python integers.</p>
 </li>
 </ul>
 <p>Roughly speaking, the reasons for having three (so far) implementations is that I wanted to be able to run things in environments in which <a class="reference external" href="https://github.com/ilanschnell/bitarray">bitarray</a> is not available. That led the to <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSeive</span></code>.
-An off-hand comment I made in some discussion about how immutable <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> means that a seive implement with <code class="docutils literal notranslate"><span class="pre">int</span></code> would be slow was challanged. I was curious to see whether an <code class="docutils literal notranslate"><span class="pre">int</span></code>-based implementation would work, so that led to <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.</p>
+An off-hand comment I made in some discussion about how immutable <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> means that a sieve implement with <code class="docutils literal notranslate"><span class="pre">int</span></code> would be slow was challanged. I was curious to see whether an <code class="docutils literal notranslate"><span class="pre">int</span></code>-based implementation would work, so that led to <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.</p>
 <p>It turns out that using native Python integers was enormously slower than I could have imagined.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -485,7 +485,7 @@ particulary for playing with cryptographic notions,
 is that there is just one type of <code class="docutils literal notranslate"><span class="pre">int</span></code>.
 I don’t have to go to a big integeer library when numbers get too
 large.</p>
-<p>My observation about ineffiencies of bit twidling in Python acknowleging
+<p>My observation about inefficiencies of bit twiddling in Python acknowledging
 a limitation that follows from a very reasonable design choice.</p>
 </div>
 <figure class="align-default" id="id2">
@@ -502,23 +502,23 @@ to be created by the different classes.</p>
 of time it takes to construct an <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.
 So here is a graph showing the times just for <a class="reference internal" href="#toy_crypto.sieve.BaSieve" title="toy_crypto.sieve.BaSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code></a> and a <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a>.</p>
 <figure class="align-default" id="id3">
-<span id="sans-int-figure"></span><img alt="Graph showing that Sieve is more efficient than SetSeive" src="../_images/sans_int.png" />
+<span id="sans-int-figure"></span><img alt="Graph showing that Sieve is more efficient than SetSieve" src="../_images/sans_int.png" />
 <figcaption>
 <p><span class="caption-text">Seconds to create sieves (without IntSieve).</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>Specifically on my system it took approximately 0.011 seconds to create a sieve of all numbers less than or equal to 1 million using the bitarray-based <a class="reference internal" href="#toy_crypto.sieve.BaSieve" title="toy_crypto.sieve.BaSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaSieve</span></code></a>,
-0.198 seconds with <code class="xref py py-class docutils literal notranslate"><span class="pre">SetSeive</span></code>,
+0.198 seconds with <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a>,
 and a minute (59.796 seconds) with <a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a>.
-So bitaray was nearly 20 times faster than the set-based sieve construction
+So bitarray was nearly 20 times faster than the set-based sieve construction
 and more than 5000 times faster than the integer-based construction for a sieve size of one million.</p>
 </section>
 <section id="abstract-bases-and-overview">
 <h2>Abstract bases and overview<a class="headerlink" href="#abstract-bases-and-overview" title="Link to this heading">#</a></h2>
 <section id="the-algorithm">
 <h3>The algorithm<a class="headerlink" href="#the-algorithm" title="Link to this heading">#</a></h3>
-<p>The algoritm for creating the sieve is the same for all three classes
-but has fiddly differences due to how the seive is represented.
+<p>The algorithm for creating the sieve is the same for all three classes
+but has fiddly differences due to how the sieve is represented.
 This, pared down and modified so as to work all by itself,
 version from the <a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a> is probably the most
 readable.</p>

@@ -358,7 +358,7 @@
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="../rand.html">Random Numbers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../utils.html">Utility functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utiltieis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bit_utils.html">Bit manipulation utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../types.html">Types</a></li>
 </ul>
 </div>
@@ -455,7 +455,7 @@ so it completely fails to provide IND-CPA security.
 It is also vulnerable to chosen ciphertext attacks.
 <a class="reference external" href="https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding">OAEP (Optimized Assymmetric Encryption Padding)</a>
 is designed to address both of those when <em>properly implemented</em>.
-This module does <em>not</em> provide a proper implemenation.</p>
+This module does <em>not</em> provide a proper implementation.</p>
 <p>Much of the code here attempts to follow <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html"><strong>RFC 8017</strong></a>,
 particularly <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#section-7.1"><strong>section 7.1</strong></a>
 and <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc8017.html#appendix-B.2"><strong>appendix B.2</strong></a>.
@@ -504,8 +504,8 @@ message always yields the same ciphertext.</p>
 </pre></div>
 </div>
 </section>
-<section id="a-very-limted-choice-of-hashes">
-<h2>A (very limted) choice of hashes<a class="headerlink" href="#a-very-limted-choice-of-hashes" title="Link to this heading">#</a></h2>
+<section id="a-very-limited-choice-of-hashes">
+<h2>A (very limited) choice of hashes<a class="headerlink" href="#a-very-limited-choice-of-hashes" title="Link to this heading">#</a></h2>
 <p>For my purposes, I could have just hardcoded use of
 <code class="xref py py-func docutils literal notranslate"><span class="pre">hashlib.sha256()</span></code> or a more modern one,
 but most of published test vectors
@@ -551,10 +551,10 @@ what may appear in the automatically generated documentation.</p>
 <dd><p>Known Mask Generation Functions.</p>
 <dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s1">&#39;mgf1SHA256&#39;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;id_mgf1&#39;</span><span class="p">,</span>
                         <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s1">&#39;sha256&#39;</span><span class="p">,</span>
-                        <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7fa636a93d80</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+                        <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f2d42bfbd80</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
   <span class="s1">&#39;mgf1SHA1&#39;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;id_mgf1&#39;</span><span class="p">,</span>
                       <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s1">&#39;sha1&#39;</span><span class="p">,</span>
-                      <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7fa636a93d80</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)}</span>
+                      <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f2d42bfbd80</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)}</span>
 </pre></div>
 </div>
 </dd></dd></dl>
@@ -563,9 +563,9 @@ what may appear in the automatically generated documentation.</p>
 <h3>Integers, octet-streams, and masks<a class="headerlink" href="#integers-octet-streams-and-masks" title="Link to this heading">#</a></h3>
 <p>Primitive RSA operations on integers, but OAEP is designed for
 encryption and decryption of sequences of <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>,
-or octet-streams in the parlence of the standards.
+or octet-streams in the parlance of the standards.
 The standards define two functions, <code class="docutils literal notranslate"><span class="pre">I2OSP</span></code> and <code class="docutils literal notranslate"><span class="pre">OS2IP</span></code> for those
-conversions. I don’t implement them as in the standards, but use Python standard library utililties. So class methods <a class="reference internal" href="#toy_crypto.rsa.Oaep.i2osp" title="toy_crypto.rsa.Oaep.i2osp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Oaep.i2osp()</span></code></a> and
+conversions. I don’t implement them as in the standards, but use Python standard library utilities. So class methods <a class="reference internal" href="#toy_crypto.rsa.Oaep.i2osp" title="toy_crypto.rsa.Oaep.i2osp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Oaep.i2osp()</span></code></a> and
 <a class="reference internal" href="#toy_crypto.rsa.Oaep.os2ip" title="toy_crypto.rsa.Oaep.os2ip"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Oaep.os2ip()</span></code></a> are wrappers for standard library method
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">int.to_bytes()</span></code> and class method <code class="xref py py-meth docutils literal notranslate"><span class="pre">int.from_bytes()</span></code>.</p>
 <dl class="py method">
@@ -625,7 +625,7 @@ to make an <code class="xref py py-class docutils literal notranslate"><span cla
 although in her case it is her rear end is bigger than her bytey end.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
-<p>The security that OEAP offers comes from the clevernesss of applying a mask
+<p>The security that OEAP offers comes from the cleverness of applying a mask
 to the plaintext, while keeping the seed for the mask out of the clear.
 The mask is generated by a mask generation function,
 <code class="docutils literal notranslate"><span class="pre">MGF1</span></code> in the standards.
@@ -949,7 +949,7 @@ to make an <code class="xref py py-class docutils literal notranslate"><span cla
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-very-limted-choice-of-hashes">A (very limted) choice of hashes</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-very-limited-choice-of-hashes">A (very limited) choice of hashes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.HashFunc"><code class="docutils literal notranslate"><span class="pre">HashFunc</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.rsa.MgfFunc"><code class="docutils literal notranslate"><span class="pre">MgfFunc</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integers-octet-streams-and-masks">Integers, octet-streams, and masks</a></li>

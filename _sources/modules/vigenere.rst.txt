@@ -53,7 +53,7 @@ Proper use (which merely makes this annoying to break by hand instead of easy to
 
     ONCEUPONAMIDNIGHTDREARY
 
-Using ``Alphabet.PRINTABLE`` will preserve more of the input, as it includes most printiable 7-bit ASCII characters.
+Using ``Alphabet.PRINTABLE`` will preserve more of the input, as it includes most printable 7-bit ASCII characters.
 
 
 The :class:`Cipher` class
@@ -71,7 +71,7 @@ If no alphabet is specified the :data:`Alphabet.DEFAULT` is used.
 'ONCE UPON A MIDNIGHT DREARY'
 
 While a Cipher instance persists the key and the alphabet,
-the :meth:`Cipher.encrypt` method starts over at the 0-th element of the key.
+the :meth:`Cipher.encrypt` method starts over at the zeroth element of the key.
 
 >>> cipher = vigenere.Cipher("DEADBEEF", alphabet= "0123456789ABCDEF")
 >>> zero_message = "00000000000000000000"
@@ -98,7 +98,7 @@ The :class:`Alphebet` class
 Cryptanalysis tools
 ----------------------
 
-Some tools (currently just one, but more may be comming) to assist in breaking Vigenère.
+Some tools (currently just one, but more may be coming) to assist in breaking Vigenère.
 
 At the moment, I am choosing not to include statistical analyses, as I want to minimize package dependencies and not importing `scipy.stats <https://docs.scipy.org/doc/scipy/reference/stats.html>`__. Thus functions here are very statistically naïve.
 

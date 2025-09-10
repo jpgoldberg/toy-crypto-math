@@ -1,8 +1,11 @@
 from collections import UserDict
+from collections.abc import Mapping
 from random import sample
 from typing import Any, Optional, TypeAlias
 from itertools import combinations
+from warnings import deprecated
 from toy_crypto.bit_utils import hamming_distance
+from toy_crypto.utils import FrozenBidict
 
 Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""
@@ -52,22 +55,16 @@ class Alphabet:
             case (None, _):
                 raise ValueError("Unknown pre-baked alphabet")
             case (_, None):
-                if not isinstance(alphabet, str):
-                    raise TypeError("alphabet must be a string")
+                assert alphabet is not None
                 abc = alphabet
             case (_, _):
                 raise ValueError(
                     "Can't use both explicit and pre-baked alphabet"
                 )
 
-        self._alphabet = abc
-
-        self._modulus = len(self._alphabet)
-
-        # Set up char to index table
-        self._abc2idx: dict[Letter, int] = {
-            c: i for i, c in enumerate(self._alphabet)
-        }
+        self._alphabet: str = abc
+        self._bimap: FrozenBidict[int, Letter] = FrozenBidict(abc)
+        self._modulus: int = len(self._alphabet)
 
     @property
     def alphabet(self) -> str:
@@ -80,9 +77,14 @@ class Alphabet:
         return self._modulus
 
     @property
-    def abc2idx(self) -> dict[Letter, int]:
-        """Dictionary of letter to position in the alphabet."""
-        return self._abc2idx
+    def inverse_map(self) -> Mapping[Letter, int]:
+        """Dictionary of Letter to position in the alphabet."""
+        return self._bimap.inverse
+
+    @property
+    @deprecated("Use 'inverse_map' instead")
+    def abc2idx(self) -> Mapping[Letter, int]:
+        return self.inverse_map
 
     # We will want to use 'in' for Alphabet instances
     def __contains__(self, item: Any) -> bool:
@@ -93,28 +95,33 @@ class Alphabet:
         """
         return item in self.alphabet
 
-    def __getitem__(self, index: slice | int) -> str:
-        """Allows retrieving bits of the Alphabet through [index] notation."""
-        return self.alphabet[index]
+    def __getitem__(self, index: int) -> Letter:
+        """Retrieves Letter of the Alphabet through [index] notation."""
+        return self._bimap[index]
 
     # annoyingly, the type str is also used for single character strings
     # add, inverse, subtract all deal with single characters
     def add(self, a: Letter, b: Letter) -> Letter:
-        """Returns the modular sum of two characters."""
-        if a not in self or b not in self:
-            raise ValueError("argument not an element")
-        idx = (self.abc2idx[a] + self.abc2idx[b]) % self.modulus
-        return self.alphabet[idx]
+        """Returns the modular sum of two characters.
+
+        Invalid input may lead to a KeyError
+        """
+        idx = (self._bimap.inverse[a] + self._bimap.inverse[b]) % self.modulus
+        return self._bimap[idx]
 
     def inverse(self, c: Letter) -> Letter:
-        """Returns the additive inverse of character c"""
-        if c not in self:
-            raise ValueError("argument not an element")
-        idx = (self.modulus - self.abc2idx[c]) % self.modulus
-        return self.alphabet[idx]
+        """Returns the additive inverse of character c.
+
+        Invalid input may lead to a KeyError
+        """
+        idx = (self.modulus - self._bimap.inverse[c]) % self.modulus
+        return self._bimap[idx]
 
     def subtract(self, a: Letter, b: Letter) -> Letter:
-        """Returns the character corresponding to a - b."""
+        """Returns the character corresponding to a - b.
+
+        Invalid input may lead to a KeyError
+        """
         return self.add(a, self.inverse(b))
 
 

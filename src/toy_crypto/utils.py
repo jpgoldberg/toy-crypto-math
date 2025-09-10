@@ -1,10 +1,15 @@
 """Utility functions"""
 
-from collections.abc import Iterator
+from collections.abc import (
+    Hashable,
+    Iterator,
+    Mapping,
+    Sequence,
+)
 import itertools
 from hashlib import blake2b
 from base64 import a85encode
-from typing import Optional, Self
+from typing import Self
 import math
 from toy_crypto.types import Byte
 
@@ -73,42 +78,67 @@ def xor(message: bytes | Iterator[Byte], pad: bytes) -> bytes:
     return bytes([b for b in Xor(message, pad)])
 
 
+class FrozenBidict[K: Hashable | int, V: Hashable]:
+    """A bidirectional dictionary-like object.
+
+    This is a very limited utility just for specific
+    uses in this project. You will find more robust,
+    flexible, and much more broadly applicable classes
+    and functions in the outstanding
+    `bidict library <https://bidict.readthedocs.io/en/main/>`__.
+    """
+
+    def __init__(self, s: Sequence[V] | Mapping[K, V]) -> None:
+        """Create a map and its inverse.
+
+        If s contains duplicate values, the behavior of the
+        inverse map is undefined.
+        """
+        self.data: Mapping[K, V]
+        self._inverse: Mapping[V, K]
+        if isinstance(s, Mapping):
+            self.data = {k: v for k, v in s.items()}
+        elif isinstance(s, Sequence):
+            self.data = {k: v for k, v in enumerate(s)}  # type: ignore[misc]
+        else:
+            raise TypeError
+
+        self._inverse = {v: k for k, v in self.data.items()}
+
+    def __getitem__(self, k: K) -> V:
+        return self.data[k]
+
+    @property
+    def inverse(self) -> Mapping[V, K]:
+        """The inverse map."""
+        return self._inverse
+
+
 class Rsa129:
     """Text encoder/decoder used in RSA-129 challenge.
 
     Encoding scheme from Martin Gardner's 1977 article.
     """
 
-    _abc: list[str] = list(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    _abc_index: Optional[dict[str, int]] = None
-
-    @classmethod
-    def _make_index(cls) -> dict[str, int]:
-        if cls._abc_index is None:
-            cls._abc_index = {c: i for i, c in enumerate(cls._abc)}
-        return cls._abc_index
-
-    def __init__(self) -> None:
-        self._make_index()
+    bimap: FrozenBidict[int, str] = FrozenBidict(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
     @classmethod
     def encode(cls, text: str) -> int:
-        """Encode text"""
+        """Encode text to number"""
 
-        indx = cls._make_index()
         result = 0
         for c in text:
             result *= 100
-            result += indx[c]
+            result += cls.bimap.inverse[c]
         return result
 
     @classmethod
     def decode(cls, number: int) -> str:
-        """Decode text."""
+        """Decode number to text."""
         chars: list[str] = []
         while True:
             number, rem = divmod(number, 100)
-            chars.append(cls._abc[rem])
+            chars.append(cls.bimap[rem])
             if number == 0:
                 break
         return "".join(reversed(chars))

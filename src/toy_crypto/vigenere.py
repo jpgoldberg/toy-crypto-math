@@ -3,7 +3,11 @@ from collections.abc import Mapping
 from random import sample
 from typing import Any, Optional, TypeAlias
 from itertools import combinations
-from warnings import deprecated
+
+try:
+    from warnings import deprecated
+except ImportError:
+    from typing_extensions import deprecated
 from toy_crypto.bit_utils import hamming_distance
 from toy_crypto.utils import FrozenBidict
 

@@ -21,7 +21,7 @@ Utility functions
         from toy_crypto import utils
 
     as you might later find yourself in trouble not knowing
-    whose `utils` are being referred to.
+    whose ``utils`` are being referred to.
 
 
 .. currentmodule:: toy_crypto.utils
@@ -129,7 +129,7 @@ And we will use an example from :cite:p:`Gardner77:RSA`.
     :members:
 
 Simple frozen bi-directional mapping
----------------------------------------
+=====================================
 
 For the :func:`Rsa129.encode` and :func:`Rsa129.decode`,
 as well as for methods in the :class:`toy_crypto.vigenere.Alphabet`,
@@ -164,7 +164,7 @@ so the annotated versions of the above would be
 ..  code-block:: python
 
     bi_mapping: FrozenBidict[int, str] = FrozenBidict("ABCDEF")
-    tastes: FrozenBidict[str, str] = tastes = FrozenBidict(d)
+    tastes: FrozenBidict[str, str] = FrozenBidict(d)
 
 
 .. autoclass:: FrozenBidict

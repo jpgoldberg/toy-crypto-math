@@ -1,7 +1,7 @@
 .. include:: /../common/unsafe.rst
 
 Utility functions
-=================
+##################
 
 .. py:module:: toy_crypto.utils
     :synopsis: Various utilities
@@ -9,6 +9,20 @@ Utility functions
     This module is imported with:
 
         import toy_crypto.utils
+
+.. caution::
+
+    Many libraries will have a module named `utils`, it is therefore
+    unwise to do anything like
+
+    .. code-block:: python
+
+        # This is unwise
+        from toy_crypto import utils
+
+    as you might later find yourself in trouble not knowing
+    whose `utils` are being referred to.
+
 
 .. currentmodule:: toy_crypto.utils
 
@@ -60,7 +74,7 @@ using bit shifts. I am not sure how Pythonic that leaves things.
 .. autofunction:: nearest_multiple
 
 xor
------
+===========
 
 The :func:`utils.xor` and the class :class:`utils.Xor` provide utilities for xoring strings of bytes together. There is some asymmetry between the two arguments. The ``message`` can be an :py:class:`collections.abc.Iterator` as well as :py:class:`bytes`. The ``pad`` arguement on the other hand, is expected to be :py:class:`bytes` only (in this version.) The ``pad`` argument is will be repeated if it is shorter than the message.
 
@@ -84,7 +98,7 @@ b'Attack at dusk!'
 
 
 Encodings for the RSA 129 challenge
--------------------------------------
+===================================
 
 Martin :cite:authors:`Gardner77:RSA` first reported the Rivest, Shamir, and Adleman (RSA) in :cite:year:`Gardner77:RSA`.
 The examples and challenge described in it used an encoding scheme
@@ -111,6 +125,55 @@ And we will use an example from :cite:p:`Gardner77:RSA`.
 9201900011212000718050511002015001305
 >>> assert Rsa129.decode(encoded) == latin_text
 
-
 .. autoclass:: Rsa129
     :members:
+
+Simple frozen bi-directional mapping
+---------------------------------------
+
+For the :func:`Rsa129.encode` and :func:`Rsa129.decode`,
+as well as for methods in the :class:`toy_crypto.vigenere.Alphabet`,
+I found myself needing to look up the index of a character within a string.
+
+I very recommend that people use the outstanding `bidict library <https://bidict.readthedocs.io/en/main/>`__ library instead of this.
+I include my own, inferior version, simply because I wanted to reduce
+dependencies.
+
+
+>>> from toy_crypto.utils import FrozenBidict
+>>> bi_mapping = FrozenBidict("ABCDEF")
+>>> bi_mapping[2]
+'C'
+>>> bi_mapping.inverse['C']
+2
+
+This also can be initialized with a dictionary as long as the values in the
+the dictionary are hashable.
+
+>>> d = { "eggs": "ok", "bacon": "yummy", "SPAM": "essential"}
+>>> tastes = FrozenBidict(d)
+>>> tastes["bacon"]
+'yummy'
+>>>> tastes.inverse["essential"]
+'SPAM'
+
+The :class:`FrozenBidict` is type parameterized,
+with types representing the forward direction of the mapping, 
+so the annotated versions of the above would be 
+
+..  code-block:: python
+
+    bi_mapping: FrozenBidict[int, str] = FrozenBidict("ABCDEF")
+    tastes: FrozenBidict[str, str] = tastes = FrozenBidict(d)
+
+
+.. autoclass:: FrozenBidict
+    :members:
+
+
+
+
+
+
+
+

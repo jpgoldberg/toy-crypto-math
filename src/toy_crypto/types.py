@@ -6,6 +6,7 @@ They are not carefully thought out.
 This module is probably the least stable of any of these unstable modules.
 """
 
+from dataclasses import dataclass
 from typing import (
     Any,
     NewType,
@@ -56,3 +57,12 @@ def is_byte(val: Any) -> bool:
 @runtime_checkable
 class SupportsBool(Protocol):
     def __bool__(self) -> bool: ...
+
+
+# So that I can start playing with Annotated
+
+
+@dataclass
+class ValueRange:
+    min: float
+    max: float

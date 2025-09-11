@@ -179,15 +179,10 @@ but hopefully what I list here makes some sense.
 
 .. autotypevar:: K
 
-.. type:: KeyGenerator
-    :canonical: Callable[[], K]
+.. autodata:: KeyGenerator
 
-    A parameterized type alias for the key generation function.
+.. autodata:: Cryptor
 
-.. type:: Cryptor
-    :canonical: Callable[[K, bytes], bytes]
-
-    A parameterized type alias to describe the encryptor/decrptor functions.
 
 
 The class and method organization

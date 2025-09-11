@@ -111,7 +111,7 @@ class TestCryptionCapsOnly:
 class TestCryptionPrintable:
     """Encryption/decryption tests with printable alphabet."""
 
-    abc = vigenere.Alphabet(prebaked="printable")
+    abc = vigenere.Alphabet(pre_baked="printable")
 
     class TVector:
         def __init__(self, key: str, ptext: str, ctext: str) -> None:

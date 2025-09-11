@@ -93,12 +93,17 @@ The :class:`Alphebet` class
 ------------------------------
 
 .. autoclass:: Alphabet
+    :class-doc-from: init
     :members:
 
 Cryptanalysis tools
 ----------------------
 
 Some tools (currently just one, but more may be coming) to assist in breaking Vigenère.
+
+.. autodata:: BitSimilarity
+
+.. autoclass:: SimilarityScores
 
 At the moment, I am choosing not to include statistical analyses, as I want to minimize package dependencies and not importing `scipy.stats <https://docs.scipy.org/doc/scipy/reference/stats.html>`__. Thus functions here are very statistically naïve.
 

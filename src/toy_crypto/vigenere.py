@@ -1,7 +1,7 @@
 from collections import UserDict
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from random import sample
-from typing import Any, Optional, TypeAlias
+from typing import Any, Optional, TypeAlias, Annotated
 from itertools import combinations
 
 try:
@@ -10,25 +10,20 @@ except ImportError:
     from typing_extensions import deprecated
 from toy_crypto.bit_utils import hamming_distance
 from toy_crypto.utils import FrozenBidict
+from .types import ValueRange
 
 Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""
 
 
 class Alphabet:
-    """An alphabet.
+    """Alphabet to be used for :class:`Cipher`."""
 
-    This does not check if the alphabet is sensible. In particular, you may get
-    very peculiar results if the alphabet contains duplicate elements.
-
-    Instances of this class are conventionally immutable.
-    """
-
-    CAPS_ONLY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    CAPS_ONLY: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     """'A' through 'Z' in order."""
 
     # Printable 7 bit ASCI with space but excluding backslash. Shuffled.
-    PRINTABLE = r"""JDi-Km9247oBEctS%Isxz{<;=W^fL,[Y3Mgd6HV(kR8:_CF"*')>|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&ru5Q"""
+    PRINTABLE: str = r"""JDi-Km9247oBEctS%Isxz{<;=W^fL,[Y3Mgd6HV(kR8:_CF"*')>|#~Xay!]N+1vnqTl/}j$A.@0b ZGe`UPhp?Ow&ru5Q"""
     """
     Printable 7-bit ASCII in a fixed scrambled order.
 
@@ -36,28 +31,49 @@ class Alphabet:
     and the scrambled order is hardcoded.
      """
 
-    DEFAULT = CAPS_ONLY
+    DEFAULT: str = CAPS_ONLY
+    """Default alphabet to use."""
+
+    _pre_baked: Mapping[str, str] = {
+        "default": DEFAULT,
+        "caps": CAPS_ONLY,
+        "printable": PRINTABLE,
+    }
+
+    PREBAKED: Sequence[str] = list(_pre_baked.keys())
+    """Names of pre-baked alphabets"""
+
     """CAPS_ONLY is the default."""
 
     def __init__(
         self,
         alphabet: Optional[str] = None,
-        prebaked: Optional[str] = None,
+        pre_baked: Optional[str] = None,
     ):
-        """This does not check if the alphabet is sensible. In particular, you
-        may get  very peculiar results if the alphabet contains duplicate
-        elements.
+        """
+        :param alphabet:
+            Sequence of characters to be used to construct alphabet.
+        :param pre_baked:
+            Name of pre_baked (hardcoded) alphabets to use.
+
+        :raises ValueError: if both alphabet and pre_baked are used.
+
+        .. warning::
+
+            This does not check if the alphabet is sensible. In particular, you
+            may get  very peculiar results if the alphabet contains duplicate
+            elements.
         """
 
-        match (alphabet, prebaked):
-            case (None, None) | (None, "default"):
-                abc = self.DEFAULT
-            case (None, "caps"):
-                abc = self.CAPS_ONLY
-            case (None, "printable"):
-                abc = self.PRINTABLE
+        match (alphabet, pre_baked):
+            case (None, None):
+                abc = self._pre_baked["default"]
             case (None, _):
-                raise ValueError("Unknown pre-baked alphabet")
+                assert pre_baked is not None
+                try:
+                    abc = self._pre_baked[pre_baked]
+                except KeyError:
+                    raise ValueError("Unknown pre-baked alphabet name")
             case (_, None):
                 assert alphabet is not None
                 abc = alphabet
@@ -208,7 +224,7 @@ class Cipher:
         return self.crypt(ciphertext, mode="decrypt")
 
 
-BitSimilarity = float
+BitSimilarity: TypeAlias = Annotated[float, ValueRange(-4.0, 4.0)]
 """A float in [-4.0, 4.0] the bit similarity per byte.
 -4 indicates that all bits are different.
 +4 indicates that all bits are the same.
@@ -216,7 +232,7 @@ BitSimilarity = float
 
 
 class SimilarityScores(UserDict[int, list[BitSimilarity]]):
-    """A dictionary of keysize : list[BitSimilarity]."""
+    """A dictionary of keysize : list[:class:`BitSimilarity`]."""
 
     def __init__(self) -> None:
         self.data: dict[int, list[BitSimilarity]] = {}

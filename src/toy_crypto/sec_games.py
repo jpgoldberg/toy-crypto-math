@@ -2,7 +2,7 @@ from collections.abc import Callable, KeysView, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 import secrets
-from typing import Any, Generic, Optional, TypeVar, cast, Protocol
+from typing import Any, Generic, Optional, TypeAlias, TypeVar, cast, Protocol
 from functools import wraps
 from toy_crypto.types import SupportsBool
 from toy_crypto.utils import hash_bytes
@@ -10,10 +10,10 @@ from toy_crypto.utils import hash_bytes
 K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
 
-type KeyGenerator[K] = Callable[[], K]
+KeyGenerator: TypeAlias = Callable[[], K]
 """To describe key generation functions"""
 
-type Cryptor[K] = Callable[[K, bytes], bytes]
+Cryptor: TypeAlias = Callable[[K, bytes], bytes]
 """To describe encryptor/decryptor functions."""
 
 

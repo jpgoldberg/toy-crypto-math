@@ -2,14 +2,16 @@
 
 from collections.abc import (
     Hashable,
+    ItemsView,
     Iterator,
+    KeysView,
     Mapping,
     Sequence,
 )
 import itertools
 from hashlib import blake2b
 from base64 import a85encode
-from typing import Self
+from typing import Self, ValuesView
 import math
 from toy_crypto.types import Byte
 
@@ -17,21 +19,18 @@ from toy_crypto.types import Byte
 def digit_count(n: int, base: int = 10) -> int:
     """returns the number of digits (base b) of integer n.
 
-    :raises ValueError: if base < 2
-    :raises TypeError: if n is not an integer
-
+    :raises ValueError: if base < 1
     """
-
-    if base < 2:
-        raise ValueError("base must be at least 2")
-
-    if not isinstance(n, int):
-        raise TypeError("n must be an integer")
+    if base < 1:
+        raise ValueError("base must be at least 1")
 
     n = abs(n)
 
-    # Handling this case separately seems better than trying
-    # to simulate a do-while in Python.
+    if base == 1:
+        return n
+    if base == 2:
+        return n.bit_length()
+
     if n == 0:
         return 1
 
@@ -94,24 +93,39 @@ class FrozenBidict[K: Hashable | int, V: Hashable]:
         If s contains duplicate values, the behavior of the
         inverse map is undefined.
         """
-        self.data: Mapping[K, V]
-        self._inverse: Mapping[V, K]
+        self._fwd: Mapping[K, V]
+        self._inv: Mapping[V, K]
         if isinstance(s, Mapping):
-            self.data = {k: v for k, v in s.items()}
+            self._fwd = {k: v for k, v in s.items()}
         elif isinstance(s, Sequence):
-            self.data = {k: v for k, v in enumerate(s)}  # type: ignore[misc]
+            self._fwd = {k: v for k, v in enumerate(s)}  # type: ignore[misc]
         else:
             raise TypeError
 
-        self._inverse = {v: k for k, v in self.data.items()}
+        self._inv = {v: k for k, v in self._fwd.items()}
 
     def __getitem__(self, k: K) -> V:
-        return self.data[k]
+        return self._fwd[k]
+
+    def keys(self) -> KeysView[K]:
+        return self._fwd.keys()
+
+    def values(self) -> ValuesView[V]:
+        return self._fwd.values()
+
+    def items(self) -> ItemsView[K, V]:
+        return self._fwd.items()
+
+    def __len__(self) -> int:
+        return len(self._fwd)
+
+    def get(self, key: K, default: object = None) -> object:
+        return self._fwd.get(key, default=default)
 
     @property
     def inverse(self) -> Mapping[V, K]:
         """The inverse map."""
-        return self._inverse
+        return self._inv
 
 
 class Rsa129:

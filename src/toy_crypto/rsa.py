@@ -3,7 +3,7 @@ import hashlib
 from hmac import compare_digest
 import math
 import secrets
-from typing import Callable
+from typing import Callable, TypeAlias
 from toy_crypto import utils
 from toy_crypto.nt import lcm, modinv, probably_prime, gcd
 
@@ -25,11 +25,20 @@ class DecryptionError(Exception):
     """
 
 
-type HashFunc = Callable[[bytes], hashlib._Hash]
+HashFunc: TypeAlias = Callable[
+    [bytes],
+    hashlib._hashlib.HASH,  # type: ignore[name-defined,attr-defined]
+]
 """Type for hashlib style hash function."""
 
-type MgfFunc = Callable[[bytes, int, str], bytes]
-"""Type for RFC8017 Mask Generation Function."""
+MgfFunc: TypeAlias = Callable[[bytes, int, str], bytes]
+"""Type for RFC8017 Mask Generation Function.
+
+.. caution::
+
+    This depends on undocumented features of hashlib,
+    and so may break at any time in the future.
+"""
 
 
 class Oaep:

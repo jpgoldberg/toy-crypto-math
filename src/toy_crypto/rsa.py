@@ -29,16 +29,16 @@ HashFunc: TypeAlias = Callable[
     [bytes],
     hashlib._hashlib.HASH,  # type: ignore[name-defined,attr-defined]
 ]
-"""Type for hashlib style hash function."""
-
-MgfFunc: TypeAlias = Callable[[bytes, int, str], bytes]
-"""Type for RFC8017 Mask Generation Function.
+"""Type for hashlib style hash function.
 
 .. caution::
 
     This depends on undocumented features of hashlib,
     and so may break at any time in the future.
 """
+
+MgfFunc: TypeAlias = Callable[[bytes, int, str], bytes]
+"""Type for RFC8017 Mask Generation Function."""
 
 
 class Oaep:

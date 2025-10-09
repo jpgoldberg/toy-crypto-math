@@ -14,7 +14,7 @@ def _pbirthday_exact(
     n: types.PositiveInt, classes: types.PositiveInt, coincident: int
 ) -> types.Prob:
     # use notation  from Diconis and Mosteller 1969
-    c = classes  # classes
+    c = classes
     k = coincident
 
     if k < 2:
@@ -94,14 +94,14 @@ def P(
 
 
 def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
-    """Returns minimum number n to get a probability of p for c classes.
+    """Returns minimum number n to get prob for classes.
 
-    :raises ValueError: if :data:`prob` is less than 0 or greater than 1.
-    :raises ValueError: if :data:`classes` is less than 1.
-    :raises ValueError: if :data:`coincident` is less than 1.
+    :raises ValueError: if ``prob`` is less than 0 or greater than 1.
+    :raises ValueError: if ``classes`` is less than 1.
+    :raises ValueError: if ``coincident`` is less than 1.
     """
 
-    if not types.is_prob(prob):
+    if not (0.0 <= prob <= 1.0):
         raise ValueError(f"{prob} is not a valid probability")
 
     if classes < 1:

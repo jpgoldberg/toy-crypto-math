@@ -2,4 +2,4 @@
 #
 # SPDX-License-Identifier: MIT
 
-# This __init__.py intentially left blank
+# This __init__.py intentionally left blank

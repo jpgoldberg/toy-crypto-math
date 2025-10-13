@@ -1,2 +1,4 @@
 ## Follow pep8 style guide
 line-length = 79
+
+extend-exclude = ["tests/resources/wycheproof/**"]

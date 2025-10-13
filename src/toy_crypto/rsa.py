@@ -2,10 +2,11 @@ from dataclasses import dataclass
 import hashlib
 from hmac import compare_digest
 import math
+from math import lcm, gcd
 import secrets
 from typing import Callable, TypeAlias
 from toy_crypto import utils
-from toy_crypto.nt import lcm, modinv, probably_prime, gcd
+from toy_crypto.nt import modinv, probably_prime
 
 _DEFAULT_E = 65537
 

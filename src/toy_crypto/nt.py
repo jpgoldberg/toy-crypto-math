@@ -8,17 +8,27 @@ from collections import UserList
 from collections.abc import Iterator, Iterable
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
+try:
+    from warnings import deprecated
+except ImportError:
+    from typing_extensions import deprecated
+
 import primefac
 
 from . import rand
-
 from . import types
+from .utils import export
+
+__all__: list[str] = []
 
 
 Modulus = NewType("Modulus", int)
 """type Modulus is an int greater than 1"""
 
+__all__.append("Modulus")
 
+
+@export
 def is_modulus(n: Any) -> TypeGuard[Modulus]:
     if not isinstance(n, int):
         return False
@@ -29,11 +39,13 @@ def is_modulus(n: Any) -> TypeGuard[Modulus]:
     return True
 
 
+@export
 def isprime(n: int) -> bool:
     """False if composite; True if very probably prime."""
     return primefac.isprime(n)
 
 
+@deprecated("Use math.isqrt instead")
 def isqrt(n: int) -> int:
     """returns the greatest r such that r * r =< n"""
     if n < 0:
@@ -41,6 +53,7 @@ def isqrt(n: int) -> int:
     return math.isqrt(n)
 
 
+@export
 def modinv(a: int, m: int) -> int:
     """
     Returns b such that :math:`ab \\equiv 1 \\pmod m`.
@@ -52,6 +65,7 @@ def modinv(a: int, m: int) -> int:
     return pow(a, -1, m)
 
 
+@export
 class FactorList(UserList[tuple[int, int]]):
     """
     A FactorList is an list of (prime, exponent) tuples.
@@ -223,6 +237,7 @@ class FactorList(UserList[tuple[int, int]]):
         return FactorList([(p, n * e) for p, e in self.data])
 
 
+@export
 def factor(n: int, ith: int = 0) -> FactorList:
     """
     Returns list (prime, exponent) factors of n.
@@ -236,11 +251,14 @@ def factor(n: int, ith: int = 0) -> FactorList:
     return FactorList([(p, 1) for p in primes])
 
 
+@deprecated("Use math.gcd instead")
+@export
 def gcd(*integers: int) -> int:
     """Returns greatest common denominator of arguments."""
     return math.gcd(*integers)
 
 
+@export
 def egcd(a: int, b: int) -> tuple[int, int, int]:
     """returns (g, x, y) such that :math:`ax + by = \\gcd(a, b) = g`."""
     x0, x1, y0, y1 = 0, 1, 1, 0
@@ -251,12 +269,14 @@ def egcd(a: int, b: int) -> tuple[int, int, int]:
     return b, x0, y0
 
 
+@export
 def is_square(n: int) -> bool:
     """True iff n is a perfect square."""
 
     return primefac.ispower(n, 2) is not None
 
 
+@export
 def mod_sqrt(a: int, m: int) -> list[int]:
     """Modular square root.
 
@@ -299,6 +319,8 @@ def mod_sqrt(a: int, m: int) -> list[int]:
     return [v, (m - v) % m]
 
 
+@deprecated("Use math.lcm instead")
+@export
 def lcm(*integers: int) -> int:
     """Least common multiple"""
 
@@ -307,6 +329,7 @@ def lcm(*integers: int) -> int:
 
 
 # lifted from https://gist.github.com/Ayrx/5884790
+@export
 def probably_prime(n: int, k: int = 4) -> bool:
     """Returns True if n is prime or if you had really bad luck.
 
@@ -376,6 +399,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
     return True
 
 
+@export
 def fermat_test(n: int, k: int = 8) -> bool:
     """Returns true if n is prime, a Carmichael number, or through bad luck.
 
@@ -433,7 +457,7 @@ def fermat_test(n: int, k: int = 8) -> bool:
 
     return True
 
-
+@export
 def get_prime(
     bit_size: int, k: int = 4, leading_1_bits: int = 1, e: int = 1
 ) -> int:
@@ -494,7 +518,7 @@ def get_prime(
         if n % 2 == 0:
             n += 1
 
-        if gcd(n - 1, e) != 1:
+        if math.gcd(n - 1, e) != 1:
             continue
 
         if probably_prime(n, k):

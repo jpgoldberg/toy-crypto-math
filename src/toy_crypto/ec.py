@@ -1,11 +1,9 @@
 """Simple elliptic curve groups."""
 
-import sys
-
-if sys.version_info < (3, 11):
-    raise Exception("Requires python 3.11")
 from typing import Optional, Self
 from functools import cached_property
+
+from .utils import export
 
 """
 Until some of the self-type issues with mypy are better sorted out,
@@ -18,6 +16,7 @@ from toy_crypto.nt import Modulus as Modulus  # noqa: E402
 from toy_crypto.nt import is_modulus, mod_sqrt  # noqa: E402
 from toy_crypto.bit_utils import bits  # noqa: E402
 
+__all__: list[str] = []  # Will be added to along the way
 
 """
 This is more complicated because I unwisely attempted to make this work both
@@ -26,6 +25,7 @@ defined over integer fields.
 """
 
 
+@export
 class Curve:
     def __init__(self, a: int, b: int, p: int) -> None:
         """Define a curve of the form :math:`y^2 = x^3 + ax + b \\pmod p`."""
@@ -108,6 +108,7 @@ class Curve:
         return Point(x, y, self)
 
 
+@export
 class Point:
     """Point on elliptic curve over finite field."""
 

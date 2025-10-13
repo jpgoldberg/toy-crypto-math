@@ -36,6 +36,10 @@ else:
             raise NotImplementedError("bitarray is not installed")
 
 
+# This will be appended to after each class definition
+__all__: list[str] = []
+
+
 class Sievish(ABC):
     """Methods available for all Sieve-like classes.
 
@@ -129,6 +133,9 @@ class Sievish(ABC):
         :raises ValueError: if primes is empty
         """
         ...
+
+
+__all__.append("Sievish")
 
 
 class BaSieve(Sievish):
@@ -300,6 +307,9 @@ class BaSieve(Sievish):
     from_list.__doc__ = Sievish.from_list.__doc__
 
 
+__all__.append("BaSieve")
+
+
 class SetSieve(Sievish):
     """Sieve of Eratosthenes using a native python set
 
@@ -468,6 +478,9 @@ class SetSieve(Sievish):
     from_list.__doc__ = Sievish.from_list.__doc__
 
 
+__all__.append("SetSieve")
+
+
 class IntSieve(Sievish):
     """A pure Python (using a large int) Sieve of Eratosthenes."""
 
@@ -581,6 +594,8 @@ class IntSieve(Sievish):
     from_list.__doc__ = Sievish.from_list.__doc__
 
 
+__all__.append("IntSieve")
+
 # https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
 Sieve: type[Sievish]
 """Sieve will be an alias for BaSieve if bitarray is available,
@@ -590,5 +605,6 @@ if _has_bitarry:
     Sieve = BaSieve
 else:
     Sieve = SetSieve
+__all__.append("Sieve")
 
 Sievish.register(Sieve)

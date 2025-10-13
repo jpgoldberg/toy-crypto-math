@@ -11,7 +11,8 @@ from collections.abc import (
 import itertools
 from hashlib import blake2b
 from base64 import a85encode
-from typing import Self, ValuesView
+import sys
+from typing import Protocol, Self, ValuesView, runtime_checkable
 import math
 from toy_crypto.types import Byte
 
@@ -268,3 +269,28 @@ def nearest_multiple(n: int, factor: int, direction: str = "round") -> int:
             return sign * prev
         case _:
             raise ValueError(f"Invalid direction: '{direction}'")
+
+
+@runtime_checkable
+class SuppprtsName(Protocol):
+    """Objects with '__name__1'"""
+
+    __name__: str
+
+
+def export[F: SuppprtsName](fn: F) -> F:
+    """Decorator to mark class or function as exported from module
+
+    See https://brandonrozek.com/blog/exportpydecorator/
+    """
+
+    if isinstance(fn, SuppprtsName):
+        name = fn.__name__
+    else:
+        raise TypeError("Please respect the type annotation")
+    mod = sys.modules[fn.__module__]
+    if hasattr(mod, "__all__"):
+        mod.__all__.append(name)
+    else:
+        setattr(mod, "__all__", [name])
+    return fn

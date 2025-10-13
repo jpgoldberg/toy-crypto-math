@@ -373,3 +373,7 @@ class TestRedundent:
 
         for n, expected in vectors:
             assert OLF(n) == expected
+
+
+# Nothing here should be used
+__all__: list[str] = []

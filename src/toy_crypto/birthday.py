@@ -1,13 +1,19 @@
 import math
 
 from . import types
+from .utils import export
 
+__all__: list[str] = []  # will be appended to with each definition
 
 MAX_QBIRTHDAY_P = 1.0 - (10**-8)
 """Maximum probability that Q can handle."""
 
+
 EXACT_THRESHOLD = 1000
 """With auto mode, the threshold for using exact or approximate modes."""
+
+__all__.append("MAX_QBIRTHDAY_P")
+__all__.append("EXACT_THRESHOLD")
 
 
 def _pbirthday_exact(
@@ -47,8 +53,6 @@ def _pbirthday_approx(
     if k < 2:
         return types.Prob(1.0)
 
-    # p = 1.0 - math.exp(-(n * n) / (2 * d))
-
     # lifted from R src/library/stats/R/birthday.R
     LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
     lxx = k * math.log(LHS) - (k - 1) * math.log(c) - math.lgamma(k + 1)
@@ -58,6 +62,7 @@ def _pbirthday_approx(
     return p
 
 
+@export
 def P(
     n: int, classes: int = 365, coincident: int = 2, mode: str = "auto"
 ) -> types.Prob:
@@ -93,6 +98,7 @@ def P(
             raise ValueError('mode must be "auto", "exact", or  "approximate"')
 
 
+@export
 def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     """Returns minimum number n to get prob for classes.
 

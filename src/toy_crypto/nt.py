@@ -457,6 +457,7 @@ def fermat_test(n: int, k: int = 8) -> bool:
 
     return True
 
+
 @export
 def get_prime(
     bit_size: int, k: int = 4, leading_1_bits: int = 1, e: int = 1

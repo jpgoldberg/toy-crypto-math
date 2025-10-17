@@ -1733,8 +1733,10 @@ c-deps = [
 dev = [
     { name = "bitarray" },
     { name = "jsonschema" },
+    { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-subtests" },
+    { name = "ruff" },
     { name = "types-jsonschema" },
 ]
 docs = [
@@ -1748,9 +1750,7 @@ docs = [
     { name = "sphinxcontrib-bibtex" },
 ]
 lint = [
-    { name = "mypy" },
     { name = "polars" },
-    { name = "ruff" },
     { name = "sphinx" },
     { name = "types-docutils" },
     { name = "types-seaborn" },
@@ -1776,8 +1776,10 @@ provides-extras = ["c-deps"]
 dev = [
     { name = "bitarray", specifier = ">=3.4.2" },
     { name = "jsonschema", specifier = ">=4.25.0" },
+    { name = "mypy", specifier = ">=1.15" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "pytest-subtests", specifier = ">=0.14.2" },
+    { name = "ruff", specifier = ">=0.11.13" },
     { name = "types-jsonschema", specifier = ">=4.25.0.20250809" },
 ]
 docs = [
@@ -1791,9 +1793,7 @@ docs = [
     { name = "sphinxcontrib-bibtex", specifier = ">=2.6.4" },
 ]
 lint = [
-    { name = "mypy", specifier = ">=1.15" },
     { name = "polars", specifier = ">=1.30" },
-    { name = "ruff", specifier = ">=0.11.13" },
     { name = "sphinx", specifier = ">=8.2.3" },
     { name = "types-docutils", specifier = ">=0.21.0.20241128" },
     { name = "types-seaborn", specifier = ">=0.13.2.20250111" },

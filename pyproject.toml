@@ -119,6 +119,8 @@ filterwarnings =  [
 
 [dependency-groups]
 dev = [
+    "mypy >= 1.15",
+    "ruff >= 0.11.13",
     "pytest >= 8.3",
     "bitarray>=3.4.2",
     "jsonschema>=4.25.0",
@@ -126,8 +128,6 @@ dev = [
     "pytest-subtests>=0.14.2",
 ]
 lint = [
-    "mypy >= 1.15",
-    "ruff >= 0.11.13",
     "types-docutils>=0.21.0.20241128",
     "types-seaborn>=0.13.2.20250111",
     "vermin>=1.6.0",

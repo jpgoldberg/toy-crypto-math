@@ -1,3 +1,4 @@
+import math
 import sys
 from typing import NamedTuple
 
@@ -159,6 +160,7 @@ class TestMath:
         for n, is_prime in vectors:
             assert nt.isprime(n) == is_prime
 
+    @pytest.mark.filterwarnings("ignore:Use math\\.[\\w]+ instead")
     def test_gcd(self) -> None:
         vectors = [
             ((5, 50), 5),
@@ -190,7 +192,7 @@ class TestMath:
 
         for a, b in vectors:
             g, x, y = nt.egcd(a, b)
-            assert g == nt.gcd(a, b)
+            assert g == math.gcd(a, b)
             assert a * x + b * y == g
 
     def test_mod_sqrt(self) -> None:
@@ -235,6 +237,7 @@ class TestMath:
         assert q_inv > 0
         assert q_inv < p
 
+    @pytest.mark.filterwarnings("ignore:Use math\\.[\\w]+ instead")
     def test_isqrt(self) -> None:
         p = 868112830765445632873217196988651
         vectors = [
@@ -348,7 +351,7 @@ class TestGenPrime:
         for size in sizes:
             for _trial in range(trials):
                 p = nt.get_prime(size, leading_1_bits=0, e=e)
-                assert nt.gcd(e, p - 1) == 1
+                assert math.gcd(e, p - 1) == 1
 
 
 if __name__ == "__main__":

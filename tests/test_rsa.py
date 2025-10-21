@@ -5,10 +5,11 @@ import pytest
 
 from collections import namedtuple
 from typing import Optional
+from math import lcm, gcd
 
 
 from toy_crypto import rsa, wycheproof
-from toy_crypto.nt import lcm, modinv, gcd
+from toy_crypto.nt import modinv
 from toy_crypto.utils import Rsa129
 
 from . import WP_DATA

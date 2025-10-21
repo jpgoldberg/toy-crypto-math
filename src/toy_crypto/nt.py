@@ -342,8 +342,13 @@ def probably_prime(n: int, k: int = 4) -> bool:
     If you need a real primality check, use sympy.isprime() instead.
     """
 
+    # A few notational things to help make logic of code more readable
+    PRIME = True
+    PROBABLY_PRIME = True
+    COMPOSITE = False
+
     if n < 2:
-        return False
+        return COMPOSITE
 
     if k < 1:
         raise ValueError("k must be greater than 0")
@@ -354,14 +359,19 @@ def probably_prime(n: int, k: int = 4) -> bool:
     small_primes = (2, 3, 5, 7, 11, 13)
     largest_small = small_primes[-1]
     if n in small_primes:
-        return True
+        return PRIME
     if n < largest_small:
-        return False
+        return COMPOSITE
     for p in small_primes:
         if n % p == 0:
-            return False
+            return COMPOSITE
     if n <= largest_small**2:
-        return True
+        return PRIME
+
+    # If we reach this point then n
+    # - is not in small primes,
+    # - is not divisible by a small prime
+    # - is greater than the square of the largest small prime
 
     # Set up generator for k trial bases
     bases: Generator[int, None, None]
@@ -377,26 +387,30 @@ def probably_prime(n: int, k: int = 4) -> bool:
     while s % 2 == 0:
         r += 1
         s //= 2
+        # This leaves us with 2^r * s = n - 1
 
     # Now we use FLT for the reduced s, but still mod n
     for a in bases:
         x = pow(a, s, n)
         if x == 1 or x == n - 1:
-            # This a is good. Call the next witness!
+            # Consistent with prime. Call the next potential witness!
             continue
 
         # square x for each time we reduced s for a passing x
+        # We are undoing the r, s reduction here.
+        # A more efficient implementation would have done the test
+        # in here during that reduction.
         for _ in range(r - 1):
             x = pow(x, 2, n)
             if x == n - 1:
-                # Our _a_ really was good, once we tested squares of x
+                # a is consistent with prime, once we tested squares of x
                 break
         else:
-            # We've exited the loop without finding _a_ to be good
-            return False
+            # a is a witness to n being composite
+            return COMPOSITE
 
-    # We've run all k trials, without any a telling us n is composite
-    return True
+    # We've called k witnesses and none have said n is composite
+    return PROBABLY_PRIME
 
 
 @export

@@ -44,7 +44,8 @@ class TestAssumptions(unittest.TestCase):
         WP_ROOT.glob("testvectors_v1/*_test.json")
     )
 
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
+    @pytest.mark.xfail(reason="data sanity not guaranteed", strict=False)
     def test_data(self) -> None:
         for file in self.test_files:
             file_name = file.name
@@ -70,7 +71,7 @@ class TestAssumptions(unittest.TestCase):
                         f"weird result ({tc.result}) in {stem}"
                     )
 
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_formats(self) -> None:
         # Documented formats
         # https://github.com/C2SP/wycheproof/blob/main/doc/formats.md#data-types

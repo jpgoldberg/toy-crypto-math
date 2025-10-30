@@ -255,7 +255,7 @@ class TestMath:
 
 
 class TestPrimeTesting(unittest.TestCase):
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_probably_prime(self) -> None:
         try:
             data = WP_DATA.load("primality_test.json")
@@ -282,7 +282,7 @@ class TestPrimeTesting(unittest.TestCase):
                     else:
                         assert not result, f"False positive: {case}"
 
-    @pytest.mark.skip(reason="Probabilistic")
+    @pytest.mark.statistical
     def test_worst_cases(self) -> None:
         try:
             data = WP_DATA.load("primality_test.json")
@@ -312,7 +312,7 @@ class TestPrimeTesting(unittest.TestCase):
 
 
 class TestGenPrime:
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_sizes(self) -> None:
         sizes = [8, 16, 24, 32, 1028]
         trials = 5
@@ -322,7 +322,7 @@ class TestGenPrime:
                 p = nt.get_prime(size, leading_1_bits=0, e=1)
                 assert p.bit_length() <= size
 
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_1prefix(self) -> None:
         sizes = [8, 16, 24, 32, 1028]
         trials = 5
@@ -332,7 +332,7 @@ class TestGenPrime:
                 p = nt.get_prime(size, leading_1_bits=1, e=1)
                 assert p.bit_length() == size
 
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_2prefix(self) -> None:
         sizes = [8, 16, 24, 32, 1028]
         trials = 5

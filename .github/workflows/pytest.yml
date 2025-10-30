@@ -35,4 +35,4 @@ jobs:
         cache-dependency-glob: "uv.lock"
    
     - name: Test with pytest
-      run: uv run pytest .
+      run: uv run pytest -m  "not statistical and not slow" .

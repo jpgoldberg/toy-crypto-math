@@ -490,7 +490,7 @@ class TestES:
 
 
 class TestKeyGen:
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_size(self) -> None:
         # Note that a single trial will take several seconds
         trials = 4
@@ -512,7 +512,7 @@ class TestKeyGen:
 
                 assert N.bit_length() == size
 
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_fips186_4_A1_3(self) -> None:
         # Each trial can take several seconds, particularly at larger sizes
         trials = 5
@@ -558,7 +558,7 @@ class TestKeyGen:
                 n = p * q
                 assert n.bit_length() == size
 
-    @pytest.mark.skip(reason="Slow")
+    @pytest.mark.slow
     def test_pq_diff(self) -> None:
         """p and q can't be too close to each other."""
 

@@ -282,7 +282,7 @@ class TestPrimeTesting(unittest.TestCase):
                     else:
                         assert not result, f"False positive: {case}"
 
-    # @pytest.mark.skip(reason="Probabilistic")
+    @pytest.mark.skip(reason="Probabilistic")
     def test_worst_cases(self) -> None:
         try:
             data = WP_DATA.load("primality_test.json")

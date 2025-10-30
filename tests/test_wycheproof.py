@@ -81,6 +81,7 @@ class TestAssumptions(unittest.TestCase):
 
         # Until https://github.com/C2SP/wycheproof/issues/165 is resolved
         known.append("Hex")
+        known.append("BASE64URL")
         for file in self.test_files:
             with self.subTest(file.stem):
                 data = LOADER.load(file.name)

@@ -5,7 +5,7 @@
 import math
 import secrets
 from collections import UserList
-from collections.abc import Iterator, Iterable
+from collections.abc import Iterator, Iterable, Sequence
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 try:
@@ -328,6 +328,26 @@ def lcm(*integers: int) -> int:
     return math.lcm(*integers)
 
 
+def _small_primality(
+    n: int, primes: Sequence[int] = (2, 3, 5, 7, 11, 13, 17, 19)
+) -> bool | None:
+    """Testing small n.
+
+    Returns True if prime, False if composite, None if unknown
+    """
+    largest_small = primes[-1]
+    if n in primes:
+        return True
+    if n < largest_small:
+        return False
+    if any((n % p == 0 for p in primes)):
+        return False
+    if n <= largest_small**2:
+        return True
+
+    return None
+
+
 # lifted from https://gist.github.com/Ayrx/5884790
 @export
 def probably_prime(n: int, k: int = 4) -> bool:
@@ -341,32 +361,21 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
     If you need a real primality check, use sympy.isprime() instead.
     """
-
     # A few notational things to help make logic of code more readable
     PRIME = True
     PROBABLY_PRIME = True
     COMPOSITE = False
 
-    if n < 2:
-        return COMPOSITE
-
     if k < 1:
         raise ValueError("k must be greater than 0")
 
-    # Let's deal with some very low primes
-    # I don't want to do Fermat for tiny numbers
-    # so we do trial division for primes <= 13
-    small_primes = (2, 3, 5, 7, 11, 13)
-    largest_small = small_primes[-1]
-    if n in small_primes:
-        return PRIME
-    if n < largest_small:
-        return COMPOSITE
-    for p in small_primes:
-        if n % p == 0:
+    match _small_primality(n):
+        case True:
+            return PRIME
+        case False:
             return COMPOSITE
-    if n <= largest_small**2:
-        return PRIME
+        case _:
+            pass
 
     # If we reach this point then n
     # - is not in small primes,
@@ -396,10 +405,9 @@ def probably_prime(n: int, k: int = 4) -> bool:
             # Consistent with prime. Call the next potential witness!
             continue
 
-        # square x for each time we reduced s for a passing x
-        # We are undoing the r, s reduction here.
-        # A more efficient implementation would have done the test
-        # in here during that reduction.
+        # If any of the successive squares of x is n - 1 (mod n)
+        # then primality passes is base a,
+        # else a tells us that n is composite
         for _ in range(r - 1):
             x = pow(x, 2, n)
             if x == n - 1:
@@ -433,22 +441,13 @@ def fermat_test(n: int, k: int = 8) -> bool:
         Its only advantage is that it is easier to understand.
     """
 
-    if n < 2:
-        return False
-
-    # I don't want to do Fermat for tiny numbers
-    # so we do trial division for primes <= 13
-    small_primes = (2, 3, 5, 7, 11, 13)
-    largest_small = small_primes[-1]
-    if n in small_primes:
-        return True
-    if n < largest_small:
-        return False
-    for p in small_primes:
-        if n % p == 0:
+    match _small_primality(n):
+        case True:
+            return True
+        case False:
             return False
-    if n <= largest_small**2:
-        return True
+        case _:
+            pass
 
     # Now we are ready for Fermat's test
     if k < 1:
@@ -468,7 +467,6 @@ def fermat_test(n: int, k: int = 8) -> bool:
     for a in bases:
         if pow(a, n - 1, n) != 1:
             return False
-
     return True
 
 

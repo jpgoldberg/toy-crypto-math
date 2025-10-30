@@ -274,7 +274,7 @@ class TestPrimeTesting(unittest.TestCase):
                     assert isinstance(value, int)
 
                     try:
-                        result = nt.probably_prime(value, k=4)
+                        result = nt.probably_prime(value, k=5)
                     except Exception as e:
                         assert False, f"Runtime error in {case}: {e}"
                     if expected:

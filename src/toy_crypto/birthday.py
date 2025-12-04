@@ -36,7 +36,7 @@ def _pbirthday_exact(
 
     p = 1.0 - float(v_dn / v_t)
     if not types.is_prob(p):
-        raise Exception("this should not happen")
+        assert False, f"This should not happen: p = {p}"
     return p
 
 
@@ -58,7 +58,7 @@ def _pbirthday_approx(
     lxx = k * math.log(LHS) - (k - 1) * math.log(c) - math.lgamma(k + 1)
     p = -math.expm1(-math.exp(lxx))
     if not types.is_prob(p):
-        raise Exception("this should not happen")
+        assert False, f"this should not happen: p = {p}"
     return p
 
 

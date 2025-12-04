@@ -12,9 +12,9 @@ from pathlib import Path
 import json
 
 try:
-    from warnings import deprecated
+    from warnings import deprecated  # novermin
 except ImportError:
-    from typing_extensions import deprecated
+    from typing_extensions import deprecated  # novermin
 
 from jsonschema import validators
 from referencing import Resource, Registry

@@ -113,7 +113,6 @@ markers = [
     "statistical: marks tests of a statistical nature (deselect with '-m \"not statistical\"')",
 ]
 
-
 [dependency-groups]
 dev = [
     "mypy >= 1.15",

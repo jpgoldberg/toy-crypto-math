@@ -5,9 +5,9 @@ from typing import Any, Optional, TypeAlias, Annotated
 from itertools import combinations
 
 try:
-    from warnings import deprecated
+    from warnings import deprecated  # novermin
 except ImportError:
-    from typing_extensions import deprecated
+    from typing_extensions import deprecated  # novermin
 from toy_crypto.bit_utils import hamming_distance
 from toy_crypto.utils import FrozenBidict
 from .types import ValueRange

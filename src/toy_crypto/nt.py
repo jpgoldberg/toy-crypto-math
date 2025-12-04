@@ -9,9 +9,9 @@ from collections.abc import Iterator, Iterable, Sequence
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 try:
-    from warnings import deprecated
+    from warnings import deprecated  # novermin
 except ImportError:
-    from typing_extensions import deprecated
+    from typing_extensions import deprecated  # novermin
 
 import primefac
 

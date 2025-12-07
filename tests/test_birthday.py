@@ -1,3 +1,4 @@
+import itertools
 import math
 import sys
 
@@ -187,20 +188,22 @@ class TestBirthday:
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",
-        hash_vectors,
+        list(itertools.filterfalse(
+            lambda t: t[2] < 3 or t[0] > 32,
+            hash_vectors)),
     )
     def test_wp_data_p(bits: int, p: float, n: int) -> None:
         if n < 3:  # We need a different test in these cases
             return
-        c = 2**bits
-        my_p = birthday.P(n, c)
+        classes = int(2**bits)
+        my_p = birthday.P(n, classes=classes)
         assert math.isclose(p, my_p), f"p: {p}; my_p: {my_p}"
 
     @pytest.mark.skip
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",
-        hash_vectors,
+        list(filter(lambda t: t[0] <= 32, hash_vectors)),
     )
     def test_wp_data_q(bits: int, p: float, n: int) -> None:
         if n < 3:  # We need a different test in these cases

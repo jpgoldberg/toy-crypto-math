@@ -1,9 +1,16 @@
 import itertools
 import math
 import sys
+from typing import NamedTuple
 
 import pytest
 from toy_crypto import birthday
+
+
+class HashVector(NamedTuple):
+    bits: int
+    p: float
+    n: int
 
 
 class TestBirthday:
@@ -19,8 +26,49 @@ class TestBirthday:
 
     # data from table in https://en.wikipedia.org/wiki/Birthday_attack
     # tuples are (bits, prob, n)
-    hash_vectors: list[tuple[int, float, int]] = [
-        (16, 1e-17, 2), (16, 1e-14, 2), (16, 1e-11, 2),
+
+    _table_p: list[float] = [
+        1e-18, 1e-15, 1e-12, 1e-9, 1e-6,
+        0.001, 0.01, 0.25, 0.50, 0.75,
+    ]  # fmt: skip
+
+    hash_vectors: list[HashVector] = []
+    hv16 = [
+        HashVector(16, p, int(n))
+        for p, n in zip(_table_p, [2, 2, 2, 2, 2, 11, 36, 190, 300, 430])
+    ]
+    hash_vectors.extend(hv16)
+
+    hv32 = [
+        HashVector(32, p, int(n))
+        for p, n in zip(
+            _table_p, [2, 2, 2, 3, 93, 2900, 9300, 50_000, 77_000, 110_000]
+        )
+    ]
+    hash_vectors.extend(hv32)
+
+    hv64 = [
+        HashVector(64, p, int(n))
+        for p, n in zip(
+            _table_p,
+            [
+                6,
+                190,
+                6100,
+                190_000,
+                6_100_000,
+                1.9e8,
+                6.1e8,
+                3.3e9,
+                5.1e9,
+                7.2e9,
+            ],  # fmt: skip
+        )
+    ]
+    hash_vectors.extend(hv64)
+
+    _ = [
+        (16, 1e-18, 2), (16, 1e-15, 2), (16, 1e-12, 2),
         (16, 1e-08, 2), (16, 1e-05, 2), (16, 0.01, 11),
         (16, 0.1, 36), (16, 0.25, 190), (16, 0.5, 300),
         (16, 0.75, 430), (32, 1e-17, 2), (32, 1e-14, 2),
@@ -188,29 +236,33 @@ class TestBirthday:
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",
-        list(itertools.filterfalse(
-            lambda t: t[2] < 3 or t[0] > 32,
-            hash_vectors)),
+        list(itertools.filterfalse(lambda t: t[2] < 3, hash_vectors)),
     )
     def test_wp_data_p(bits: int, p: float, n: int) -> None:
-        if n < 3:  # We need a different test in these cases
-            return
         classes = int(2**bits)
         my_p = birthday.P(n, classes=classes)
         assert math.isclose(p, my_p), f"p: {p}; my_p: {my_p}"
 
-    @pytest.mark.skip
+    # @pytest.mark.skip
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",
-        list(filter(lambda t: t[0] <= 32, hash_vectors)),
+        hash_vectors,
     )
     def test_wp_data_q(bits: int, p: float, n: int) -> None:
-        if n < 3:  # We need a different test in these cases
-            return
         c = 2**bits
         my_n = birthday.Q(p, c)
         assert math.isclose(n, my_n, rel_tol=0.1), f"n: {n}; my_n: {my_n}"
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "bits, p, n",
+        list(filter(lambda t: t[2] <= 2, hash_vectors)),
+    )
+    def test_wp_data_q2(bits: int, p: float, n: int) -> None:
+        c = 2**bits
+        my_n = birthday.Q(p, c)
+        assert my_n == 2, f"n: {n}; my_n: {my_n}"
 
     def test_k_p(self) -> None:
         expected_p = 0.5

@@ -144,6 +144,8 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     log_n = (term1 + term2 + term3) / k  # adding log x_i is log prod x_i
     n = math.exp(log_n)
     n = math.ceil(n)
+    if n < k:
+        return k
 
     # n is now close to what it should be,
     # but we may need to increase it or decrease it
@@ -152,7 +154,11 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     def pck(n: int) -> types.Prob:
         return P(n, c, coincident=k)
 
-    if pck(n) < p:
+    p_n = pck(n)
+    if math.isclose(p, p_n, rel_tol=0.05):
+        return n
+
+    if p_n < p:
         n += 1
         while pck(n) < p:
             n += 1

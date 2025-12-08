@@ -154,16 +154,11 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     def pck(n: int) -> types.Prob:
         return P(n, c, coincident=k)
 
-    p_n = pck(n)
-    if math.isclose(p, p_n, rel_tol=0.05):
-        return n
-
-    if p_n < p:
+    if pck(n) < p:
         n += 1
         while pck(n) < p:
             n += 1
     elif pck(n - 1) >= p:
-        n -= 1
         while pck(n - 1) >= p:
             n -= 1
 

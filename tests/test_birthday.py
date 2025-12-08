@@ -221,16 +221,15 @@ class TestBirthday:
         n = birthday.Q(p, d)
         assert n == expected
 
-    def test_inverse_365(self) -> None:
+    @staticmethod
+    @pytest.mark.parametrize("n", range(10, 360, 10))
+    def test_inverse_365(n: int) -> None:
         d = 365
-
-        for n in range(10, 360, 10):
-            p = birthday.P(n, d)
-            if p > birthday.MAX_QBIRTHDAY_P:
-                continue
-            n2 = birthday.Q(p, d)
-
-            assert n == n2
+        p = birthday.P(n, d)
+        if p > birthday.MAX_QBIRTHDAY_P:
+            return
+        n2 = birthday.Q(p, d)
+        assert n == n2
 
     @pytest.mark.skip
     @staticmethod

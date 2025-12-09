@@ -147,10 +147,13 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     if n < k:
         return k
 
+    # If n is sufficiently large, we don't further refine it
+    if n > 2**20:
+        return n
+
     # n is now close to what it should be,
     # but we may need to increase it or decrease it
     # until |P(n, c, k) - p| is nearly minimized
-
     def pck(n: int) -> types.Prob:
         return P(n, c, coincident=k)
 

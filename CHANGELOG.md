@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- `birthday.Q` is usable for large n, small p. (Tests had not been running before)
+
 ## 0.5.1 2025-09-01
 
 ### Added

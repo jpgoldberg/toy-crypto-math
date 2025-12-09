@@ -153,7 +153,7 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
 
     # n is now close to what it should be,
     # but we may need to increase it or decrease it
-    # until |P(n, c, k) - p| is nearly minimized
+    # until n is smallest n such that P(n, c, k) >= p
     def pck(n: int) -> types.Prob:
         return P(n, c, coincident=k)
 
@@ -161,8 +161,8 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
         n += 1
         while pck(n) < p:
             n += 1
-    elif pck(n - 1) >= p:
-        while pck(n - 1) >= p:
-            n -= 1
+        return n
+    while pck(n - 1) >= p:
+        n -= 1
 
     return n

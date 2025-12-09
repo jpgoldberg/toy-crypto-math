@@ -147,22 +147,22 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     if n < k:
         return k
 
-    # If n is sufficiently large, we don't further refine it
-    if n > 2**20:
-        return n
-
     # n is now close to what it should be,
     # but we may need to increase it or decrease it
     # until n is smallest n such that P(n, c, k) >= p
+    #
+    # But for large n, we don't try to be exact
+    step = max(1, n // 100_000)
+
     def pck(n: int) -> types.Prob:
         return P(n, c, coincident=k)
 
     if pck(n) < p:
-        n += 1
+        n += step
         while pck(n) < p:
-            n += 1
+            n += step
         return n
-    while pck(n - 1) >= p:
-        n -= 1
+    while pck(n - step) >= p:
+        n -= step
 
     return n

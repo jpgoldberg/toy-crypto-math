@@ -193,7 +193,6 @@ class TestBirthday:
         my_p = birthday.P(n, classes=classes)
         assert math.isclose(p, my_p), f"p: {p}; my_p: {my_p}"
 
-    # @pytest.mark.skip
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",

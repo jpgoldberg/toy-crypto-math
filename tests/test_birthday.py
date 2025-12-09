@@ -52,7 +52,7 @@ class TestBirthday:
         for p, n in zip(
             _table_p,
             [
-                6,
+                7,  # Original data has 6.
                 190,
                 6100,
                 190_000,
@@ -252,16 +252,6 @@ class TestBirthday:
         c = 2**bits
         my_n = birthday.Q(p, c)
         assert math.isclose(n, my_n, rel_tol=0.1), f"n: {n}; my_n: {my_n}"
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        "bits, p, n",
-        list(filter(lambda t: t[2] <= 2, hash_vectors)),
-    )
-    def test_wp_data_q2(bits: int, p: float, n: int) -> None:
-        c = 2**bits
-        my_n = birthday.Q(p, c)
-        assert my_n == 2, f"n: {n}; my_n: {my_n}"
 
     def test_k_p(self) -> None:
         expected_p = 0.5

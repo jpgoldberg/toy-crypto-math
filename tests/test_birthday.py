@@ -127,6 +127,26 @@ class TestBirthday:
     ]
     hash_vectors.extend(hv192)
 
+    hv256 = [
+        HashVector(256, p, int(n))
+        for p, n in zip(
+            _table_p,
+            [
+                4.8e29,
+                1.5e31,
+                4.8e32,
+                1.5e34,
+                4.8e35,
+                1.5e37,
+                4.8e37,
+                2.6e38,
+                4.0e38,
+                5.7e38,
+            ],  # fmt: skip
+        )
+    ]
+    hash_vectors.extend(hv256)
+
     # From table 3 of DM69
     k_p50_c365_vectors = [
         (2, 23), (3, 88), (4, 187), (5, 313),

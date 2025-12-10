@@ -26,13 +26,13 @@ class TestBirthday:
 
     # data from table in https://en.wikipedia.org/wiki/Birthday_attack
     # tuples are (bits, prob, n)
-
     _table_p: list[float] = [
         1e-18, 1e-15, 1e-12, 1e-9, 1e-6,
         0.001, 0.01, 0.25, 0.50, 0.75,
     ]  # fmt: skip
 
     hash_vectors: list[HashVector] = []
+    """Data from Wikipedia Birthday Attack article."""
     hv16 = [
         HashVector(16, p, int(n))
         for p, n in zip(_table_p, [2, 2, 2, 2, 2, 11, 36, 190, 300, 430])
@@ -148,12 +148,15 @@ class TestBirthday:
     ]
     hash_vectors.extend(hv256)
 
-    # From table 3 of DM69
     k_p50_c365_vectors = [
         (2, 23), (3, 88), (4, 187), (5, 313),
         (6, 460), (7, 623), (8, 798), (9, 985),
         (10, 1181), (11, 1385), (12, 1596), (13, 1813),
     ]  # fmt: skip
+    """(k, n) s.t. Q(prob=0.5, classes=365, coincident=k) ==  n.
+
+    From DM69 table 3
+    """
 
     @staticmethod
     @pytest.mark.parametrize(
@@ -224,12 +227,10 @@ class TestBirthday:
         assert calculated_p + wiggle_room >= expected_p
         assert p_below < expected_p + wiggle_room
 
-    def test_k_q(self) -> None:
-        p = 0.5
-        c = 365
-        for k, expected_n in self.k_p50_c365_vectors:
-            calculated_n = birthday.Q(p, c, k)
-            assert math.isclose(calculated_n, expected_n, rel_tol=0.01)
+    @pytest.mark.parametrize("k, expected_n", k_p50_c365_vectors)
+    def test_k_q(self, k: int, expected_n: int) -> None:
+        calculated_n = birthday.Q(0.5, 365, k)
+        assert math.isclose(calculated_n, expected_n, rel_tol=0.01)
 
 
 class TestSpecialCasesP:

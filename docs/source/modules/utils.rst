@@ -135,7 +135,9 @@ For the :func:`Rsa129.encode` and :func:`Rsa129.decode`,
 as well as for methods in the :class:`toy_crypto.vigenere.Alphabet`,
 I found myself needing to look up the index of a character within a string.
 
-I very recommend that people use the outstanding `bidict library <https://bidict.readthedocs.io/en/main/>`__ library instead of this.
+I very strongly recommend that people use the outstanding
+`bidict library <https://bidict.readthedocs.io/en/main/>`__
+library instead of this.
 I include my own, inferior version, simply because I wanted to reduce
 dependencies.
 

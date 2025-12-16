@@ -115,15 +115,15 @@ class Oaep:
     ) -> bytes:
         """Mask generation function.
 
-        Generates a unique mask of length :data:`length` as described in
+        Generates a unique mask of length **length** as described in
         :rfc:`appendix B.2.1 <8017#appendix-B.2.1>` of :rfc:`8017`.
 
         :param seed: This should come from a CSPRNG
         :param length: Length in bytes of the mask to generate.
         :param hash_id: The name hash function in :data:`KNOWN_HASHES`.
 
-        :raises ValueError: if :data:`length` :math:`> 2^{32}` bytes.
-        :raises ValueError: if :data:`hash_id` is unknown.
+        :raises ValueError: if **length** :math:`> 2^{32}` bytes.
+        :raises ValueError: if **hash_id** is unknown.
         """
 
         """
@@ -201,8 +201,8 @@ class Oaep:
         :param n: A non-negative integer
         :param length: Length of returned bytes object
 
-        :raises ValueError: if :data:`n` is negative.
-        :raises ValueError: if :data:`n` cannot fit in :data:`length` bytes
+        :raises ValueError: if **n** is negative.
+        :raises ValueError: if **n** cannot fit in **length** bytes
 
         .. warning::
 
@@ -428,10 +428,8 @@ class PrivateKey:
         """Primitive decryption.
 
         :param ciphertext: Ciphertext as :py:class:`int`
-        :raises ValueError: if :data:`ciphertext` is out of range for this key.
-
+        :raises ValueError: if **ciphertext** is out of range for this key.
         """
-
         ciphertext = int(ciphertext)  # See comment in PublicKey.encrypt()
 
         if ciphertext < 1 or ciphertext >= self.pub_key.N:
@@ -470,9 +468,7 @@ class PrivateKey:
             on various decryption errors.
             If unsafe error reporting is enabled, details of
             decryption errors will be provided.
-
         """
-
         try:
             h = Oaep.KNOWN_HASHES[hash_id]
         except KeyError:
@@ -647,18 +643,20 @@ def fips186_prime_gen(
     :param e: Public exponent.
     :param k: Trials for primality testing.
 
-    :raises ValueError: if :data:`e` is out of range or odd.
+    :raises ValueError: if **e** is out of range or odd.
     :raises Exception:
         if it fails to find suitable primes after trying really hard.
 
-    This insecurely deviates from the standard in allowing :data:`n_len`
-    to be less than 2048.
+    .. warning::
+
+        This insecurely deviates from the standard in allowing **n_len**
+        to be less than 2048.
 
     .. note::
 
-        The condition that *p* and *q* differ in their
+        The condition that **p** and **q** differ in their
         most significant 100 bits is relaxed when
-        :data:`n_len` < 2048.
+        **n_len** < 2048.
     """
 
     # We don't enforce Step 1 for this toy

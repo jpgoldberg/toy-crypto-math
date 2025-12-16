@@ -2,7 +2,7 @@
 
 *****************
 Vigenère cipher
-****************
+*****************
 
 .. py:module:: toy_crypto.vigenere
     :synopsis: For when one needs to demonstrate the Vigenère cipher

@@ -474,7 +474,7 @@ def fermat_test(n: int, k: int = 8) -> bool:
 def get_prime(
     bit_size: int, k: int = 4, leading_1_bits: int = 1, e: int = 1
 ) -> int:
-    """Return a randomly chosen prime of :data:`bit_size` bits.
+    """Return a randomly chosen prime of **bit_size** bits.
 
     :param bit_size: Size in bits of the prime to be generated
     :param k: Number of witnesses to primality we require.

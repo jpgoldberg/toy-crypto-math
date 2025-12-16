@@ -111,6 +111,7 @@ extensions: list[str] = [
     "sphinx_reredirects",
     "sphinx_prompt",
     "sphinx_toolbox.collapse",
+    "sphinx_paramlinks",
 ]
 
 autodoc_typehints = "signature"

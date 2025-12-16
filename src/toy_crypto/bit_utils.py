@@ -175,7 +175,7 @@ class Bit:
         self, other: bool, expr: Callable[[bool, bool], bool]
     ) -> Union["Bit", int, bool, bytes]:
         """
-        Abstraction to manage type of :data:`other`
+        Abstraction to manage type of ``other``
         for things like :func:`__and__` and :func:`__or__`.
         """
         sb = bool(self)

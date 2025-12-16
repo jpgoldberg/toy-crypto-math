@@ -1636,6 +1636,16 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-paramlinks"
+version = "0.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docutils" },
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ae/21/62d3a58ff7bd02bbb9245a63d1f0d2e0455522a11a78951d16088569fca8/sphinx-paramlinks-0.6.0.tar.gz", hash = "sha256:746a0816860aa3fff5d8d746efcbec4deead421f152687411db1d613d29f915e", size = 12363 }
+
+[[package]]
 name = "sphinx-prompt"
 version = "1.10.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1827,6 +1837,7 @@ docs = [
     { name = "pydata-sphinx-theme" },
     { name = "sphinx" },
     { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-paramlinks" },
     { name = "sphinx-prompt" },
     { name = "sphinx-reredirects" },
     { name = "sphinx-toolbox" },
@@ -1870,6 +1881,7 @@ docs = [
     { name = "pydata-sphinx-theme", specifier = ">=0.16.1" },
     { name = "sphinx", specifier = ">=8.2.3" },
     { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-paramlinks", specifier = ">=0.6.0" },
     { name = "sphinx-prompt", specifier = ">=1.10.0" },
     { name = "sphinx-reredirects", specifier = ">=1.0.0" },
     { name = "sphinx-toolbox", specifier = ">=3.10.0" },

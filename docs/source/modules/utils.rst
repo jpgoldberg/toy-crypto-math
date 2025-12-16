@@ -156,7 +156,7 @@ the dictionary are hashable.
 >>> tastes = FrozenBidict(d)
 >>> tastes["bacon"]
 'yummy'
->>>> tastes.inverse["essential"]
+>>> tastes.inverse["essential"]
 'SPAM'
 
 The :class:`FrozenBidict` is type parameterized,

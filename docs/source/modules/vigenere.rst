@@ -1,7 +1,8 @@
 .. include:: /../common/unsafe.rst
 
+*****************
 Vigenère cipher
-===============
+****************
 
 .. py:module:: toy_crypto.vigenere
     :synopsis: For when one needs to demonstrate the Vigenère cipher
@@ -57,7 +58,7 @@ Using ``Alphabet.PRINTABLE`` will preserve more of the input, as it includes mos
 
 
 The :class:`Cipher` class
-----------------------------
+==========================
 
 A new cipher is created from a key and an alphabet.
 If no alphabet is specified the :data:`Alphabet.DEFAULT` is used.
@@ -90,14 +91,14 @@ We can use `cipher` defined above to decrypt.
 
 
 The :class:`Alphebet` class
-------------------------------
+===========================
 
 .. autoclass:: Alphabet
     :class-doc-from: init
     :members:
 
 Cryptanalysis tools
-----------------------
+=====================
 
 Some tools (currently just one, but more may be coming) to assist in breaking Vigenère.
 
@@ -110,4 +111,5 @@ At the moment, I am choosing not to include statistical analyses, as I want to m
 .. autofunction:: probable_keysize
 
 The algorithm has a long history, but I've lifted it from 
-`Cryptopals set 1, chalange 6 <https://cryptopals.com/sets/1/challenges/6>`__.
+`Cryptopals set 1, challenge 6 <https://cryptopals.com/sets/1/challenges/6>`__.
+

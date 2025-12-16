@@ -232,7 +232,7 @@ BitSimilarity: TypeAlias = Annotated[float, ValueRange(-4.0, 4.0)]
 
 
 class SimilarityScores(UserDict[int, list[BitSimilarity]]):
-    """A dictionary of keysize : list[:class:`BitSimilarity`]."""
+    """A dictionary of keysize : dict[int, list[:class:`BitSimilarity`]]."""
 
     def __init__(self) -> None:
         self.data: dict[int, list[BitSimilarity]] = {}

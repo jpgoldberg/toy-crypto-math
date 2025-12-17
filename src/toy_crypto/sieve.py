@@ -482,9 +482,13 @@ __all__.append("SetSieve")
 
 
 class IntSieve(Sievish):
-    """A pure Python (using a large int) Sieve of Eratosthenes."""
+    """A pure Python (using a large int) Sieve of Eratosthenes.
+
+    Work in progress. This does not always work.
+    """
 
     _BASE_SIEVE: int = int("1100", 2)
+    _common_data = _BASE_SIEVE
 
     @classmethod
     def _reset(cls) -> None:
@@ -500,7 +504,9 @@ class IntSieve(Sievish):
         return sieve
 
     @classmethod
-    def from_list(cls, primes: list[int], size: int | None = None) -> Self:
+    def from_list(
+        cls, primes: list[int], size: int | None = None
+    ) -> "IntSieve":
         if not primes:
             raise ValueError("primes cannot be empty")
         max_prime = max(primes)
@@ -511,20 +517,21 @@ class IntSieve(Sievish):
         instance = cls.__new__(cls)
         instance._data = sum((int(2**p) for p in primes))
         instance._n = size
-        instance._count = instance._data.bit_count()
+        instance._count = int(instance._data.bit_count())
         return instance
 
     def __init__(self, data: int) -> None:
         self._data: int = data
-        self._n = self._data.bit_length()
-        self._count = self._data.bit_count()
+        self._n: int = self._data.bit_length()
+        self._count: int = self._data.bit_count()
 
     def _extend(self, n: int) -> None:
-        if n <= self._data.bit_length():
+        if n <= int(self._common_data).bit_length():
             return
-        ones = (2 ** ((n - self._n) + 1)) - 1
+        ones: int = (2 ** ((n - self._n) + 1)) - 1
         ones = ones << self._n
         self._data |= ones
+        assert isinstance(self._data, int)
 
         self._n = n
         # We only need to go up to and including the square root of n,
@@ -539,7 +546,8 @@ class IntSieve(Sievish):
                 # higher up in the sieve.
                 for m in range(p + p, n + 1, p):
                     # self._data = utils.set_bit(self._data, m, False)
-                    self._data = self._data & ~(1 << m)  # pyright: ignore
+                    self._data = self._data & ~(1 << m)
+        self._common_data = self._data
 
     @classmethod
     def from_size[S](cls, size: int) -> "IntSieve":
@@ -561,6 +569,9 @@ class IntSieve(Sievish):
         if n > self.count:
             raise ValueError("n cannot exceed count")
 
+        # ty can't seem to figure this out on its own.
+        assert isinstance(self._data, int)
+
         result = bit_utils.bit_index(self._data, n)
         assert result is not None  # because we checked n earlier
         return result
@@ -576,13 +587,16 @@ class IntSieve(Sievish):
     def primes(self, start: int = 1) -> Iterator[int]:
         if start < 1:
             raise ValueError("Start must be >= 1")
+
+        # ty can't seem to figure this out on its own
+        assert isinstance(self._data, int)
         for n in range(start, self.count + 1):
             pm = bit_utils.bit_index(self._data, n)
             assert pm is not None
             yield pm
 
     def __int__(self) -> int:
-        return self._data
+        return self._data  # type: ignore
 
     # 'Inherit' docstrings
     from_size.__doc__ = Sievish.from_size.__doc__
@@ -594,7 +608,7 @@ class IntSieve(Sievish):
     from_list.__doc__ = Sievish.from_list.__doc__
 
 
-__all__.append("IntSieve")
+# __all__.append("IntSieve")
 
 # https://mypy.readthedocs.io/en/stable/common_issues.html#variables-vs-type-aliases
 Sieve: type[Sievish]

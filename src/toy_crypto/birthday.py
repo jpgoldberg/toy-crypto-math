@@ -20,9 +20,7 @@ type Mode = Literal["exact", "approximate", "auto"]
 __all__.append("Mode")
 
 
-def _pbirthday_exact(
-    n: types.PositiveInt, classes: types.PositiveInt, coincident: int
-) -> types.Prob:
+def _pbirthday_exact(n: int, classes: int, coincident: int) -> types.Prob:
     # use notation  from Diconis and Mosteller 1969
     c = classes
     k = coincident
@@ -44,9 +42,7 @@ def _pbirthday_exact(
     return p
 
 
-def _pbirthday_approx(
-    n: types.PositiveInt, classes: types.PositiveInt, coincident: int
-) -> types.Prob:
+def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
     # DM1969 notation
     c = classes
     k = coincident
@@ -78,11 +74,11 @@ def P(
     :raises ValueError: if any of ``n``, ``classes``,
         or ``coincident`` are less than 1.
     """
-    if not types.is_positive_int(n):
+    if n < 1:
         raise ValueError("n must be a positive integer")
-    if not types.is_positive_int(classes):
+    if classes < 1:
         raise ValueError("classes must be a positive integer")
-    if not types.is_positive_int(coincident):
+    if coincident < 1:
         raise ValueError("coincident must be a positive integer")
 
     # Name parameters to follow # Use DM69 notation

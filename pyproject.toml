@@ -122,6 +122,7 @@ dev = [
     "jsonschema>=4.25.0",
     "types-jsonschema>=4.25.0.20250809",
     "pytest-subtests>=0.14.2",
+    "ty>=0.0.2",
 ]
 lint = [
     "types-docutils>=0.21.0.20241128",

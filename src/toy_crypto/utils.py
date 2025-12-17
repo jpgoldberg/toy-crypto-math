@@ -97,7 +97,7 @@ class FrozenBidict[K: Hashable | int, V: Hashable]:
         self._fwd: Mapping[K, V]
         self._inv: Mapping[V, K]
         if isinstance(s, Mapping):
-            self._fwd = {k: v for k, v in s.items()}
+            self._fwd = {k: v for k, v in s.items()}  # type: ignore[invalid-assignment]
         elif isinstance(s, Sequence):
             self._fwd = {k: v for k, v in enumerate(s)}  # type: ignore[misc]
         else:

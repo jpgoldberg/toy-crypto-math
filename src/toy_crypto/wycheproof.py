@@ -12,7 +12,7 @@ from pathlib import Path
 import json
 
 try:
-    from warnings import deprecated  # novermin
+    from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
 except ImportError:
     from typing_extensions import deprecated  # novermin
 

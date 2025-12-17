@@ -5,7 +5,7 @@ from typing import Any, Optional, TypeAlias, Annotated
 from itertools import combinations
 
 try:
-    from warnings import deprecated  # novermin
+    from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
 except ImportError:
     from typing_extensions import deprecated  # novermin
 from toy_crypto.bit_utils import hamming_distance

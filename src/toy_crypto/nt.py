@@ -9,7 +9,7 @@ from collections.abc import Iterator, Iterable, Sequence
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 try:
-    from warnings import deprecated  # novermin
+    from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
 except ImportError:
     from typing_extensions import deprecated  # novermin
 

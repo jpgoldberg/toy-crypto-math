@@ -108,9 +108,14 @@ class FactorList(UserList[tuple[int, int]]):
         #  - list
         #  - int
         #  - UserDict
+        if isinstance(other, FactorList):
+            return self.data == other.data
+
         if isinstance(other, list):
             try:
-                other_f = FactorList(other)
+                other_f = FactorList(
+                    other
+                )  # ty: ignore[invalid-argument-type]
             except (ValueError, TypeError):
                 return False
             return self.data == other_f.data
@@ -119,10 +124,7 @@ class FactorList(UserList[tuple[int, int]]):
         if isinstance(other, int):
             return self.n == other
 
-        if not isinstance(other, UserList):
-            return NotImplemented
-
-        return self.data == other.data
+        return NotImplemented
 
     def __add__(self, other: Iterable[tuple[int, int]]) -> "FactorList":
         added = super().__add__(other)

@@ -6,7 +6,7 @@ from .utils import export
 
 __all__: list[str] = []  # will be appended to with each definition
 
-MAX_QBIRTHDAY_P = 1.0 - (10**-8)
+MAX_QBIRTHDAY_P = types.Prob(1.0 - (10**-8))
 """Maximum probability that Q can handle."""
 
 
@@ -59,7 +59,7 @@ def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
     p = -math.expm1(-math.exp(lxx))
     if not types.is_prob(p):
         assert False, f"this should not happen: p = {p}"
-    return p
+    return p  # ty: ignore
 
 
 @export
@@ -115,7 +115,7 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
         raise ValueError("coincident must be positive")
 
     # Use DM69 notation so I can better connect code to published method.
-    p = prob
+    p: types.Prob = prob  # ty: ignore
     c = classes
     k = coincident
 

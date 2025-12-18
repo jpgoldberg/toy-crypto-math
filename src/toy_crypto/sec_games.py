@@ -163,10 +163,10 @@ class Ind(Generic[K]):
     def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")
         return (  # Compiler should know this is unreachable
-            b"Does this ever return?"
-            b" No, this never returns,"
-            b" And its fate is still unlearned.",
-        )
+            "Does this ever return?"
+            " No, this never returns,"
+            " And its fate is still unlearned."
+        ).encode()
 
     @manage_state
     def initialize(self) -> None:

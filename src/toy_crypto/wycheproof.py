@@ -6,6 +6,7 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
+from typing import TypeGuard, no_type_check
 from collections.abc import Iterator, Mapping, Sequence, Set
 from copy import copy
 from pathlib import Path
@@ -25,6 +26,35 @@ import jsonref  # type: ignore[import-untyped]
 import logging
 
 logging.getLogger(__name__)
+
+type JsonValue = (
+    int | float | str | bool | None | list["JsonValue"] | "JsonObject"
+)
+
+type StrDict = dict[str, object]
+
+
+def is_strdict(val: object) -> TypeGuard[dict[str, object]]:
+    if not isinstance(val, dict):
+        return False
+    return all((isinstance(k, str) for k in val.keys()))
+
+
+type JsonObject = dict[str, JsonValue]
+
+
+def is_jsonvalue(val: object) -> TypeGuard[JsonValue]:
+    """This can give false positives as it does not recursively check."""
+    if isinstance(val, int | float | bool | str | None):
+        return True
+    if isinstance(val, dict):
+        # This does not check values in dict
+        return all((isinstance(k, str) for k in val.keys()))
+    if isinstance(val, list):
+        # This does recurse through lists of lists,
+        # but we don't expect too many of those
+        return all((is_jsonvalue(v) for v in val))
+    return False
 
 
 def deserialize_top_level(
@@ -156,15 +186,16 @@ class TestCase:
 class Note:
     """Notes on flags for in TestData"""
 
+    @no_type_check
     def __init__(self, note_name: str, notes: dict[str, object]) -> None:
         self._flag_name = note_name
-        note = notes[self._flag_name]
-        assert isinstance(note, dict)
+        note: StrDict = notes[self._flag_name]
+        assert is_strdict(note)
 
         # common.json schema says bugType must exist
         self._bug_type: str
-        bug_type = note["bugType"]
-        self._bug_type = bug_type["description"]  # type: ignore[assignment]
+        bug_type: StrDict = note["bugType"]
+        self._bug_type = bug_type["description"]
 
         self._description: str | None = note.get("description", None)
         self._effect: str | None = note.get("effect", None)
@@ -410,7 +441,8 @@ class Loader:
 
     @classmethod
     def collect_formats(
-        cls, schema: Mapping[str, object]
+        cls,
+        schema: JsonObject,
     ) -> Mapping[str, str]:
         """Collects format annotation for all string types in schema.
 
@@ -428,28 +460,29 @@ class Loader:
 
     @classmethod
     def _collect_formats(
-        cls, node: object, property: str = ""
+        cls, val: JsonValue, property: str = ""
     ) -> dict[str, str]:
         # There really must be tools to match data properties with schemata,
         # but I can't find any.
 
         local_dict: dict[str, str] = {}
 
-        if isinstance(node, dict):
+        if isinstance(val, dict):
             # Base of recursion
-            format = node.get("format")
+            format = val.get("format")
             if format is not None:
                 assert isinstance(format, str)
                 return {property: format}
 
             # Recurse through dictionary values
-            for key, value in node.items():
+            for key, value in val.items():
+                assert isinstance(key, str)
                 local_dict.update(cls._collect_formats(value, key))
 
-        elif isinstance(node, list):
+        elif isinstance(val, list):
             # Recurse through list members
             # (Do schemata even have lists?)
-            for n in node:
+            for n in val:
                 local_dict.update(cls._collect_formats(n, ""))
         return local_dict
 

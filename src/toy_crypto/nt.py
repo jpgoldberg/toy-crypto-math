@@ -114,8 +114,8 @@ class FactorList(UserList[tuple[int, int]]):
         if isinstance(other, list):
             try:
                 other_f = FactorList(
-                    other
-                )  # ty: ignore[invalid-argument-type]
+                    other,  # ty: ignore[invalid-argument-type]
+                )
             except (ValueError, TypeError):
                 return False
             return self.data == other_f.data

@@ -111,8 +111,13 @@ class TestCase:
             raise ValueError("Weird result status")
         self._result: str = result
 
-        self._comment: str = data.pop("comment", "")  # type: ignore[assignment]
-        self._flags: Set[str] = data.pop("flags", [])  # type: ignore[assignment]
+        t_comment = data.pop("comment", "")
+        assert isinstance(t_comment, str)
+        self._comment = t_comment
+
+        t_flags = data.pop("flags", [])
+        assert isinstance(t_flags, list)
+        self._flags: Set[str] = set(t_flags)
 
         self._fields = data
 
@@ -189,13 +194,14 @@ class Note:
     @no_type_check
     def __init__(self, note_name: str, notes: dict[str, object]) -> None:
         self._flag_name = note_name
-        note: StrDict = notes[self._flag_name]
-        assert is_strdict(note)
+        note = notes[self._flag_name]
+        # assert is_strdict(note)
 
         # common.json schema says bugType must exist
-        self._bug_type: str
-        bug_type: StrDict = note["bugType"]
-        self._bug_type = bug_type["description"]
+        bug_type = note["bugType"]
+        # assert is_strdict(bug_type)
+        self._bug_type: str = bug_type["description"]
+        # assert isinstance(self._bug_type, str)
 
         self._description: str | None = note.get("description", None)
         self._effect: str | None = note.get("effect", None)
@@ -205,31 +211,26 @@ class Note:
     @property
     def bug_type(self) -> str:
         """The type of the bug tested for"""
-
         return self._bug_type
 
     @property
     def description(self) -> str | None:
         """A description of the flag"""
-
         return self._description
 
     @property
     def effect(self) -> str | None:
         """The expected effect of failing the test vector"""
-
         return self._effect
 
     @property
     def links(self) -> Sequence[str]:
         """A list of potentially related references"""
-
         return self._links
 
     @property
     def cves(self) -> Sequence[str]:
         """A list of potentially related CVEs"""
-
         return self._cves
 
 
@@ -286,17 +287,17 @@ class TestData:
 
     def __init__(
         self,
-        data: dict[str, object],
+        data: StrDict,
         formats: Mapping[str, str],
         schema_path: Path,
         schema_status: str = "valid",
     ) -> None:
         self._formats = formats
-        self._groups: Sequence[dict[str, object]]
+        self._groups: Sequence[StrDict]
         self._algorithm: str
         self._header: str
         self._notes: Mapping[str, Note]
-        self._data: dict[str, object]
+        self._data: StrDict
         self._test_count: int | None
 
         self._schema_file = schema_path
@@ -309,25 +310,32 @@ class TestData:
         _data: dict[str, object] = copy(data)
 
         try:
-            self._groups = _data.pop("testGroups")  # type: ignore[assignment]
+            t_groups = _data.pop("testGroups")
         except KeyError:
             raise ValueError('There should be a "testGroups" key in the data')
+        assert isinstance(t_groups, Sequence)
+        self._groups = t_groups
 
-        self._test_count = _data.pop("numberOfTests", None)  # type: ignore[assignment]
+        t_count = _data.pop("numberOfTests", None)
+        assert isinstance(t_count, int | None)
+        self._test_count = t_count
 
         # docs say header can be a string as well as a list of strings
-        header: list[str] | str = _data.pop("header", "")  # type: ignore[assignment]
+        header = _data.pop("header", "")
+        assert isinstance(header, list | str)
         if not isinstance(header, str):
             header = " ".join(header)
         self._header = header
 
-        src_notes: dict[str, dict[str, object]] = _data.get("Notes", dict())  # type: ignore[assignment]
-
+        src_notes = _data.get("Notes", dict())
+        assert is_strdict(src_notes)
         self._notes = {
             name: Note(name, note) for name, note in src_notes.items()
         }
 
-        self._algorithm = _data.pop("algorithm", "")  # type: ignore[assignment]
+        t_alg = _data.pop("algorithm", "")
+        assert isinstance(t_alg, str)
+        self._algorithm = t_alg
 
         self._data = _data
 

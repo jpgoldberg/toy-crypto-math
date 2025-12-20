@@ -6,7 +6,7 @@ from .utils import export
 
 __all__: list[str] = []  # will be appended to with each definition
 
-MAX_QBIRTHDAY_P = types.Prob(1.0 - (10**-8))
+MAX_QBIRTHDAY_P = 1.0 - (10**-8)
 """Maximum probability that Q can handle."""
 
 

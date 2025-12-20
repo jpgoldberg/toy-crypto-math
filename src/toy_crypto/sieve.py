@@ -528,7 +528,7 @@ class IntSieve(Sievish):
     def _extend(self, n: int) -> None:
         if n <= int(self._common_data).bit_length():
             return
-        ones: int = (2 ** ((n - self._n) + 1)) - 1
+        ones: int = (1 << ((n - self._n) + 1)) - 1
         ones = ones << self._n
         self._data |= ones
         assert isinstance(self._data, int)

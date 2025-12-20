@@ -242,7 +242,7 @@ def flip_end(byte: int) -> int:
     result = 0
     for p in range(8):
         byte, b = divmod(byte, 2)
-        result += b * (2 ** (8 - p))
+        result += b * (1 << (8 - p))
     return result
 
 

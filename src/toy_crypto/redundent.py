@@ -350,7 +350,7 @@ def mod_sqrt(a: int, m: int) -> list[int]:
             w2 *= w2
             k += 1
         # step 6:
-        d = pow(y, 2 ** (r - k - 1), m)
+        d = pow(y, 1 << (r - k - 1), m)
         y = (d * d) % m
         r = k
         v = (d * v) % m

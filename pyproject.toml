@@ -132,7 +132,7 @@ lint = [
    
 ]
 docs = [
-    "sphinx>=8.2.3",
+    "sphinx>=8.2.3, <9.0",
     "enum-tools[sphinx]>=0.13.0",
     "sphinx_autodoc_typehints",
     "sphinx-toolbox>=3.10.0",

@@ -1,6 +1,11 @@
 import math
 from typing import Literal, assert_never
 
+try:
+    from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
+except ImportError:
+    from typing_extensions import deprecated  # novermin
+
 from . import types
 from .utils import export
 
@@ -63,7 +68,7 @@ def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
 
 
 @export
-def P(
+def probability(
     n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
 ) -> types.Prob:
     """probability of at least 1 collision among n individuals for c classes".
@@ -99,9 +104,19 @@ def P(
             assert_never(mode)
 
 
+@deprecated("Use 'probability' instead")
+def P(
+    n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
+) -> types.Prob:
+    """See :func:`probability`."""
+    return probability(n, classes, coincident, mode)
+
+
 @export
-def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
-    """Returns minimum number n to get prob for classes.
+def quantile(
+    prob: float = 0.5, classes: int = 365, coincident: int = 2
+) -> int:
+    """Quantile: minimum number n to get prob for classes.
 
     :raises ValueError: if ``prob`` is less than 0 or greater than 1.
     :raises ValueError: if ``classes`` is less than 1.
@@ -115,15 +130,15 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
         raise ValueError("coincident must be positive")
 
     # Use DM69 notation so I can better connect code to published method.
-    p: types.Prob = prob  # ty: ignore
+
     c = classes
     k = coincident
 
-    if p > MAX_QBIRTHDAY_P:
+    if prob > MAX_QBIRTHDAY_P:
         return c * (k - 1) + 1
 
     # Lifted from R src/library/stats/R/birthday.R
-    if p == types.Prob(0):
+    if prob == types.Prob(0):
         return 1
 
     # First approximation
@@ -136,7 +151,7 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     # All terms are computed as logarithms
     term1 = (k - 1) * math.log(c)  # log  c^{k-1}
     term2 = math.lgamma(k + 1)  # log   k!
-    term3 = math.log(-math.log1p(-p))  # log  1/log(1-p)
+    term3 = math.log(-math.log1p(-prob))  # log  1/log(1-p)
     log_n = (term1 + term2 + term3) / k  # adding log x_i is log prod x_i
     n = math.exp(log_n)
     n = math.ceil(n)
@@ -151,14 +166,21 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     step = max(1, n // 100_000)
 
     def pck(n: int) -> types.Prob:
-        return P(n, c, coincident=k)
+        nonlocal prob
+        return probability(n, c, coincident=k)
 
-    if pck(n) < p:
+    if pck(n) < prob:
         n += step
-        while pck(n) < p:
+        while pck(n) < prob:
             n += step
         return n
-    while pck(n - step) >= p:
+    while pck(n - step) >= prob:
         n -= step
 
     return n
+
+
+@deprecated("Use 'quantile' instead")
+def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
+    """See :func:`quantile`."""
+    return quantile(prob, classes, coincident)

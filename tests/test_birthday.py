@@ -164,7 +164,7 @@ class TestBirthday:
         vectors,
     )
     def test_pbirthday(n: int, d: int, expected: float) -> None:
-        p = birthday.P(n, d, mode="exact")
+        p = birthday.probability(n, d, mode="exact")
         assert math.isclose(p, expected)
 
     @staticmethod
@@ -173,17 +173,17 @@ class TestBirthday:
         vectors,
     )
     def test_qbrithday(d: int, p: float, expected: int) -> None:
-        n = birthday.Q(p, d)
+        n = birthday.quantile(p, d)
         assert n == expected
 
     @staticmethod
     @pytest.mark.parametrize("n", range(10, 360, 10))
     def test_inverse_365(n: int) -> None:
         d = 365
-        p = birthday.P(n, d)
+        p = birthday.probability(n, d)
         if p > birthday.MAX_QBIRTHDAY_P:
             return
-        n2 = birthday.Q(p, d)
+        n2 = birthday.quantile(p, d)
         assert n == n2
 
     @staticmethod
@@ -195,7 +195,7 @@ class TestBirthday:
     )
     def test_wp_data_p(bits: int, p: float, n: int) -> None:
         classes = int(2**bits)
-        my_p = birthday.P(n, classes=classes)
+        my_p = birthday.probability(n, classes=classes)
         rel_delta = abs(my_p - p) / p
         assert math.isclose(p, my_p, rel_tol=0.1), (
             f"p: {p}; my_p: {my_p}; rel diff: {rel_delta}"
@@ -211,7 +211,7 @@ class TestBirthday:
     )
     def test_wp_data_q(bits: int, p: float, n: int) -> None:
         c = int(2**bits)
-        my_n = birthday.Q(p, c)
+        my_n = birthday.quantile(p, c)
         assert math.isclose(n, my_n, rel_tol=0.1), f"n: {n}; my_n: {my_n}"
 
     @staticmethod
@@ -221,41 +221,41 @@ class TestBirthday:
         c = 365
         wiggle_room = 0.01  # because P always uses approximation when k > 2
 
-        calculated_p = birthday.P(n, c, k)
-        p_below = birthday.P(n - 1, c, k)
+        calculated_p = birthday.probability(n, c, k)
+        p_below = birthday.probability(n - 1, c, k)
 
         assert calculated_p + wiggle_room >= expected_p
         assert p_below < expected_p + wiggle_room
 
     @pytest.mark.parametrize("k, expected_n", k_p50_c365_vectors)
     def test_k_q(self, k: int, expected_n: int) -> None:
-        calculated_n = birthday.Q(0.5, 365, k)
+        calculated_n = birthday.quantile(0.5, 365, k)
         assert math.isclose(calculated_n, expected_n, rel_tol=0.01)
 
 
 class TestSpecialCasesP:
     def test_exsct_n_equal_c(self) -> None:
-        p = birthday.P(n=20, classes=20, mode="exact")
+        p = birthday.probability(n=20, classes=20, mode="exact")
         assert p == 1.0
 
     def test_approx_n_equal_c(self) -> None:
-        p = birthday.P(n=20, classes=20, mode="approximate")
+        p = birthday.probability(n=20, classes=20, mode="approximate")
         assert p == 1.0
 
     def test_n_gt_c(self) -> None:
-        p = birthday.P(n=20, classes=19, mode="exact")
+        p = birthday.probability(n=20, classes=19, mode="exact")
         assert p == 1.0
 
     def test_n_gt_ck(self) -> None:
-        p = birthday.P(n=20, classes=10, coincident=3, mode="approximate")
+        p = birthday.probability(n=20, classes=10, coincident=3, mode="approximate")
         assert p == 1.0
 
     def test_exact_k_lt_two(self) -> None:
-        p = birthday.P(n=23, classes=365, coincident=1, mode="exact")
+        p = birthday.probability(n=23, classes=365, coincident=1, mode="exact")
         assert p == 1.0
 
     def test_approx_k_lt_two(self) -> None:
-        p = birthday.P(n=23, classes=365, coincident=1, mode="approximate")
+        p = birthday.probability(n=23, classes=365, coincident=1, mode="approximate")
         assert p == 1.0
 
 
@@ -263,13 +263,13 @@ class TestSpecialCasesQ:
     HIGH_P = (1.0 + birthday.MAX_QBIRTHDAY_P) / 2.0
 
     def test_p_is_0(self) -> None:
-        q = birthday.Q(prob=0.0)
+        q = birthday.quantile(prob=0.0)
         assert q == 1.0
 
     @pytest.mark.parametrize("c", range(100, 5000, 100))
     @pytest.mark.parametrize("k", (2, 35, 5))
     def test_big_p(self, c: int, k: int) -> None:
-        q = birthday.Q(prob=self.HIGH_P, classes=c, coincident=k)
+        q = birthday.quantile(prob=self.HIGH_P, classes=c, coincident=k)
         assert q == c * (k - 1) + 1
 
 

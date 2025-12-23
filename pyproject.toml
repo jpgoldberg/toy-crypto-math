@@ -132,12 +132,12 @@ lint = [
    
 ]
 docs = [
-    "sphinx>=8.2.3",
+    "sphinx>=9.0.4",
     "enum-tools[sphinx]>=0.13.0",
     "sphinx_autodoc_typehints",
     "sphinx-toolbox>=3.10.0",
     "sphinxcontrib-bibtex>=2.6.4",
-    "sphinx-reredirects>=1.0.0",
+    "sphinx-reredirects>=1.1.0",
     "pydata-sphinx-theme>=0.16.1",
     "sphinx-prompt>=1.10.0",
     "pycryptodome>=3.23.0",

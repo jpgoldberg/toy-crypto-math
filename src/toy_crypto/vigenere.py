@@ -104,6 +104,10 @@ class Alphabet:
     @property
     @deprecated("Use 'inverse_map' instead")
     def abc2idx(self) -> Mapping[Letter, int]:
+        """
+        .. deprecated:: 0.6
+           Renamed. Use :func:`inverse_map` instead.
+        """
         return self.inverse_map
 
     # We will want to use 'in' for Alphabet instances

@@ -47,7 +47,11 @@ def isprime(n: int) -> bool:
 
 @deprecated("Use math.isqrt instead")
 def isqrt(n: int) -> int:
-    """returns the greatest r such that r * r =< n"""
+    """returns the greatest r such that r * r =< n
+
+    .. deprecated:: 0.6
+       Use :func:`math.isqrt` instead.
+    """
     if n < 0:
         raise ValueError("n cannot be negative")
     return math.isqrt(n)
@@ -256,7 +260,11 @@ def factor(n: int, ith: int = 0) -> FactorList:
 @deprecated("Use math.gcd instead")
 @export
 def gcd(*integers: int) -> int:
-    """Returns greatest common denominator of arguments."""
+    """Returns greatest common denominator of arguments.
+
+    .. deprecated:: 0.6
+       Use :func:`math.gcd` instead.
+    """
     return math.gcd(*integers)
 
 
@@ -324,9 +332,11 @@ def mod_sqrt(a: int, m: int) -> list[int]:
 @deprecated("Use math.lcm instead")
 @export
 def lcm(*integers: int) -> int:
-    """Least common multiple"""
+    """Least common multiple
 
-    # requires python 3.9, but I'm already requiring 3.11
+    .. deprecated:: 0.6
+       Use :func:`math.lcm` instead.
+    """
     return math.lcm(*integers)
 
 

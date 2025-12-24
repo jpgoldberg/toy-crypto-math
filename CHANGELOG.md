@@ -8,19 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 This release starts
 
 - deprecating utilities that duplicate what is available in the Python standard library,
+- renames `birthday.Q` to `birthday.quantile` (old names deprecated)
+- renames `birthday.P` to `birthday.probability` (old names deprecated)
 - renames some attributes (deprecating the old names),
-- fixes a major bug in birthday.Q,
+- fixes a major bug in `birthday.quantile`,
 - includes a number of changes to building, testing, code tidying that are not visible to users but may be relevant to those working with the source.
 
 ### Fixed
 
-- `birthday.Q` is now usable for large n, small p. (Tests had not been running before)
+- `birthday.quantile` is now usable for large n, small p. (Tests had not been running before)
 - Many documentation typos
 
 ### Deprecations
 
 - `nt.lcm`, `nt.gcd`, `nt.isqrt` are all deprecated. Use the corresponding functions from the standard `math` library instead.
-- `vigenere.Alphabet.abc2idx` is deprecated. Use ``vigenere.Alphabet.inverse_map` instead.
+- `birthday.Q` and `birthday.P` are renamed `birthday.quantile` and `birthday.probability` (old names deprecated)
+- `vigenere.Alphabet.abc2idx` is renamed ``vigenere.Alphabet.inverse_map` (old name depreciated).
 
 ### Added
 

@@ -247,7 +247,9 @@ class TestSpecialCasesP:
         assert p == 1.0
 
     def test_n_gt_ck(self) -> None:
-        p = birthday.probability(n=20, classes=10, coincident=3, mode="approximate")
+        p = birthday.probability(
+            n=20, classes=10, coincident=3, mode="approximate"
+        )
         assert p == 1.0
 
     def test_exact_k_lt_two(self) -> None:
@@ -255,7 +257,9 @@ class TestSpecialCasesP:
         assert p == 1.0
 
     def test_approx_k_lt_two(self) -> None:
-        p = birthday.probability(n=23, classes=365, coincident=1, mode="approximate")
+        p = birthday.probability(
+            n=23, classes=365, coincident=1, mode="approximate"
+        )
         assert p == 1.0
 
 

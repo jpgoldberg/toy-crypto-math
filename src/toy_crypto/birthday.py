@@ -108,8 +108,14 @@ def probability(
 def P(
     n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
 ) -> types.Prob:
-    """See :func:`probability`."""
+    """
+    .. deprecated:: 0.5
+        Renamed. Use :func:`probability`.
+    """
     return probability(n, classes, coincident, mode)
+
+
+__all__.append('P')  # fmt: skip
 
 
 @export
@@ -182,5 +188,11 @@ def quantile(
 
 @deprecated("Use 'quantile' instead")
 def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
-    """See :func:`quantile`."""
+    """
+    .. deprecated:: 0.5
+        Renamed. Use :func:`quantile`.
+    """
     return quantile(prob, classes, coincident)
+
+
+__all__.append("Q")

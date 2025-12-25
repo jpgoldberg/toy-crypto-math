@@ -12,7 +12,15 @@ import itertools
 from hashlib import blake2b
 from base64 import a85encode
 import sys
-from typing import Protocol, Self, ValuesView, runtime_checkable
+from copy import copy
+from typing import (
+    Callable,
+    Literal,
+    Protocol,
+    Self,
+    ValuesView,
+    runtime_checkable,
+)
 import math
 from toy_crypto.types import Byte
 
@@ -294,3 +302,58 @@ def export[F: SuppprtsName](fn: F) -> F:
     else:
         setattr(mod, "__all__", [name])
     return fn
+
+
+@export
+def find_zero(
+    function: Callable[[int], float],
+    initial_estimate: int = 0,
+    initial_step: int = 256,
+    max_iterations: int = 500,
+) -> int:
+    """Finds zero of non-decreasing function.
+
+    Performs a binary search of a non-decreasing function,
+    :math:`f(n)`, to return an :math:`n_0` such that
+    :math:`\\forall n [\\left|f(n_0)\\right \\leq \\left|f(n)\\right]`.
+    """
+    if initial_step < 1:
+        raise ValueError("initial step size must be positive")
+
+    class Point:
+        n: int | None
+        x: float
+
+        def __init__(self, n: int | None, x: float) -> None:
+            self.n = n
+            self.x = x
+
+        @property
+        def sign(self) -> Literal[-1, 0, 1]:
+            if self.x == 0.0:
+                return 0
+            return 1 if self.x > 0.0 else -1
+
+    lowest_above = Point(None, math.inf)
+    highest_below = Point(None, -math.inf)
+
+    start = Point(initial_estimate, function(initial_estimate))
+    match start.sign:
+        case 0:
+            return initial_estimate
+        case 1:
+            lowest_above = copy(start)
+        case -1:
+            highest_below = copy(start)
+
+    # TODO: Make this actually work
+    # We need to first scale up to a step size that surrounds the zero
+    initial_sign = start.sign
+    step_sign = (-1) * initial_sign
+
+    step_size = step_sign * initial_step
+
+    best = start
+
+    assert isinstance(best.n, int)
+    return best.n

@@ -311,6 +311,8 @@ def find_zero(
     initial_estimate: int = 0,
     initial_step: int = 256,
     max_iterations: int = 500,
+    lower_bound: int | None = None,
+    upper_bound: int | None = None,
 ) -> int:
     """Finds smallest n for f(x) such that f(n) > 0.
 
@@ -358,8 +360,14 @@ def find_zero(
             return math.isclose(self.n, other.n)
 
     # Both of these will be reset during step finding stage
-    lowest_above: Point = Point(cast(int, math.inf), math.inf)
-    highest_below: Point = Point(cast(int, -math.inf), -math.inf)
+    if lower_bound is None:
+        lower_bound = cast(int, -math.inf)
+
+    if upper_bound is None:
+        upper_bound = cast(int, math.inf)
+
+    lowest_above: Point = Point(upper_bound, math.inf)
+    highest_below: Point = Point(lower_bound, -math.inf)
 
     start = Point(initial_estimate, function(initial_estimate))
     match start.sign:
@@ -379,6 +387,7 @@ def find_zero(
     while new_point.sign == previous.sign:
         match new_point.sign:
             case 0:
+                # This shouldn't be reachable
                 return new_point.n
             case 1:
                 lowest_above = new_point
@@ -388,10 +397,15 @@ def find_zero(
         previous = new_point.copy()
         new_point = new_point.next(step)
 
-    if new_point.sign > 0:
-        lowest_above = new_point
-    else:
-        highest_below = new_point
+    # because python doesn't have a do while, we do this 1 more time
+    # when the sign has changed
+    match new_point.sign:
+        case 0:
+            return new_point.n
+        case 1:
+            lowest_above = new_point
+        case -1:
+            highest_below = new_point
     best_other = previous
 
     # Now we actually bisect
@@ -402,9 +416,8 @@ def find_zero(
             return lowest_above.n
         best_other = highest_below if new_point.sign > 0 else lowest_above
         new_point = Point.from_n((best_other.n + new_point.n) // 2)
-        if new_point.x > 0:
-            lowest_above = new_point
-        else:
+        if new_point.sign < 0:
             highest_below = new_point
-
-    return lowest_above.n
+        else:
+            lowest_above = new_point
+    return new_point.n

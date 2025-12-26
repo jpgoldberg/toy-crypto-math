@@ -7,7 +7,7 @@ except ImportError:
     from typing_extensions import deprecated  # novermin
 
 from . import types
-from .utils import export
+from .utils import export, find_zero
 
 __all__: list[str] = []  # will be appended to with each definition
 
@@ -167,22 +167,13 @@ def quantile(
     # n is now close to what it should be,
     # but we may need to increase it or decrease it
     # until n is smallest n such that P(n, c, k) >= p
-    #
-    # But for large n, we don't try to be exact
     step = max(1, n // 100_000)
 
-    def pck(n: int) -> types.Prob:
-        nonlocal prob
-        return probability(n, c, coincident=k)
-
-    if pck(n) < prob:
-        n += step
-        while pck(n) < prob:
-            n += step
-        return n
-    while pck(n - step) >= prob:
-        n -= step
-
+    n = find_zero(
+        function=lambda m: probability(m, c, coincident=k) - prob,
+        initial_estimate=n,
+        initial_step=step,
+    )
     return n
 
 

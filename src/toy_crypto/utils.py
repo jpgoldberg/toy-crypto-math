@@ -15,7 +15,6 @@ import sys
 from copy import copy
 from typing import (
     Callable,
-    Literal,
     Protocol,
     Self,
     ValuesView,
@@ -320,6 +319,14 @@ def find_zero(
     if initial_step < 1:
         raise ValueError("initial step size must be positive")
 
+    call_count = 0
+
+    def callit(n: int) -> float:
+        nonlocal call_count
+        nonlocal function
+        call_count += 1
+        return function(n)
+
     class Point:
         n: int | None
         x: float
@@ -329,31 +336,69 @@ def find_zero(
             self.x = x
 
         @property
-        def sign(self) -> Literal[-1, 0, 1]:
+        def sign(self) -> int:
             if self.x == 0.0:
                 return 0
             return 1 if self.x > 0.0 else -1
 
-    lowest_above = Point(None, math.inf)
-    highest_below = Point(None, -math.inf)
+        def next(self, step: int) -> "Point":
+            assert self.n is not None
+            next_n = self.n + step
+            return Point(next_n, callit(next_n))
+
+    _lowest_above = Point(None, math.inf)
+    _highest_below = Point(None, -math.inf)
 
     start = Point(initial_estimate, function(initial_estimate))
     match start.sign:
         case 0:
             return initial_estimate
         case 1:
-            lowest_above = copy(start)
+            _lowest_above = copy(start)
         case -1:
-            highest_below = copy(start)
+            _highest_below = copy(start)
 
     # TODO: Make this actually work
     # We need to first scale up to a step size that surrounds the zero
     initial_sign = start.sign
     step_sign = (-1) * initial_sign
 
-    step_size = step_sign * initial_step
+    step = step_sign * initial_step
 
-    best = start
+    previous = start
 
-    assert isinstance(best.n, int)
-    return best.n
+    # We will double the step size until we cross zero
+    assert isinstance(previous.n, int)
+    new_point = previous.next(step)
+    while new_point.sign == previous.sign:
+        match new_point.sign:
+            case 0:
+                pass  # Never reached
+            case 1:
+                _lowest_above = new_point
+            case -1:
+                _highest_below = new_point
+        step *= 2
+        new_point = new_point.next(step)
+
+    # we have reached or crossed zero
+    match new_point.sign:
+        case 0:
+            assert new_point.n is not None
+            return new_point.n
+        case 1:
+            _lowest_above = new_point
+            step = min(-1, -1 * step // 2)
+        case -1:
+            _highest_below = new_point
+            step = max(1, -1 * step // 2)
+
+    # Now we actually bisect, cutting the step in half each time we cross zero
+
+    while new_point.sign != 0 and call_count < max_iterations:
+        # TODO
+        ...
+    assert new_point.n is not None
+    return new_point.n
+
+    return previous.n

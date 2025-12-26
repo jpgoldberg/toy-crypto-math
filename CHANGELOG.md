@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-This release starts
+Important highlights. This release
 
 - deprecating utilities that duplicate what is available in the Python standard library,
 - renames `birthday.Q` to `birthday.quantile` (old names deprecated)

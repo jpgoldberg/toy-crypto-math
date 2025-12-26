@@ -93,6 +93,8 @@ class FrozenBidict[K: Hashable | int, V: Hashable]:
     flexible, and much more broadly applicable classes
     and functions in the outstanding
     `bidict library <https://bidict.readthedocs.io/en/main/>`__.
+
+    .. versionadded::0.6
     """
 
     def __init__(self, s: Sequence[V] | Mapping[K, V]) -> None:
@@ -310,11 +312,13 @@ def find_zero(
     initial_step: int = 256,
     max_iterations: int = 500,
 ) -> int:
-    """Finds zero of non-decreasing function.
+    """Finds smallest n for f(x) such that f(n) > 0.
 
-    Performs a binary search of a non-decreasing function,
+    Performs a binary search for +0 of a non-decreasing function,
     :math:`f(n)`, to return an :math:`n_0` such that
-    :math:`\\forall n [\\left|f(n_0)\\right \\leq \\left|f(n)\\right]`.
+    :math:`f(n_0) \\geq 0 \\land f(n_0 - 1) < 0`.
+
+    .. versionadded:: 0.6
     """
     if initial_step < 1:
         raise ValueError("initial step size must be positive")
@@ -383,17 +387,24 @@ def find_zero(
         step *= 2
         previous = new_point.copy()
         new_point = new_point.next(step)
+
+    if new_point.sign > 0:
+        lowest_above = new_point
+    else:
+        highest_below = new_point
     best_other = previous
 
     # Now we actually bisect
     while call_count < max_iterations and not (
         new_point.sign == 0 or new_point.isclose(best_other)
     ):
-        best_other = highest_below if new_point.n > 0 else lowest_above
+        if lowest_above.n - highest_below.n < 2:
+            return lowest_above.n
+        best_other = highest_below if new_point.sign > 0 else lowest_above
         new_point = Point.from_n((best_other.n + new_point.n) // 2)
-        if new_point.n > 0:
+        if new_point.x > 0:
             lowest_above = new_point
         else:
             highest_below = new_point
 
-    return new_point.n
+    return lowest_above.n

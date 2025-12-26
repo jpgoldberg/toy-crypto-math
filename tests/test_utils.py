@@ -97,5 +97,15 @@ class TestRsa29Encoding:
             assert decoded == s
 
 
+class TestFindZero:
+    def test_simple(self) -> None:
+        def f(n: int) -> float:
+            return 1.5 * n + 20
+
+        zero = utils.find_zero(f)
+        expected_zero = -13
+        assert zero == expected_zero
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

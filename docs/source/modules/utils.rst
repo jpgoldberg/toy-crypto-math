@@ -172,6 +172,32 @@ so the annotated versions of the above would be
 .. autoclass:: FrozenBidict
     :members:
 
+Find zero
+==========
+
+There are excellent equation and function solvers available in Python.
+This is not one of them.
+
+This was built explicitly has a helper function for the
+:func:`~toy_crypto.birthday.quantile` function in the :mod:`birthday` module.
+As such it assumes that
+
+- The the input function, :math:`f(n)`, is non-decreasing in *n*;
+
+- :math:`f: \mathbb{Z} \to \mathbb{R}`,
+  or in Python has the type signature ``def f(n: int) -> float``;
+
+- You want the least *n* for which :math:`f(n) \geq 0`
+  even though :math:`f(n -1)` might be closer to 0;
+
+- You don't mind using an embarrassingly kludgy implementation
+  because for some reason I struggled with what should be a simple
+  piece of code.
+
+.. autofunction:: find_zero
+
+
+
 
 
 

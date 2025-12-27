@@ -346,6 +346,14 @@ def find_zero(
     :raises ValueError: if ``initial_step`` isn't positive.
     :raises ValueError: if not lower_bound <= initial_estimate <= upper_bound.
 
+    .. warning::
+        Results are undefined if function is not non-decreasing
+        or if function isn't defined for every n in [lower_bound, upper_bound].
+
+    .. caution::
+        This has only been tested for use in
+        :func:`toy_crypto.birthday.quantile`.
+
     .. versionadded:: 0.6
     """
     if initial_step < 1:
@@ -374,8 +382,9 @@ def find_zero(
         def __init__(self, n: int, x: float) -> None:
             self._n = n
 
-            # We only ever make use of the sign of x, but
-            # let's keep x around for potential diagnostics
+            # We only ever make use of the sign of x,
+            # but let's keep this if we want to move to smarter
+            # interpolation.
             self._x = x
             self._sign: int = 0 if self._x == 0 else 1 if self._x > 0 else -1
 

@@ -196,11 +196,25 @@ As such it assumes that
 
 .. autofunction:: find_zero
 
+Example
+---------
 
+Let's take :math:`f(n) = n^3 - 40` as an example.
+It is non-decreasing and has a real zero at
+:math:`\sqrt[3]{40} \approx 3.42`.
+The smallest integer equal to or greater than that is 4.
 
+.. doctest::
 
+    >>> from toy_crypto.utils import find_zero
+    >>> find_zero(lambda n: n ** 3 - 40)
+    4
 
-
+Once again, note that a proper solver would have been able to solve this
+analytically, without resorting to a binary search or restricting to
+non-decreasing functions only.
+But this root finder is built to be just good enough for the
+specific need in :func:`toy_crypto.birthday.quantile`.
 
 
 

@@ -168,11 +168,12 @@ def quantile(
     # but we may need to increase it or decrease it
     # until n is smallest n such that P(n, c, k) >= p
     step = max(1, n // 100_000)
-
     n = find_zero(
         function=lambda m: probability(m, c, coincident=k) - prob,
         initial_estimate=n,
         initial_step=step,
+        lower_bound=k,
+        upper_bound=(k - 1) * (c + 1),
     )
     return n
 

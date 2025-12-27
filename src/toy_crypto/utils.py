@@ -23,6 +23,10 @@ from typing import (
 import math
 from toy_crypto.types import Byte
 
+import logging
+
+logging.getLogger(__name__)
+
 
 def digit_count(n: int, base: int = 10) -> int:
     """returns the number of digits (base b) of integer n.
@@ -333,11 +337,14 @@ def find_zero(
         before it just gives you its best estimate that that
         time.
     :param lower_bound:
-        Unused. May be used in future versions.
+        Smallest meaningful *n* in f(n).
+        If ``None``, treated as ``-math.inf``.
     :param upper_bound:
-        Unused. May be used in future versions.
+        Largest meaningful *n* in f(n).
+        If ``None``, treated as ``math.inf``.
 
     :raises ValueError: if ``initial_step`` isn't positive.
+    :raises ValueError: if not lower_bound <= initial_estimate <= upper_bound.
 
     .. versionadded:: 0.6
     """
@@ -356,33 +363,43 @@ def find_zero(
     call_count = 0
 
     def callit(n: int) -> float:
+        """Wrapper for function, tracking number of times called."""
         nonlocal call_count
         nonlocal function
-        nonlocal lower_bound
-        nonlocal upper_bound
 
         call_count += 1
         return function(n)
 
     class Point:
         def __init__(self, n: int, x: float) -> None:
-            self.n = n
-            self.x = x
+            self._n = n
+
+            # We only ever make use of the sign of x, but
+            # let's keep x around for potential diagnostics
+            self._x = x
+            self._sign: int = 0 if self._x == 0 else 1 if self._x > 0 else -1
 
         @staticmethod
         def from_n(n: int) -> "Point":
             return Point(n, callit(n))
 
         @property
-        def sign(self) -> int:
-            if self.x == 0.0:
-                return 0
-            return 1 if self.x > 0.0 else -1
+        def x(self) -> float:
+            return self._x
 
-        def copy(self) -> "Point":
-            return Point(self.n, self.x)
+        @property
+        def n(self) -> int:
+            return self._n
+
+        @property
+        def sign(self) -> int:
+            return self._sign
 
         def isclose(self, other: "Point") -> bool:
+            # if same point or adjacent
+            if abs(self.n - other.n) < 2:
+                return True
+            # if close on a large scale
             return math.isclose(self.n, other.n)
 
     # We need to handle cases of
@@ -408,27 +425,26 @@ def find_zero(
         case 0:
             return initial_estimate
         case 1:
-            lowest_above = start.copy()
+            lowest_above = start
         case -1:
-            highest_below = start.copy()
+            highest_below = start
 
     # We need to first scale up to a step size that surrounds the zero
     step = (-1) * start.sign * initial_step
-    previous = start.copy()
+    previous = start
 
     # We will double the step size until we cross zero
     new_point = Point.from_n(previous.n + step)
     while new_point.sign == previous.sign:
         match new_point.sign:
             case 0:
-                # This shouldn't be reachable
                 return new_point.n
             case 1:
                 lowest_above = new_point
             case -1:
                 highest_below = new_point
         step *= 2
-        previous = new_point.copy()
+        previous = new_point
 
         next_n = new_point.n + step
         # This assumes we've already handled pathological bound cases
@@ -445,6 +461,11 @@ def find_zero(
         case -1:
             highest_below = new_point
 
+    logging.info(
+        f"zero in ({highest_below.n}, {lowest_above.n} "
+        f"after {call_count} calls to function."
+    )
+
     # At this point we have `new_point` and `previous` with opposite signs
     # The logic below is that best_other and new_point will always have
     # opposite signs (except for when new_point is at zero)
@@ -454,13 +475,13 @@ def find_zero(
     while call_count < max_iterations and not (
         new_point.sign == 0 or new_point.isclose(best_other)
     ):
-        if lowest_above.n - highest_below.n < 2:
-            return lowest_above.n
         best_other = highest_below if new_point.sign > 0 else lowest_above
+        # Pick halfway n for now. Interpolation might be better, though
         new_n = (best_other.n + new_point.n) // 2
         new_point = Point.from_n(new_n)
         if new_point.sign < 0:
             highest_below = new_point
         else:
             lowest_above = new_point
-    return new_point.n
+    logging.info(f"bisection done after {call_count} function calls")
+    return lowest_above.n

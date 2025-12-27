@@ -320,16 +320,47 @@ def find_zero(
     :math:`f(n)`, to return an :math:`n_0` such that
     :math:`f(n_0) \\geq 0 \\land f(n_0 - 1) < 0`.
 
+    :param function:
+        The function for which you want to find the zero.
+        Must be non-decreasing.
+    :param initial_estimate:
+        The closer this is to the actual zero,
+        the less the computer will need to work to find it.
+    :param initial_step:
+        The initial step size.
+    :param max_iterations:
+        The number of times this will compute the function
+        before it just gives you its best estimate that that
+        time.
+    :param lower_bound:
+        Unused. May be used in future versions.
+    :param upper_bound:
+        Unused. May be used in future versions.
+
+    :raises ValueError: if ``initial_step`` isn't positive.
+
     .. versionadded:: 0.6
     """
     if initial_step < 1:
         raise ValueError("initial step size must be positive")
+
+    if lower_bound is None:
+        lower_bound = cast(int, -math.inf)
+
+    if upper_bound is None:
+        upper_bound = cast(int, math.inf)
+
+    if not lower_bound <= initial_estimate < upper_bound:
+        raise ValueError("Bounds and initial_estimate don't make sense")
 
     call_count = 0
 
     def callit(n: int) -> float:
         nonlocal call_count
         nonlocal function
+        nonlocal lower_bound
+        nonlocal upper_bound
+
         call_count += 1
         return function(n)
 
@@ -348,26 +379,29 @@ def find_zero(
                 return 0
             return 1 if self.x > 0.0 else -1
 
-        def next(self, step: int) -> "Point":
-            assert self.n is not None
-            next_n = self.n + step
-            return Point(next_n, callit(next_n))
-
         def copy(self) -> "Point":
             return Point(self.n, self.x)
 
         def isclose(self, other: "Point") -> bool:
             return math.isclose(self.n, other.n)
 
-    # Both of these will be reset during step finding stage
-    if lower_bound is None:
-        lower_bound = cast(int, -math.inf)
+    # We need to handle cases of
+    # - f(lower_bound) >= 0
+    # - f(upper_bound) <= 0
+    # early, so rest of code can assume working bounds
+    if upper_bound != math.inf:
+        lowest_above = Point.from_n(upper_bound)
+        if lowest_above.sign != 1:
+            return upper_bound
+    else:
+        lowest_above = Point(upper_bound, math.inf)
 
-    if upper_bound is None:
-        upper_bound = cast(int, math.inf)
-
-    lowest_above: Point = Point(upper_bound, math.inf)
-    highest_below: Point = Point(lower_bound, -math.inf)
+    if lower_bound != -math.inf:
+        highest_below = Point.from_n(lower_bound)
+        if highest_below.sign != -1:
+            return lower_bound
+    else:
+        highest_below = Point(lower_bound, -math.inf)
 
     start = Point(initial_estimate, function(initial_estimate))
     match start.sign:
@@ -383,7 +417,7 @@ def find_zero(
     previous = start.copy()
 
     # We will double the step size until we cross zero
-    new_point = previous.next(step)
+    new_point = Point.from_n(previous.n + step)
     while new_point.sign == previous.sign:
         match new_point.sign:
             case 0:
@@ -395,7 +429,11 @@ def find_zero(
                 highest_below = new_point
         step *= 2
         previous = new_point.copy()
-        new_point = new_point.next(step)
+
+        next_n = new_point.n + step
+        # This assumes we've already handled pathological bound cases
+        next_n = min(upper_bound, max(lower_bound, next_n))
+        new_point = Point.from_n(next_n)
 
     # because python doesn't have a do while, we do this 1 more time
     # when the sign has changed
@@ -406,6 +444,10 @@ def find_zero(
             lowest_above = new_point
         case -1:
             highest_below = new_point
+
+    # At this point we have `new_point` and `previous` with opposite signs
+    # The logic below is that best_other and new_point will always have
+    # opposite signs (except for when new_point is at zero)
     best_other = previous
 
     # Now we actually bisect
@@ -415,7 +457,8 @@ def find_zero(
         if lowest_above.n - highest_below.n < 2:
             return lowest_above.n
         best_other = highest_below if new_point.sign > 0 else lowest_above
-        new_point = Point.from_n((best_other.n + new_point.n) // 2)
+        new_n = (best_other.n + new_point.n) // 2
+        new_point = Point.from_n(new_n)
         if new_point.sign < 0:
             highest_below = new_point
         else:

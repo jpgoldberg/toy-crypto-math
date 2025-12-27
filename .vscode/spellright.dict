@@ -115,3 +115,4 @@ lceil
 rceil
 ty
 Docstring
+math.inf

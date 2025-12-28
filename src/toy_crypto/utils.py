@@ -411,6 +411,27 @@ def find_zero(
             # if close on a large scale
             return math.isclose(self.n, other.n)
 
+        def linear_zero(self, other: "Point") -> int:
+            """Assuming points on straight line, zero.
+
+            Abnormal: Do not use
+            """
+
+            # This is middle school math, I should be able to
+            # easily reconstruct how to do this. So far I failed
+
+            # TODO: Get this to work
+
+            if self.n == other.n:
+                raise ValueError("Must be distinct points")
+            if self.x == other.x:
+                # A more general function would return None
+                raise ValueError("line is horizontal")
+
+            slope: float = (self.n - other.n) / (self.x - other.x)
+            offset = self.n - slope * self.x
+            return -int(offset)
+
     # We need to handle cases of
     # - f(lower_bound) >= 0
     # - f(upper_bound) <= 0
@@ -487,6 +508,7 @@ def find_zero(
         best_other = highest_below if new_point.sign > 0 else lowest_above
         # Pick halfway n for now. Interpolation might be better, though
         new_n = (best_other.n + new_point.n) // 2
+        # new_n = best_other.linear_zero(new_point) # broken
         new_point = Point.from_n(new_n)
         if new_point.sign < 0:
             highest_below = new_point

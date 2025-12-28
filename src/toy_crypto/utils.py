@@ -12,9 +12,20 @@ import itertools
 from hashlib import blake2b
 from base64 import a85encode
 import sys
-from typing import Protocol, Self, ValuesView, runtime_checkable
+from typing import (
+    Callable,
+    Protocol,
+    Self,
+    ValuesView,
+    cast,
+    runtime_checkable,
+)
 import math
 from toy_crypto.types import Byte
+
+import logging
+
+logging.getLogger(__name__)
 
 
 def digit_count(n: int, base: int = 10) -> int:
@@ -86,6 +97,8 @@ class FrozenBidict[K: Hashable | int, V: Hashable]:
     flexible, and much more broadly applicable classes
     and functions in the outstanding
     `bidict library <https://bidict.readthedocs.io/en/main/>`__.
+
+    .. versionadded::0.6
     """
 
     def __init__(self, s: Sequence[V] | Mapping[K, V]) -> None:
@@ -294,3 +307,217 @@ def export[F: SuppprtsName](fn: F) -> F:
     else:
         setattr(mod, "__all__", [name])
     return fn
+
+
+@export
+def find_zero(
+    function: Callable[[int], float],
+    initial_estimate: int = 0,
+    initial_step: int = 256,
+    max_iterations: int = 500,
+    lower_bound: int | None = None,
+    upper_bound: int | None = None,
+) -> int:
+    """Finds (nearly) smallest n for f(x) such that f(n) > 0.
+
+    Performs a binary search for +0 of a non-decreasing function,
+    :math:`f(n)`, to return an :math:`n_0` such that
+    :math:`f(n_0) \\geq 0 \\land f(n_0 - 1) < 0`.
+
+    :param function:
+        The function for which you want to find the zero.
+        Must be non-decreasing.
+    :param initial_estimate:
+        The closer this is to the actual zero,
+        the less the computer will need to work to find it.
+    :param initial_step:
+        The initial step size.
+    :param max_iterations:
+        The number of times this will compute the function
+        before it just gives you its best estimate that that
+        time.
+    :param lower_bound:
+        Smallest meaningful *n* in f(n).
+        If ``None``, treated as ``-math.inf``.
+    :param upper_bound:
+        Largest meaningful *n* in f(n).
+        If ``None``, treated as ``math.inf``.
+
+    :raises ValueError: if ``initial_step`` isn't positive.
+    :raises ValueError: if not lower_bound <= initial_estimate <= upper_bound.
+
+    .. warning::
+        Results are undefined if function is not non-decreasing
+        or if function isn't defined for every n in [lower_bound, upper_bound].
+
+    .. caution::
+        If f(n) is close to flat around n\\ :sub:`0` and
+        n\\ :sub:`0` is large
+        then the result may be approximate.
+
+    .. caution::
+        This has only been tested for use in
+        :func:`toy_crypto.birthday.quantile`.
+
+    .. versionadded:: 0.6
+    """
+    if initial_step < 1:
+        raise ValueError("initial step size must be positive")
+
+    if lower_bound is None:
+        lower_bound = cast(int, -math.inf)
+
+    if upper_bound is None:
+        upper_bound = cast(int, math.inf)
+
+    if not lower_bound <= initial_estimate < upper_bound:
+        raise ValueError("Bounds and initial_estimate don't make sense")
+
+    call_count = 0
+
+    def callit(n: int) -> float:
+        """Wrapper for function, tracking number of times called."""
+        nonlocal call_count
+        nonlocal function
+
+        call_count += 1
+        return function(n)
+
+    class Point:
+        def __init__(self, n: int, y: float) -> None:
+            self._n = n
+
+            # We only ever make use of the sign of x,
+            # but let's keep this if we want to move to smarter
+            # interpolation.
+            self._y = y
+            self._sign: int = 0 if self._y == 0 else 1 if self._y > 0 else -1
+
+        @staticmethod
+        def from_n(n: int) -> "Point":
+            return Point(n, callit(n))
+
+        @property
+        def y(self) -> float:
+            return self._y
+
+        @property
+        def n(self) -> int:
+            return self._n
+
+        @property
+        def sign(self) -> int:
+            return self._sign
+
+        def isclose(self, other: "Point") -> bool:
+            # if same point or adjacent
+            if abs(self.n - other.n) < 2:
+                return True
+            # if close on a large scale
+            return math.isclose(self.n, other.n, rel_tol=1e-12)
+
+        def linear_zero(self, other: "Point") -> int:
+            """Assuming points on straight line, zero.
+
+            Abnormal: Do not use
+            """
+            if self.n == other.n:
+                raise ValueError("Must be distinct points")
+            if self.y == other.y:
+                # A more general function would return None
+                raise ValueError("line is horizontal")
+
+            # US high school notation for slope/intercept form
+            # y = mx + b
+            # The linear zero should be near -b
+            m: float = (self.y - other.y) / (self.n - other.n)
+            b = self.y - m * self.n
+            return -round(b)
+
+    # We need to handle cases of
+    # - f(lower_bound) >= 0
+    # - f(upper_bound) <= 0
+    # early, so rest of code can assume working bounds
+    if upper_bound != math.inf:
+        lowest_above = Point.from_n(upper_bound)
+        if lowest_above.sign != 1:
+            return upper_bound
+    else:
+        lowest_above = Point(upper_bound, math.inf)
+
+    if lower_bound != -math.inf:
+        highest_below = Point.from_n(lower_bound)
+        if highest_below.sign != -1:
+            return lower_bound
+    else:
+        highest_below = Point(lower_bound, -math.inf)
+
+    start = Point(initial_estimate, function(initial_estimate))
+    match start.sign:
+        case 0:
+            return initial_estimate
+        case 1:
+            lowest_above = start
+        case -1:
+            highest_below = start
+
+    # We need to first scale up to a step size that surrounds the zero
+    step = (-1) * start.sign * initial_step
+    previous = start
+
+    # We will double the step size until we cross zero
+    new_point = Point.from_n(previous.n + step)
+    while new_point.sign == previous.sign:
+        match new_point.sign:
+            case 0:
+                return new_point.n
+            case 1:
+                lowest_above = new_point
+            case -1:
+                highest_below = new_point
+        step *= 2
+        previous = new_point
+
+        next_n = new_point.n + step
+        # This assumes we've already handled pathological bound cases
+        next_n = min(upper_bound, max(lower_bound, next_n))
+        new_point = Point.from_n(next_n)
+
+    # because python doesn't have a do while, we do this 1 more time
+    # when the sign has changed
+    match new_point.sign:
+        case 0:
+            return new_point.n
+        case 1:
+            lowest_above = new_point
+        case -1:
+            highest_below = new_point
+
+    logging.info(
+        f"zero in ({highest_below.n}, {lowest_above.n} "
+        f"after {call_count} calls to function."
+    )
+
+    # At this point we have `new_point` and `previous` with opposite signs
+    # The logic below is that best_other and new_point will always have
+    # opposite signs (except for when new_point is at zero)
+    best_other = previous
+
+    # Now we actually bisect
+    while call_count < max_iterations and not (
+        new_point.sign == 0 or new_point.isclose(best_other)
+    ):
+        best_other = highest_below if new_point.sign > 0 else lowest_above
+
+        # Pick halfway n.
+        # Linear interpolation runs into big enough
+        # precision errors with the quantile function
+        # that it is worse than useless.
+        new_n = (best_other.n + new_point.n) // 2
+        new_point = Point.from_n(new_n)
+        if new_point.sign < 0:
+            highest_below = new_point
+        else:
+            lowest_above = new_point
+    logging.info(f"bisection done after {call_count} function calls")
+    return lowest_above.n

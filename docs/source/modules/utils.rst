@@ -172,10 +172,52 @@ so the annotated versions of the above would be
 .. autoclass:: FrozenBidict
     :members:
 
+Find zero
+==========
 
+There are excellent equation and function solvers available in Python.
+This is not one of them.
 
+This was built explicitly has a helper function for the
+:func:`~toy_crypto.birthday.quantile` function in the :mod:`birthday` module.
+As such it assumes that
 
+- The the input function, :math:`f(n)`, is non-decreasing in *n*;
 
+- :math:`f: \mathbb{Z} \to \mathbb{R}`,
+  or in Python has the type signature ``def f(n: int) -> float``;
 
+- You want the least *n* for which :math:`f(n) \geq 0`
+  even though :math:`f(n -1)` might be closer to 0;
 
+- You don't mind using an embarrassingly kludgy implementation
+  because for some reason I struggled with what should be a simple
+  piece of code.
 
+.. note::
+
+    When the result, :math:`n_0` is large
+    and :math:`f\prime` is near 0 in the region of :math:`n_0`
+    the result may be approximate.
+
+.. autofunction:: find_zero
+
+Example
+---------
+
+Let's take :math:`f(n) = n^3 - 40` as an example.
+It is non-decreasing and has a real zero at
+:math:`\sqrt[3]{40} \approx 3.42`.
+The smallest integer equal to or greater than that is 4.
+
+.. doctest::
+
+    >>> from toy_crypto.utils import find_zero
+    >>> find_zero(lambda n: n ** 3 - 40)
+    4
+
+Once again, note that a proper solver would have been able to solve this
+analytically, without resorting to a binary search or restricting to
+non-decreasing functions only.
+But this root finder is built to be just good enough for the
+specific need in :func:`toy_crypto.birthday.quantile`.

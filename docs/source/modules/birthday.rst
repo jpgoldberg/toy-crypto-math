@@ -46,6 +46,18 @@ and you wished to know the probability of a collision if you hashed ten thousand
     p = birthday.probability(n, c)
     assert isclose(p,  0.011574013876)
 
+This implementation is crafted to work for even larger numbers.
+Suppose you wanted to know how many 128-bit tokens you would
+need to generate to have a one in one-billion (10\ :sup:`-9`)
+chance of a collision.
+
+.. doctest::
+
+    >>> import math
+    >>> n = birthday.quantile(10e-9, 1 << 128)
+    >>> math.isclose(n, 2608763573180720)
+    True
+
 
 The :mod:`birthday` functions
 ------------------------------
@@ -54,7 +66,7 @@ The :mod:`birthday` functions
     :synopsis: Birthday problem computations
     :members:
 
-Implementation ported from R
+Notes on the implementation
 ------------------------------
 
 It was not a simple matter for me to find or construct an algorithm that 
@@ -63,6 +75,17 @@ ranges of numbers I wished to consider.
 Eventually I found the solution used by :cite:t:`RProject`
 in `R's birthday.R source <https://github.com/wch/r-source/blob/trunk/src/library/stats/R/birthday.R>`__, which credits :cite:t:`DiaconisMosteller1989`.
 
-My port of that implementation to Python only changes the conditions under which the approximate method is used along with some internal variable
-naming and commenting to help me better understand the algorithm and its implementation.
+That R code is the basis for some of the approximations, but as it stands
+it is not suitable for the large values relevant for Cryptography.
+So my code differs from the original R code in two substantive respects.
+
+1. It allows use of the approximation in :func:`probability`
+   even when the ``coincident`` parameter is 2.
+2. After computing the approximate quantile in `:func:`quantile`
+   this refines that through a binary search 
+   (see :func:`toy_crypto.utils.find_zero`)
+   instead of just talking single steps to the complete answer.
+
+Both of those modifications allow us to perform birthday problem computations
+with larger numbers.
 

@@ -191,7 +191,12 @@ class TestBirthday:
         "bits, p, n",
         # hash_vectors,
         # Lots of failures for fewer than 64 bits
-        list(itertools.filterfalse(lambda t: t[0] < 64, hash_vectors)),
+        list(
+            itertools.filterfalse(
+                lambda t: t[0] < 64,  # type: ignore[index]
+                hash_vectors,
+            )
+        ),
     )
     def test_wp_data_p(bits: int, p: float, n: int) -> None:
         classes = int(2**bits)
@@ -206,7 +211,8 @@ class TestBirthday:
         "bits, p, n",
         # We get a different (wrong?) result for 64 bits, 1e-18
         itertools.filterfalse(
-            lambda v: v[0] == 64 and v[2] == 6, hash_vectors
+            lambda v: v[0] == 64 and v[2] == 6,  # type: ignore[index]
+            hash_vectors,
         ),
     )
     def test_wp_data_q(bits: int, p: float, n: int) -> None:

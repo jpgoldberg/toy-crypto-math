@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Vigenère cipher &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>Vigenère cipher &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -31,6 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -38,7 +39,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules/vigenere';</script>
@@ -48,7 +49,7 @@
     <link rel="prev" title="Security games" href="games.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -110,7 +111,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -516,8 +517,8 @@ the <a class="reference internal" href="#toy_crypto.vigenere.Cipher.encrypt" tit
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>alphabet</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.vigenere.Alphabet" title="toy_crypto.vigenere.Alphabet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Alphabet</span></code></a> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Cipher.params.key"></span><strong>key</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Cipher.params.key">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Cipher.params.alphabet"></span><strong>alphabet</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Cipher.params.alphabet">¶</a> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.vigenere.Alphabet" title="toy_crypto.vigenere.Alphabet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Alphabet</span></code></a> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -534,8 +535,8 @@ the <a class="reference internal" href="#toy_crypto.vigenere.Cipher.encrypt" tit
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>mode</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Cipher.crypt.params.text"></span><strong>text</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Cipher.crypt.params.text">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Cipher.crypt.params.mode"></span><strong>mode</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Cipher.crypt.params.mode">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -550,7 +551,7 @@ the <a class="reference internal" href="#toy_crypto.vigenere.Cipher.encrypt" tit
 <dd><p>Returns plaintext.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ciphertext</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.vigenere.Cipher.decrypt.params.ciphertext"></span><strong>ciphertext</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Cipher.decrypt.params.ciphertext">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
@@ -564,7 +565,7 @@ the <a class="reference internal" href="#toy_crypto.vigenere.Cipher.encrypt" tit
 <dd><p>Returns ciphertext.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>plaintext</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.vigenere.Cipher.encrypt.params.plaintext"></span><strong>plaintext</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Cipher.encrypt.params.plaintext">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
@@ -591,34 +592,45 @@ the <a class="reference internal" href="#toy_crypto.vigenere.Cipher.encrypt" tit
 <h2>The <code class="xref py py-class docutils literal notranslate"><span class="pre">Alphebet</span></code> class<a class="headerlink" href="#the-alphebet-class" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.vigenere.</span></span><span class="sig-name descname"><span class="pre">Alphabet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alphabet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prebaked</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#Alphabet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.Alphabet" title="Link to this definition">#</a></dt>
-<dd><p>An alphabet.</p>
-<p>This does not check if the alphabet is sensible. In particular, you may get
-very peculiar results if the alphabet contains duplicate elements.</p>
-<p>Instances of this class are conventionally immutable.</p>
-<dl class="field-list simple">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.vigenere.</span></span><span class="sig-name descname"><span class="pre">Alphabet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alphabet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_baked</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#Alphabet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.Alphabet" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alphabet</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
-<li><p><strong>prebaked</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Alphabet.params.alphabet"></span><strong>alphabet</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.params.alphabet">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Sequence of characters to be used to construct alphabet.</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Alphabet.params.pre_baked"></span><strong>pre_baked</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.params.pre_baked">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of pre_baked (hardcoded) alphabets to use.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if both alphabet and pre_baked are used.</p>
+</dd>
 </dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This does not check if the alphabet is sensible. In particular, you
+may get  very peculiar results if the alphabet contains duplicate
+elements.</p>
+</div>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.CAPS_ONLY">
-<span class="sig-name descname"><span class="pre">CAPS_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.CAPS_ONLY" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">CAPS_ONLY</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.CAPS_ONLY" title="Link to this definition">#</a></dt>
 <dd><p>‘A’ through ‘Z’ in order.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.DEFAULT">
-<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.DEFAULT" title="Link to this definition">#</a></dt>
-<dd><p>CAPS_ONLY is the default.</p>
+<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ABCDEFGHIJKLMNOPQRSTUVWXYZ'</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.DEFAULT" title="Link to this definition">#</a></dt>
+<dd><p>Default alphabet to use.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.PREBAKED">
+<span class="sig-name descname"><span class="pre">PREBAKED</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['default',</span> <span class="pre">'caps',</span> <span class="pre">'printable']</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.PREBAKED" title="Link to this definition">#</a></dt>
+<dd><p>Names of pre-baked alphabets</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.PRINTABLE">
-<span class="sig-name descname"><span class="pre">PRINTABLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'JDi-Km9247oBEctS%Isxz{&lt;;=W^fL,[Y3Mgd6HV(kR8:_CF&quot;*\')&gt;|#~Xay!]N+1vnqTl/}j$A.&#64;0b</span> <span class="pre">ZGe`UPhp?Ow&amp;ru5Q'</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.PRINTABLE" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">PRINTABLE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'JDi-Km9247oBEctS%Isxz{&lt;;=W^fL,[Y3Mgd6HV(kR8:_CF&quot;*\')&gt;|#~Xay!]N+1vnqTl/}j$A.&#64;0b</span> <span class="pre">ZGe`UPhp?Ow&amp;ru5Q'</span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.PRINTABLE" title="Link to this definition">#</a></dt>
 <dd><p>Printable 7-bit ASCII in a fixed scrambled order.</p>
 <p>It does not include the backslash character,
 and the scrambled order is hardcoded.</p>
@@ -626,19 +638,22 @@ and the scrambled order is hardcoded.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.abc2idx">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abc2idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.abc2idx" title="Link to this definition">#</a></dt>
-<dd><p>Dictionary of letter to position in the alphabet.</p>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abc2idx</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.abc2idx" title="Link to this definition">#</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.6: </span>Renamed. Use <a class="reference internal" href="#toy_crypto.vigenere.Alphabet.inverse_map" title="toy_crypto.vigenere.Alphabet.inverse_map"><code class="xref py py-func docutils literal notranslate"><span class="pre">inverse_map()</span></code></a> instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.add">
 <span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#Alphabet.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.add" title="Link to this definition">#</a></dt>
 <dd><p>Returns the modular sum of two characters.</p>
+<p>Invalid input may lead to a KeyError</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Alphabet.add.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.add.params.a">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Alphabet.add.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.add.params.b">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -656,15 +671,22 @@ and the scrambled order is hardcoded.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.inverse">
 <span class="sig-name descname"><span class="pre">inverse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#Alphabet.inverse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.inverse" title="Link to this definition">#</a></dt>
-<dd><p>Returns the additive inverse of character c</p>
+<dd><p>Returns the additive inverse of character c.</p>
+<p>Invalid input may lead to a KeyError</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>c</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.vigenere.Alphabet.inverse.params.c"></span><strong>c</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.inverse.params.c">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.inverse_map">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inverse_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.inverse_map" title="Link to this definition">#</a></dt>
+<dd><p>Dictionary of Letter to position in the alphabet.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -677,11 +699,12 @@ and the scrambled order is hardcoded.</p>
 <dt class="sig sig-object py" id="toy_crypto.vigenere.Alphabet.subtract">
 <span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#Alphabet.subtract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.Alphabet.subtract" title="Link to this definition">#</a></dt>
 <dd><p>Returns the character corresponding to a - b.</p>
+<p>Invalid input may lead to a KeyError</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Alphabet.subtract.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.subtract.params.a">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.Alphabet.subtract.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.Alphabet.subtract.params.b">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -696,22 +719,37 @@ and the scrambled order is hardcoded.</p>
 <section id="cryptanalysis-tools">
 <h2>Cryptanalysis tools<a class="headerlink" href="#cryptanalysis-tools" title="Link to this heading">#</a></h2>
 <p>Some tools (currently just one, but more may be coming) to assist in breaking Vigenère.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="toy_crypto.vigenere.BitSimilarity">
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.vigenere.</span></span><span class="sig-name descname"><span class="pre">BitSimilarity</span></span><a class="headerlink" href="#toy_crypto.vigenere.BitSimilarity" title="Link to this definition">#</a></dt>
+<dd><p>A float in [-4.0, 4.0] the bit similarity per byte.
+-4 indicates that all bits are different.
++4 indicates that all bits are the same.</p>
+<p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Annotated</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <a class="reference internal" href="types.html#toy_crypto.types.ValueRange" title="toy_crypto.types.ValueRange"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueRange</span></code></a>(min=-4.0, max=4.0)]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="toy_crypto.vigenere.SimilarityScores">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.vigenere.</span></span><span class="sig-name descname"><span class="pre">SimilarityScores</span></span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#SimilarityScores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.SimilarityScores" title="Link to this definition">#</a></dt>
+<dd><p>A dictionary of keysize : dict[int, list[<a class="reference internal" href="#toy_crypto.vigenere.BitSimilarity" title="toy_crypto.vigenere.BitSimilarity"><code class="xref py py-class docutils literal notranslate"><span class="pre">BitSimilarity</span></code></a>]].</p>
+</dd></dl>
+
 <p>At the moment, I am choosing not to include statistical analyses, as I want to minimize package dependencies and not importing <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/stats.html">scipy.stats</a>. Thus functions here are very statistically naïve.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="toy_crypto.vigenere.probable_keysize">
-<span class="sig-prename descclassname"><span class="pre">toy_crypto.vigenere.</span></span><span class="sig-name descname"><span class="pre">probable_keysize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ciphertext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trial_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SimilarityScores</span></span></span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#probable_keysize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.probable_keysize" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">toy_crypto.vigenere.</span></span><span class="sig-name descname"><span class="pre">probable_keysize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ciphertext</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trial_pairs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#toy_crypto.vigenere.SimilarityScores" title="toy_crypto.vigenere.SimilarityScores"><span class="pre">SimilarityScores</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/vigenere.html#probable_keysize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.vigenere.probable_keysize" title="Link to this definition">#</a></dt>
 <dd><p>Assesses likelihood for key length of ciphertext.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ciphertext</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The ciphertext.</p></li>
-<li><p><strong>min_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">3</span></code>) – The minimum key length to try.</p></li>
-<li><p><strong>max_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">40</span></code>) – The maximum key length to try.</p></li>
-<li><p><strong>trial_pairs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The number of pairs of blocks to test.</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.probable_keysize.params.ciphertext"></span><strong>ciphertext</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.probable_keysize.params.ciphertext">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The ciphertext.</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.probable_keysize.params.min_size"></span><strong>min_size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.probable_keysize.params.min_size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">3</span></code>) – The minimum key length to try.</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.probable_keysize.params.max_size"></span><strong>max_size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.probable_keysize.params.max_size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">40</span></code>) – The maximum key length to try.</p></li>
+<li><p><span class="target" id="toy_crypto.vigenere.probable_keysize.params.trial_pairs"></span><strong>trial_pairs</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.vigenere.probable_keysize.params.trial_pairs">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The number of pairs of blocks to test.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimilarityScores</span></code></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.vigenere.SimilarityScores" title="toy_crypto.vigenere.SimilarityScores"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimilarityScores</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Returns list sorted by scores of (keysize, score)</p>
@@ -722,7 +760,7 @@ but they do not directly represent probabilities.</p>
 </dd></dl>
 
 <p>The algorithm has a long history, but I’ve lifted it from
-<a class="reference external" href="https://cryptopals.com/sets/1/challenges/6">Cryptopals set 1, chalange 6</a>.</p>
+<a class="reference external" href="https://cryptopals.com/sets/1/challenges/6">Cryptopals set 1, challenge 6</a>.</p>
 </section>
 </section>
 
@@ -789,11 +827,13 @@ but they do not directly represent probabilities.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet"><code class="docutils literal notranslate"><span class="pre">Alphabet</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.CAPS_ONLY"><code class="docutils literal notranslate"><span class="pre">Alphabet.CAPS_ONLY</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.DEFAULT"><code class="docutils literal notranslate"><span class="pre">Alphabet.DEFAULT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.PREBAKED"><code class="docutils literal notranslate"><span class="pre">Alphabet.PREBAKED</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.PRINTABLE"><code class="docutils literal notranslate"><span class="pre">Alphabet.PRINTABLE</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.abc2idx"><code class="docutils literal notranslate"><span class="pre">Alphabet.abc2idx</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.add"><code class="docutils literal notranslate"><span class="pre">Alphabet.add()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.alphabet"><code class="docutils literal notranslate"><span class="pre">Alphabet.alphabet</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.inverse"><code class="docutils literal notranslate"><span class="pre">Alphabet.inverse()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.inverse_map"><code class="docutils literal notranslate"><span class="pre">Alphabet.inverse_map</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.modulus"><code class="docutils literal notranslate"><span class="pre">Alphabet.modulus</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.Alphabet.subtract"><code class="docutils literal notranslate"><span class="pre">Alphabet.subtract()</span></code></a></li>
 </ul>
@@ -801,6 +841,8 @@ but they do not directly represent probabilities.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cryptanalysis-tools">Cryptanalysis tools</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.BitSimilarity"><code class="docutils literal notranslate"><span class="pre">BitSimilarity</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.SimilarityScores"><code class="docutils literal notranslate"><span class="pre">SimilarityScores</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#toy_crypto.vigenere.probable_keysize"><code class="docutils literal notranslate"><span class="pre">probable_keysize()</span></code></a></li>
 </ul>
 </li>

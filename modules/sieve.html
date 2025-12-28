@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sieve of Eratosthenes &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>Sieve of Eratosthenes &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -31,6 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -38,7 +39,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules/sieve';</script>
@@ -48,7 +49,7 @@
     <link rel="prev" title="Number Theory" href="nt.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -110,7 +111,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -580,7 +581,7 @@ instead of a Protocol.</p>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.Sievish.from_int.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.Sievish.from_int.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
@@ -599,8 +600,8 @@ instead of a Protocol.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.Sievish.from_list.params.primes"></span><strong>primes</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.Sievish.from_list.params.primes">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.Sievish.from_list.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.Sievish.from_list.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -615,7 +616,7 @@ instead of a Protocol.</p>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.Sievish.from_size.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.Sievish.from_size.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">S</span></code>)</span></p>
@@ -642,7 +643,7 @@ instead of a Protocol.</p>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.Sievish.nth_prime.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.Sievish.nth_prime.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -660,7 +661,7 @@ instead of a Protocol.</p>
 <dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.Sievish.primes.params.start"></span><strong>start</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.Sievish.primes.params.start">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
@@ -695,8 +696,8 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code></span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.BaSieve.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.params.data">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.BaSieve.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -707,8 +708,8 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code></span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.BaSieve.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.params.data">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bitarray</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.BaSieve.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -724,7 +725,7 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.BaSieve.from_int.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.from_int.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -743,8 +744,8 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.BaSieve.from_list.params.primes"></span><strong>primes</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.from_list.params.primes">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.BaSieve.from_list.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.from_list.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -759,7 +760,7 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.BaSieve.from_size.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.from_size.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -786,7 +787,7 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.BaSieve.nth_prime.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.nth_prime.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -804,7 +805,7 @@ with the <a class="reference external" href="https://pypi.org/project/bitarray/"
 <dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.BaSieve.primes.params.start"></span><strong>start</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.BaSieve.primes.params.start">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
@@ -828,8 +829,8 @@ the integer or bitarray sieves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.SetSieve.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.params.data">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.SetSieve.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -840,8 +841,8 @@ illustrate the algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.SetSieve.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.params.data">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.SetSieve.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -857,7 +858,7 @@ illustrate the algorithm.</p>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.SetSieve.from_int.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.from_int.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -876,8 +877,8 @@ illustrate the algorithm.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.SetSieve.from_list.params.primes"></span><strong>primes</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.from_list.params.primes">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.SetSieve.from_list.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.from_list.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -892,7 +893,7 @@ illustrate the algorithm.</p>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.SetSieve.from_size.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.from_size.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.sieve.SetSieve" title="toy_crypto.sieve.SetSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">SetSieve</span></code></a></span></p>
@@ -919,7 +920,7 @@ illustrate the algorithm.</p>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.SetSieve.nth_prime.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.nth_prime.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -937,7 +938,7 @@ illustrate the algorithm.</p>
 <dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.SetSieve.primes.params.start"></span><strong>start</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.SetSieve.primes.params.start">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
@@ -954,9 +955,10 @@ illustrate the algorithm.</p>
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">toy_crypto.sieve.</span></span><span class="sig-name descname"><span class="pre">IntSieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve" title="Link to this definition">#</a></dt>
 <dd><p>A pure Python (using a large int) Sieve of Eratosthenes.</p>
+<p>Work in progress. This does not always work.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.IntSieve.params.data"></span><strong>data</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.params.data">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 </dl>
 <dl class="py property">
@@ -971,7 +973,7 @@ illustrate the algorithm.</p>
 <dd><p>Returns a new sieve of primes from the bits of n.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.IntSieve.from_int.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.from_int.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
@@ -981,7 +983,7 @@ illustrate the algorithm.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="toy_crypto.sieve.IntSieve.from_list">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_list" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><span class="pre">IntSieve</span></a></span></span><a class="reference internal" href="../_modules/toy_crypto/sieve.html#IntSieve.from_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#toy_crypto.sieve.IntSieve.from_list" title="Link to this definition">#</a></dt>
 <dd><p>Returns a new sieve of primes from list.</p>
 <p>If size is not specified it will be set to the largest value in primes</p>
 <dl class="field-list simple">
@@ -990,12 +992,12 @@ illustrate the algorithm.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>primes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
-<li><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.IntSieve.from_list.params.primes"></span><strong>primes</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.from_list.params.primes">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>)</p></li>
+<li><p><span class="target" id="toy_crypto.sieve.IntSieve.from_list.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.from_list.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Self</span></code></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1006,7 +1008,7 @@ illustrate the algorithm.</p>
 <dd><p>Returns a new sieve of primes less than or equal to size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.sieve.IntSieve.from_size.params.size"></span><strong>size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.from_size.params.size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#toy_crypto.sieve.IntSieve" title="toy_crypto.sieve.IntSieve"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntSieve</span></code></a></span></p>
@@ -1033,7 +1035,7 @@ illustrate the algorithm.</p>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.IntSieve.nth_prime.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.nth_prime.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -1051,7 +1053,7 @@ illustrate the algorithm.</p>
 <dd class="field-odd"><p><strong>ValueError</strong> – if start &lt; 1</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>start</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.sieve.IntSieve.primes.params.start"></span><strong>start</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.sieve.IntSieve.primes.params.start">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>

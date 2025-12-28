@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>toy_crypto.utils &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>toy_crypto.utils &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -30,6 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -37,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/toy_crypto/utils';</script>
@@ -45,7 +46,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -107,7 +108,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -393,13 +394,32 @@
   <h1>Source code for toy_crypto.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Hashable</span><span class="p">,</span>
+    <span class="n">ItemsView</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
+    <span class="n">KeysView</span><span class="p">,</span>
+    <span class="n">Mapping</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">hashlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">blake2b</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">base64</span><span class="w"> </span><span class="kn">import</span> <span class="n">a85encode</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Self</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Protocol</span><span class="p">,</span>
+    <span class="n">Self</span><span class="p">,</span>
+    <span class="n">ValuesView</span><span class="p">,</span>
+    <span class="n">cast</span><span class="p">,</span>
+    <span class="n">runtime_checkable</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">toy_crypto.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Byte</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="digit_count">
@@ -407,21 +427,18 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">digit_count</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;returns the number of digits (base b) of integer n.</span>
 
-<span class="sd">    :raises ValueError: if base &lt; 2</span>
-<span class="sd">    :raises TypeError: if n is not an integer</span>
-
+<span class="sd">    :raises ValueError: if base &lt; 1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">base</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;base must be at least 2&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n must be an integer&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;base must be at least 1&quot;</span><span class="p">)</span>
 
     <span class="n">n</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-    <span class="c1"># Handling this case separately seems better than trying</span>
-    <span class="c1"># to simulate a do-while in Python.</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">n</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
 
@@ -475,6 +492,62 @@
 
 
 
+<div class="viewcode-block" id="FrozenBidict">
+<a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.FrozenBidict">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FrozenBidict</span><span class="p">[</span><span class="n">K</span><span class="p">:</span> <span class="n">Hashable</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">V</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A bidirectional dictionary-like object.</span>
+
+<span class="sd">    This is a very limited utility just for specific</span>
+<span class="sd">    uses in this project. You will find more robust,</span>
+<span class="sd">    flexible, and much more broadly applicable classes</span>
+<span class="sd">    and functions in the outstanding</span>
+<span class="sd">    `bidict library &lt;https://bidict.readthedocs.io/en/main/&gt;`__.</span>
+
+<span class="sd">    .. versionadded::0.6</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">V</span><span class="p">]</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a map and its inverse.</span>
+
+<span class="sd">        If s contains duplicate values, the behavior of the</span>
+<span class="sd">        inverse map is undefined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inv</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">V</span><span class="p">,</span> <span class="n">K</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>  <span class="c1"># type: ignore[invalid-assignment]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s</span><span class="p">)}</span>  <span class="c1"># type: ignore[misc]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inv</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="n">K</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">V</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="n">K</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesView</span><span class="p">[</span><span class="n">V</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemsView</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">K</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fwd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">V</span><span class="p">,</span> <span class="n">K</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The inverse map.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inv</span></div>
+
+
+
 <div class="viewcode-block" id="Rsa129">
 <a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.Rsa129">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Rsa129</span><span class="p">:</span>
@@ -483,29 +556,18 @@
 <span class="sd">    Encoding scheme from Martin Gardner&#39;s 1977 article.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_abc</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot; ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="p">)</span>
-    <span class="n">_abc_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_make_index</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_abc_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_abc_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_abc</span><span class="p">)}</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_abc_index</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_make_index</span><span class="p">()</span>
+    <span class="n">bimap</span><span class="p">:</span> <span class="n">FrozenBidict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">FrozenBidict</span><span class="p">(</span><span class="s2">&quot; ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Rsa129.encode">
 <a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.Rsa129.encode">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode text&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode text to number&quot;&quot;&quot;</span>
 
-        <span class="n">indx</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_make_index</span><span class="p">()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">*=</span> <span class="mi">100</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="n">indx</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">bimap</span><span class="o">.</span><span class="n">inverse</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
 
@@ -513,11 +575,11 @@
 <a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.Rsa129.decode">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode text.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decode number to text.&quot;&quot;&quot;</span>
         <span class="n">chars</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">number</span><span class="p">,</span> <span class="n">rem</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-            <span class="n">chars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_abc</span><span class="p">[</span><span class="n">rem</span><span class="p">])</span>
+            <span class="n">chars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">bimap</span><span class="p">[</span><span class="n">rem</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span></div>
@@ -640,6 +702,248 @@
             <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">prev</span>
         <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid direction: &#39;</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuppprtsName</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Objects with &#39;__name__1&#39;&quot;&quot;&quot;</span>
+
+    <span class="vm">__name__</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">[</span><span class="n">F</span><span class="p">:</span> <span class="n">SuppprtsName</span><span class="p">](</span><span class="n">fn</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to mark class or function as exported from module</span>
+
+<span class="sd">    See https://brandonrozek.com/blog/exportpydecorator/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">SuppprtsName</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">fn</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Please respect the type annotation&quot;</span><span class="p">)</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">fn</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s2">&quot;__all__&quot;</span><span class="p">):</span>
+        <span class="n">mod</span><span class="o">.</span><span class="n">__all__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s2">&quot;__all__&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">fn</span>
+
+
+<div class="viewcode-block" id="find_zero">
+<a class="viewcode-back" href="../../modules/utils.html#toy_crypto.utils.find_zero">[docs]</a>
+<span class="nd">@export</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_zero</span><span class="p">(</span>
+    <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">initial_estimate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">initial_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span>
+    <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">lower_bound</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">upper_bound</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds (nearly) smallest n for f(x) such that f(n) &gt; 0.</span>
+
+<span class="sd">    Performs a binary search for +0 of a non-decreasing function,</span>
+<span class="sd">    :math:`f(n)`, to return an :math:`n_0` such that</span>
+<span class="sd">    :math:`f(n_0) \\geq 0 \\land f(n_0 - 1) &lt; 0`.</span>
+
+<span class="sd">    :param function:</span>
+<span class="sd">        The function for which you want to find the zero.</span>
+<span class="sd">        Must be non-decreasing.</span>
+<span class="sd">    :param initial_estimate:</span>
+<span class="sd">        The closer this is to the actual zero,</span>
+<span class="sd">        the less the computer will need to work to find it.</span>
+<span class="sd">    :param initial_step:</span>
+<span class="sd">        The initial step size.</span>
+<span class="sd">    :param max_iterations:</span>
+<span class="sd">        The number of times this will compute the function</span>
+<span class="sd">        before it just gives you its best estimate that that</span>
+<span class="sd">        time.</span>
+<span class="sd">    :param lower_bound:</span>
+<span class="sd">        Smallest meaningful *n* in f(n).</span>
+<span class="sd">        If ``None``, treated as ``-math.inf``.</span>
+<span class="sd">    :param upper_bound:</span>
+<span class="sd">        Largest meaningful *n* in f(n).</span>
+<span class="sd">        If ``None``, treated as ``math.inf``.</span>
+
+<span class="sd">    :raises ValueError: if ``initial_step`` isn&#39;t positive.</span>
+<span class="sd">    :raises ValueError: if not lower_bound &lt;= initial_estimate &lt;= upper_bound.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        Results are undefined if function is not non-decreasing</span>
+<span class="sd">        or if function isn&#39;t defined for every n in [lower_bound, upper_bound].</span>
+
+<span class="sd">    .. caution::</span>
+<span class="sd">        If f(n) is close to flat around n\\ :sub:`0` and</span>
+<span class="sd">        n\\ :sub:`0` is large</span>
+<span class="sd">        then the result may be approximate.</span>
+
+<span class="sd">    .. caution::</span>
+<span class="sd">        This has only been tested for use in</span>
+<span class="sd">        :func:`toy_crypto.birthday.quantile`.</span>
+
+<span class="sd">    .. versionadded:: 0.6</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">initial_step</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;initial step size must be positive&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lower_bound</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">upper_bound</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lower_bound</span> <span class="o">&lt;=</span> <span class="n">initial_estimate</span> <span class="o">&lt;</span> <span class="n">upper_bound</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bounds and initial_estimate don&#39;t make sense&quot;</span><span class="p">)</span>
+
+    <span class="n">call_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">callit</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for function, tracking number of times called.&quot;&quot;&quot;</span>
+        <span class="k">nonlocal</span> <span class="n">call_count</span>
+        <span class="k">nonlocal</span> <span class="n">function</span>
+
+        <span class="n">call_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Point</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>
+
+            <span class="c1"># We only ever make use of the sign of x,</span>
+            <span class="c1"># but let&#39;s keep this if we want to move to smarter</span>
+            <span class="c1"># interpolation.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sign</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">from_n</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Point&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">callit</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+        <span class="nd">@property</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+
+        <span class="nd">@property</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">n</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
+
+        <span class="nd">@property</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">sign</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sign</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">isclose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;Point&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="c1"># if same point or adjacent</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="c1"># if close on a large scale</span>
+            <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">linear_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;Point&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Assuming points on straight line, zero.</span>
+
+<span class="sd">            Abnormal: Do not use</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must be distinct points&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">y</span><span class="p">:</span>
+                <span class="c1"># A more general function would return None</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;line is horizontal&quot;</span><span class="p">)</span>
+
+            <span class="c1"># US high school notation for slope/intercept form</span>
+            <span class="c1"># y = mx + b</span>
+            <span class="c1"># The linear zero should be near -b</span>
+            <span class="n">m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+            <span class="k">return</span> <span class="o">-</span><span class="nb">round</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="c1"># We need to handle cases of</span>
+    <span class="c1"># - f(lower_bound) &gt;= 0</span>
+    <span class="c1"># - f(upper_bound) &lt;= 0</span>
+    <span class="c1"># early, so rest of code can assume working bounds</span>
+    <span class="k">if</span> <span class="n">upper_bound</span> <span class="o">!=</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+        <span class="n">lowest_above</span> <span class="o">=</span> <span class="n">Point</span><span class="o">.</span><span class="n">from_n</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lowest_above</span><span class="o">.</span><span class="n">sign</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">upper_bound</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lowest_above</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lower_bound</span> <span class="o">!=</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+        <span class="n">highest_below</span> <span class="o">=</span> <span class="n">Point</span><span class="o">.</span><span class="n">from_n</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">highest_below</span><span class="o">.</span><span class="n">sign</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">lower_bound</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">highest_below</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">Point</span><span class="p">(</span><span class="n">initial_estimate</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">initial_estimate</span><span class="p">))</span>
+    <span class="k">match</span> <span class="n">start</span><span class="o">.</span><span class="n">sign</span><span class="p">:</span>
+        <span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">initial_estimate</span>
+        <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lowest_above</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="k">case</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">highest_below</span> <span class="o">=</span> <span class="n">start</span>
+
+    <span class="c1"># We need to first scale up to a step size that surrounds the zero</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">start</span><span class="o">.</span><span class="n">sign</span> <span class="o">*</span> <span class="n">initial_step</span>
+    <span class="n">previous</span> <span class="o">=</span> <span class="n">start</span>
+
+    <span class="c1"># We will double the step size until we cross zero</span>
+    <span class="n">new_point</span> <span class="o">=</span> <span class="n">Point</span><span class="o">.</span><span class="n">from_n</span><span class="p">(</span><span class="n">previous</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">new_point</span><span class="o">.</span><span class="n">sign</span> <span class="o">==</span> <span class="n">previous</span><span class="o">.</span><span class="n">sign</span><span class="p">:</span>
+        <span class="k">match</span> <span class="n">new_point</span><span class="o">.</span><span class="n">sign</span><span class="p">:</span>
+            <span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">new_point</span><span class="o">.</span><span class="n">n</span>
+            <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">lowest_above</span> <span class="o">=</span> <span class="n">new_point</span>
+            <span class="k">case</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">highest_below</span> <span class="o">=</span> <span class="n">new_point</span>
+        <span class="n">step</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="n">previous</span> <span class="o">=</span> <span class="n">new_point</span>
+
+        <span class="n">next_n</span> <span class="o">=</span> <span class="n">new_point</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">step</span>
+        <span class="c1"># This assumes we&#39;ve already handled pathological bound cases</span>
+        <span class="n">next_n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">next_n</span><span class="p">))</span>
+        <span class="n">new_point</span> <span class="o">=</span> <span class="n">Point</span><span class="o">.</span><span class="n">from_n</span><span class="p">(</span><span class="n">next_n</span><span class="p">)</span>
+
+    <span class="c1"># because python doesn&#39;t have a do while, we do this 1 more time</span>
+    <span class="c1"># when the sign has changed</span>
+    <span class="k">match</span> <span class="n">new_point</span><span class="o">.</span><span class="n">sign</span><span class="p">:</span>
+        <span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">new_point</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lowest_above</span> <span class="o">=</span> <span class="n">new_point</span>
+        <span class="k">case</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">highest_below</span> <span class="o">=</span> <span class="n">new_point</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;zero in (</span><span class="si">{</span><span class="n">highest_below</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">lowest_above</span><span class="o">.</span><span class="n">n</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;after </span><span class="si">{</span><span class="n">call_count</span><span class="si">}</span><span class="s2"> calls to function.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># At this point we have `new_point` and `previous` with opposite signs</span>
+    <span class="c1"># The logic below is that best_other and new_point will always have</span>
+    <span class="c1"># opposite signs (except for when new_point is at zero)</span>
+    <span class="n">best_other</span> <span class="o">=</span> <span class="n">previous</span>
+
+    <span class="c1"># Now we actually bisect</span>
+    <span class="k">while</span> <span class="n">call_count</span> <span class="o">&lt;</span> <span class="n">max_iterations</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="n">new_point</span><span class="o">.</span><span class="n">sign</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">new_point</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">best_other</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">best_other</span> <span class="o">=</span> <span class="n">highest_below</span> <span class="k">if</span> <span class="n">new_point</span><span class="o">.</span><span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">lowest_above</span>
+
+        <span class="c1"># Pick halfway n.</span>
+        <span class="c1"># Linear interpolation runs into big enough</span>
+        <span class="c1"># precision errors with the quantile function</span>
+        <span class="c1"># that it is worse than useless.</span>
+        <span class="n">new_n</span> <span class="o">=</span> <span class="p">(</span><span class="n">best_other</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">new_point</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">new_point</span> <span class="o">=</span> <span class="n">Point</span><span class="o">.</span><span class="n">from_n</span><span class="p">(</span><span class="n">new_n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_point</span><span class="o">.</span><span class="n">sign</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">highest_below</span> <span class="o">=</span> <span class="n">new_point</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lowest_above</span> <span class="o">=</span> <span class="n">new_point</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bisection done after </span><span class="si">{</span><span class="n">call_count</span><span class="si">}</span><span class="s2"> function calls&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lowest_above</span><span class="o">.</span><span class="n">n</span></div>
 
 </pre></div>
 

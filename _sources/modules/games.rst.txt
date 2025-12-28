@@ -174,20 +174,12 @@ When a game is set up, it must be given an encryption scheme,
 which will include a key generation function, an encryption function,
 and optionally a decryption function.
 
-Sphinx doesn't seem to have good ways of documenting these,
-but hopefully what I list here makes some sense.
-
 .. autotypevar:: K
 
-.. type:: KeyGenerator
-    :canonical: Callable[[], K]
+.. autodata:: KeyGenerator
 
-    A parameterized type alias for the key generation function.
+.. autodata:: Cryptor
 
-.. type:: Cryptor
-    :canonical: Callable[[K, bytes], bytes]
-
-    A parameterized type alias to describe the encryptor/decrptor functions.
 
 
 The class and method organization

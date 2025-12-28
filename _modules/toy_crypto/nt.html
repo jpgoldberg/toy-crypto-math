@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>toy_crypto.nt &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>toy_crypto.nt &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -30,6 +30,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -37,7 +38,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/toy_crypto/nt';</script>
@@ -45,7 +46,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -107,7 +108,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -398,22 +399,32 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserList</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Self</span><span class="p">,</span> <span class="n">TypeGuard</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>  <span class="c1"># novermin # ty: ignore[unresolved-import]</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>  <span class="c1"># novermin</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">primefac</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">rand</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">export</span>
+
+<span class="n">__all__</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
 
 <span class="n">Modulus</span> <span class="o">=</span> <span class="n">NewType</span><span class="p">(</span><span class="s2">&quot;Modulus&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;type Modulus is an int greater than 1&quot;&quot;&quot;</span>
 
+<span class="n">__all__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Modulus&quot;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="is_modulus">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.is_modulus">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_modulus</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">Modulus</span><span class="p">]:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -427,6 +438,7 @@
 
 <div class="viewcode-block" id="isprime">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.isprime">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">isprime</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;False if composite; True if very probably prime.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">primefac</span><span class="o">.</span><span class="n">isprime</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
@@ -435,8 +447,13 @@
 
 <div class="viewcode-block" id="isqrt">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.isqrt">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use math.isqrt instead&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">isqrt</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;returns the greatest r such that r * r =&lt; n&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;returns the greatest r such that r * r =&lt; n</span>
+
+<span class="sd">    .. deprecated:: 0.6</span>
+<span class="sd">       Use :func:`math.isqrt` instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n cannot be negative&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></div>
@@ -445,6 +462,7 @@
 
 <div class="viewcode-block" id="modinv">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.modinv">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">modinv</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns b such that :math:`ab \\equiv 1 \\pmod m`.</span>
@@ -459,6 +477,7 @@
 
 <div class="viewcode-block" id="FactorList">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.FactorList">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">FactorList</span><span class="p">(</span><span class="n">UserList</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A FactorList is an list of (prime, exponent) tuples.</span>
@@ -501,9 +520,14 @@
         <span class="c1">#  - list</span>
         <span class="c1">#  - int</span>
         <span class="c1">#  - UserDict</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">FactorList</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">other_f</span> <span class="o">=</span> <span class="n">FactorList</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+                <span class="n">other_f</span> <span class="o">=</span> <span class="n">FactorList</span><span class="p">(</span>
+                    <span class="n">other</span><span class="p">,</span>  <span class="c1"># ty: ignore[invalid-argument-type]</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">other_f</span><span class="o">.</span><span class="n">data</span>
@@ -512,10 +536,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">UserList</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="s2">&quot;FactorList&quot;</span><span class="p">:</span>
         <span class="n">added</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
@@ -657,6 +678,7 @@
 
 <div class="viewcode-block" id="factor">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.factor">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ith</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactorList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns list (prime, exponent) factors of n.</span>
@@ -673,14 +695,21 @@
 
 <div class="viewcode-block" id="gcd">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.gcd">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use math.gcd instead&quot;</span><span class="p">)</span>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">gcd</span><span class="p">(</span><span class="o">*</span><span class="n">integers</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns greatest common denominator of arguments.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns greatest common denominator of arguments.</span>
+
+<span class="sd">    .. deprecated:: 0.6</span>
+<span class="sd">       Use :func:`math.gcd` instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="o">*</span><span class="n">integers</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="egcd">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.egcd">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">egcd</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;returns (g, x, y) such that :math:`ax + by = \\gcd(a, b) = g`.&quot;&quot;&quot;</span>
     <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
@@ -694,6 +723,7 @@
 
 <div class="viewcode-block" id="is_square">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.is_square">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_square</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;True iff n is a perfect square.&quot;&quot;&quot;</span>
 
@@ -703,6 +733,7 @@
 
 <div class="viewcode-block" id="mod_sqrt">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.mod_sqrt">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">mod_sqrt</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Modular square root.</span>
 
@@ -748,17 +779,42 @@
 
 <div class="viewcode-block" id="lcm">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.lcm">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use math.lcm instead&quot;</span><span class="p">)</span>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">lcm</span><span class="p">(</span><span class="o">*</span><span class="n">integers</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Least common multiple&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Least common multiple</span>
 
-    <span class="c1"># requires python 3.9, but I&#39;m already requiring 3.11</span>
+<span class="sd">    .. deprecated:: 0.6</span>
+<span class="sd">       Use :func:`math.lcm` instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">lcm</span><span class="p">(</span><span class="o">*</span><span class="n">integers</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_small_primality</span><span class="p">(</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">primes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Testing small n.</span>
+
+<span class="sd">    Returns True if prime, False if composite, None if unknown</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">largest_small</span> <span class="o">=</span> <span class="n">primes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">largest_small</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">n</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primes</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">largest_small</span><span class="o">**</span><span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
 
 
 <span class="c1"># lifted from https://gist.github.com/Ayrx/5884790</span>
 <div class="viewcode-block" id="probably_prime">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.probably_prime">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">probably_prime</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns True if n is prime or if you had really bad luck.</span>
 
@@ -770,27 +826,26 @@
 
 <span class="sd">    If you need a real primality check, use sympy.isprime() instead.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
+    <span class="c1"># A few notational things to help make logic of code more readable</span>
+    <span class="n">PRIME</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">PROBABLY_PRIME</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">COMPOSITE</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;k must be greater than 0&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Let&#39;s deal with some very low primes</span>
-    <span class="c1"># I don&#39;t want to do Fermat for tiny numbers</span>
-    <span class="c1"># so we do trial division for primes &lt;= 13</span>
-    <span class="n">small_primes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
-    <span class="n">largest_small</span> <span class="o">=</span> <span class="n">small_primes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">small_primes</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">largest_small</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">small_primes</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">largest_small</span><span class="o">**</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">match</span> <span class="n">_small_primality</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">case</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PRIME</span>
+        <span class="k">case</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">COMPOSITE</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># If we reach this point then n</span>
+    <span class="c1"># - is not in small primes,</span>
+    <span class="c1"># - is not divisible by a small prime</span>
+    <span class="c1"># - is greater than the square of the largest small prime</span>
 
     <span class="c1"># Set up generator for k trial bases</span>
     <span class="n">bases</span><span class="p">:</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -806,29 +861,33 @@
     <span class="k">while</span> <span class="n">s</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">r</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">s</span> <span class="o">//=</span> <span class="mi">2</span>
+        <span class="c1"># This leaves us with 2^r * s = n - 1</span>
 
     <span class="c1"># Now we use FLT for the reduced s, but still mod n</span>
     <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c1"># This a is good. Call the next witness!</span>
+            <span class="c1"># Consistent with prime. Call the next potential witness!</span>
             <span class="k">continue</span>
 
-        <span class="c1"># square x for each time we reduced s for a passing x</span>
+        <span class="c1"># If any of the successive squares of x is n - 1 (mod n)</span>
+        <span class="c1"># then primality passes is base a,</span>
+        <span class="c1"># else a tells us that n is composite</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="nb">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c1"># Our _a_ really was good, once we tested squares of x</span>
+                <span class="c1"># a is consistent with prime, once we tested squares of x</span>
                 <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># We&#39;ve exited the loop without finding _a_ to be good</span>
-            <span class="k">return</span> <span class="kc">False</span>
+            <span class="c1"># a is a witness to n being composite</span>
+            <span class="k">return</span> <span class="n">COMPOSITE</span>
 
-    <span class="c1"># We&#39;ve run all k trials, without any a telling us n is composite</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
+    <span class="c1"># We&#39;ve called k witnesses and none have said n is composite</span>
+    <span class="k">return</span> <span class="n">PROBABLY_PRIME</span></div>
 
 
 
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">fermat_test</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns true if n is prime, a Carmichael number, or through bad luck.</span>
 
@@ -848,22 +907,13 @@
 <span class="sd">        Its only advantage is that it is easier to understand.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="c1"># I don&#39;t want to do Fermat for tiny numbers</span>
-    <span class="c1"># so we do trial division for primes &lt;= 13</span>
-    <span class="n">small_primes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
-    <span class="n">largest_small</span> <span class="o">=</span> <span class="n">small_primes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">small_primes</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">largest_small</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">small_primes</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">match</span> <span class="n">_small_primality</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">case</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">case</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">largest_small</span><span class="o">**</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">pass</span>
 
     <span class="c1"># Now we are ready for Fermat&#39;s test</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -883,16 +933,16 @@
     <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">pow</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-
     <span class="k">return</span> <span class="kc">True</span>
 
 
 <div class="viewcode-block" id="get_prime">
 <a class="viewcode-back" href="../../modules/nt.html#toy_crypto.nt.get_prime">[docs]</a>
+<span class="nd">@export</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_prime</span><span class="p">(</span>
     <span class="n">bit_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">leading_1_bits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a randomly chosen prime of :data:`bit_size` bits.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a randomly chosen prime of **bit_size** bits.</span>
 
 <span class="sd">    :param bit_size: Size in bits of the prime to be generated</span>
 <span class="sd">    :param k: Number of witnesses to primality we require.</span>
@@ -949,7 +999,7 @@
         <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">gcd</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">gcd</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">continue</span>
 
         <span class="k">if</span> <span class="n">probably_prime</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>

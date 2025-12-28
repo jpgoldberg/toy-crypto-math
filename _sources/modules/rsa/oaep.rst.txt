@@ -127,19 +127,9 @@ For my purposes, I could have just hardcoded use of
 but most of published test vectors
 for RSA-OAEP use :py:func:`hashlib.sha1`.
 
-For reasons I don't understand, I had difficulty
-getting these type definition within the :class:`Oaep` class,
-so those are given module scope.
+.. autodata:: HashFunc
 
-.. type:: HashFunc
-    :canonical: Callable[[bytes], hashlib._Hash]
-
-    Type for hashlib style hash function.
-
-.. type:: MgfFunc
-    :canonical: Callable[[bytes, int, str], bytes]
-
-    Type for RFC8017 Mask Generation Function.
+.. autodata:: MgfFunc
 
 The (short) lists of supported hash and mask generation functions
 are attributes of the :class:`Oaep` class, as are the classes to describe them.

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Primitive RSA &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>Primitive RSA &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -31,6 +31,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -38,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -49,7 +50,7 @@
     <link rel="prev" title="RSA" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -111,7 +112,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -497,8 +498,8 @@ See <a class="reference internal" href="oaep.html"><span class="doc">OAEP</span>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>modulus</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>public_exponent</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.params.modulus"></span><strong>modulus</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.params.modulus">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.params.public_exponent"></span><strong>public_exponent</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.params.public_exponent">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -526,7 +527,7 @@ See <a class="reference internal" href="oaep.html"><span class="doc">OAEP</span>
 </ul>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.rsa.PublicKey.encrypt.params.message"></span><strong>message</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.encrypt.params.message">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -541,11 +542,11 @@ See <a class="reference internal" href="oaep.html"><span class="doc">OAEP</span>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>) – The message to encrypt.</p></li>
-<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">b''</span></code>) – Rarely used. Just leave as default.</p></li>
-<li><p><strong>hash_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'sha256'</span></code>) – Name of the hash function.</p></li>
-<li><p><strong>mgf_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mgf1SHA256'</span></code>) – Name of the MGF function (with hash).</p></li>
-<li><p><strong>_seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Used for testing only. OAEP is not supposed to be deterministic.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.oaep_encrypt.params.message"></span><strong>message</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.oaep_encrypt.params.message">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>) – The message to encrypt.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.oaep_encrypt.params.label"></span><strong>label</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.oaep_encrypt.params.label">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">b''</span></code>) – Rarely used. Just leave as default.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.oaep_encrypt.params.hash_id"></span><strong>hash_id</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.oaep_encrypt.params.hash_id">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'sha256'</span></code>) – Name of the hash function.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.oaep_encrypt.params.mgf_id"></span><strong>mgf_id</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.oaep_encrypt.params.mgf_id">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mgf1SHA256'</span></code>) – Name of the MGF function (with hash).</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PublicKey.oaep_encrypt.params._seed"></span><strong>_seed</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PublicKey.oaep_encrypt.params._seed">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Used for testing only. OAEP is not supposed to be deterministic.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -577,9 +578,9 @@ Consider using <a class="reference internal" href="keygen.html#toy_crypto.rsa.fi
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>p</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>q</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>pub_exponent</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.params.p"></span><strong>p</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.params.p">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.params.q"></span><strong>q</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.params.q">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.params.pub_exponent"></span><strong>pub_exponent</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.params.pub_exponent">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -589,10 +590,10 @@ Consider using <a class="reference internal" href="keygen.html#toy_crypto.rsa.fi
 <dd><p>Primitive decryption.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ciphertext</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Ciphertext as <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.rsa.PrivateKey.decrypt.params.ciphertext"></span><strong>ciphertext</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.decrypt.params.ciphertext">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Ciphertext as <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">ciphertext</span></code> is out of range for this key.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – if <strong>ciphertext</strong> is out of range for this key.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -613,10 +614,10 @@ Consider using <a class="reference internal" href="keygen.html#toy_crypto.rsa.fi
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ciphertext</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>) – The message to encrypt.</p></li>
-<li><p><strong>label</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">b''</span></code>) – Rarely used.</p></li>
-<li><p><strong>hash_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'sha256'</span></code>) – Name of the hash function.</p></li>
-<li><p><strong>mgf_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mgf1SHA256'</span></code>) – Name of the MGF function (with hash).</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.oaep_decrypt.params.ciphertext"></span><strong>ciphertext</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.oaep_decrypt.params.ciphertext">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>) – The message to encrypt.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.oaep_decrypt.params.label"></span><strong>label</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.oaep_decrypt.params.label">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">b''</span></code>) – Rarely used.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.oaep_decrypt.params.hash_id"></span><strong>hash_id</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.oaep_decrypt.params.hash_id">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'sha256'</span></code>) – Name of the hash function.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.PrivateKey.oaep_decrypt.params.mgf_id"></span><strong>mgf_id</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.PrivateKey.oaep_decrypt.params.mgf_id">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mgf1SHA256'</span></code>) – Name of the MGF function (with hash).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>

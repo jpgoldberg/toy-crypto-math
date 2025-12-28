@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>RSA Key Generation &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>RSA Key Generation &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -31,6 +31,7 @@
 <link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -38,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -49,7 +50,7 @@
     <link rel="prev" title="Primitive RSA" href="primitive.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -111,7 +112,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -519,14 +520,14 @@ primitive RSA.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n_len</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Desired length of modulus in bits</p></li>
-<li><p><strong>e</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>) – Public exponent.</p></li>
-<li><p><strong>k</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">4</span></code>) – Trials for primality testing.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.fips186_prime_gen.params.n_len"></span><strong>n_len</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.fips186_prime_gen.params.n_len">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Desired length of modulus in bits</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.fips186_prime_gen.params.e"></span><strong>e</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.fips186_prime_gen.params.e">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>) – Public exponent.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.fips186_prime_gen.params.k"></span><strong>k</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.fips186_prime_gen.params.k">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">4</span></code>) – Trials for primality testing.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>ValueError</strong> – if <code class="xref py py-data docutils literal notranslate"><span class="pre">e</span></code> is out of range or odd.</p></li>
+<li><p><strong>ValueError</strong> – if <strong>e</strong> is out of range or odd.</p></li>
 <li><p><strong>Exception</strong> – if it fails to find suitable primes after trying really hard.</p></li>
 </ul>
 </dd>
@@ -534,13 +535,16 @@ primitive RSA.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
 </dd>
 </dl>
-<p>This insecurely deviates from the standard in allowing <code class="xref py py-data docutils literal notranslate"><span class="pre">n_len</span></code>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This insecurely deviates from the standard in allowing <strong>n_len</strong>
 to be less than 2048.</p>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The condition that <em>p</em> and <em>q</em> differ in their
+<p>The condition that <strong>p</strong> and <strong>q</strong> differ in their
 most significant 100 bits is relaxed when
-<code class="xref py py-data docutils literal notranslate"><span class="pre">n_len</span></code> &lt; 2048.</p>
+<strong>n_len</strong> &lt; 2048.</p>
 </div>
 </dd></dl>
 
@@ -551,9 +555,9 @@ most significant 100 bits is relaxed when
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>strength</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">112</span></code>) – Intended security parameter (in bits).</p></li>
-<li><p><strong>key_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">2048</span></code>) – size in bits of desired modulus.</p></li>
-<li><p><strong>e</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>) – public exponent.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.key_gen.params.strength"></span><strong>strength</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.key_gen.params.strength">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">112</span></code>) – Intended security parameter (in bits).</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.key_gen.params.key_size"></span><strong>key_size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.key_gen.params.key_size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">2048</span></code>) – size in bits of desired modulus.</p></li>
+<li><p><span class="target" id="toy_crypto.rsa.key_gen.params.e"></span><strong>e</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.key_gen.params.e">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">65537</span></code>) – public exponent.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -587,7 +591,7 @@ implementation in lots of other respects, too.</p>
 <p>From NIST SP-800-56B r2 Appendix D.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Modulus size in bits</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.rsa.estimate_strength.params.key_size"></span><strong>key_size</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.rsa.estimate_strength.params.key_size">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Modulus size in bits</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>

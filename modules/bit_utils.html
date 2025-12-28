@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Bit manipulation utilities &#8212; ToyCrypto 0.5.1 documentation</title>
+    <title>Bit manipulation utilities &#8212; ToyCrypto 0.6.0 documentation</title>
   
   
   
@@ -31,6 +31,7 @@
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_paramlinks.css" />
   
   <!-- So that users can add custom icons -->
   <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
@@ -38,7 +39,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../_static/documentation_options.js?v=8fa8b3e9"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'modules/bit_utils';</script>
@@ -48,7 +49,7 @@
     <link rel="prev" title="Utility functions" href="utils.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.5.1" />
+  <meta name="docsearch:version" content="0.6.0" />
   </head>
   
   
@@ -110,7 +111,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.5.1)</p>
+    <p class="title logo__title">ToyCrypto (0.6.0)</p>
   
 </a></div>
     
@@ -480,7 +481,7 @@ This is more of a trash heap than a well-thought-out module.</p>
 bits, I need an abstraction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="types.html#toy_crypto.types.SupportsBool" title="toy_crypto.types.SupportsBool"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBool</span></code></a></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.bit_utils.Bit.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.Bit.params.b">¶</a> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="types.html#toy_crypto.types.SupportsBool" title="toy_crypto.types.SupportsBool"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBool</span></code></a></span>)</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -516,9 +517,9 @@ built-in int</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>k</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.bit_index.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bit_index.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.bit_index.params.k"></span><strong>k</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bit_index.params.k">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.bit_index.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bit_index.params.b">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -536,9 +537,9 @@ built-in int</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>k</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.bit_index_linear.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bit_index_linear.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.bit_index_linear.params.k"></span><strong>k</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bit_index_linear.params.k">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.bit_index_linear.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bit_index_linear.params.b">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -556,7 +557,7 @@ built-in int</p>
 <dd class="field-odd"><p><strong>ValueError</strong> – if n is negative.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-even"><p><span class="target" id="toy_crypto.bit_utils.bits.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.bits.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
@@ -570,7 +571,7 @@ built-in int</p>
 <dd><p>Return int with reversed bit sequence</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>byte</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
+<dd class="field-odd"><p><span class="target" id="toy_crypto.bit_utils.flip_end.params.byte"></span><strong>byte</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.flip_end.params.byte">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
@@ -585,8 +586,8 @@ built-in int</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>k</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.get_bit.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.get_bit.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.get_bit.params.k"></span><strong>k</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.get_bit.params.k">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -605,8 +606,8 @@ built-in int</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>)</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.hamming_distance.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.hamming_distance.params.a">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.hamming_distance.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.hamming_distance.params.b">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -622,9 +623,9 @@ built-in int</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>n</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>k</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.set_bit.params.n"></span><strong>n</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.set_bit.params.n">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.set_bit.params.k"></span><strong>k</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.set_bit.params.k">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.set_bit.params.value"></span><strong>value</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.set_bit.params.value">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -640,9 +641,9 @@ built-in int</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>byte</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>bit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
-<li><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="types.html#toy_crypto.types.SupportsBool" title="toy_crypto.types.SupportsBool"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBool</span></code></a></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.set_bit_in_byte.params.byte"></span><strong>byte</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.set_bit_in_byte.params.byte">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.set_bit_in_byte.params.bit"></span><strong>bit</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.set_bit_in_byte.params.bit">¶</a> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>)</p></li>
+<li><p><span class="target" id="toy_crypto.bit_utils.set_bit_in_byte.params.value"></span><strong>value</strong><a class="paramlink headerlink reference internal" href="#toy_crypto.bit_utils.set_bit_in_byte.params.value">¶</a> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="types.html#toy_crypto.types.SupportsBool" title="toy_crypto.types.SupportsBool"><code class="xref py py-class docutils literal notranslate"><span class="pre">SupportsBool</span></code></a></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

@@ -1,11 +1,12 @@
 # Toy cryptographic utilities
 
+[![PyPI](https://img.shields.io/pypi/v/toycrypto?label=pypi%20package)][published]
+[![Documentation][doc-build-badge]][documentation]
 [![mypy status][type-badge]](https://mypy.readthedocs.io/en/stable/)
 [![ruff status][lint-badge]](https://docs.astral.sh/ruff/)
 [![pytest status][test-badge]](https://docs.pytest.org/en/stable/)
 ![Doctest status][doctest-badge]
-[![PyPI](https://img.shields.io/pypi/v/toycrypto?label=pypi%20package)][published]
-[![Documentation][doc-build-badge]][documentation]
+[![CodeFactor][codefactor-badge]](https://www.codefactor.io/repository/github/jpgoldberg/toy-crypto-math)
 [![License: MIT](https://img.shields.io/badge/license-MIT-C06524)](https://github.com/jpgoldberg/toy-crypto-math/blob/main/LICENSE.txt)
 
 ----
@@ -30,3 +31,4 @@ look at [SageMath](https://doc.sagemath.org/) or [SymPy](https://www.sympy.org/e
 [test-badge]: https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/pytest.yml/badge.svg
 [doctest-badge]: https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/doctest.yml/badge.svg
 [doc-build-badge]: https://github.com/jpgoldberg/toy-crypto-math/actions/workflows/gh-pages.yml/badge.svg
+[codefactor-badge]: https://www.codefactor.io/repository/github/jpgoldberg/toy-crypto-math/badge

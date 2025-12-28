@@ -194,6 +194,12 @@ As such it assumes that
   because for some reason I struggled with what should be a simple
   piece of code.
 
+.. note::
+
+    When the result, :math:`n_0` is large
+    and :math:`f\prime` is near 0 in the region of :math:`n_0`
+    the result may be approximate.
+
 .. autofunction:: find_zero
 
 Example
@@ -215,7 +221,3 @@ analytically, without resorting to a binary search or restricting to
 non-decreasing functions only.
 But this root finder is built to be just good enough for the
 specific need in :func:`toy_crypto.birthday.quantile`.
-
-
-
-

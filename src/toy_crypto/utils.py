@@ -318,7 +318,7 @@ def find_zero(
     lower_bound: int | None = None,
     upper_bound: int | None = None,
 ) -> int:
-    """Finds smallest n for f(x) such that f(n) > 0.
+    """Finds (nearly) smallest n for f(x) such that f(n) > 0.
 
     Performs a binary search for +0 of a non-decreasing function,
     :math:`f(n)`, to return an :math:`n_0` such that
@@ -351,6 +351,11 @@ def find_zero(
         or if function isn't defined for every n in [lower_bound, upper_bound].
 
     .. caution::
+        If f(n) is close to flat around n\\ :sub:`0` and
+        n\\ :sub:`0` is large
+        then the result may be approximate.
+
+    .. caution::
         This has only been tested for use in
         :func:`toy_crypto.birthday.quantile`.
 
@@ -379,22 +384,22 @@ def find_zero(
         return function(n)
 
     class Point:
-        def __init__(self, n: int, x: float) -> None:
+        def __init__(self, n: int, y: float) -> None:
             self._n = n
 
             # We only ever make use of the sign of x,
             # but let's keep this if we want to move to smarter
             # interpolation.
-            self._x = x
-            self._sign: int = 0 if self._x == 0 else 1 if self._x > 0 else -1
+            self._y = y
+            self._sign: int = 0 if self._y == 0 else 1 if self._y > 0 else -1
 
         @staticmethod
         def from_n(n: int) -> "Point":
             return Point(n, callit(n))
 
         @property
-        def x(self) -> float:
-            return self._x
+        def y(self) -> float:
+            return self._y
 
         @property
         def n(self) -> int:
@@ -409,28 +414,25 @@ def find_zero(
             if abs(self.n - other.n) < 2:
                 return True
             # if close on a large scale
-            return math.isclose(self.n, other.n)
+            return math.isclose(self.n, other.n, rel_tol=1e-12)
 
         def linear_zero(self, other: "Point") -> int:
             """Assuming points on straight line, zero.
 
             Abnormal: Do not use
             """
-
-            # This is middle school math, I should be able to
-            # easily reconstruct how to do this. So far I failed
-
-            # TODO: Get this to work
-
             if self.n == other.n:
                 raise ValueError("Must be distinct points")
-            if self.x == other.x:
+            if self.y == other.y:
                 # A more general function would return None
                 raise ValueError("line is horizontal")
 
-            slope: float = (self.n - other.n) / (self.x - other.x)
-            offset = self.n - slope * self.x
-            return -int(offset)
+            # US high school notation for slope/intercept form
+            # y = mx + b
+            # The linear zero should be near -b
+            m: float = (self.y - other.y) / (self.n - other.n)
+            b = self.y - m * self.n
+            return -round(b)
 
     # We need to handle cases of
     # - f(lower_bound) >= 0
@@ -506,9 +508,12 @@ def find_zero(
         new_point.sign == 0 or new_point.isclose(best_other)
     ):
         best_other = highest_below if new_point.sign > 0 else lowest_above
-        # Pick halfway n for now. Interpolation might be better, though
+
+        # Pick halfway n.
+        # Linear interpolation runs into big enough
+        # precision errors with the quantile function
+        # that it is worse than useless.
         new_n = (best_other.n + new_point.n) // 2
-        # new_n = best_other.linear_zero(new_point) # broken
         new_point = Point.from_n(new_n)
         if new_point.sign < 0:
             highest_below = new_point

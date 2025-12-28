@@ -28,6 +28,9 @@ Important highlights. This release
 ### Added
 
 - `utils.FrozenBidict`
+- `utils.find_zero`
+- `birthday.quantile` (renaming of now deprecated `birthday.Q`)
+- `birthday.probability` (renaming of now deprecated `birthday.P`)
 
 ## 0.5.1 2025-09-01
 

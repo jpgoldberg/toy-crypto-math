@@ -411,10 +411,7 @@ def find_zero(
 
         def isclose(self, other: "Point") -> bool:
             # if same point or adjacent
-            if abs(self.n - other.n) < 2:
-                return True
-            # if close on a large scale
-            return math.isclose(self.n, other.n, rel_tol=1e-12)
+            return abs(self.n - other.n) < 2
 
         def linear_zero(self, other: "Point") -> int:
             """Assuming points on straight line, zero.

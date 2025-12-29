@@ -54,8 +54,8 @@ chance of a collision.
 .. doctest::
 
     >>> import math
-    >>> n = birthday.quantile(10e-9, 1 << 128)
-    >>> math.isclose(n, 2608763573180720)
+    >>> n = birthday.quantile(1e-9, 1 << 128)
+    >>> math.isclose(n, 824963474453361)
     True
 
 

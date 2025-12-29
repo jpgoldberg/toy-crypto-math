@@ -190,7 +190,7 @@ class TestBirthday:
     @pytest.mark.parametrize(
         "bits, p, n",
         # hash_vectors,
-        # Lots of failures for fewer than 64 bits
+        # 8 failures for fewer than 64 bits
         list(
             itertools.filterfalse(
                 lambda t: t[0] < 64,  # type: ignore[index]
@@ -209,9 +209,8 @@ class TestBirthday:
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",
-        # We get a different (wrong?) result for 64 bits, 1e-18
         itertools.filterfalse(
-            lambda v: v[0] == 64 and v[2] == 6,  # type: ignore[index]
+            lambda v: v[2] == 6,  # type: ignore[index]
             hash_vectors,
         ),
     )

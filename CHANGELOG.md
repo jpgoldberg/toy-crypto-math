@@ -5,6 +5,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Improved
+
+- `birthday.quantile` and `utils.find_zero` are more accurate.
+- `birthday` document examples improved.
+
+## 0.6.0 2025-12-28
+
 Important highlights. This release
 
 - deprecating utilities that duplicate what is available in the Python standard library,

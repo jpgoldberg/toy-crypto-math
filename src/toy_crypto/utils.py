@@ -309,6 +309,65 @@ def export[F: SuppprtsName](fn: F) -> F:
     return fn
 
 
+class _Point:
+    """This is only used in find_zero."""
+
+    function: Callable[[int], float] | None = None
+
+    @classmethod
+    def set_function(cls, f: Callable[[int], float]) -> None:
+        cls.function = f
+
+    def __init__(self, n: int, y: float) -> None:
+        self._n = n
+
+        # We only ever make use of the sign of x,
+        # but let's keep this if we want to move to smarter
+        # interpolation.
+        self._y = y
+        self._sign: int = 0 if self._y == 0 else 1 if self._y > 0 else -1
+
+    @classmethod
+    def from_n(cls, n: int) -> "_Point":
+        if cls.function is None:
+            raise Exception("function has not been defined")
+        return _Point(n, cls.function(n))
+
+    @property
+    def y(self) -> float:
+        return self._y
+
+    @property
+    def n(self) -> int:
+        return self._n
+
+    @property
+    def sign(self) -> int:
+        return self._sign
+
+    def isclose(self, other: "_Point") -> bool:
+        # if same point or adjacent
+        return abs(self.n - other.n) < 2
+
+    def linear_zero(self, other: "_Point") -> int:
+        """Assuming points on straight line, zero.
+
+        Abnormal: Do not use
+        """
+        if self.n == other.n:
+            raise ValueError("Must be distinct points")
+        if self.y == other.y:
+            # A more general function would return None
+            raise ValueError("line is horizontal")
+
+        # US high school notation for slope/intercept form
+        # y = mx + b
+        # The linear zero should be near -b
+        m: float = (self.y - other.y) / (self.n - other.n)
+        b = self.y - m * self.n
+        return -round(b)
+
+
 @export
 def find_zero(
     function: Callable[[int], float],
@@ -383,73 +442,26 @@ def find_zero(
         call_count += 1
         return function(n)
 
-    class Point:
-        def __init__(self, n: int, y: float) -> None:
-            self._n = n
-
-            # We only ever make use of the sign of x,
-            # but let's keep this if we want to move to smarter
-            # interpolation.
-            self._y = y
-            self._sign: int = 0 if self._y == 0 else 1 if self._y > 0 else -1
-
-        @staticmethod
-        def from_n(n: int) -> "Point":
-            return Point(n, callit(n))
-
-        @property
-        def y(self) -> float:
-            return self._y
-
-        @property
-        def n(self) -> int:
-            return self._n
-
-        @property
-        def sign(self) -> int:
-            return self._sign
-
-        def isclose(self, other: "Point") -> bool:
-            # if same point or adjacent
-            return abs(self.n - other.n) < 2
-
-        def linear_zero(self, other: "Point") -> int:
-            """Assuming points on straight line, zero.
-
-            Abnormal: Do not use
-            """
-            if self.n == other.n:
-                raise ValueError("Must be distinct points")
-            if self.y == other.y:
-                # A more general function would return None
-                raise ValueError("line is horizontal")
-
-            # US high school notation for slope/intercept form
-            # y = mx + b
-            # The linear zero should be near -b
-            m: float = (self.y - other.y) / (self.n - other.n)
-            b = self.y - m * self.n
-            return -round(b)
-
+    _Point.set_function(callit)
     # We need to handle cases of
     # - f(lower_bound) >= 0
     # - f(upper_bound) <= 0
     # early, so rest of code can assume working bounds
     if upper_bound != math.inf:
-        lowest_above = Point.from_n(upper_bound)
+        lowest_above = _Point.from_n(upper_bound)
         if lowest_above.sign != 1:
             return upper_bound
     else:
-        lowest_above = Point(upper_bound, math.inf)
+        lowest_above = _Point(upper_bound, math.inf)
 
     if lower_bound != -math.inf:
-        highest_below = Point.from_n(lower_bound)
+        highest_below = _Point.from_n(lower_bound)
         if highest_below.sign != -1:
             return lower_bound
     else:
-        highest_below = Point(lower_bound, -math.inf)
+        highest_below = _Point(lower_bound, -math.inf)
 
-    start = Point(initial_estimate, function(initial_estimate))
+    start = _Point(initial_estimate, function(initial_estimate))
     match start.sign:
         case 0:
             return initial_estimate
@@ -463,7 +475,7 @@ def find_zero(
     previous = start
 
     # We will double the step size until we cross zero
-    new_point = Point.from_n(previous.n + step)
+    new_point = _Point.from_n(previous.n + step)
     while new_point.sign == previous.sign:
         match new_point.sign:
             case 0:
@@ -478,7 +490,7 @@ def find_zero(
         next_n = new_point.n + step
         # This assumes we've already handled pathological bound cases
         next_n = min(upper_bound, max(lower_bound, next_n))
-        new_point = Point.from_n(next_n)
+        new_point = _Point.from_n(next_n)
 
     # because python doesn't have a do while, we do this 1 more time
     # when the sign has changed
@@ -511,7 +523,7 @@ def find_zero(
         # precision errors with the quantile function
         # that it is worse than useless.
         new_n = (best_other.n + new_point.n) // 2
-        new_point = Point.from_n(new_n)
+        new_point = _Point.from_n(new_n)
         if new_point.sign < 0:
             highest_below = new_point
         else:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Motiviation &#8212; ToyCrypto 0.6.0 documentation</title>
+    <title>Motivation &#8212; ToyCrypto 0.6.1 documentation</title>
   
   
   
@@ -39,9 +39,10 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../_static/documentation_options.js?v=8fa8b3e9"></script>
+    <script src="../_static/documentation_options.js?v=2bd037f0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'why/index';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -49,7 +50,7 @@
     <link rel="prev" title="Installing &amp; Importing" href="../intro/quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0" />
+  <meta name="docsearch:version" content="0.6.1" />
   </head>
   
   
@@ -111,7 +112,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.6.0)</p>
+    <p class="title logo__title">ToyCrypto (0.6.1)</p>
   
 </a></div>
     
@@ -134,7 +135,7 @@
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Motiviation
+    Motivation
   </a>
 </li>
 
@@ -261,7 +262,7 @@
 
 <li class="nav-item current active">
   <a class="nav-link nav-internal" href="#">
-    Motiviation
+    Motivation
   </a>
 </li>
 
@@ -376,7 +377,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Motiviation</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Motivation</span></li>
   </ul>
 </nav>
 </div>
@@ -401,8 +402,8 @@
 <li><p>If you need efficient and reliable abstract math utilities in a Python-like environment consider using <a class="reference external" href="https://www.sagemath.org">SageMath</a>.</p></li>
 </ul>
 </div>
-<section id="motiviation">
-<h1>Motiviation<a class="headerlink" href="#motiviation" title="Link to this heading">#</a></h1>
+<section id="motivation">
+<h1>Motivation<a class="headerlink" href="#motivation" title="Link to this heading">#</a></h1>
 <p>There are two facts to keep in mind when considering why something like this
 toy cryptography project should exist:</p>
 <ol class="arabic simple">
@@ -420,13 +421,13 @@ I thought it would be fun if my pseudo-code would actually run.</p>
 </section>
 <section id="one-int-to-rule-them-all">
 <h3>One <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code> to Rule Them All<a class="headerlink" href="#one-int-to-rule-them-all" title="Link to this heading">#</a></h3>
-<p>Nearly everyone I know with a math background complains about two things when they first learn a (typical) programmming language.
+<p>Nearly everyone I know with a math background complains about two things when they first learn a (typical) programming language.
 The first is that <code class="docutils literal notranslate"><span class="pre">=</span></code> is an assignment
-instead of just a statement of eqaulity.
+instead of just a statement of equality.
 The second is when they discover that something of type <code class="docutils literal notranslate"><span class="pre">int</span></code>
 is strictly limited in size and is not actually an Integer.
 Python solves this latter problem,
-and more importanlty makes it easy to present code that deals with
+and more importantly makes it easy to present code that deals with
 larger integers.</p>
 <p>I had previously attempted to use Golang to illustrate algorithms,
 but found that the clutter of
@@ -437,10 +438,10 @@ but found that the clutter of
 <h2>And Python is terrible<a class="headerlink" href="#and-python-is-terrible" title="Link to this heading">#</a></h2>
 <p>Python is not well-suited for secure cryptographic implementations,
 which is why things like <a class="reference external" href="https://cryptography.io/en/latest/">pyca</a> are mostly written in C or Rust.
-Effiency and defense against many side challenges require direct manipultation
+Efficiency and defense against many side challenges require direct manipulation
 of bytes and integer types that are closer to the machine.
 Python, by design, does not offer direct access to memory management or low level data types.
-This design helps Python be as readable as it is, but it does have consequence for cyrptographic implementations.
+This design helps Python be as readable as it is, but it does have consequence for cryptographic implementations.
 This also impacts what Python is suitable for illustrating.
 I have (so far) chosen to not implement algorithms that depend heavily
 on bitwise manipulation.</p>
@@ -459,7 +460,7 @@ of that within the language itself.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../modules/birthday.html#module-toy_crypto.birthday" title="toy_crypto.birthday: Birthday problem computations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">birthday</span></code></a> originated because I had need for the calculations.</p></li>
 <li><p><a class="reference internal" href="../modules/games.html#module-toy_crypto.sec_games" title="toy_crypto.sec_games: Classes for running security games, including IND-CPA and IND-EAV."><code class="xref py py-mod docutils literal notranslate"><span class="pre">sec_games</span></code></a> exists because a presentation I gave intending to explain <code class="docutils literal notranslate"><span class="pre">IND-CPA</span></code> had failed, and I hope that providing illustrations of the game in action will help for next time.</p></li>
-<li><p><a class="reference internal" href="../modules/ec.html#module-toy_crypto.ec" title="toy_crypto.ec: Simple elliptic curves"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ec</span></code></a> originated becasue I wanted to illustrate the “double and add” algorithm for scaler multiplication of a point.</p></li>
+<li><p><a class="reference internal" href="../modules/ec.html#module-toy_crypto.ec" title="toy_crypto.ec: Simple elliptic curves"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ec</span></code></a> originated because I wanted to illustrate the “double and add” algorithm for scaler multiplication of a point.</p></li>
 <li><p><a class="reference internal" href="../modules/rsa/index.html#module-toy_crypto.rsa" title="toy_crypto.rsa: RSA utilities"><code class="xref py py-mod docutils literal notranslate"><span class="pre">rsa</span></code></a> had its origins in me wanted to provide a walk through of Adversary in the Middle Attack with small numbers. It has now been expanded because, among other things, I wanted to understand OAEP better.</p></li>
 <li><p><a class="reference internal" href="../modules/types.html#module-toy_crypto.types" title="toy_crypto.types: Helpful(?) type definitions and guards."><code class="xref py py-mod docutils literal notranslate"><span class="pre">types</span></code></a> and some of the run time type checking exists because when I first started to play with Python I reacted badly to its type system. (I will probably remove much of that run time type checking in future versions.)</p></li>
 <li><p><a class="reference internal" href="../modules/nt.html#module-toy_crypto.nt" title="toy_crypto.nt: Number theoretic utilities and integer factorization tools"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nt</span></code></a> exists because I didn’t know that <a class="reference external" href="https://www.sympy.org/">sympy</a> was pure Python and I did want illustrate some of the algorithms themselves in presentation slides.</p></li>
@@ -471,17 +472,92 @@ After all,
 I had probably written the Extended Euclidean Algorithm half a dozen times,
 and I was getting tired of not finding my previous implementations.
 And as I wanted to include these in Jupyter notebooks, I published on PyPI
-(because I didn’t know at the time that pip could install packages from a public git respositor.)</p>
+(because I didn’t know at the time that pip could install packages from a public git repository.)</p>
 <section id="that-was-then-this-is-now">
 <h3>That was then. This is now<a class="headerlink" href="#that-was-then-this-is-now" title="Link to this heading">#</a></h3>
 <p>I do believe that what is here can be genuinely useful,
 particularly for those teaching or learning about some
-aspects of cyrptography.
+aspects of cryptography.
 The <a class="reference internal" href="../modules/games.html#module-toy_crypto.sec_games" title="toy_crypto.sec_games: Classes for running security games, including IND-CPA and IND-EAV."><code class="xref py py-mod docutils literal notranslate"><span class="pre">sec_games</span></code></a> module is not
 something I’ve seen elsewhere and provides a mechanism for
 teaching about <em>Modern</em> Cryptography.
 The <a class="reference internal" href="../modules/birthday.html#module-toy_crypto.birthday" title="toy_crypto.birthday: Birthday problem computations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">birthday</span></code></a> modules provides ways to calculate things that
 people working with or adjacent to Cryptography might want to calculate.</p>
+</section>
+<section id="coding-style">
+<h3>Coding style<a class="headerlink" href="#coding-style" title="Link to this heading">#</a></h3>
+<p>Although some of the code here is from when I first started playing with Python,
+my intent is for readable code.
+However, one person’s readable code
+is another person’s too clever by half trickery.
+So I will mention some things might be unfamiliar to novice programers
+or those with limited Python experience.</p>
+<ol class="arabic">
+<li><dl class="simple">
+<dt>Comprehensions</dt><dd><p>Things like
+<a class="reference external" href="https://docs.python.org/3/glossary.html#term-list-comprehension">list Comprehensions</a>
+are just such a great thing that Python offers that I couldn’t
+bring myself to use explicit <code class="docutils literal notranslate"><span class="pre">for</span></code> loops where a comprehension
+is more expressive<a class="footnote-reference brackets" href="#expressive" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> of intent.
+And they are such a great thing, that you should become familiar with them
+anyway.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Generators and Iterators.</dt><dd><p>These are functions that instead of producing, say, a list
+will compute and produce each element of the list in turn.
+I am not particular consistent in when I use one instead of the
+other.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Abstract types</dt><dd><p>If the type annotations in the code are confusing or distracting,
+you can ignore them (just as the Python interpreter does),
+but in many cases they serve
+<a class="reference external" href="https://jeffrey.goldmark.org/post/what-python-doesnt-teach/#sec-types">as additional documentation</a>
+for functions and methods.
+The more abstract types, such as using
+<code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Mapping</span></code> instead of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>,
+are often used to be
+<a class="reference external" href="https://jeffrey.goldmark.org/post/what-python-doesnt-teach/#mindfulness-about-mutability">mindful of mutability</a>.</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>“<code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">&lt;&lt;</span> <span class="pre">n</span></code>” instead of “<code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">**</span> <span class="pre">n</span></code>”.</dt><dd><p>You don’t need to know why <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">&lt;&lt;</span> <span class="pre">n</span></code> computes the same value
+as <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">**</span> <span class="pre">n</span></code> or why<a class="footnote-reference brackets" href="#shift" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> I am using the more obscure form; just
+know that <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">&lt;&lt;</span> <span class="pre">n</span></code> means <span class="math notranslate nohighlight">\(2^n\)</span>.</p>
+<p>Note, however, that these assocate differently</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">**</span> <span class="mi">5</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># (2^5) - 1</span>
+<span class="go">31</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># 2^(5 - 1)</span>
+<span class="go">16</span>
+</pre></div>
+</div>
+<p>So when in doubt use parenthesis.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p class="rubric">Footnotes</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="expressive" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Well at least “more expressive” to those familiar with the construction.</p>
+</aside>
+<aside class="footnote brackets" id="shift" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>The relevant difference is that <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">&lt;&lt;</span> <span class="pre">n</span></code>
+enforces the requirement that <code class="docutils literal notranslate"><span class="pre">n</span></code> is a non-negative integer
+while <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">**</span> <span class="pre">n</span></code> does not
+and so the result is guaranteed to be an integer.
+I want both that enforcement and inference in those
+cases I use this mechanism to create a power of two.</p>
+</aside>
+</aside>
 </section>
 </section>
 </section>
@@ -541,6 +617,7 @@ people working with or adjacent to Cryptography might want to calculate.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#and-python-is-terrible">And Python is terrible</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#early-motivation">Early motivation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#that-was-then-this-is-now">That was then. This is now</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coding-style">Coding style</a></li>
 </ul>
 </li>
 </ul>

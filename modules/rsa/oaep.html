@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>OAEP &#8212; ToyCrypto 0.6.0 documentation</title>
+    <title>OAEP &#8212; ToyCrypto 0.6.1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=8fa8b3e9"></script>
+    <script src="../../_static/documentation_options.js?v=2bd037f0"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -50,7 +50,7 @@
     <link rel="prev" title="RSA Key Generation" href="keygen.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="0.6.0" />
+  <meta name="docsearch:version" content="0.6.1" />
   </head>
   
   
@@ -112,7 +112,7 @@
   
   
   
-    <p class="title logo__title">ToyCrypto (0.6.0)</p>
+    <p class="title logo__title">ToyCrypto (0.6.1)</p>
   
 </a></div>
     
@@ -135,7 +135,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../why/index.html">
-    Motiviation
+    Motivation
   </a>
 </li>
 
@@ -262,7 +262,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../why/index.html">
-    Motiviation
+    Motivation
   </a>
 </li>
 
@@ -541,11 +541,11 @@ what may appear in the automatically generated documentation.</p>
 <dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s1">&#39;sha256&#39;</span><span class="p">:</span> <span class="n">HashInfo</span><span class="p">(</span><span class="n">hashlib_name</span><span class="o">=</span><span class="s1">&#39;sha256&#39;</span><span class="p">,</span>
                      <span class="n">function</span><span class="o">=&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="n">openssl_sha256</span><span class="o">&gt;</span><span class="p">,</span>
                      <span class="n">digest_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
-                     <span class="n">input_limit</span><span class="o">=</span><span class="mi">2305843009213693951</span><span class="p">),</span>
+                     <span class="n">input_limit</span><span class="o">=</span><span class="mi">1152921504606846976</span><span class="p">),</span>
   <span class="s1">&#39;sha1&#39;</span><span class="p">:</span> <span class="n">HashInfo</span><span class="p">(</span><span class="n">hashlib_name</span><span class="o">=</span><span class="s1">&#39;sha1&#39;</span><span class="p">,</span>
                    <span class="n">function</span><span class="o">=&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">function</span> <span class="n">openssl_sha1</span><span class="o">&gt;</span><span class="p">,</span>
                    <span class="n">digest_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-                   <span class="n">input_limit</span><span class="o">=</span><span class="mi">18446744073709551615</span><span class="p">)}</span>
+                   <span class="n">input_limit</span><span class="o">=</span><span class="mi">9223372036854775808</span><span class="p">)}</span>
 </pre></div>
 </div>
 </dd></dd></dl>
@@ -556,10 +556,10 @@ what may appear in the automatically generated documentation.</p>
 <dd><p>Known Mask Generation Functions.</p>
 <dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span> <span class="s1">&#39;mgf1SHA256&#39;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;id_mgf1&#39;</span><span class="p">,</span>
                         <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s1">&#39;sha256&#39;</span><span class="p">,</span>
-                        <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f9224861080</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
+                        <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f753aae0cc0</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">),</span>
   <span class="s1">&#39;mgf1SHA1&#39;</span><span class="p">:</span> <span class="n">MgfInfo</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">&#39;id_mgf1&#39;</span><span class="p">,</span>
                       <span class="n">hashAlgorithm</span><span class="o">=</span><span class="s1">&#39;sha1&#39;</span><span class="p">,</span>
-                      <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f9224861080</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)}</span>
+                      <span class="n">function</span><span class="o">=&lt;</span><span class="nb">staticmethod</span><span class="p">(</span><span class="o">&lt;</span><span class="n">function</span> <span class="n">Oaep</span><span class="o">.</span><span class="n">mgf1</span> <span class="n">at</span> <span class="mh">0x7f753aae0cc0</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">)}</span>
 </pre></div>
 </div>
 </dd></dd></dl>
@@ -774,7 +774,7 @@ with anything out in the world.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="toy_crypto.rsa.Oaep.KNOWN_HASHES">
-<span class="sig-name descname"><span class="pre">KNOWN_HASHES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <a class="reference internal" href="#toy_crypto.rsa.Oaep.HashInfo" title="toy_crypto.rsa.Oaep.HashInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashInfo</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'sha1':</span> <span class="pre">Oaep.HashInfo(hashlib_name='sha1',</span> <span class="pre">function=&lt;built-in</span> <span class="pre">function</span> <span class="pre">openssl_sha1&gt;,</span> <span class="pre">digest_size=20,</span> <span class="pre">input_limit=18446744073709551615),</span> <span class="pre">'sha256':</span> <span class="pre">Oaep.HashInfo(hashlib_name='sha256',</span> <span class="pre">function=&lt;built-in</span> <span class="pre">function</span> <span class="pre">openssl_sha256&gt;,</span> <span class="pre">digest_size=32,</span> <span class="pre">input_limit=2305843009213693951)}</span></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.KNOWN_HASHES" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">KNOWN_HASHES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <a class="reference internal" href="#toy_crypto.rsa.Oaep.HashInfo" title="toy_crypto.rsa.Oaep.HashInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">HashInfo</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'sha1':</span> <span class="pre">Oaep.HashInfo(hashlib_name='sha1',</span> <span class="pre">function=&lt;built-in</span> <span class="pre">function</span> <span class="pre">openssl_sha1&gt;,</span> <span class="pre">digest_size=20,</span> <span class="pre">input_limit=9223372036854775808),</span> <span class="pre">'sha256':</span> <span class="pre">Oaep.HashInfo(hashlib_name='sha256',</span> <span class="pre">function=&lt;built-in</span> <span class="pre">function</span> <span class="pre">openssl_sha256&gt;,</span> <span class="pre">digest_size=32,</span> <span class="pre">input_limit=1152921504606846976)}</span></em><a class="headerlink" href="#toy_crypto.rsa.Oaep.KNOWN_HASHES" title="Link to this definition">#</a></dt>
 <dd><p>Hashes known for OAEP. keys will be hashlib names.</p>
 </dd></dl>
 

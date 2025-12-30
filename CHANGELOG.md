@@ -5,10 +5,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 0.6.1 2025-12-30
+
 ### Improved
 
 - `birthday.quantile` and `utils.find_zero` are more accurate.
 - `birthday` document examples improved.
+- Various documentation improvements.
+- Slightly more consistent coding style.
 
 ## 0.6.0 2025-12-28
 

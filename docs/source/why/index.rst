@@ -27,13 +27,13 @@ I thought it would be fun if my pseudo-code would actually run.
 One :py:class:`int` to Rule Them All
 -------------------------------------
 
-Nearly everyone I know with a math background complains about two things when they first learn a (typical) programmming language.
+Nearly everyone I know with a math background complains about two things when they first learn a (typical) programming language.
 The first is that ``=`` is an assignment
-instead of just a statement of eqaulity.
+instead of just a statement of equality.
 The second is when they discover that something of type ``int``
 is strictly limited in size and is not actually an Integer.
 Python solves this latter problem,
-and more importanlty makes it easy to present code that deals with
+and more importantly makes it easy to present code that deals with
 larger integers.
 
 I had previously attempted to use Golang to illustrate algorithms,
@@ -45,10 +45,10 @@ And Python is terrible
 
 Python is not well-suited for secure cryptographic implementations,
 which is why things like pyca_ are mostly written in C or Rust.
-Effiency and defense against many side challenges require direct manipultation
+Efficiency and defense against many side challenges require direct manipulation
 of bytes and integer types that are closer to the machine.
 Python, by design, does not offer direct access to memory management or low level data types.
-This design helps Python be as readable as it is, but it does have consequence for cyrptographic implementations.
+This design helps Python be as readable as it is, but it does have consequence for cryptographic implementations.
 This also impacts what Python is suitable for illustrating.
 I have (so far) chosen to not implement algorithms that depend heavily
 on bitwise manipulation.
@@ -83,17 +83,59 @@ After all,
 I had probably written the Extended Euclidean Algorithm half a dozen times,
 and I was getting tired of not finding my previous implementations.
 And as I wanted to include these in Jupyter notebooks, I published on PyPI
-(because I didn't know at the time that pip could install packages from a public git respositor.)
+(because I didn't know at the time that pip could install packages from a public git repository.)
 
 That was then. This is now
 ---------------------------
 
 I do believe that what is here can be genuinely useful,
 particularly for those teaching or learning about some
-aspects of cyrptography.
+aspects of cryptography.
 The :mod:`.sec_games` module is not
 something I've seen elsewhere and provides a mechanism for
 teaching about *Modern* Cryptography.
 The :mod:`.birthday` modules provides ways to calculate things that
 people working with or adjacent to Cryptography might want to calculate.
+
+Coding style
+-------------
+
+Although some of the code here is from when I first started playing with Python,
+my intent is for readable code.
+However, one person's readable code
+is another person's too clever by half trickery.
+So I will mention some things might be unfamiliar to novice programers
+or those with limited Python experience.
+
+1. Comprehensions, such as `list Comprehensions <https://docs.python.org/3/glossary.html#term-list-comprehension>`__\s.
+    These are just such a great thing that Python offers that I couldn't
+    bring myself to just use explicit ``for`` loops just for familiarity.
+    And they are such a great thing, that you should become familiar with them
+    anyway.
+
+2. Generators and Iterators.
+    These are functions that instead of producing, say, a list
+    will compute and produce each element of the list in turn.
+    I am not particular consistent in when I use one instead of the
+    other.
+
+3. Abstract types
+   It the type annotations in the code are confusing or distracting,
+   you can ignore them (just as the Python interpreter does),
+   but in many cases, they serve as additional documentation.
+
+4. “``1 << n``” instead of “``2 ** n``”.
+    You don't need to know why ``1 << n`` computes the same value
+    as ``2 ** n`` or why\ [#shift]_ I am using the more obscure form; just
+    know that ``1 << n`` means :math:`2^n`.
+    
+
+.. rubric:: Footnotes
+
+.. [#shift] The relevant difference is that ``1 << expr``
+    enforces the requirement that ``expr`` is a non-negative integer
+    and so the result guaranteed to be an integer.
+    I want both that enforcement and inference in those
+    cases I use this mechanism to create a power of two.
+
 

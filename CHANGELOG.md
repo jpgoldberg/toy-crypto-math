@@ -217,7 +217,7 @@ Important highlights. This release
 - birthday.Q uses simple approximation when p > MAX_BIRTHDAY_Q instead of raising exception
 
 ### Improved
-k
+
 - Improved test coverage for birthday module
 - Documentation improvements
 

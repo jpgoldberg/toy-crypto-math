@@ -3,7 +3,7 @@
 .. currentmodule:: toy_crypto
 
 *************
-Motiviation
+Motivation
 *************
 
 There are two facts to keep in mind when considering why something like this
@@ -70,7 +70,7 @@ My initial goals for what what became different modules varied,
 
 - :mod:`.birthday` originated because I had need for the calculations.
 - :mod:`.sec_games` exists because a presentation I gave intending to explain ``IND-CPA`` had failed, and I hope that providing illustrations of the game in action will help for next time.
-- :mod:`.ec` originated becasue I wanted to illustrate the “double and add” algorithm for scaler multiplication of a point.
+- :mod:`.ec` originated because I wanted to illustrate the “double and add” algorithm for scaler multiplication of a point.
 - :mod:`.rsa` had its origins in me wanted to provide a walk through of Adversary in the Middle Attack with small numbers. It has now been expanded because, among other things, I wanted to understand OAEP better.
 - :mod:`.types` and some of the run time type checking exists because when I first started to play with Python I reacted badly to its type system. (I will probably remove much of that run time type checking in future versions.)
 - :mod:`.nt` exists because I didn't know that sympy_ was pure Python and I did want illustrate some of the algorithms themselves in presentation slides.

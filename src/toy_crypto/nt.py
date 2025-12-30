@@ -532,7 +532,7 @@ def get_prime(
         # We want our constructed number to have leading_one_bits of leading 1s
         n = secrets.randbits(bit_size - leading_1_bits)
 
-        prefix = (2**leading_1_bits) - 1
+        prefix = (1 << leading_1_bits) - 1
         n += prefix << (bit_size - leading_1_bits)
 
         # Well, this is a special case, innit?

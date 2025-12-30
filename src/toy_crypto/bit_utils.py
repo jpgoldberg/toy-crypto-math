@@ -100,7 +100,7 @@ def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
         return bit_index_linear(n, k, b)
 
     mid_index = bl // 2
-    midpoint = int(2**mid_index)
+    midpoint = int(1 << mid_index)
     upper, lower = divmod(n, midpoint)
 
     # Debugging check against alternative way to compute upper and lower
@@ -394,7 +394,7 @@ class PyBitArray:
 
     def __int__(self) -> int:
         """Integer with first element as least significant bit"""
-        return sum(b * (2**i) for i, b in enumerate(self))
+        return sum(b * (1 << i) for i, b in enumerate(self))
 
     def count(self) -> int:
         """Returns number of 1 bits"""

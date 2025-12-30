@@ -432,9 +432,11 @@ def find_zero(
     if not lower_bound <= initial_estimate < upper_bound:
         raise ValueError("Bounds and initial_estimate don't make sense")
 
+    # We need to keep track of how many times function is called
+    # so that we can enforce max_iterations (and log the information)
     call_count = 0
 
-    def callit(n: int) -> float:
+    def fun_wrapper(n: int) -> float:
         """Wrapper for function, tracking number of times called."""
         nonlocal call_count
         nonlocal function
@@ -442,7 +444,10 @@ def find_zero(
         call_count += 1
         return function(n)
 
-    _Point.set_function(callit)
+    # Set the poorly named _Point class to use our wrapped
+    # function when creating points with .from_n()
+    _Point.set_function(fun_wrapper)
+
     # We need to handle cases of
     # - f(lower_bound) >= 0
     # - f(upper_bound) <= 0
@@ -510,9 +515,8 @@ def find_zero(
     # At this point we have `new_point` and `previous` with opposite signs
     # The logic below is that best_other and new_point will always have
     # opposite signs (except for when new_point is at zero)
+    # So we are ready for the bisection part
     best_other = previous
-
-    # Now we actually bisect
     while call_count < max_iterations and not (
         new_point.sign == 0 or new_point.isclose(best_other)
     ):

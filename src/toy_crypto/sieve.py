@@ -462,7 +462,7 @@ class SetSieve(Sievish):
 
     def __int__(self) -> int:
         ip = bisect_right(self._common_data, self._n)
-        result = sum((int(2**p) for p in self._common_data[:ip]))
+        result = sum((int(1 << p) for p in self._common_data[:ip]))
         return result
 
     @property
@@ -515,7 +515,7 @@ class IntSieve(Sievish):
             size = max_prime
 
         instance = cls.__new__(cls)
-        instance._data = sum((int(2**p) for p in primes))
+        instance._data = sum((int(1 << p) for p in primes))
         instance._n = size
         instance._count = int(instance._data.bit_count())
         return instance

@@ -317,7 +317,7 @@ def mod_sqrt(a: int, m: int) -> list[int]:
         q //= 2  # could do q >>= 1, but compiler will pick that if faster
 
     # just a check that we got an e and q
-    if m != (2**e) * q + 1:
+    if m != (1 << e) * q + 1:
         raise Exception(f"Shouldn't happen: 2^{e} * {q} + 1 != {m}")
     if q % 2 == 0:
         raise Exception(f"Shouldn't happen: q ({q}) isn't odd.")

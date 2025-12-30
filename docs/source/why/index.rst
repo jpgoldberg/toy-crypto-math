@@ -107,9 +107,12 @@ is another person's too clever by half trickery.
 So I will mention some things might be unfamiliar to novice programers
 or those with limited Python experience.
 
-1. Comprehensions, such as `list Comprehensions <https://docs.python.org/3/glossary.html#term-list-comprehension>`__\s.
-    These are just such a great thing that Python offers that I couldn't
-    bring myself to just use explicit ``for`` loops just for familiarity.
+1. Comprehensions
+    Things like
+    `list Comprehensions <https://docs.python.org/3/glossary.html#term-list-comprehension>`__
+    are just such a great thing that Python offers that I couldn't
+    bring myself to use explicit ``for`` loops where a comprehension
+    is more expressive\ [#expressive]_ of intent.
     And they are such a great thing, that you should become familiar with them
     anyway.
 
@@ -120,21 +123,43 @@ or those with limited Python experience.
     other.
 
 3. Abstract types
-   It the type annotations in the code are confusing or distracting,
-   you can ignore them (just as the Python interpreter does),
-   but in many cases, they serve as additional documentation.
+    If the type annotations in the code are confusing or distracting,
+    you can ignore them (just as the Python interpreter does),
+    but in many cases they serve
+    `as additional documentation <https://jeffrey.goldmark.org/post/what-python-doesnt-teach/#sec-types>`__
+    for functions and methods.
+    The more abstract types, such as using
+    :py:class:`collections.abc.Mapping` instead of
+    :py:class:`dict`,
+    are often used to be
+    `mindful of mutability <https://jeffrey.goldmark.org/post/what-python-doesnt-teach/#mindfulness-about-mutability>`__.
+
 
 4. “``1 << n``” instead of “``2 ** n``”.
     You don't need to know why ``1 << n`` computes the same value
     as ``2 ** n`` or why\ [#shift]_ I am using the more obscure form; just
     know that ``1 << n`` means :math:`2^n`.
-    
 
+    Note, however, that these assocate differently
+
+    .. doctest::
+
+        >>> 2 ** 5 - 1  # (2^5) - 1
+        31
+        >>> 1 << 5 - 1  # 2^(5 - 1)
+        16
+
+    So when in doubt use parenthesis.
+
+    
 .. rubric:: Footnotes
 
-.. [#shift] The relevant difference is that ``1 << expr``
-    enforces the requirement that ``expr`` is a non-negative integer
-    and so the result guaranteed to be an integer.
+.. [#expressive] Well at least “more expressive” to those familiar with the construction.
+
+.. [#shift] The relevant difference is that ``1 << n``
+    enforces the requirement that ``n`` is a non-negative integer
+    while ``2 ** n`` does not
+    and so the result is guaranteed to be an integer.
     I want both that enforcement and inference in those
     cases I use this mechanism to create a power of two.
 

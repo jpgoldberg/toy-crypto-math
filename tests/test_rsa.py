@@ -97,8 +97,8 @@ class TestSage:
     """
 
     # Don't use Mersenne primes in real life
-    p = (2**31) - 1
-    q = (2**61) - 1
+    p = (1 << 31) - 1
+    q = (1 << 61) - 1
     e = 1850567623300615966303954877
     m = 72697676798779827668  # message
 

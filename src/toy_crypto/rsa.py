@@ -140,7 +140,7 @@ class Oaep:
         Hash    | hasher    | CS hash function                  | HashFunc
         """
 
-        if length > 2**32:
+        if length > 1 << 32:
             raise ValueError("mask too long")
 
         try:
@@ -170,14 +170,14 @@ class Oaep:
             hashlib_name="sha256",
             function=hashlib.sha256,
             digest_size=32,
-            input_limit=2**61 - 1,
+            input_limit=1 << 61 - 1,
         ),
         # We need sha1 because that is what test vectors exist for
         "sha1": HashInfo(
             hashlib_name="sha1",
             function=hashlib.sha1,
             digest_size=20,
-            input_limit=2**64 - 1,
+            input_limit=1 << 64 - 1,
         ),
     }
     """Hashes known for OAEP. keys will be hashlib names."""

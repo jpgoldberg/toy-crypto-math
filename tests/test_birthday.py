@@ -199,7 +199,7 @@ class TestBirthday:
         ),
     )
     def test_wp_data_p(bits: int, p: float, n: int) -> None:
-        classes = int(2**bits)
+        classes = int(1 << bits)
         my_p = birthday.probability(n, classes=classes)
         rel_delta = abs(my_p - p) / p
         assert math.isclose(p, my_p, rel_tol=0.1), (
@@ -215,7 +215,7 @@ class TestBirthday:
         ),
     )
     def test_wp_data_q(bits: int, p: float, n: int) -> None:
-        c = int(2**bits)
+        c = int(1 << bits)
         my_n = birthday.quantile(p, c)
         assert math.isclose(n, my_n, rel_tol=0.1), f"n: {n}; my_n: {my_n}"
 

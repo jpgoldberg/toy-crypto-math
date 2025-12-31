@@ -102,6 +102,8 @@ Coding style
 
 Although some of the code here is from when I first started playing with Python,
 my intent is for readable code.
+And while in general, I try to implement correct and efficient algorithms,
+I often prefer readability over finer points of code optimization.
 However, one person's readable code
 is another person's too clever by half trickery.
 So I will mention some things might be unfamiliar to novice programers
@@ -140,7 +142,10 @@ or those with limited Python experience.
     as ``2 ** n`` or why\ [#shift]_ I am using the more obscure form; just
     know that ``1 << n`` means :math:`2^n`.
 
-    Note, however, that these assocate differently
+    Note, however, that the
+    `shifting operator <https://docs.python.org/3/reference/expressions.html#shifting-operations>`__ (``<<``)
+    and the power operator (``**``)
+    assocate differently:
 
     .. doctest::
 
@@ -149,7 +154,17 @@ or those with limited Python experience.
         >>> 1 << 5 - 1  # 2^(5 - 1)
         16
 
-    So when in doubt use parenthesis.
+    So when in doubt use parentheses.
+    In general, using strictly unnecessary parentheses in cases
+    where the code might otherwise be unclear the a human is
+    a good thing.
+
+There are also places where I do very much complicate the code because
+I am playing with certain sorts of optimizations.
+The ``_common_data`` in various :class:`toy_crypto.sieve.Sievish` classes
+is just such an experiment.
+In such cases, as well as others,
+I attempt to explain my decisions in comments within the code.
 
     
 .. rubric:: Footnotes

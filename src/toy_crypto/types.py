@@ -8,6 +8,7 @@ This module is probably the least stable of any of these unstable modules.
 
 from dataclasses import dataclass
 from typing import (
+    Annotated,
     Any,
     NewType,
     TypeGuard,
@@ -16,7 +17,17 @@ from typing import (
 )
 
 
-Prob = NewType("Prob", float)
+# So that I can start playing with Annotated
+@dataclass
+class ValueRange:
+    min: float
+    max: float
+
+    def within(self, x: float) -> bool:
+        return self.min <= x <= self.max
+
+
+Prob = Annotated[float, ValueRange(0.0, 1.0)]
 """Probability: A float between 0.0 and 1.0"""
 
 
@@ -24,7 +35,11 @@ def is_prob(val: Any) -> TypeGuard[Prob]:
     """true iff val is a float, s.t. 0.0 <= val <= 1.0"""
     if not isinstance(val, float):
         return False
-    return val >= 0.0 and val <= 1.0
+    for datum in Prob.__metadata__:  # type: ignore[attr-defined]
+        if isinstance(datum, ValueRange):
+            if not datum.within(val):
+                return False
+    return True
 
 
 PositiveInt = NewType("PositiveInt", int)
@@ -57,12 +72,3 @@ def is_byte(val: Any) -> bool:
 @runtime_checkable
 class SupportsBool(Protocol):
     def __bool__(self) -> bool: ...
-
-
-# So that I can start playing with Annotated
-
-
-@dataclass
-class ValueRange:
-    min: float
-    max: float

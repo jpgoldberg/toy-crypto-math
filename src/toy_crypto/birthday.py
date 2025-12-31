@@ -31,12 +31,12 @@ def _pbirthday_exact(n: int, classes: int, coincident: int) -> types.Prob:
     k = coincident
 
     if k < 2:
-        return types.Prob(1.0)
+        return 1.0
     if k > 2:
         return _pbirthday_approx(n, c, coincident=k)
 
     if n >= c:
-        return types.Prob(1.0)
+        return 1.0
 
     v_dn = math.perm(c, n)
     v_t = c**n
@@ -53,10 +53,10 @@ def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
     k = coincident
 
     if n >= c * (k - 1):
-        return types.Prob(1.0)
+        return 1.0
 
     if k < 2:
-        return types.Prob(1.0)
+        return 1.0
 
     # lifted from R src/library/stats/R/birthday.R
     LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
@@ -64,7 +64,7 @@ def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
     p = -math.expm1(-math.exp(lxx))
     if not types.is_prob(p):
         assert False, f"this should not happen: p = {p}"
-    return p  # ty: ignore
+    return p
 
 
 @export
@@ -91,7 +91,7 @@ def probability(
     k = coincident
 
     if k == 1:
-        return types.Prob(1.0)
+        return 1.0
 
     if mode == "auto":
         mode = "exact" if c < EXACT_THRESHOLD else "approximate"
@@ -144,7 +144,7 @@ def quantile(
         return c * (k - 1) + 1
 
     # Lifted from R src/library/stats/R/birthday.R
-    if prob == types.Prob(0):
+    if prob == 0:
         return 1
 
     # First approximation

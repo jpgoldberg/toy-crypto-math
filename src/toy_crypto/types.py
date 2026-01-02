@@ -7,10 +7,10 @@ This module is probably the least stable of any of these unstable modules.
 """
 
 from dataclasses import dataclass
+import math
 from typing import (
     Annotated,
     Any,
-    NewType,
     TypeGuard,
     Protocol,
     runtime_checkable,
@@ -25,6 +25,15 @@ class ValueRange:
 
     def within(self, x: float) -> bool:
         return self.min <= x <= self.max
+
+
+@dataclass
+class LengthRange:
+    min: int
+    max: int
+
+    def within(self, length: int) -> bool:
+        return self.min <= length <= self.max
 
 
 Prob = Annotated[float, ValueRange(0.0, 1.0)]
@@ -42,31 +51,49 @@ def is_prob(val: Any) -> TypeGuard[Prob]:
     return True
 
 
-PositiveInt = NewType("PositiveInt", int)
+PositiveInt = Annotated[int, ValueRange(1, math.inf)]
 """Positive integer."""
 
 
-def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
+def is_positive_int(val: Any) -> bool:
     """true if val is a float, s.t. 0.0 <= val <= 1.0"""
     if not isinstance(val, int):
         return False
-    return val >= 1
+    for datum in PositiveInt.__metadata__:  # type: ignore[attr-defined]
+        if isinstance(datum, ValueRange):
+            if not datum.within(val):
+                return False
+    return True
 
 
-Byte = int
-"""And int representing a single byte.
+Char = Annotated[str, LengthRange(1, 1)]
+"""A string of length 1"""
 
-Currently implemented as a type alias.
-As a consequence, type checking is not going to identify
-cases where an int out of the range of a byte is used.
-"""
+
+def is_char(val: Any) -> bool:
+    """true if val is a str of length 1"""
+    if not isinstance(val, str):
+        return False
+    for datum in Char.__metadata__:  # type: ignore[attr-defined]
+        if isinstance(datum, LengthRange):
+            if not datum.within(len(val)):
+                return False
+    return True
+
+
+Byte = Annotated[int, ValueRange(0, 255)]
+"""And int representing a single byte."""
 
 
 def is_byte(val: Any) -> bool:
     """True iff val is int s.t. 0 <= val < 256."""
     if not isinstance(val, int):
         return False
-    return 0 <= val and val < 256
+    for datum in PositiveInt.__metadata__:  # type: ignore[attr-defined]
+        if isinstance(datum, ValueRange):
+            if not datum.within(val):
+                return False
+    return True
 
 
 @runtime_checkable

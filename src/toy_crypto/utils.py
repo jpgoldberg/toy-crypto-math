@@ -74,7 +74,7 @@ class Xor:
 
     def __next__(self) -> Byte:
         b, p = next(zip(self._message, self._pad))
-        return Byte(b ^ p)
+        return b ^ p
 
     def __iter__(self: Self) -> Self:
         return self

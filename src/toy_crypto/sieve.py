@@ -530,8 +530,8 @@ class IntSieve(Sievish):
             return
         ones: int = (1 << ((n - self._n) + 1)) - 1
         ones = ones << self._n
-        self._data |= ones
         assert isinstance(self._data, int)
+        self._data |= ones
 
         self._n = n
         # We only need to go up to and including the square root of n,

@@ -11,6 +11,7 @@ import math
 from typing import (
     Annotated,
     Any,
+    Self,
     TypeGuard,
     Protocol,
     runtime_checkable,
@@ -99,3 +100,18 @@ def is_byte(val: Any) -> bool:
 @runtime_checkable
 class SupportsBool(Protocol):
     def __bool__(self) -> bool: ...
+
+
+# Isn't catchable as either TypeError or ValueError
+# class ValueTypeError(ExceptionGroup):
+#    """Where both ValueError and TypeError would make sense"""
+#
+#    def __new__(cls, msg: str) -> Self:
+#        self = super().__new__(cls, msg, [ValueError(msg), TypeError(msg)])
+#        return self
+
+
+# Documentation says not to inherit exceptions this way,
+# but I have not found an alternative.
+class ValueOrTypeError(TypeError, ValueError):
+    """Where either ValueError and TypeError would make sense"""

@@ -6,8 +6,8 @@ try:
 except ImportError:
     from typing_extensions import deprecated  # novermin
 
-from . import types
 from .utils import export, find_zero
+from .types import Prob, is_prob, PositiveInt, is_positive_int, ValueOrTypeError
 
 __all__: list[str] = []  # will be appended to with each definition
 
@@ -24,8 +24,13 @@ __all__.append("EXACT_THRESHOLD")
 type Mode = Literal["exact", "approximate", "auto"]
 __all__.append("Mode")
 
+# The public methods explicitly raise value errors
+# if called with the wrong types, but the private methods
+# do not perform any such checks.
 
-def _pbirthday_exact(n: int, classes: int, coincident: int) -> types.Prob:
+def _pbirthday_exact(
+    n: PositiveInt, classes: PositiveInt, coincident: int
+) -> Prob:
     # use notation  from Diconis and Mosteller 1969
     c = classes
     k = coincident
@@ -42,12 +47,13 @@ def _pbirthday_exact(n: int, classes: int, coincident: int) -> types.Prob:
     v_t = c**n
 
     p = 1.0 - v_dn / v_t
-    if not types.is_prob(p):
-        assert False, f"This should not happen: p = {p}"
+    assert is_prob(p), "Should not happen"
     return p
 
 
-def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
+def _pbirthday_approx(
+    n: PositiveInt, classes: PositiveInt, coincident: int
+) -> Prob:
     # DM1969 notation
     c = classes
     k = coincident
@@ -62,15 +68,18 @@ def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
     LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
     lxx = k * math.log(LHS) - (k - 1) * math.log(c) - math.lgamma(k + 1)
     p = -math.expm1(-math.exp(lxx))
-    if not types.is_prob(p):
+    if not is_prob(p):
         assert False, f"this should not happen: p = {p}"
     return p
 
 
 @export
 def probability(
-    n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
-) -> types.Prob:
+    n: PositiveInt,
+    classes: PositiveInt = 365,
+    coincident: PositiveInt = 2,
+    mode: Mode = "auto",
+) -> Prob:
     """probability of at least 1 collision among n individuals for c classes".
 
     The "exact" method still involves floating point approximations
@@ -78,12 +87,16 @@ def probability(
 
     :raises ValueError: if any of ``n``, ``classes``,
         or ``coincident`` are less than 1.
+
+    .. caution::
+        What are raised as ValueErrors here may be changed to
+        TypeError in future versions.
     """
-    if n < 1:
+    if not is_positive_int(n):
         raise ValueError("n must be a positive integer")
-    if classes < 1:
-        raise ValueError("classes must be a positive integer")
-    if coincident < 1:
+    if not is_positive_int(classes):
+        raise ValueOrTypeError("classes must be a positive integer")
+    if not is_positive_int(coincident):
         raise ValueError("coincident must be a positive integer")
 
     # Name parameters to follow # Use DM69 notation
@@ -107,7 +120,7 @@ def probability(
 @deprecated("Use 'probability' instead")
 def P(
     n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
-) -> types.Prob:
+) -> Prob:
     """
     .. deprecated:: 0.5
         Renamed. Use :func:`probability`.
@@ -120,7 +133,7 @@ __all__.append('P')  # fmt: skip
 
 @export
 def quantile(
-    prob: float = 0.5, classes: int = 365, coincident: int = 2
+    prob: Prob = 0.5, classes: PositiveInt = 365, coincident: PositiveInt = 2
 ) -> int:
     """Quantile: minimum number n to get prob for classes.
 
@@ -128,11 +141,11 @@ def quantile(
     :raises ValueError: if ``classes`` is less than 1.
     :raises ValueError: if ``coincident`` is less than 1.
     """
-    if not types.is_prob(prob):
+    if not is_prob(prob):
         raise ValueError(f"{prob} is not a valid probability")
-    if not types.is_positive_int(classes):
+    if not is_positive_int(classes):
         raise ValueError("classes must be positive")
-    if not types.is_positive_int(coincident):
+    if not is_positive_int(coincident):
         raise ValueError("coincident must be positive")
 
     # Use DM69 notation so I can better connect code to published method.
@@ -143,10 +156,10 @@ def quantile(
     if prob > MAX_QBIRTHDAY_P:
         return c * (k - 1) + 1
 
-    # Lifted from R src/library/stats/R/birthday.R
-    if prob == 0:
+    if prob == 0 or k < 2:
         return 1
 
+    # Lifted from R src/library/stats/R/birthday.R
     # First approximation
     # broken down into three terms to help me better understand
     # t_1 = c^{k-1}

@@ -12,19 +12,24 @@ from typing import (
     Annotated,
     Any,
     Callable,
-    TypeGuard,
+    Sized,
     Protocol,
     runtime_checkable,
 )
 
 
-# So that I can start playing with Annotated
+@runtime_checkable
+class AnnotatedType(Protocol):
+    __metadata__: tuple[Any]
+    __origin__: type
+
+
 @dataclass
 class ValueRange:
     min: float
     max: float
 
-    def __contains__(self, x: float) -> bool:
+    def is_ok(self, x: float) -> bool:
         return self.min <= x <= self.max
 
 
@@ -33,90 +38,62 @@ class LengthRange:
     min: int
     max: int
 
-    def __contains__(self, length: int) -> bool:
-        return self.min <= length <= self.max
+    def is_ok(self, val: object) -> bool:
+        # Unsized things automatically pass
+        if not isinstance(val, Sized):
+            return True
+        return self.min <= len(val) <= self.max
 
 
-Prob = Annotated[float, ValueRange(0.0, 1.0)]
-"""Probability: A float between 0.0 and 1.0"""
+type Predicate = Callable[[object], bool]
 
 
-def is_prob(val: Any) -> TypeGuard[Prob]:
-    """true iff val is a float, s.t. 0.0 <= val <= 1.0"""
-    if not isinstance(val, float):
-        return False
-    for datum in Prob.__metadata__:  # type: ignore[attr-defined]
-        if isinstance(datum, ValueRange):
-            if val not in datum:
-                return False
-    return True
-
-
-PositiveInt = Annotated[int, ValueRange(1, math.inf)]
-"""Positive integer."""
-
-
-def is_positive_int(val: Any) -> bool:
-    """true if val is a float, s.t. 0.0 <= val <= 1.0"""
-    if not isinstance(
-        val,
-        PositiveInt.__origin__,  # type: ignore[attr-defined]
-    ):
-        return False
-    for datum in PositiveInt.__metadata__:  # type: ignore[attr-defined]
-        if isinstance(datum, ValueRange):
-            if val not in datum:
-                return False
-    return True
-
-
-Char = Annotated[str, LengthRange(1, 1)]
-"""A string of length 1"""
-
-
-def is_char(val: Any) -> bool:
-    """true if val is a str of length 1"""
-    if not isinstance(val, Char.__origin__):  # type: ignore[attr-defined]
-        return False
-    for datum in Char.__metadata__:  # type: ignore[attr-defined]
-        if isinstance(datum, LengthRange):
-            if len(val) not in datum:
-                return False
-    return True
-
-
-def make_predicate(t: object) -> Callable[[object], bool]:
+def make_predicate(t: type | AnnotatedType) -> Predicate:
     def predicate(val: object) -> bool:
-        if hasattr(t, "__origin__"):
-            if not isinstance(val, t.__origin__):
-                return False
-        else:
+        if not isinstance(t, AnnotatedType):
             return isinstance(val, t)
-        for datum in t.__metadata__:  # type: ignore[attr-defined]
+
+        # It is an Annotated type
+        if not isinstance(val, t.__origin__):
+            return False
+        for datum in t.__metadata__:
             if isinstance(datum, ValueRange):
-                if val not in datum:
+                assert isinstance(val, float | int)
+                if not datum.is_ok(val):
                     return False
-            if isinstance(datum, LengthRange) and hasattr(val, '__len__'):
-                if len(val) not in datum:
+            elif isinstance(datum, LengthRange):
+                if not datum.is_ok(val):
                     return False
         return True
 
     return predicate
 
 
+Prob = Annotated[float, ValueRange(0.0, 1.0)]
+"""Probability: A float between 0.0 and 1.0"""
+
+assert isinstance(Prob, AnnotatedType)
+is_prob: Predicate = make_predicate(Prob)
+
+PositiveInt = Annotated[int, ValueRange(1, math.inf)]
+"""Positive integer."""
+
+assert isinstance(PositiveInt, AnnotatedType)
+is_positive_int = make_predicate(PositiveInt)
+
+
+Char = Annotated[str, LengthRange(1, 1)]
+"""A string of length 1"""
+
+assert isinstance(Char, AnnotatedType)
+is_char = make_predicate(Char)
+
+
 Byte = Annotated[int, ValueRange(0, 255)]
 """And int representing a single byte."""
 
-
-def is_byte(val: Any) -> bool:
-    """True iff val is int s.t. 0 <= val < 256."""
-    if not isinstance(val, int):
-        return False
-    for datum in PositiveInt.__metadata__:  # type: ignore[attr-defined]
-        if isinstance(datum, ValueRange):
-            if val not in datum:
-                return False
-    return True
+assert isinstance(Byte, AnnotatedType)
+is_byte = make_predicate(Byte)
 
 
 @runtime_checkable

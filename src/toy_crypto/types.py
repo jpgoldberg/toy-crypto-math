@@ -79,21 +79,21 @@ PositiveInt = Annotated[int, ValueRange(1, math.inf)]
 """Positive integer."""
 
 assert isinstance(PositiveInt, AnnotatedType)
-is_positive_int = make_predicate(PositiveInt)
+is_positive_int: Predicate = make_predicate(PositiveInt)
 
 
 Char = Annotated[str, LengthRange(1, 1)]
 """A string of length 1"""
 
 assert isinstance(Char, AnnotatedType)
-is_char = make_predicate(Char)
+is_char: Predicate = make_predicate(Char)
 
 
 Byte = Annotated[int, ValueRange(0, 255)]
 """And int representing a single byte."""
 
 assert isinstance(Byte, AnnotatedType)
-is_byte = make_predicate(Byte)
+is_byte: Predicate = make_predicate(Byte)
 
 
 @runtime_checkable

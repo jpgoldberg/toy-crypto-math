@@ -29,7 +29,7 @@ __all__.append("Mode")
 # if called with the wrong types, but the private methods
 # do not perform any such checks
 def _pbirthday_exact(
-    n: PositiveInt, classes: PositiveInt, coincident: int
+    n: int, classes: int, coincident: int
 ) -> Prob:
     # use notation  from Diconis and Mosteller 1969
     c = classes
@@ -44,7 +44,7 @@ def _pbirthday_exact(
         return 1.0
 
     v_dn = math.perm(c, n)
-    v_t = c**n
+    v_t = int(c**n)
 
     p = 1.0 - v_dn / v_t
     assert is_prob(p), "Should not happen"

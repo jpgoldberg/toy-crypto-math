@@ -28,9 +28,7 @@ __all__.append("Mode")
 # The public methods explicitly raise  errors
 # if called with the wrong types, but the private methods
 # do not perform any such checks
-def _pbirthday_exact(
-    n: int, classes: int, coincident: int
-) -> Prob:
+def _pbirthday_exact(n: int, classes: int, coincident: int) -> Prob:
     # use notation  from Diconis and Mosteller 1969
     c = classes
     k = coincident

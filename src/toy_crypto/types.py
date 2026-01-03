@@ -6,6 +6,7 @@ They are not carefully thought out.
 This module is probably the least stable of any of these unstable modules.
 """
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import math
 from typing import (
@@ -24,24 +25,49 @@ class AnnotatedType(Protocol):
     __origin__: type
 
 
+class SupportsIsOk(ABC):
+    @abstractmethod
+    def is_ok(self, val: object) -> bool: ...
+
+
+@runtime_checkable
+class Ord(Protocol):
+    """Supports a bunch of comparison operators"""
+
+    def __le__(self, other: object) -> bool: ...
+    def __lt__(self, other: object) -> bool: ...
+    def __ge__(self, other: object) -> bool: ...
+    def __gt__(self, other: object) -> bool: ...
+    def __eq__(self, other: object) -> bool: ...
+
+
 @dataclass
-class ValueRange:
+class ValueRange(SupportsIsOk):
     min: float
     max: float
 
-    def is_ok(self, x: float) -> bool:
-        return self.min <= x <= self.max
+    def is_ok(self, val: object) -> bool:
+        """True iff min <= val <= max.
+
+        If val can't be compared to float errors
+        will be passed upward
+        """
+        return self.min <= val <= self.max  # type: ignore[operator]
 
 
 @dataclass
-class LengthRange:
-    min: int
-    max: int
+class LengthRange(SupportsIsOk):
+    def __init__(self, min: int | None, max: int | None) -> None:
+        self.min: float = -math.inf if min is None else min
+        self.max: float = math.inf if max is None else max
 
     def is_ok(self, val: object) -> bool:
-        # Unsized things automatically pass
+        """True iff min <= len(val) <= max.
+
+        :raises TypeError: if val is not Sized.
+        """
         if not isinstance(val, Sized):
-            return True
+            raise TypeError("Must support len(val)")
         return self.min <= len(val) <= self.max
 
 
@@ -49,6 +75,19 @@ type Predicate = Callable[[object], bool]
 
 
 def make_predicate(t: type | AnnotatedType) -> Predicate:
+    """Create predicate from simple type or typing.Annotated.
+
+    When given an Annotated type, the predicate
+    checks for
+    - base type
+    - conformance to any :func:`ValueRange` annotations
+    - conformance to any :func:`LengthRange` annotations
+
+    .. caution::
+       Current version ignores type parameters.
+       That is ``tuple[str]`` will be treated as ``tuple``.
+    """
+
     def predicate(val: object) -> bool:
         if not isinstance(t, AnnotatedType):
             return isinstance(val, t)
@@ -57,11 +96,7 @@ def make_predicate(t: type | AnnotatedType) -> Predicate:
         if not isinstance(val, t.__origin__):
             return False
         for datum in t.__metadata__:
-            if isinstance(datum, ValueRange):
-                assert isinstance(val, float | int)
-                if not datum.is_ok(val):
-                    return False
-            elif isinstance(datum, LengthRange):
+            if isinstance(datum, SupportsIsOk):
                 if not datum.is_ok(val):
                     return False
         return True

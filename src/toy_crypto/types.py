@@ -11,7 +11,7 @@ import math
 from typing import (
     Annotated,
     Any,
-    Self,
+    Callable,
     TypeGuard,
     Protocol,
     runtime_checkable,
@@ -24,7 +24,7 @@ class ValueRange:
     min: float
     max: float
 
-    def within(self, x: float) -> bool:
+    def __contains__(self, x: float) -> bool:
         return self.min <= x <= self.max
 
 
@@ -33,7 +33,7 @@ class LengthRange:
     min: int
     max: int
 
-    def within(self, length: int) -> bool:
+    def __contains__(self, length: int) -> bool:
         return self.min <= length <= self.max
 
 
@@ -47,7 +47,7 @@ def is_prob(val: Any) -> TypeGuard[Prob]:
         return False
     for datum in Prob.__metadata__:  # type: ignore[attr-defined]
         if isinstance(datum, ValueRange):
-            if not datum.within(val):
+            if val not in datum:
                 return False
     return True
 
@@ -58,11 +58,14 @@ PositiveInt = Annotated[int, ValueRange(1, math.inf)]
 
 def is_positive_int(val: Any) -> bool:
     """true if val is a float, s.t. 0.0 <= val <= 1.0"""
-    if not isinstance(val, int):
+    if not isinstance(
+        val,
+        PositiveInt.__origin__,  # type: ignore[attr-defined]
+    ):
         return False
     for datum in PositiveInt.__metadata__:  # type: ignore[attr-defined]
         if isinstance(datum, ValueRange):
-            if not datum.within(val):
+            if val not in datum:
                 return False
     return True
 
@@ -73,13 +76,32 @@ Char = Annotated[str, LengthRange(1, 1)]
 
 def is_char(val: Any) -> bool:
     """true if val is a str of length 1"""
-    if not isinstance(val, str):
+    if not isinstance(val, Char.__origin__):  # type: ignore[attr-defined]
         return False
     for datum in Char.__metadata__:  # type: ignore[attr-defined]
         if isinstance(datum, LengthRange):
-            if not datum.within(len(val)):
+            if len(val) not in datum:
                 return False
     return True
+
+
+def make_predicate(t: object) -> Callable[[object], bool]:
+    def predicate(val: object) -> bool:
+        if hasattr(t, "__origin__"):
+            if not isinstance(val, t.__origin__):
+                return False
+        else:
+            return isinstance(val, t)
+        for datum in t.__metadata__:  # type: ignore[attr-defined]
+            if isinstance(datum, ValueRange):
+                if val not in datum:
+                    return False
+            if isinstance(datum, LengthRange) and hasattr(val, '__len__'):
+                if len(val) not in datum:
+                    return False
+        return True
+
+    return predicate
 
 
 Byte = Annotated[int, ValueRange(0, 255)]
@@ -92,7 +114,7 @@ def is_byte(val: Any) -> bool:
         return False
     for datum in PositiveInt.__metadata__:  # type: ignore[attr-defined]
         if isinstance(datum, ValueRange):
-            if not datum.within(val):
+            if val not in datum:
                 return False
     return True
 
@@ -100,18 +122,3 @@ def is_byte(val: Any) -> bool:
 @runtime_checkable
 class SupportsBool(Protocol):
     def __bool__(self) -> bool: ...
-
-
-# Isn't catchable as either TypeError or ValueError
-# class ValueTypeError(ExceptionGroup):
-#    """Where both ValueError and TypeError would make sense"""
-#
-#    def __new__(cls, msg: str) -> Self:
-#        self = super().__new__(cls, msg, [ValueError(msg), TypeError(msg)])
-#        return self
-
-
-# Documentation says not to inherit exceptions this way,
-# but I have not found an alternative.
-class ValueOrTypeError(TypeError, ValueError):
-    """Where either ValueError and TypeError would make sense"""

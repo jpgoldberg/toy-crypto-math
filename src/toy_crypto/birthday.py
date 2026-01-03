@@ -7,7 +7,7 @@ except ImportError:
     from typing_extensions import deprecated  # novermin
 
 from .utils import export, find_zero
-from .types import Prob, is_prob, PositiveInt, is_positive_int, ValueOrTypeError
+from .types import Prob, is_prob, PositiveInt, is_positive_int
 
 __all__: list[str] = []  # will be appended to with each definition
 
@@ -24,10 +24,10 @@ __all__.append("EXACT_THRESHOLD")
 type Mode = Literal["exact", "approximate", "auto"]
 __all__.append("Mode")
 
-# The public methods explicitly raise value errors
-# if called with the wrong types, but the private methods
-# do not perform any such checks.
 
+# The public methods explicitly raise  errors
+# if called with the wrong types, but the private methods
+# do not perform any such checks
 def _pbirthday_exact(
     n: PositiveInt, classes: PositiveInt, coincident: int
 ) -> Prob:
@@ -68,8 +68,7 @@ def _pbirthday_approx(
     LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
     lxx = k * math.log(LHS) - (k - 1) * math.log(c) - math.lgamma(k + 1)
     p = -math.expm1(-math.exp(lxx))
-    if not is_prob(p):
-        assert False, f"this should not happen: p = {p}"
+    assert is_prob(p), f"this should not happen: p = {p}"
     return p
 
 
@@ -85,19 +84,15 @@ def probability(
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
 
-    :raises ValueError: if any of ``n``, ``classes``,
-        or ``coincident`` are less than 1.
-
-    .. caution::
-        What are raised as ValueErrors here may be changed to
-        TypeError in future versions.
+    :raises TypeError: if any of ``n``, ``classes``,
+        or ``coincident`` are not positive integers.
     """
     if not is_positive_int(n):
-        raise ValueError("n must be a positive integer")
+        raise TypeError("n must be a positive integer")
     if not is_positive_int(classes):
-        raise ValueOrTypeError("classes must be a positive integer")
+        raise TypeError("classes must be a positive integer")
     if not is_positive_int(coincident):
-        raise ValueError("coincident must be a positive integer")
+        raise TypeError("coincident must be a positive integer")
 
     # Name parameters to follow # Use DM69 notation
     c = classes
@@ -137,16 +132,17 @@ def quantile(
 ) -> int:
     """Quantile: minimum number n to get prob for classes.
 
-    :raises ValueError: if ``prob`` is less than 0 or greater than 1.
-    :raises ValueError: if ``classes`` is less than 1.
-    :raises ValueError: if ``coincident`` is less than 1.
+    :raises TypeError:
+        if ``prob`` not a float or is less than 0 or greater than 1.
+    :raises TypeError: if ``classes`` is not a positive integer.
+    :raises TypeError: if ``coincident`` is not a positive integer.
     """
     if not is_prob(prob):
-        raise ValueError(f"{prob} is not a valid probability")
+        raise TypeError(f"{prob} is not a valid probability")
     if not is_positive_int(classes):
-        raise ValueError("classes must be positive")
+        raise TypeError("classes must be positive")
     if not is_positive_int(coincident):
-        raise ValueError("coincident must be positive")
+        raise TypeError("coincident must be positive")
 
     # Use DM69 notation so I can better connect code to published method.
 

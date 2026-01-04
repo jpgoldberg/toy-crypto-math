@@ -25,12 +25,16 @@ class AnnotatedType(Protocol):
     __origin__: type
 
 
-class SupportsIsOk(ABC):
+class Constraint(ABC):
+    """Abstract class that constraints must subclass."""
     @abstractmethod
-    def is_ok(self, val: object) -> bool: ...
+    def is_valid(self, val: object) -> bool:
+        """True iff val satisfies the constraint"""
+        ...
 
 
-class ValueRange(SupportsIsOk):
+class ValueRange(Constraint):
+    """Constrain the values to a range."""
     def __init__(self, min: float | None, max: float | None) -> None:
         """Set minimum and maximum.
 
@@ -39,7 +43,7 @@ class ValueRange(SupportsIsOk):
         self.min: float = -math.inf if min is None else min
         self.max: float = math.inf if max is None else max
 
-    def is_ok(self, val: object) -> bool:
+    def is_valid(self, val: object) -> bool:
         """True iff min <= val <= max.
 
         If val can't be compared to float errors
@@ -49,7 +53,8 @@ class ValueRange(SupportsIsOk):
 
 
 @dataclass
-class LengthRange(SupportsIsOk):
+class LengthRange(Constraint):
+    """Constraint the length to a range."""
     def __init__(self, min: int | None, max: int | None) -> None:
         """Set minimum and maximum.
 
@@ -58,7 +63,7 @@ class LengthRange(SupportsIsOk):
         self.min: float = -math.inf if min is None else min
         self.max: float = math.inf if max is None else max
 
-    def is_ok(self, val: object) -> bool:
+    def is_valid(self, val: object) -> bool:
         """True iff min <= len(val) <= max.
 
         :raises TypeError: if val is not Sized.
@@ -93,8 +98,8 @@ def make_predicate(t: type | AnnotatedType) -> Predicate:
         if not isinstance(val, t.__origin__):
             return False
         for datum in t.__metadata__:
-            if isinstance(datum, SupportsIsOk):
-                if not datum.is_ok(val):
+            if isinstance(datum, Constraint):
+                if not datum.is_valid(val):
                     return False
         return True
 

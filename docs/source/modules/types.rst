@@ -144,3 +144,7 @@ As illustrated above, a predicate can be created from an appropriate annotated t
 .. autofunction:: make_predicate
 
 The generated predicate will return false for its argument unless all constraints are met.
+Predicates are of the type :data:`Predicate`.
+
+.. autodata:: Predicate
+

@@ -14,6 +14,7 @@ from typing import (
     Any,
     Callable,
     Sized,
+    TypeAlias,
     Protocol,
     runtime_checkable,
 )
@@ -27,6 +28,7 @@ class AnnotatedType(Protocol):
 
 class Constraint(ABC):
     """Abstract class that constraints must subclass."""
+
     @abstractmethod
     def is_valid(self, val: object) -> bool:
         """True iff val satisfies the constraint"""
@@ -35,6 +37,7 @@ class Constraint(ABC):
 
 class ValueRange(Constraint):
     """Constrain the values to a range."""
+
     def __init__(self, min: float | None, max: float | None) -> None:
         """Set minimum and maximum.
 
@@ -55,6 +58,7 @@ class ValueRange(Constraint):
 @dataclass
 class LengthRange(Constraint):
     """Constraint the length to a range."""
+
     def __init__(self, min: int | None, max: int | None) -> None:
         """Set minimum and maximum.
 
@@ -73,7 +77,8 @@ class LengthRange(Constraint):
         return self.min <= len(val) <= self.max
 
 
-type Predicate = Callable[[object], bool]
+Predicate: TypeAlias = Callable[[object], bool]
+"""Type of (generated) predicates."""
 
 
 def make_predicate(t: type | AnnotatedType) -> Predicate:

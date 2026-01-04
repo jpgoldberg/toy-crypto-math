@@ -30,21 +30,14 @@ class SupportsIsOk(ABC):
     def is_ok(self, val: object) -> bool: ...
 
 
-@runtime_checkable
-class Ord(Protocol):
-    """Supports a bunch of comparison operators"""
-
-    def __le__(self, other: object) -> bool: ...
-    def __lt__(self, other: object) -> bool: ...
-    def __ge__(self, other: object) -> bool: ...
-    def __gt__(self, other: object) -> bool: ...
-    def __eq__(self, other: object) -> bool: ...
-
-
-@dataclass
 class ValueRange(SupportsIsOk):
-    min: float
-    max: float
+    def __init__(self, min: float | None, max: float | None) -> None:
+        """Set minimum and maximum.
+
+        Use `None` for no minimum or maximum
+        """
+        self.min: float = -math.inf if min is None else min
+        self.max: float = math.inf if max is None else max
 
     def is_ok(self, val: object) -> bool:
         """True iff min <= val <= max.
@@ -58,6 +51,10 @@ class ValueRange(SupportsIsOk):
 @dataclass
 class LengthRange(SupportsIsOk):
     def __init__(self, min: int | None, max: int | None) -> None:
+        """Set minimum and maximum.
+
+        Use `None` for no minimum or maximum.
+        """
         self.min: float = -math.inf if min is None else min
         self.max: float = math.inf if max is None else max
 

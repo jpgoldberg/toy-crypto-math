@@ -19,7 +19,6 @@ from typing import (
     TypeAlias,
     Protocol,
     TypeGuard,
-    cast,
     runtime_checkable,
 )
 
@@ -85,7 +84,10 @@ Predicate: TypeAlias = Callable[[object], bool]
 """Type of (generated) predicates."""
 
 
-def make_predicate(t: type | AnnotatedType) -> Predicate:
+def make_predicate(
+    t: NewType | AnnotatedType | type,
+    constraints: Sequence[Constraint] = tuple(),
+) -> Predicate:
     """Create predicate from simple type or typing.Annotated.
 
     When given an Annotated type, the predicate
@@ -100,12 +102,29 @@ def make_predicate(t: type | AnnotatedType) -> Predicate:
     """
 
     def predicate(val: object) -> bool:
-        if not isinstance(t, AnnotatedType):
-            return isinstance(val, t)
+        cons: tuple[Constraint, ...] = tuple(constraints)
+        if isinstance(t, AnnotatedType):
+            base_type = t.__origin__
+            cons += tuple(t.__metadata__)
 
-        if not isinstance(val, t.__origin__):
+        elif isinstance(t, NewType):
+            # This relies on undocumented features of NewType
+            # that I have gleaned from the source.
+            if not isinstance(t.__supertype__, type):
+                raise TypeError("super-type is not so super after all")
+            base_type = t.__supertype__
+
+        elif isinstance(t, type):
+            base_type = t
+
+        if not isinstance(base_type, type):
+            raise TypeError(
+                "base type of type t is not the type of type"
+                "we typically expect."
+            )
+        if not isinstance(val, base_type):
             return False
-        for datum in t.__metadata__:
+        for datum in cons:
             if isinstance(datum, Constraint):
                 if not datum.is_valid(val):
                     return False

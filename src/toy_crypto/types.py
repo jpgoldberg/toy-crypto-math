@@ -13,9 +13,11 @@ from typing import (
     Annotated,
     Any,
     Callable,
+    Sequence,
     Sized,
     TypeAlias,
     Protocol,
+    TypeGuard,
     runtime_checkable,
 )
 
@@ -144,3 +146,73 @@ is_byte: Predicate = make_predicate(Byte)
 @runtime_checkable
 class SupportsBool(Protocol):
     def __bool__(self) -> bool: ...
+
+
+# Now experiment with a factory to subclass builtin
+
+
+class Constrained(type):
+    # class data
+    _constraints: Sequence[Constraint]
+    primary_base: type
+
+    def __new__(
+        cls, name: str, bases: tuple[type], attrs: dict[str, Any] = {}
+    ):
+        instance = super().__new__(cls, name, bases, attrs)
+        return instance
+
+    @classmethod
+    def is_valid(cls, val: object) -> bool:
+        if not isinstance(val, cls.primary_base):
+            return False
+
+        # I don't use "all" because this is easier to debug
+        for c in cls._constraints:
+            if not c.is_valid(val):
+                return False
+        return True
+
+
+def make_subclass(
+    name: str, base_type: type, constraints: Constraint | Sequence[Constraint]
+) -> type[Constrained]:
+    class SubClass(metaclass=Constrained):
+        _constraints: Sequence[Constraint]
+        if isinstance(constraints, Constraint):  # Not a sequence
+            _constraints = (constraints,)
+        else:
+            _constraints = constraints
+
+        _primary_base = base_type
+
+        __name__ = name
+
+        @classmethod
+        def is_valid(cls, val: object) -> bool:
+            if not isinstance(val, base_type):
+                return False
+            for c in cls._constraints:
+                if not c.is_valid(val):
+                    return False
+            return True
+
+        def __init__(self, value: object) -> None:
+            if not self.is_valid(value):
+                raise ValueError("Does not satisfy constraints")
+
+    assert isinstance(SubClass, Constrained)
+    return SubClass
+
+
+Prob2 = make_subclass("Prob2", float, ValueRange(0.0, 1.0))
+
+
+def is_prob2(value: object) -> TypeGuard[Prob2]:  # type: ignore
+    return Prob2.is_valid(value)
+
+
+def _dummy_function(x) -> Prob2:  # type: ignore
+    if not is_prob2(x):
+        raise ValueError
+    return x

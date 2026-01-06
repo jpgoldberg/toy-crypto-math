@@ -13,11 +13,13 @@ from typing import (
     Annotated,
     Any,
     Callable,
+    NewType,
     Sequence,
     Sized,
     TypeAlias,
     Protocol,
     TypeGuard,
+    cast,
     runtime_checkable,
 )
 
@@ -101,7 +103,6 @@ def make_predicate(t: type | AnnotatedType) -> Predicate:
         if not isinstance(t, AnnotatedType):
             return isinstance(val, t)
 
-        # It is an Annotated type
         if not isinstance(val, t.__origin__):
             return False
         for datum in t.__metadata__:
@@ -216,3 +217,63 @@ def _dummy_function(x) -> Prob2:  # type: ignore
     if not is_prob2(x):
         raise ValueError
     return x
+
+
+# Now let me try to copying bits of the NewType code
+class NewConstrainedType:
+    # the magic is in a C function _idfunc, but perhaps I
+    # can that via NewType
+
+    __call__ = NewType.__call__
+
+    def __init__(
+        self,
+        name: str,
+        tp: type,
+        constraints: Constraint | Sequence[Constraint],
+    ) -> None:
+        self.__qualname__ = name
+        if "." in name:
+            name = name.rpartition(".")[-1]
+        self.__name__ = name
+        self.__supertype__ = tp
+
+        self._constraints: Sequence[Constraint]
+        if isinstance(constraints, Constraint):  # Not a sequence
+            self._constraints = (constraints,)
+        else:
+            self._constraints = constraints
+
+        # We don't do the module name thing from NewType
+
+    def is_one_of_us(self, val: object) -> bool:
+        if not isinstance(val, self.__supertype__):
+            return False
+        for c in self._constraints:
+            if not c.is_valid(val):
+                return False
+        return True
+
+
+# Prob3 = NewConstrainedType("Prob3", float, (ValueRange(0.0, 1.0),))
+# Prob3 = cast(type[NewType], Prob3)
+Prob3 = NewType("Prob3", float)
+
+
+def is_prob3(val: object) -> TypeGuard[Prob3]:
+    return Prob3.is_one_of_us(val)
+
+
+def make_guard(
+    name: str, tp: type[NewType], constraints: tuple[Constraint]
+) -> object:
+    def predicate(val: object):
+        assert isinstance(tp.__supertype__, type)
+        if not isinstance(val, tp.__supertype__):
+            return False
+        for c in constraints:
+            if not c.is_valid(val):
+                return False
+        return True
+
+    return predicate

@@ -18,6 +18,7 @@ from typing import (
     Sized,
     TypeAlias,
     Protocol,
+    TypeGuard,
     runtime_checkable,
 )
 
@@ -121,37 +122,48 @@ Predicate: TypeAlias = Callable[[object], bool]
 
 def make_predicate(
     name: str,
-    t: NewType | AnnotatedType | type,
+    # t: NewType | AnnotatedType | type,
+    t: object,
     constraints: Sequence[Constraint] = tuple(),
     docstring: bool = True,
 ) -> Predicate:
-    """Create predicate from simple type or typing.Annotated.
+    """Create predicate from a type and constraints.
 
-    When given an Annotated type, the predicate
-    checks for
-    - base type
-    - conformance to any :func:`ValueRange` annotations
-    - conformance to any :func:`LengthRange` annotations
+    :param name:
+        The name that the predicate will know itself by in docstrings
+    :param t: A type,
+        such as ``int``,
+        or an Annotated type,
+        or something created by NewType.
+    :param constraints:
+        The :class:`Constraint`\\ s that the predicate should enforce.
+    :param docstring:
+        Create a docstring from the ``name`` and ``constraints`` for
+        the created predicate
 
-    .. caution::
-       Current version ignores type parameters.
-       That is ``tuple[str]`` will be treated as ``tuple``.
+    If the type has Constraints as part of its ``__metadata__``,
+    those will be along with any Constraints provided here.
     """
 
-    cons: tuple[Constraint, ...] = tuple(constraints)
+    cons = tuple(constraints)
     if isinstance(t, AnnotatedType):
         base_type = t.__origin__
-        cons += tuple(t.__metadata__)
+        cons += tuple(
+            filter(lambda c: isinstance(c, Constraint), t.__metadata__)
+        )
 
     elif isinstance(t, NewType):
         # This relies on undocumented features of NewType
         # that I have gleaned from the source.
         if not isinstance(t.__supertype__, type):
+            # TODO: Recurse if __supertype__ is NewType
             raise TypeError("super-type is not so super after all")
         base_type = t.__supertype__
 
     elif isinstance(t, type):
         base_type = t
+    else:
+        raise TypeError("t must be the type of type we typically handle")
 
     def predicate(val: object) -> bool:
         if not isinstance(base_type, type):
@@ -175,12 +187,18 @@ def make_predicate(
     return predicate
 
 
-Prob = Annotated[float, ValueRange(0.0, 1.0)]
-"""Probability: A float between 0.0 and 1.0"""
+# Prob = Annotated[float, ValueRange(0.0, 1.0)]
+Prob = NewType("Prob", float)
 
-assert isinstance(Prob, AnnotatedType)
-is_prob: Predicate = make_predicate("is_prob", Prob)
-"""True iff val is a float and 0.0 <= val <= 1.0"""
+_is_prob: Predicate = make_predicate("is_prob", Prob, (ValueRange(0.0, 1.0),))
+
+
+def is_prob(val: object) -> TypeGuard[Prob]:
+    return _is_prob(val)
+
+
+is_prob.__doc__ = _is_prob.__doc__
+
 
 PositiveInt = Annotated[int, ValueRange(1, math.inf)]
 """Positive integer."""

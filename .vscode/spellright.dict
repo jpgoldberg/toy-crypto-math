@@ -123,3 +123,5 @@ FrozenBidict
 fromhex
 bidict
 versionadded
+__supertype__
+autodata

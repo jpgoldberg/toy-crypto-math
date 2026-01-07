@@ -75,7 +75,7 @@ between 5 and 10 inclusively.
     >>> from toy_crypto.types import ValueRange, make_predicate, LengthRange
 
     >>> Five2ten = Annotated[int, ValueRange(5, 10)]
-    >>> is_5to10 = make_predicate(Five2ten)
+    >>> is_5to10 = make_predicate("is_5to10", Five2ten)
 
     >>> is_5to10(7)
     True
@@ -104,7 +104,7 @@ Another constraint defined in this module is :func:`LengthRange`.
 .. doctest::
 
     >>> Password = Annotated[str, LengthRange(min=8, max=None)]
-    >>> is_password = make_predicate(Password)
+    >>> is_password = make_predicate('is_password', Password)
 
     >>> too_short = 'abcdefg'
     >>> len(too_short)

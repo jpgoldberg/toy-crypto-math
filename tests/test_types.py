@@ -46,5 +46,21 @@ class TestProb:
         assert types.is_prob(thing) is expected, note
 
 
+class TestDocstrings:
+    def test_predicate_description(self) -> None:
+        expected = (
+            "True if and only if val satisfies all of"
+            "\n- is of type int\n- meets ValueRange(0, 255)"
+            "\n- meets LengthRange(1, 1)"
+        )
+        base_type: type = int
+        constraints = (
+            types.ValueRange(0, 255),
+            types.LengthRange(1, 1),
+        )
+        d = types._predicate_description(base_type, constraints)
+        assert d == expected
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))

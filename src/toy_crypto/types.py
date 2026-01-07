@@ -108,9 +108,9 @@ def _predicate_description(
 
     intro = f"True if and only if {param_name} satisfies all of"
     conditions: list[str] = [f"is of type {type_name}"]
-    conditions += [f'meets {c}' for c in constraints]
+    conditions += [f"meets {c}" for c in constraints]
 
-    text = '\n- '.join((intro, *conditions))
+    text = "\n- ".join((intro, *conditions))
 
     return text
 
@@ -120,8 +120,10 @@ Predicate: TypeAlias = Callable[[object], bool]
 
 
 def make_predicate(
+    name: str,
     t: NewType | AnnotatedType | type,
     constraints: Sequence[Constraint] = tuple(),
+    docstring: bool = True,
 ) -> Predicate:
     """Create predicate from simple type or typing.Annotated.
 
@@ -136,22 +138,22 @@ def make_predicate(
        That is ``tuple[str]`` will be treated as ``tuple``.
     """
 
+    cons: tuple[Constraint, ...] = tuple(constraints)
+    if isinstance(t, AnnotatedType):
+        base_type = t.__origin__
+        cons += tuple(t.__metadata__)
+
+    elif isinstance(t, NewType):
+        # This relies on undocumented features of NewType
+        # that I have gleaned from the source.
+        if not isinstance(t.__supertype__, type):
+            raise TypeError("super-type is not so super after all")
+        base_type = t.__supertype__
+
+    elif isinstance(t, type):
+        base_type = t
+
     def predicate(val: object) -> bool:
-        cons: tuple[Constraint, ...] = tuple(constraints)
-        if isinstance(t, AnnotatedType):
-            base_type = t.__origin__
-            cons += tuple(t.__metadata__)
-
-        elif isinstance(t, NewType):
-            # This relies on undocumented features of NewType
-            # that I have gleaned from the source.
-            if not isinstance(t.__supertype__, type):
-                raise TypeError("super-type is not so super after all")
-            base_type = t.__supertype__
-
-        elif isinstance(t, type):
-            base_type = t
-
         if not isinstance(base_type, type):
             raise TypeError(
                 "base type of type t is not the type of type"
@@ -165,6 +167,11 @@ def make_predicate(
                     return False
         return True
 
+    predicate.__name__ = name
+    if docstring:
+        predicate.__doc__ = _predicate_description(
+            base_type=base_type, constraints=cons
+        )
     return predicate
 
 
@@ -172,14 +179,14 @@ Prob = Annotated[float, ValueRange(0.0, 1.0)]
 """Probability: A float between 0.0 and 1.0"""
 
 assert isinstance(Prob, AnnotatedType)
-is_prob: Predicate = make_predicate(Prob)
+is_prob: Predicate = make_predicate("is_prob", Prob)
 """True iff val is a float and 0.0 <= val <= 1.0"""
 
 PositiveInt = Annotated[int, ValueRange(1, math.inf)]
 """Positive integer."""
 
 assert isinstance(PositiveInt, AnnotatedType)
-is_positive_int: Predicate = make_predicate(PositiveInt)
+is_positive_int: Predicate = make_predicate("is_positive_int", PositiveInt)
 """True iff val is an int and vat >= 1"""
 
 
@@ -187,7 +194,7 @@ Char = Annotated[str, LengthRange(1, 1)]
 """A string of length 1"""
 
 assert isinstance(Char, AnnotatedType)
-is_char: Predicate = make_predicate(Char)
+is_char: Predicate = make_predicate("is_char", Char)
 """True iff val is str and len(val) == 1"""
 
 
@@ -195,7 +202,7 @@ Byte = Annotated[int, ValueRange(0, 255)]
 """And int representing a single byte."""
 
 assert isinstance(Byte, AnnotatedType)
-is_byte: Predicate = make_predicate(Byte)
+is_byte: Predicate = make_predicate("is_byte", Byte)
 
 
 @runtime_checkable

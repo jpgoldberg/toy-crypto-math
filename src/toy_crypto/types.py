@@ -45,8 +45,16 @@ class ValueRange(Constraint):
 
         Use `None` for no minimum or maximum
         """
-        self.min: float = -math.inf if min is None else min
-        self.max: float = math.inf if max is None else max
+        self._min: float = -math.inf if min is None else min
+        self._max: float = math.inf if max is None else max
+
+    @property
+    def min(self) -> float:
+        return self._min
+
+    @property
+    def max(self) -> float:
+        return self._max
 
     def is_valid(self, val: object) -> bool:
         """True iff min <= val <= max.
@@ -54,7 +62,10 @@ class ValueRange(Constraint):
         If val can't be compared to float errors
         will be passed upward
         """
-        return self.min <= val <= self.max  # type: ignore[operator]
+        return self._min <= val <= self._max  # type: ignore[operator]
+
+    def __str__(self) -> str:
+        return f"ValueRange({self._min}, {self._max})"
 
 
 @dataclass
@@ -66,8 +77,8 @@ class LengthRange(Constraint):
 
         Use `None` for no minimum or maximum.
         """
-        self.min: float = -math.inf if min is None else min
-        self.max: float = math.inf if max is None else max
+        self._min: float = -math.inf if min is None else min
+        self._max: float = math.inf if max is None else max
 
     def is_valid(self, val: object) -> bool:
         """True iff min <= len(val) <= max.
@@ -76,7 +87,32 @@ class LengthRange(Constraint):
         """
         if not isinstance(val, Sized):
             raise TypeError("Must support len(val)")
-        return self.min <= len(val) <= self.max
+        return self._min <= len(val) <= self._max
+
+    @property
+    def min(self) -> float:
+        return self._min
+
+    @property
+    def max(self) -> float:
+        return self._max
+
+    def __str__(self) -> str:
+        return f"LengthRange({self._min}, {self._max})"
+
+
+def _predicate_description(
+    base_type: type, constraints: Sequence[Constraint], param_name: str = "val"
+) -> str:
+    type_name = base_type.__name__
+
+    intro = "True if and only if all of the following conditions hold"
+    conditions: list[str] = [f"'{param_name}' is of type {type_name}"]
+    conditions += [str(c) for c in constraints]
+
+    text = f"{intro}\n{'\n- '.join(conditions)}"
+
+    return text
 
 
 Predicate: TypeAlias = Callable[[object], bool]

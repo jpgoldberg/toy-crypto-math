@@ -126,7 +126,7 @@ __all__.append('P')  # fmt: skip
 
 @export
 def quantile(
-    prob: Prob = Prob(0.5),
+    prob: float = Prob(0.5),
     classes: PositiveInt = 365,
     coincident: PositiveInt = 2,
 ) -> int:

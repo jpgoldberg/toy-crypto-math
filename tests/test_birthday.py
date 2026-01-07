@@ -52,20 +52,11 @@ class TestBirthday:
         for p, n in zip(
             _table_p,
             [
-                # 7,  # Original data has 6.
-                6,
-                190,
-                6100,
-                190_000,
-                6_100_000,
-                1.9e8,
-                6.1e8,
-                3.3e9,
-                5.1e9,
-                7.2e9,
-            ],  # fmt: skip
+                6, 190, 6100, 190_000, 6_100_000,
+                1.9e8, 6.1e8, 3.3e9, 5.1e9, 7.2e9,
+            ],
         )
-    ]
+    ]  # fmt: skip
     hash_vectors.extend(hv64)
 
     hv96 = [
@@ -73,19 +64,11 @@ class TestBirthday:
         for p, n in zip(
             _table_p,
             [
-                4.0e5,
-                1.3e7,
-                4.0e8,
-                1.3e10,
-                4.0e11,
-                1.3e13,
-                4.0e13,
-                2.1e14,
-                3.3e14,
-                4.7e14,
-            ],  # fmt: skip
+                4.0e5, 1.3e7, 4.0e8, 1.3e10, 4.0e11,
+                1.3e13, 4.0e13, 2.1e14, 3.3e14, 4.7e14,
+            ],
         )
-    ]
+    ]  # fmt: skip
     hash_vectors.extend(hv96)
 
     hv128 = [
@@ -93,19 +76,11 @@ class TestBirthday:
         for p, n in zip(
             _table_p,
             [
-                2.6e10,
-                8.2e11,
-                2.6e13,
-                8.2e14,
-                2.6e16,
-                8.3e17,
-                2.6e18,
-                1.4e19,
-                2.2e19,
-                3.1e19,
-            ],  # fmt: skip
+                2.6e10, 8.2e11, 2.6e13, 8.2e14, 2.6e16,
+                8.3e17, 2.6e18, 1.4e19, 2.2e19, 3.1e19,
+            ],
         )
-    ]
+    ]  # fmt: skip
     hash_vectors.extend(hv128)
 
     hv192 = [
@@ -113,19 +88,11 @@ class TestBirthday:
         for p, n in zip(
             _table_p,
             [
-                1.1e20,
-                3.7e21,
-                1.1e23,
-                3.5e24,
-                1.1e26,
-                3.5e27,
-                1.1e28,
-                6.0e28,
-                9.3e28,
-                1.3e29,
-            ],  # fmt: skip
+                1.1e20, 3.7e21, 1.1e23, 3.5e24, 1.1e26,
+                3.5e27, 1.1e28, 6.0e28, 9.3e28, 1.3e29,
+            ],
         )
-    ]
+    ]  # fmt: skip
     hash_vectors.extend(hv192)
 
     hv256 = [
@@ -133,19 +100,11 @@ class TestBirthday:
         for p, n in zip(
             _table_p,
             [
-                4.8e29,
-                1.5e31,
-                4.8e32,
-                1.5e34,
-                4.8e35,
-                1.5e37,
-                4.8e37,
-                2.6e38,
-                4.0e38,
-                5.7e38,
-            ],  # fmt: skip
+                4.8e29, 1.5e31, 4.8e32, 1.5e34, 4.8e35,
+                1.5e37, 4.8e37, 2.6e38, 4.0e38, 5.7e38,
+            ],
         )
-    ]
+    ]  # fmt: skip
     hash_vectors.extend(hv256)
 
     k_p50_c365_vectors = [
@@ -203,7 +162,7 @@ class TestBirthday:
         my_p = birthday.probability(n, classes=classes)
         rel_delta = abs(my_p - p) / p
         assert math.isclose(p, my_p, rel_tol=0.1), (
-            f"p: {p}; my_p: {my_p}; rel diff: {rel_delta}"
+            f"p: {p}; my_p: {my_p}; relative diff: {rel_delta}"
         )
 
     @staticmethod

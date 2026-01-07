@@ -190,14 +190,12 @@ def make_predicate(
 # Prob = Annotated[float, ValueRange(0.0, 1.0)]
 Prob = NewType("Prob", float)
 
+# fmt: off
 _is_prob: Predicate = make_predicate("is_prob", Prob, (ValueRange(0.0, 1.0),))
-
-
 def is_prob(val: object) -> TypeGuard[Prob]:
     return _is_prob(val)
-
-
 is_prob.__doc__ = _is_prob.__doc__
+# fmt: on
 
 
 PositiveInt = Annotated[int, ValueRange(1, math.inf)]

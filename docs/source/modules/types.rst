@@ -148,3 +148,50 @@ Predicates are of the type :data:`Predicate`.
 
 .. autodata:: Predicate
 
+
+Creating TypeGuards
+-------------------
+
+In this section everything I say about `TypeGuard`_ applies to
+`TypeIs`_. There are differences between the two that are not
+relevant for this discussion or my examples beyond that fact that
+`TypeIs`__` was introduced in Python 3.13, and I don't want to raise
+the minimum of this package just yet.
+
+.. _TypeIs: https://docs.python.org/3/library/typing.html#typing.TypeIs
+
+.. _TypeGuard: https://docs.python.org/3/library/typing.html#typing.TypeGuard
+
+Much of this module is what I could salvage from my misguided attempt
+to automate the generation of TypeGuards.
+The separation between Python itself and type checking system
+doomed my efforts from the start.
+I should have foreseen that.
+
+At any rate here is an example of creating a `TypeGuard`.
+
+.. testcode:: python
+
+    from typing import NewType, TypeGuard, reveal_type
+    from toy_crypto.types import make_predicate, ValueRange
+    Probability = NewType("Probability", float)
+
+    _inner_is_probability = make_predicate(
+                "is_probability", # Final name here for setting name and docs
+                Probability,      # this will end up being a check for float
+                [ValueRange(0.0, 1.0)],  # Constraints
+            )
+    
+    def is_probability(val: object) -> TypeGuard[Probability]:
+        return _inner_is_probability(val)
+    
+    # And now give our TypeGuard predicate's documentation
+    is_probability.__doc__ = _inner_is_probability.__doc__
+
+    p = 0.5
+    assert is_probability(p)
+    reveal_type(p)  # type checker says Probability, run-tine float
+
+.. testoutput::
+
+    float

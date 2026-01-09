@@ -143,6 +143,7 @@ def make_predicate(
 
     If the type has Constraints as part of its ``__metadata__``,
     those will be along with any Constraints provided here.
+    The order in which constraints are tested is undefined.
     """
 
     cons = tuple(constraints)
@@ -173,10 +174,8 @@ def make_predicate(
             )
         if not isinstance(val, base_type):
             return False
-        for datum in cons:
-            if isinstance(datum, Constraint):
-                if not datum.is_valid(val):
-                    return False
+        if not all((c.is_valid(val) for c in cons)):
+            return False
         return True
 
     predicate.__name__ = name

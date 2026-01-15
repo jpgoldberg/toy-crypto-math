@@ -4,7 +4,6 @@ from enum import StrEnum
 import secrets
 from typing import Any, Generic, Optional, TypeAlias, TypeVar, cast, Protocol
 from functools import wraps
-from toy_crypto.types import SupportsBool
 from toy_crypto.utils import hash_bytes
 
 K = TypeVar("K")
@@ -180,6 +179,8 @@ class Ind(Generic[K]):
         """Challenger picks key and a b."""
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
+        # Until https://github.com/astral-sh/ty/issues/1714 is resolved
+        self._b = cast(bool, self._b)
         self._challenge_ctexts = set()
 
     @manage_state
@@ -195,10 +196,7 @@ class Ind(Generic[K]):
         """
 
         # If these are None at this point, you've got a bad TransitionTable.
-        cast(bool, self._b)
-        cast(K, self._key)
-
-        # Hmm, casts aren't working for me.
+        assert self._b is not None
         assert self._key is not None
 
         if len(m0) != len(m1):
@@ -218,8 +216,8 @@ class Ind(Generic[K]):
         :param ptext: Message to be encrypted
         :raises StateError: if method called when disallowed.
         """
-
         assert self._key is not None
+
         return self._encryptor(self._key, ptext)
 
     @manage_state
@@ -229,7 +227,6 @@ class Ind(Generic[K]):
         :param ctext: Ciphertext to be decrypted
         :raises StateError: if method called when disallowed.
         """
-
         assert self._key is not None
 
         if hash_bytes(ctext) in self._challenge_ctexts:
@@ -247,8 +244,8 @@ class Ind(Generic[K]):
         :param guess:
         :raises StateError: if method called when disallowed.
         """
-
-        return bool(guess) == self._b
+        assert self._b is not None
+        return bool(guess) is self._b
 
 
 class IndCpa(Ind[K]):
@@ -278,7 +275,6 @@ class IndCpa(Ind[K]):
         :param encryptor:
             A function that takes a key and message and outputs ctext
         """
-
         super().__init__(key_gen=key_gen, encryptor=encryptor)
         self._t_table = self.T_TABLE
 
@@ -393,7 +389,6 @@ class IndCca1(Ind[K]):
             A function that takes a key and ciphertext and outputs plaintext
         :raises StateError: if methods called in disallowed order.
         """
-
         super().__init__(
             key_gen=key_gen, encryptor=encryptor, decryptor=decrytpor
         )

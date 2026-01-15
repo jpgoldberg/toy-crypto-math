@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.6.1 2025-12-30
 
+- deprecates `types.SupportsBool`
+  
 ### Improved
 
 - `birthday.quantile` and `utils.find_zero` are more accurate.

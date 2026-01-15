@@ -240,14 +240,15 @@ class Ind(Generic[K]):
         return self._decryptor(self._key, ctext)
 
     @manage_state
-    def finalize(self, guess: SupportsBool) -> bool:
+    def finalize(self, guess: object) -> bool:
         """
-        True iff guess is the same as b of previously created challenger.
+        True iff ``bool(guess)`` is the same as challenger's h=``b``,
 
+        :param guess:
         :raises StateError: if method called when disallowed.
         """
 
-        return guess == self._b
+        return bool(guess) == self._b
 
 
 class IndCpa(Ind[K]):

@@ -17,5 +17,6 @@
     "python.analysis.typeEvaluation.disableBytesTypePromotions": true,
     "dependi.python.silenceVersionOverflows": false,
     "python.defaultInterpreterPath": "/Users/jeffrey/src/github.com/jpgoldberg/toy-crypto-math/.venv/bin/python",
-    "python.analysis.enablePytestSupport": false
+    "python.analysis.enablePytestSupport": false,
+    "python.languageServer": "None"
 }

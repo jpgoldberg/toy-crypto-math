@@ -222,4 +222,9 @@ is_byte: Predicate = make_predicate("is_byte", Byte)
 
 @runtime_checkable
 class SupportsBool(Protocol):
+    """
+    .. deprecated:: 0.6.2
+       This never should have been a thing.
+    """
+
     def __bool__(self) -> bool: ...

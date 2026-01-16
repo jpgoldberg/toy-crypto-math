@@ -55,59 +55,6 @@ path = "src/toy_crypto/__about__.py"
 packages = ["src/toy_crypto"]
 
 
-[tool.hatch.envs.default]
-dependencies = [
-  "coverage[toml]>=7.5",
-  "pytest",
-  "ruff",
-  "mypy>=1.12",
-  "types-docutiles",
-]
-
-[tool.hatch.envs.test]
-dependencies = [
-  "coverage[toml]>=7.5",
-  "pytest",
-  "ruff",
-  "mypy>=1.12",
-]
-
-[[tool.hatch.envs.test.matrix]]
-python = ["3.12", "3.13"]
-
-[tool.hatch.envs.test.scripts]
-types = "mypy --install-types --non-interactive {args:src/toy_crypto tests}"
-test = "pytest {args:tests}"
-test-cov = "coverage run -m pytest {args:tests}"
-cov-report = [
-  "- coverage combine",
-  "coverage report",
-]
-cov = [
-  "test-cov",
-  "cov-report",
-]
-lint = "ruff check {args:src/toy_crypto tests}"
-
-[tool.coverage.run]
-source_pkgs = ["toy_crypto", "tests"]
-branch = true
-parallel = true
-omit = [
-  "src/toy_crypto/__about__.py",
-]
-
-[tool.coverage.paths]
-toy_crypto = ["src/toy_crypto", "*/toy-crypto-math/src/toy_crypto"]
-tests = ["tests", "*/toy-crypto-math/tests"]
-
-[tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
-
 [tool.pytest.ini_options]
 testpaths = [ "tests" ]
 markers = [

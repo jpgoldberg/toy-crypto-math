@@ -1826,6 +1826,7 @@ dependencies = [
     { name = "jsonschema" },
     { name = "primefac" },
     { name = "referencing" },
+    { name = "typing-extensions" },
 ]
 
 [package.optional-dependencies]
@@ -1875,6 +1876,7 @@ requires-dist = [
     { name = "jsonschema", specifier = ">=4.25.0" },
     { name = "primefac", specifier = ">=2.0.12" },
     { name = "referencing", specifier = ">=0.36.2" },
+    { name = "typing-extensions", specifier = ">=4.5.0" },
 ]
 provides-extras = ["c-deps"]
 

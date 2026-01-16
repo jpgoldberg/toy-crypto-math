@@ -5,7 +5,10 @@ from typing import NamedTuple
 import unittest
 import pytest
 from toy_crypto import nt
-from . import WP_DATA
+from . import WP_ROOT
+from toy_crypto import wycheproof
+
+WP_DATA = wycheproof.Loader(WP_ROOT)
 
 
 class TestFactor:

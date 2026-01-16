@@ -180,7 +180,7 @@ class Ind(Generic[K]):
         self._key = self._key_gen()
         self._b = secrets.choice([True, False])
         # Until https://github.com/astral-sh/ty/issues/1714 is resolved
-        self._b = cast(bool, self._b)
+        self._b = cast(bool, self._b)  # mypy: ignore[redundant-cast]
         self._challenge_ctexts = set()
 
     @manage_state

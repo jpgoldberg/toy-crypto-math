@@ -113,6 +113,10 @@ markers = [
     "statistical: marks tests of a statistical nature (deselect with '-m \"not statistical\"')",
 ]
 
+[tool.ty.rules]
+# Something unused by ty may be used by mypy
+unused-ignore-comment = "ignore"
+
 [dependency-groups]
 dev = [
     "mypy >= 1.15",

@@ -166,7 +166,7 @@ def quantile(
     # All terms are computed as logarithms
     term1 = (k - 1) * math.log(c)  # log  c^{k-1}
     term2 = math.lgamma(k + 1)  # log   k!
-    term3 = math.log(-math.log1p(-prob))  # log  1/log(1-p)
+    term3 = math.log(-math.log1p(-prob))  # log  1/log(1-p) # ty: ignore
     log_n = (term1 + term2 + term3) / k  # adding log x_i is log prod x_i
     n = math.exp(log_n)
     n = math.ceil(n)

@@ -33,6 +33,8 @@ dependencies = [
   "jsonschema>=4.25.0",
   "primefac >= 2.0.12",
   "referencing>=0.36.2",
+  # only needed for @deprecated in Python < 3.13
+  "typing_extensions>=4.5.0",
 ]
 
 [project.optional-dependencies]

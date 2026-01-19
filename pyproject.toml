@@ -7,6 +7,8 @@ name = "toycrypto"
 dynamic = ["version"]
 description = 'Modules that can be used to illustrate and explore cryptographic concepts. This should never be used for security purposes.'
 readme = "README.md"
+
+# be sure to adjust tox.toml when this changes
 requires-python = ">=3.12"
 license = "MIT"
 keywords = []

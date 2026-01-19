@@ -75,7 +75,9 @@ dev = [
     "jsonschema>=4.25.0",
     "types-jsonschema>=4.25.0.20250809",
     "pytest-subtests>=0.14.2",
-    "ty>=0.0.10",
+    "ty>=0.0.11",
+    "tox>=4.34",
+    "tox-uv>=1.29",
 ]
 lint = [
     "types-docutils>=0.21.0.20241128",

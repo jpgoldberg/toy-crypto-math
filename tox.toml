@@ -1,0 +1,16 @@
+requires = ["tox>=4"]
+
+# Update this when project python_version is changed
+env_list = ["3.14", "3.13", "3.12"]
+
+runner = "uv-venv-lock-runner"
+
+[env_run_base]
+description = "Run test under {base_python}"
+
+runner = "uv-venv-lock-runner"
+
+deps = ["pytest >= 8", "bitarray>=3"]
+
+commands = [[ "pytest", { replace = "posargs", default = ["tests"], extend = true } ]]
+

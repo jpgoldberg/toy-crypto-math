@@ -14,3 +14,7 @@ deps = ["pytest >= 8", "bitarray>=3"]
 
 commands = [[ "pytest", { replace = "posargs", default = ["tests"], extend = true } ]]
 
+[gh.python]
+"3.14" = ["3.14"]
+"3.13" = ["3.13"]
+"3.12" = ["3.12"]

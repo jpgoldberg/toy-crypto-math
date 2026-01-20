@@ -6,6 +6,7 @@ They are not carefully thought out.
 This module is probably the least stable of any of these unstable modules.
 """
 
+import sys  # for getrecursionlimit
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import math
@@ -21,6 +22,8 @@ from typing import (
     TypeGuard,
     runtime_checkable,
 )
+
+_RECURSION_LIMIT = sys.getrecursionlimit()
 
 
 @runtime_checkable
@@ -156,10 +159,14 @@ def make_predicate(
     elif isinstance(t, NewType):
         # This relies on undocumented features of NewType
         # that I have gleaned from the source.
-        if not isinstance(t.__supertype__, type):
-            # TODO: Recurse if __supertype__ is NewType
-            raise TypeError("super-type is not so super after all")
-        base_type = t.__supertype__
+        st = t.__supertype__
+        st_loop_count = 0  # Probably not needed, but I feel safer this way
+        while not isinstance(st, type):
+            if st_loop_count >= _RECURSION_LIMIT:
+                raise Exception("NewTypes went too deep")
+            st = st.__supertype__
+            st_loop_count += 1
+        base_type = st
 
     elif isinstance(t, type):
         base_type = t
@@ -167,11 +174,6 @@ def make_predicate(
         raise TypeError("t must be the type of type we typically handle")
 
     def predicate(val: object) -> bool:
-        if not isinstance(base_type, type):
-            raise TypeError(
-                "base type of type t is not the type of type"
-                "we typically expect."
-            )
         if not isinstance(val, base_type):
             return False
         if not all((c.is_valid(val) for c in cons)):

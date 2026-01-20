@@ -12,27 +12,42 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  test:
+    name: test ${{ matrix.env }}
 
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.12", "3.13"]
+        env: 
+          - "3.14"
+          - "3.13"
+          - "3.12"
+
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: recursive
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-
     - name: Install uv and set the python version
-      uses: astral-sh/setup-uv@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-        enable-cache: true
-        cache-dependency-glob: "uv.lock"
-   
-    - name: Test with pytest
-      run: uv run pytest -m  "not statistical and not slow" .
+      uses: astral-sh/setup-uv@v7
+
+    - name: Install tox
+      run: uv tool install --python-preference only-managed --python 3.14 tox --with tox-uv --with tox-gh
+
+    - name: Install Python
+      if: matrix.env != '3.14'
+      run: uv python install --python-preference only-managed ${{ matrix.env }}
+      
+    - name: Setup test suite
+      run: tox run -vv --notest --skip-missing-interpreters false
+      env:
+        TOX_GH_MAJOR_MINOR: ${{ matrix.env }}
+
+    - name: Run test suite
+      run: tox run --skip-pkg-install
+      env:
+        TOX_GH_MAJOR_MINOR: ${{ matrix.env }}
+
+  

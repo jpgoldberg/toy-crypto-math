@@ -7,6 +7,8 @@ name = "toycrypto"
 dynamic = ["version"]
 description = 'Modules that can be used to illustrate and explore cryptographic concepts. This should never be used for security purposes.'
 readme = "README.md"
+
+# be sure to adjust tox.toml when this changes
 requires-python = ">=3.12"
 license = "MIT"
 keywords = []
@@ -18,6 +20,7 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
   "Intended Audience :: Developers",
@@ -61,6 +64,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "statistical: marks tests of a statistical nature (deselect with '-m \"not statistical\"')",
 ]
+addopts = ["-m not (slow or statistical)"]
 
 [dependency-groups]
 dev = [
@@ -71,7 +75,9 @@ dev = [
     "jsonschema>=4.25.0",
     "types-jsonschema>=4.25.0.20250809",
     "pytest-subtests>=0.14.2",
-    "ty>=0.0.2",
+    "ty>=0.0.11",
+    "tox>=4.34",
+    "tox-uv>=1.29",
 ]
 lint = [
     "types-docutils>=0.21.0.20241128",

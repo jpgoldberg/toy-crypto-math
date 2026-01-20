@@ -20,6 +20,7 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
   "Intended Audience :: Developers",
@@ -63,6 +64,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "statistical: marks tests of a statistical nature (deselect with '-m \"not statistical\"')",
 ]
+addopts = ["-m not (slow or statistical)"]
 
 [dependency-groups]
 dev = [

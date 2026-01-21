@@ -123,3 +123,6 @@ FrozenBidict
 fromhex
 bidict
 versionadded
+egcd
+fermat_test
+equiv

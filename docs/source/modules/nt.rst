@@ -41,6 +41,55 @@ Functions
 
 .. autofunction:: egcd
 
+The heart of most primality testing is
+:wikipedia:`Fermat's Little Theorem`.
+It tells us that if *p* is prime then
+for all integers *a* such *a* is greater than 1 and less than *p*
+that
+
+.. math::
+    
+    a^{p-1} \equiv 1 \pmod p
+
+
+.. note::
+
+    It is very important to note that Fermat's Little Theorem
+    doesn't say that that condition holds *only* of prime numbers;
+    it just says that the condition holds of *every* prime number.
+    There are numbers, for example if we pick
+    *a* = 2 and *p* = 341, then
+    :math:`2^{341 - 1} \equiv 1 \pmod{341}`
+    even though 341 is not prime.
+
+    Furthermore, there are composite numbers, such as 561, for which the condition holds no matter what value of *a* we pick.
+    These are :wikipedia:`Carmichael number`\s.
+
+.. code-block:: python 
+
+    from toy_crypto import nt
+    pseudo_prime = 41 * 61 * 101  # This is not prime
+    reported_prime = nt.fermat_test(pseudo_prime)
+    print(reported_prime)
+
+That will *usually* report ``True``, which is incorrect.
+But if the randomly chosen bases are ever multiples of the factors
+of our pseudo prime, then the Fermat test will correctly identify
+it as composite.
+    
+
+
+.. admonition:: *Last* versus *Little*
+
+    - Fermat's *Last* Theorem is famous because Fermat never proved it.
+    - Fermat never proved the *Little* theorem either.
+    - The *Little* theorem was proved by Leibniz around 1683.
+    - The *Last* theorem was proved by Andrew Wiles in 1994.
+    - Unlike Fermat's *Last* Theorem, the *Little* Theorem is enormously useful.
+
+
+.. autofunction:: fermat_test
+
 .. autofunction:: probably_prime
 
 .. autofunction:: get_prime

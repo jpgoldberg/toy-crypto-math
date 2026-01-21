@@ -313,6 +313,12 @@ class TestPrimeTesting(unittest.TestCase):
                     else:
                         assert not result, f"False positive: {case}"
 
+    @pytest.mark.statistical
+    def test_fermat_carmichael(self) -> None:
+        pp = 41 * 61 * 101
+        result = nt.fermat_test(pp, k=3)
+        assert not result
+
 
 class TestGenPrime:
     @pytest.mark.slow

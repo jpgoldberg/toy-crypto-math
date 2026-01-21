@@ -434,7 +434,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
 
 @export
-def fermat_test(n: int, k: int = 8) -> bool:
+def fermat_test(n: int, k: int = 4) -> bool:
     """Returns true if n is prime, a Carmichael number, or through bad luck.
 
     Fermat's primality tests

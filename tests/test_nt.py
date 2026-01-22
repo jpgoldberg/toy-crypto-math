@@ -314,10 +314,12 @@ class TestPrimeTesting(unittest.TestCase):
                         assert not result, f"False positive: {case}"
 
     @pytest.mark.statistical
+    @pytest.mark.xfail
     def test_fermat_carmichael(self) -> None:
-        pp = 41 * 61 * 101
+        pp = 174763 * 199729 * 274627
+        expected = False  # Number is not prime
         result = nt.fermat_test(pp, k=3)
-        assert not result
+        assert result == expected  # But we should get this wrong
 
 
 class TestGenPrime:

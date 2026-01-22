@@ -17,27 +17,6 @@ going to have better versions of everything here.
 
 .. _SymPy: https://www.sympy.org/
 
-The :class:`FactorList` class
-========================
-
-Some of the methods here are meant to mimic what we
-see in SageMath's Factorization class,
-but it only does so partially, and only for :py:class:`int`.
-If you need something as reliable and
-general and fast as SageMath's Factorization tools,
-use SageMath_.
-
-The actual factoring is done by the primefac_ package.
-
-
-.. autoclass:: FactorList
-    :class-doc-from: both
-    :members:
-
-.. autofunction:: factor
-    :no-index:
-
-
 Prime testing and utilities
 ============================
 
@@ -71,18 +50,36 @@ that
     Furthermore, there are composite numbers, such as 561, for which the condition holds no matter what value of *a* we pick.
     These are :wikipedia:`Carmichael number`\s.
 
-.. code-block:: python 
+.. doctest::
 
-    from toy_crypto import nt
-    pseudo_prime = 41 * 61 * 101  # This is not prime
-    reported_prime = nt.fermat_test(pseudo_prime)
-    print(reported_prime)
+    >>> from toy_crypto import nt
+    >>> pseudo_prime = 174763 * 199729 * 274627  # This is not prime
+    >>> print(f"{pseudo_prime} isn't prime.")
+    9585921133193329 isn't prime.
+    >>> ft_result = nt.fermat_test(pseudo_prime)
+    >>> ft_message = f"Fermat test: {"probably prime" if ft_result else "composite"}.}
+    >>> print(ft_message) # doctest: +ELLIPSES
+    Fermat test: ....
 
-That will *usually* report ``True``, which is incorrect.
-But if the randomly chosen bases are ever multiples of the factors
+
+That will *usually* report “Fermat test: probably prime.”
+That would be incorrect.
+But if any of the randomly chosen bases are ever multiples of the factors
 of our pseudo prime, then the Fermat test will correctly identify
 it as composite.
-    
+
+The Rabin-Miller test, which is used in :func:`probably_prime` will
+do better.
+
+.. doctest::
+
+    >>> rb_result = nt.probably_prime(9585921133193329)
+    >>> rb_message = f"Miller-Rabin test: {"probably prime" if ft_result else "composite"}.}
+    >>> print(rb_message)  # doctest: +ELLIPSES
+    Miller-Rabin test: ....
+
+which should almost always identify our pseudo prime as composite.
+
 
 
 .. admonition:: *Last* versus *Little*
@@ -100,12 +97,8 @@ it as composite.
 
 .. autofunction:: get_prime
 
-.. autoclass:: Modulus
-
-.. autofunction:: is_modulus
-
 Wrapping from primefac_
-''''''''''''''''''''''''
+------------------------
 
 Functions here wrap functions from the primefac_ Python package.
 Note that the wrapping is not completely transparent in some cases.
@@ -121,12 +114,49 @@ That is, the interface and behavior may differ.
 
 .. autofunction:: isprime
 
+The :class:`FactorList` class
+------------------------------
 
-Functions
+Some of the methods here are meant to mimic
+a small part of what we see in SageMath's Factorization class,
+but it only does so partially, and only for :py:class:`int`.
+If you need something as reliable and
+general and fast as SageMath's Factorization tools,
+use SageMath_.
+
+The actual factoring is done by the primefac_ package.
+
+
+.. autoclass:: FactorList
+    :class-doc-from: both
+    :members:
+
+.. autofunction:: factor
+    :no-index:
+
+
+
+
+Additional functions
 ========================
+
+Before Python gave us an easy way to compute modular inverses,
+the Extended Euclidean algorithm was what I used.
+Although it is no longer called in :func:`modinv`,
+I am keeping it around.
 
 .. autofunction:: egcd
 
+The :class:`Modulus` type and
+its ``typing.TypeGuard``, :func:`is_modulus`,
+are not very well thought out.
+They may disappear if I ever get around to overhauling the
+:mod:`toy_crypto.ec` module,
+or at least be put somewhere else.
+
+.. autoclass:: Modulus
+
+.. autofunction:: is_modulus
 
 Wrapping some :py:mod:`math`
 ------------------------------

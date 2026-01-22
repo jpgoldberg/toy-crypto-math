@@ -412,13 +412,16 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
     # Now we use FLT for the reduced s, but still mod n
     for a in bases:
+        # 1 < a < n, so if gcd(a, n) != 1, n must be composite
+        if math.gcd(a, n) != 1:
+            return COMPOSITE
         x = pow(a, s, n)
         if x == 1 or x == n - 1:
             # Consistent with prime. Call the next potential witness!
             continue
 
         # If any of the successive squares of x is n - 1 (mod n)
-        # then primality passes is base a,
+        # then primality passes in base a,
         # else a tells us that n is composite
         for _ in range(r - 1):
             x = pow(x, 2, n)
@@ -477,6 +480,8 @@ def fermat_test(n: int, k: int = 4) -> bool:
     # Fermat's Little Theorem says
     # if p is prime then a^(p-1) = 1 (mod p) for all a
     for a in bases:
+        if math.gcd(a, n) != 1:
+            return False
         if pow(a, n - 1, n) != 1:
             return False
     return True

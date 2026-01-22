@@ -20,20 +20,31 @@ Imported with::
 .. warning::
 
     Many things in this module should be consider unstable.
-    In particular things like :type:`Prob` are currently implemented
-    as :class:`typing.Annotated`.
-    As such these are indistinguisable from their base types with respect
-    to static type checking.
-    But in future they may be implemented as :class:`typing.NewType`.
-    This impacts the behavior of their corresponding predicates,
-    such as :func:`is_prob`,
-    which currently play no role in type narrowing.
+    In particular how particular types are implemented is subject
+    to rapid change, as the implementations are
+    experimental.
 
 
-Annotated types
-==================
+Value constrained types
+==========================
 
-The types listed are conceptually narrower sub types of simple types.
+Since I first started using Python, I have been experimenting with
+what are conceptually sub-types of basic types.
+Much of the intent is to better document functions through their signatures.
+An example is the type signature of :func:`toy_crypto.birthday.probability`,
+making use of both :data:`PositiveInt` and :data:`Prob`.
+
+.. code-block:: python
+
+    def probability(
+        n: PositiveInt,
+        classes: PositiveInt = 365,
+        coincident: PositiveInt = 2,
+        mode: Mode = "auto",
+    ) -> Prob: ...
+
+
+The types listed here are conceptually narrower sub types of simple types.
 For example every :data:`PositiveInt` is an :class:`int`,
 but not every  :class:`int` should be considered a :data:`PositiveInt`.
 
@@ -43,10 +54,20 @@ but not every  :class:`int` should be considered a :data:`PositiveInt`.
 
 .. autodata:: Char
 
+.. autodata:: toy_crypto.nt.Modulus
+    :no-index:
+
 .. _sec-types-predicates:
 
 Predicates
-============
+------------
+
+Predicates are of the type :data:`Predicate`.
+
+.. autodata:: Predicate
+
+And at the moment, several are defined in this and
+other modules.
 
 .. autofunction:: is_prob
 
@@ -54,8 +75,13 @@ Predicates
 
 .. autofunction:: is_char
 
+.. autofunction:: toy_crypto.nt.is_modulus
+    :no-index:
+
+
+
 Generating predicates
-=======================
+-----------------------
 
 The predicates listed in :ref:`sec-types-predicates` are generated
 from the information in the annotated types.
@@ -145,8 +171,6 @@ As illustrated above, a predicate can be created from an appropriate annotated t
 
 The generated predicate will return false for its argument unless all constraints are met.
 Predicates are of the type :data:`Predicate`.
-
-.. autodata:: Predicate
 
 
 Creating TypeGuards

@@ -18,6 +18,7 @@ from typing import (
     Sequence,
     Sized,
     TypeAlias,
+    TypeAliasType,
     Protocol,
     TypeGuard,
     runtime_checkable,
@@ -168,6 +169,16 @@ def make_predicate(
             st_loop_count += 1
         base_type = st
 
+    elif isinstance(t, TypeAliasType):
+        tv = t.__value__
+        tv_loop_count = 0
+        while not isinstance(tv, type):
+            if tv_loop_count >= _RECURSION_LIMIT:
+                raise Exception("NewTypes went too deep")
+            tv = tv.__value
+            tv_loop_count += 1
+        base_type = tv
+
     elif isinstance(t, type):
         base_type = t
     else:
@@ -199,12 +210,13 @@ is_prob.__doc__ = _is_prob.__doc__
 # fmt: on
 
 
-PositiveInt = Annotated[int, ValueRange(1, math.inf)]
-"""Positive integer."""
+# PositiveInt = Annotated[int, ValueRange(1, math.inf)]
+type PositiveInt = int
 
-assert isinstance(PositiveInt, AnnotatedType)
-is_positive_int: Predicate = make_predicate("is_positive_int", PositiveInt)
-"""True iff val is an int and vat >= 1"""
+
+is_positive_int: Predicate = make_predicate(
+    "is_positive_int", PositiveInt, constraints=(ValueRange(1, math.inf),)
+)
 
 
 Char = Annotated[str, LengthRange(1, 1)]

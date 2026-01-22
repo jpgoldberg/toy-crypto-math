@@ -1,7 +1,8 @@
 .. include:: /../common/unsafe.rst
 
+###############
 Number Theory
-==============
+###############
 
 .. py:module:: toy_crypto.nt
     :synopsis: Number theoretic utilities and integer factorization tools
@@ -17,7 +18,7 @@ going to have better versions of everything here.
 .. _SymPy: https://www.sympy.org/
 
 The :class:`FactorList` class
-------------------------------
+========================
 
 Some of the methods here are meant to mimic what we
 see in SageMath's Factorization class,
@@ -36,10 +37,15 @@ The actual factoring is done by the primefac_ package.
 .. autofunction:: factor
     :no-index:
 
-Functions
-----------
 
-.. autofunction:: egcd
+Prime testing and utilities
+============================
+
+In addition to what is present in this module :mod:`toy_crypto.sieve`
+has various ways for creating and using prime sieves.
+The :mod:`toy_crypto.rsa` module contains
+:func:`toy_crypto.rsa.fips186_prime_gen` for generating
+primes suitable for RSA keys.
 
 The heart of most primality testing is
 :wikipedia:`Fermat's Little Theorem`.
@@ -98,24 +104,8 @@ it as composite.
 
 .. autofunction:: is_modulus
 
-
-Wrapping some :py:mod:`math`
-'''''''''''''''''''''''''''''
-
-There are functions which either weren't part of the Python standard library at the time I started putting some things together, or I wasn't aware of their existence, or I just wanted to write for myself some reason or the other.
-
-But now, at least in this module, I wrap those. 
-
-.. autofunction:: gcd
-
-.. autofunction:: lcm
-
-.. autofunction:: modinv
-
-
-
 Wrapping from primefac_
-'''''''''''''''''''''''''
+''''''''''''''''''''''''
 
 Functions here wrap functions from the primefac_ Python package.
 Note that the wrapping is not completely transparent in some cases.
@@ -130,3 +120,26 @@ That is, the interface and behavior may differ.
 .. autofunction:: isqrt
 
 .. autofunction:: isprime
+
+
+Functions
+========================
+
+.. autofunction:: egcd
+
+
+Wrapping some :py:mod:`math`
+------------------------------
+
+There are functions which either weren't part of the Python standard library at the time I started putting some things together, or I wasn't aware of their existence, or I just wanted to write for myself some reason or the other.
+
+But now, at least in this module, I wrap those. 
+
+.. autofunction:: gcd
+
+.. autofunction:: lcm
+
+.. autofunction:: modinv
+
+
+

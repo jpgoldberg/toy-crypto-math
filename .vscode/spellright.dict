@@ -131,3 +131,7 @@ ptext
 egcd
 fermat_test
 equiv
+mod_sqrt
+isqrt
+isprime
+modinv

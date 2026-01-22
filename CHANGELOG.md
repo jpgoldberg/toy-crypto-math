@@ -5,9 +5,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Tested with Python 3.14
+  
 ### Improved
 
-- Test under Python 3.12, 3,13, and 3.14
+- Improved test automation for multiple versions of Python
+- Other improvements in building and testing automations
+
+### Documentation
+
+- Include `nt.fermat_test()` in documentation.
+- Restructed `nt` module documentation.
 
 ## 0.6.1 2025-12-30
 

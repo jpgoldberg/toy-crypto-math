@@ -111,7 +111,7 @@ def _predicate_description(
 ) -> str:
     type_name = base_type.__name__
 
-    intro = f"True if and only if {param_name} satisfies all of"
+    intro = f"True if and only if {param_name} satisfies all of\n"
     conditions: list[str] = [f"is of type {type_name}"]
     conditions += [f"meets {c}" for c in constraints]
 

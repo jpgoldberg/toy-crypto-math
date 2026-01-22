@@ -49,8 +49,9 @@ class TestProb:
 class TestDocstrings:
     def test_predicate_description(self) -> None:
         expected = (
-            "True if and only if val satisfies all of"
-            "\n- is of type int\n- meets ValueRange(0, 255)"
+            "True if and only if val satisfies all of\n"
+            "\n- is of type int"
+            "\n- meets ValueRange(0, 255)"
             "\n- meets LengthRange(1, 1)"
         )
         base_type: type = int

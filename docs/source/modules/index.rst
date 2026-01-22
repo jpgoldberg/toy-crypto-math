@@ -1,4 +1,4 @@
-The modules
+Modules
 ===========
 
 There are a number distinct modules for playing with different Cryptographic concepts.

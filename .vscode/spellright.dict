@@ -131,3 +131,6 @@ isqrt
 isprime
 modinv
 Restructed
+maxdepth
+lfloor
+rfloor

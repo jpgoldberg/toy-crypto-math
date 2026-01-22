@@ -59,7 +59,7 @@ would otherwise fail.
 
 .. autofunction:: next_power2
 
-This is yet another function where talking a logarithm (base 2 this time)
+This is yet another function where taking a logarithm (base 2 this time)
 would be the mathematically nice way to do things,
 
 ..   math:: p = \lceil \log_2(n) \rceil
@@ -100,7 +100,7 @@ b'Attack at dusk!'
 Encodings for the RSA 129 challenge
 ===================================
 
-Martin :cite:authors:`Gardner77:RSA` first reported the Rivest, Shamir, and Adleman (RSA) in :cite:year:`Gardner77:RSA`.
+Martin :cite:authors:`Gardner77:RSA` first reported the Rivest, Shamir, and Adleman (RSA) algorithm in :cite:year:`Gardner77:RSA`.
 The examples and challenge described in it used an encoding scheme
 between text and (large) integers.
 This class provides an encoder and decoder for that scheme.

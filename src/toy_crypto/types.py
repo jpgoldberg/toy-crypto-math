@@ -135,19 +135,26 @@ def make_predicate(
 
     :param name:
         The name that the predicate will know itself by in docstrings
-    :param t: A type,
-        such as ``int``,
-        or an Annotated type,
-        or something created by NewType.
+    :param t
+        A type-like thing, including
+
+        - instances of ``type`` (this includes most classes),
+        - instances of ``typing.TypeAliasType`` (created in one of the many ways to create type aliases),
+        - ``typing.Annotated`` types,
+        - instances of ``typing.NewType``.
+        
     :param constraints:
         The :class:`Constraint`\\ s that the predicate should enforce.
     :param docstring:
         Create a docstring from the ``name`` and ``constraints`` for
         the created predicate
 
-    If the type has Constraints as part of its ``__metadata__``,
-    those will be along with any Constraints provided here.
-    The order in which constraints are tested is undefined.
+    If ``t`` is an Annotated type, any Constraints provided among its 
+    ``__metadata__`` will be included along with any constraints
+    provided to this function.
+    
+    The order in which constraints are tested in the generated
+    predicate is not defined.
     """
 
     cons = tuple(constraints)

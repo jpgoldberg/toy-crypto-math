@@ -123,6 +123,11 @@ FrozenBidict
 fromhex
 bidict
 versionadded
+__supertype__
+autodata
+rel_delta
+MAX_QBIRTHDAY_P
+ptext
 egcd
 fermat_test
 equiv
@@ -134,3 +139,4 @@ Restructed
 maxdepth
 lfloor
 rfloor
+Truthy

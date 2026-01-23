@@ -6,8 +6,8 @@ try:
 except ImportError:
     from typing_extensions import deprecated  # novermin
 
-from . import types
 from .utils import export, find_zero
+from .types import Prob, is_prob, PositiveInt, is_positive_int
 
 __all__: list[str] = []  # will be appended to with each definition
 
@@ -25,73 +25,79 @@ type Mode = Literal["exact", "approximate", "auto"]
 __all__.append("Mode")
 
 
-def _pbirthday_exact(n: int, classes: int, coincident: int) -> types.Prob:
+# The public methods explicitly raise  errors
+# if called with the wrong types, but the private methods
+# do not perform any such checks
+def _pbirthday_exact(n: int, classes: int, coincident: int) -> Prob:
     # use notation  from Diconis and Mosteller 1969
     c = classes
     k = coincident
 
     if k < 2:
-        return 1.0
+        return Prob(1.0)
     if k > 2:
         return _pbirthday_approx(n, c, coincident=k)
 
     if n >= c:
-        return 1.0
+        return Prob(1.0)
 
     v_dn = math.perm(c, n)
-    v_t = c**n
+    v_t = int(c**n)
 
     p = 1.0 - v_dn / v_t
-    if not types.is_prob(p):
-        assert False, f"This should not happen: p = {p}"
+    assert is_prob(p), "Should not happen"
     return p
 
 
-def _pbirthday_approx(n: int, classes: int, coincident: int) -> types.Prob:
+def _pbirthday_approx(
+    n: PositiveInt, classes: PositiveInt, coincident: int
+) -> Prob:
     # DM1969 notation
     c = classes
     k = coincident
 
     if n >= c * (k - 1):
-        return 1.0
+        return Prob(1.0)
 
     if k < 2:
-        return 1.0
+        return Prob(1.0)
 
     # lifted from R src/library/stats/R/birthday.R
     LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
     lxx = k * math.log(LHS) - (k - 1) * math.log(c) - math.lgamma(k + 1)
     p = -math.expm1(-math.exp(lxx))
-    if not types.is_prob(p):
-        assert False, f"this should not happen: p = {p}"
+    assert is_prob(p), f"this should not happen: p = {p}"
     return p
 
 
 @export
 def probability(
-    n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
-) -> types.Prob:
+    n: PositiveInt,
+    classes: PositiveInt = 365,
+    coincident: PositiveInt = 2,
+    mode: Mode = "auto",
+) -> Prob:
     """probability of at least 1 collision among n individuals for c classes".
 
     The "exact" method still involves floating point approximations
     and may be very slow for large n.
 
-    :raises ValueError: if any of ``n``, ``classes``,
-        or ``coincident`` are less than 1.
+    :raises TypeError: if any of ``n``, ``classes``,
+        or ``coincident`` are not positive integers.
     """
-    if n < 1:
-        raise ValueError("n must be a positive integer")
-    if classes < 1:
-        raise ValueError("classes must be a positive integer")
-    if coincident < 1:
-        raise ValueError("coincident must be a positive integer")
+    if not is_positive_int(n):
+        raise TypeError("n must be a positive integer")
+    if not is_positive_int(classes):
+        raise TypeError("classes must be a positive integer")
+    if not is_positive_int(coincident):
+        raise TypeError("coincident must be a positive integer")
 
     # Name parameters to follow # Use DM69 notation
     c = classes
     k = coincident
 
     if k == 1:
-        return 1.0
+        return Prob(1.0)
 
     if mode == "auto":
         mode = "exact" if c < EXACT_THRESHOLD else "approximate"
@@ -107,7 +113,7 @@ def probability(
 @deprecated("Use 'probability' instead")
 def P(
     n: int, classes: int = 365, coincident: int = 2, mode: Mode = "auto"
-) -> types.Prob:
+) -> Prob:
     """
     .. deprecated:: 0.5
         Renamed. Use :func:`probability`.
@@ -120,20 +126,23 @@ __all__.append('P')  # fmt: skip
 
 @export
 def quantile(
-    prob: float = 0.5, classes: int = 365, coincident: int = 2
+    prob: float = Prob(0.5),
+    classes: PositiveInt = 365,
+    coincident: PositiveInt = 2,
 ) -> int:
     """Quantile: minimum number n to get prob for classes.
 
-    :raises ValueError: if ``prob`` is less than 0 or greater than 1.
-    :raises ValueError: if ``classes`` is less than 1.
-    :raises ValueError: if ``coincident`` is less than 1.
+    :raises TypeError:
+        if ``prob`` not a float or is less than 0 or greater than 1.
+    :raises TypeError: if ``classes`` is not a positive integer.
+    :raises TypeError: if ``coincident`` is not a positive integer.
     """
-    if not types.is_prob(prob):
-        raise ValueError(f"{prob} is not a valid probability")
-    if not types.is_positive_int(classes):
-        raise ValueError("classes must be positive")
-    if not types.is_positive_int(coincident):
-        raise ValueError("coincident must be positive")
+    if not is_prob(prob):
+        raise TypeError(f"{prob} is not a valid probability")
+    if not is_positive_int(classes):
+        raise TypeError("classes must be positive")
+    if not is_positive_int(coincident):
+        raise TypeError("coincident must be positive")
 
     # Use DM69 notation so I can better connect code to published method.
 
@@ -143,10 +152,10 @@ def quantile(
     if prob > MAX_QBIRTHDAY_P:
         return c * (k - 1) + 1
 
-    # Lifted from R src/library/stats/R/birthday.R
-    if prob == 0:
+    if prob == Prob(0.0) or k < 2:
         return 1
 
+    # Lifted from R src/library/stats/R/birthday.R
     # First approximation
     # broken down into three terms to help me better understand
     # t_1 = c^{k-1}
@@ -157,7 +166,7 @@ def quantile(
     # All terms are computed as logarithms
     term1 = (k - 1) * math.log(c)  # log  c^{k-1}
     term2 = math.lgamma(k + 1)  # log   k!
-    term3 = math.log(-math.log1p(-prob))  # log  1/log(1-p)
+    term3 = math.log(-math.log1p(-prob))  # log  1/log(1-p) # ty: ignore
     log_n = (term1 + term2 + term3) / k  # adding log x_i is log prod x_i
     n = math.exp(log_n)
     n = math.ceil(n)
@@ -184,7 +193,7 @@ def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
     .. deprecated:: 0.5
         Renamed. Use :func:`quantile`.
     """
-    return quantile(prob, classes, coincident)
+    return quantile(Prob(prob), classes, coincident)
 
 
 __all__.append("Q")

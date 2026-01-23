@@ -10,7 +10,6 @@ from typing import Optional, Any, Union, Callable, Self
 from collections.abc import Iterator
 import operator
 from .utils import xor
-from .types import SupportsBool
 
 
 def bits(n: int) -> Iterator[int]:
@@ -127,8 +126,8 @@ class Bit:
     bits, I need an abstraction.
     """
 
-    def __init__(self, b: SupportsBool) -> None:
-        self._value: bool = b is True
+    def __init__(self, b: object) -> None:
+        self._value: bool = bool(b)
         self._as_int: Optional[int] = None
         self._as_bytes: Optional[bytes] = None
 
@@ -152,7 +151,7 @@ class Bit:
             )
         return self._as_bytes
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Equality with other."""
         ob = self._other_bool(other)
         if ob is None:
@@ -162,13 +161,11 @@ class Bit:
         return self._value == ob
 
     @staticmethod
-    def _other_bool(other: Any) -> Optional[bool]:
+    def _other_bool(other: object) -> Optional[bool]:
         if isinstance(other, bytes):
             ob = any([b != 0 for b in other])
-        elif not isinstance(other, SupportsBool):
-            return None
         else:
-            ob = other.__bool__()
+            ob = bool(other)
         return ob
 
     def _logic(
@@ -223,7 +220,7 @@ class Bit:
         return self.inv()
 
 
-def set_bit_in_byte(byte: int, bit: int, value: SupportsBool) -> int:
+def set_bit_in_byte(byte: int, bit: int, value: object) -> int:
     """Sets the bit-most significant bit to value in byte."""
     byte %= 256
     bit %= 8
@@ -278,7 +275,7 @@ class PyBitArray:
     If I do this right, users will never have to know or deal with that.
     """
 
-    def __init__(self, bit_length: int, fill_bit: SupportsBool = 0) -> None:
+    def __init__(self, bit_length: int, fill_bit: object = 0) -> None:
         # Instance attributes that should always exist
         self._data: bytearray
         self._length: int  # length in used bits
@@ -288,7 +285,7 @@ class PyBitArray:
             raise ValueError("bit_length cannot be negative")
 
         fill_byte: int
-        if not fill_bit:
+        if not Bit._other_bool(fill_bit):
             fill_byte = 0
         else:
             fill_byte = 255
@@ -314,7 +311,7 @@ class PyBitArray:
 
         return instance
 
-    def append(self, b: SupportsBool) -> None:
+    def append(self, b: object) -> None:
         """appends bit b."""
         b = 1 if b else 0
 
@@ -341,8 +338,12 @@ class PyBitArray:
             raise IndexError
         return self._inner_getitem(index)
 
-    def __setitem__(self, index: int, value: SupportsBool) -> None:
-        """Set a bit using [] notation."""
+    def __setitem__(self, index: int, value: object) -> None:
+        """Set a bit using [] notation.
+
+        :param index: Where to set a value.
+        :param value: sets at index to bool(value).
+        """
         while index < 0:
             index += self._length
 

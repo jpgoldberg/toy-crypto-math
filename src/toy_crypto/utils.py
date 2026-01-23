@@ -133,9 +133,6 @@ class FrozenBidict[K: Hashable | int, V: Hashable]:
     def __len__(self) -> int:
         return len(self._fwd)
 
-    def get(self, key: K, default: object = None) -> object:
-        return self._fwd.get(key, default=default)
-
     @property
     def inverse(self) -> Mapping[V, K]:
         """The inverse map."""

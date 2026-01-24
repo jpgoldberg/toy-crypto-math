@@ -142,17 +142,17 @@ def make_predicate(
         - instances of ``typing.TypeAliasType`` (created in one of the many ways to create type aliases),
         - ``typing.Annotated`` types,
         - instances of ``typing.NewType``.
-        
+
     :param constraints:
         The :class:`Constraint`\\ s that the predicate should enforce.
     :param docstring:
         Create a docstring from the ``name`` and ``constraints`` for
         the created predicate
 
-    If ``t`` is an Annotated type, any Constraints provided among its 
+    If ``t`` is an Annotated type, any Constraints provided among its
     ``__metadata__`` will be included along with any constraints
     provided to this function.
-    
+
     The order in which constraints are tested in the generated
     predicate is not defined.
     """

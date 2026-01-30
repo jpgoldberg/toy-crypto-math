@@ -158,6 +158,7 @@ def make_predicate(
     """
 
     cons = tuple(constraints)
+
     if isinstance(t, AnnotatedType):
         base_type = t.__origin__
         cons += tuple(
@@ -181,7 +182,7 @@ def make_predicate(
         tv_loop_count = 0
         while not isinstance(tv, type):
             if tv_loop_count >= _RECURSION_LIMIT:
-                raise Exception("NewTypes went too deep")
+                raise Exception("TypeAliases went too deep")
             tv = tv.__value
             tv_loop_count += 1
         base_type = tv

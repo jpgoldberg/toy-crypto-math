@@ -24,6 +24,14 @@ Imported with::
     to rapid change, as the implementations are
     experimental.
 
+.. note::
+
+    I was unaware of the thrid party
+    `anotatted-types <https://pypi.org/project/annotated-types/>`__
+    library when I began working on this.
+    Much of what I have done poorly reinvents what is there.
+
+
 
 Value constrained types
 ==========================

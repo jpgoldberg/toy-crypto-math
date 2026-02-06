@@ -145,7 +145,7 @@ class Rsa129:
     Encoding scheme from Martin Gardner's 1977 article.
     """
 
-    bimap: FrozenBidict[int, str] = FrozenBidict(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    _MAP: FrozenBidict[int, str] = FrozenBidict(" ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
     @classmethod
     def encode(cls, text: str) -> int:
@@ -154,7 +154,7 @@ class Rsa129:
         result = 0
         for c in text:
             result *= 100
-            result += cls.bimap.inverse[c]
+            result += cls._MAP.inverse[c]
         return result
 
     @classmethod
@@ -163,7 +163,7 @@ class Rsa129:
         chars: list[str] = []
         while True:
             number, rem = divmod(number, 100)
-            chars.append(cls.bimap[rem])
+            chars.append(cls._MAP[rem])
             if number == 0:
                 break
         return "".join(reversed(chars))

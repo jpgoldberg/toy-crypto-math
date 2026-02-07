@@ -24,6 +24,7 @@ from typing import (
     runtime_checkable,
 )
 
+
 _RECURSION_LIMIT = sys.getrecursionlimit()
 
 
@@ -33,11 +34,19 @@ class AnnotatedType(Protocol):
     __origin__: type
 
 
+# lifted from annotated-types
+
+
+@runtime_checkable
+class SupportsLe(Protocol):
+    def __le__[T](self: T, __other: T) -> bool: ...
+
+
 class Constraint(ABC):
     """Abstract class that constraints must subclass."""
 
     @abstractmethod
-    def is_valid(self, val: object) -> bool:
+    def __call__(self, val: object) -> bool:
         """True iff val satisfies the constraint"""
         ...
 
@@ -45,27 +54,27 @@ class Constraint(ABC):
 class ValueRange(Constraint):
     """Constrain the values to a range."""
 
-    def __init__(self, min: float | None, max: float | None) -> None:
+    def __init__[T: SupportsLe](self, min: T | None, max: T | None) -> None:
         """Set minimum and maximum.
 
         Use `None` for no minimum or maximum
         """
-        self._min: float = -math.inf if min is None else min
-        self._max: float = math.inf if max is None else max
+        self._min: T | float = -math.inf if min is None else min
+        self._max: T | float = math.inf if max is None else max
 
     @property
-    def min(self) -> float:
+    def min(self) -> SupportsLe:
         return self._min
 
     @property
-    def max(self) -> float:
+    def max(self) -> SupportsLe:
         return self._max
 
-    def is_valid(self, val: object) -> bool:
+    def __call__(self, val: object) -> bool:
         """True iff min <= val <= max.
 
-        If val can't be compared to float errors
-        will be passed upward
+        If val can't be compared to min or max
+        errors will be passed upward.
         """
         return self._min <= val <= self._max  # type: ignore[operator]
 
@@ -75,17 +84,17 @@ class ValueRange(Constraint):
 
 @dataclass
 class LengthRange(Constraint):
-    """Constraint the length to a range."""
+    """Constrain the length to a range."""
 
     def __init__(self, min: int | None, max: int | None) -> None:
-        """Set minimum and maximum.
+        """Set minimum and maximum. These are inclusive.
 
         Use `None` for no minimum or maximum.
         """
         self._min: float = -math.inf if min is None else min
         self._max: float = math.inf if max is None else max
 
-    def is_valid(self, val: object) -> bool:
+    def __call__(self, val: object) -> bool:
         """True iff min <= len(val) <= max.
 
         :raises TypeError: if val is not Sized.
@@ -135,16 +144,17 @@ def make_predicate(
 
     :param name:
         The name that the predicate will know itself by in docstrings
-    :param t
-        A type-like thing, including
 
-        - instances of ``type`` (this includes most classes),
-        - instances of ``typing.TypeAliasType`` (created in one of the many ways to create type aliases),
-        - ``typing.Annotated`` types,
-        - instances of ``typing.NewType``.
+    :param t:
+        A type-like thing, including instances of
+        ``type``,
+        ``typing.TypeAliasType``,
+        ``typing.Annotated`` types,
+        and ``typing.NewType``.
 
     :param constraints:
         The :class:`Constraint`\\ s that the predicate should enforce.
+
     :param docstring:
         Create a docstring from the ``name`` and ``constraints`` for
         the created predicate
@@ -195,7 +205,7 @@ def make_predicate(
     def predicate(val: object) -> bool:
         if not isinstance(val, base_type):
             return False
-        if not all((c.is_valid(val) for c in cons)):
+        if not all((c(val) for c in cons)):
             return False
         return True
 

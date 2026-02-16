@@ -159,9 +159,10 @@ def isqrt(s: int) -> int:
     if s < 2:
         return s
 
-    x0: int = pow(2, (s.bit_length() // 2) + 1)
-    x1: int = (x0 + s // x0) // 2
+    # Initial guess at smallest power of 2 greater than true square root
+    x0: int = 1 << ((s.bit_length() // 2) + 1)
 
+    x1: int = (x0 + s // x0) // 2
     while x1 < x0:
         x0 = x1
         x1 = (x0 + s // x0) // 2

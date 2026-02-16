@@ -64,7 +64,6 @@ def modinv(a: int, m: int) -> int:
 
     :raises ValueError: if a is not coprime with m
     """
-
     # python 3.8 allows -1 as power.
     return pow(a, -1, m)
 

@@ -40,7 +40,7 @@ class Alphabet:
         "printable": PRINTABLE,
     }
 
-    PREBAKED: Sequence[str] = list(_pre_baked.keys())
+    PREBAKED: Sequence[str] = tuple(_pre_baked.keys())
     """Names of pre-baked alphabets"""
 
     """CAPS_ONLY is the default."""
@@ -55,6 +55,7 @@ class Alphabet:
             Sequence of characters to be used to construct alphabet.
         :param pre_baked:
             Name of pre_baked (hardcoded) alphabets to use.
+            One of "default", "caps", "printable".
 
         :raises ValueError: if both alphabet and pre_baked are used.
 
@@ -65,6 +66,8 @@ class Alphabet:
             elements.
         """
 
+        if pre_baked is not None:
+            pre_baked = pre_baked.lower()
         match (alphabet, pre_baked):
             case (None, None):
                 abc = self._pre_baked["default"]
@@ -89,6 +92,9 @@ class Alphabet:
     @property
     def alphabet(self) -> str:
         """The underlying alphabet."""
+        return self._alphabet
+
+    def __str__(self) -> str:
         return self._alphabet
 
     @property

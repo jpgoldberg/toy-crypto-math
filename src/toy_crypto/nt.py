@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: 2024-present Jeffrey Goldberg <jeffrey@goldmark.org>
 #
 # SPDX-License-Identifier: MIT
+from attr import dataclass
+import itertools
 
 import math
 import secrets
 from collections import UserList
-from collections.abc import Iterator, Iterable, Sequence
+from collections.abc import Iterator, Iterable, Sequence, Collection
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 try:
@@ -18,6 +20,10 @@ import primefac
 from . import rand
 from . import types
 from .utils import export
+
+import logging
+
+logging.getLogger(__name__)
 
 __all__: list[str] = []
 
@@ -556,3 +562,55 @@ def get_prime(
         if prime_test_count > prime_test_limit:
             raise Exception("failed to find prime meeting all conditions")
     return n
+
+
+class Crt:
+    """
+    Chinese Remainder Theorem
+
+        In addition to being a theorem and an algorithm, we would suggest to the reader that the Chinese remainder theorem is also a state of mind.
+        — Hoffstein, Pipher, and Silverman (2008)
+    """
+
+    @dataclass(frozen=True, order=True)
+    class _Triple:
+        modulus: int  # Must be first member for ordering
+        partial_product: int
+        inverse: int
+
+    def __init__(self, moduli: Collection[types.PositiveInt]) -> None:
+        """Creates a CRT "world" with respect to moduli.
+
+        .. warning::
+
+            Current implementation only supports moduli that are
+            mutually co-prime with each other.
+
+        """
+
+        if len(moduli) == 0:
+            raise ValueError("At least one modulus must be given")
+
+        # sort and eliminate duplicates
+        _moduli: Sequence[int] = sorted(list(set(list(moduli))))
+        if len(_moduli) != len(moduli):
+            logging.warning(
+                f"{self.__class__.__name__} initialization has duplicate moduli"
+            )
+
+        for a, b in itertools.permutations(_moduli, 2):
+            if gcd(a, b) != 1:
+                # TODO: handle this properly. But for now just warn
+                logging.warning(f"moduli {a} and {b} are not coprime")
+
+        self._product = math.prod(_moduli)
+
+        partial_products: Sequence[int] = [m // self._product for m in _moduli]
+        inverses: Sequence[int] = [
+            pow(p, -1, m) for p, m in zip(partial_products, _moduli)
+        ]
+
+        self._data: Sequence[Crt._Triple] = [
+            self._Triple(modulus=m, partial_product=p, inverse=i)
+            for m, p, i in zip(_moduli, partial_products, inverses)
+        ]

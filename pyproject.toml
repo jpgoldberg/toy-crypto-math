@@ -66,6 +66,14 @@ markers = [
 ]
 addopts = ["-m not (slow or statistical)"]
 
+[tool.ty.rules]
+unused-ignore-comment = "ignore"
+
+[tool.ty.src]
+
+include = ["src/", "tests/"]
+exclude = ["src/toy_crypto/wycheproof.py", "tests/resources/wycheproof/"]
+
 [dependency-groups]
 dev = [
     "mypy >= 1.15",

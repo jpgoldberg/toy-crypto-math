@@ -1,0 +1,10 @@
+[rules]
+unused-ignore-comment = "ignore"
+
+[src]
+include = ["src/", "tests/"]
+exclude = [
+    "src/toy_crypto/wycheproof.py",
+    "tests/resources/wycheproof/",
+    "tests/test_wycheproof.py"
+]

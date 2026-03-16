@@ -617,10 +617,10 @@ class CrtField:
         self._product = math.prod(self._moduli)
 
         partial_products: Sequence[int] = [
-            m // self._product for m in self._moduli
+            self._product // m for m in self._moduli
         ]
         inverses: Sequence[int] = [
-            pow(p, -1, m) for p, m in zip(partial_products, self._moduli)
+            egcd(p, m)[1] for p, m in zip(partial_products, self._moduli)
         ]
 
         self._data: Sequence[CrtField._Triple] = [
@@ -657,7 +657,7 @@ class CrtField:
                 * self._data[i].partial_product
                 * self._data[i].inverse
             ) % self._product
-        return x
+        return x % self._product
 
 
 class CrtElement:
@@ -700,3 +700,39 @@ class CrtElement:
         m_digits = ", ".join((str(m) for m in self._field.moduli))
 
         return f"({r_digits}) % ({m_digits}))"
+
+    def add(self, other: object) -> "CrtElement":
+        # Note that we will be counting on CtrlElement initialization
+        # to do any needed modular reduction.
+        if isinstance(other, CrtElement):
+            added = [
+                left + right
+                for left, right in zip(self._remainders, other.remainders)
+            ]
+        elif isinstance(other, int):
+            added = [r + other for r in self._remainders]
+        else:
+            return NotImplemented
+
+        return CrtElement(self._field, added)
+
+    def __add__(self, other: object) -> "CrtElement":
+        return self.add(other)
+
+    def mul(self, other: object) -> "CrtElement":
+        # Note that we will be counting on CtrlElement initialization
+        # to do any needed modular reduction.
+        if isinstance(other, CrtElement):
+            added = [
+                left * right
+                for left, right in zip(self._remainders, other.remainders)
+            ]
+        elif isinstance(other, int):
+            added = [r * other for r in self._remainders]
+        else:
+            return NotImplemented
+
+        return CrtElement(self._field, added)
+
+    def __mul__(self, other: object) -> "CrtElement":
+        return self.mul(other)

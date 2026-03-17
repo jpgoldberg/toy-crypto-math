@@ -73,8 +73,8 @@ class Field:
 
         self._data: tuple[Field._Triple, ...] = tuple(
             [
-                self._Triple(modulus=m, partial_product=p, inverse=i)
-                for m, p, i in zip(self._moduli, partial_products, inverses)
+                self._Triple(modulus=m, partial_product=p, inverse=inv)
+                for m, p, inv in zip(self._moduli, partial_products, inverses)
             ]
         )
 
@@ -91,9 +91,21 @@ class Field:
         return self._moduli
 
     @property
+    def modulus(self) -> int:
+        return self._product
+
+    @property
     @lru_cache
     def inverses(self) -> tuple[int, ...]:
         return tuple([datum.inverse for datum in self._data])
+
+    def element(self, value: Sequence[int] | int) -> "Element":
+        """New element from either remainders or an integer."""
+
+        if isinstance(value, Sequence):
+            return Element(self, cast(Sequence[int], value))
+        elif isinstance(value, int):
+            return Element.from_int(self, value)
 
     def to_int(self, remainders: Sequence[int]) -> int:
         """The smallest non-negative integer that produces these remainders

@@ -15,7 +15,7 @@ import itertools
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 
-from .. import types
+from ..types import PositiveInt, is_positive_int
 from . import egcd
 
 
@@ -37,7 +37,7 @@ class Field:
         def __hash__(self) -> int:
             return hash((self.modulus, self.partial_product))
 
-    def __init__(self, moduli: Collection[types.PositiveInt]) -> None:
+    def __init__(self, moduli: Collection[PositiveInt]) -> None:
         """Creates a CRT field with respect to moduli.
 
         .. warning::
@@ -148,9 +148,9 @@ class Element:
         )
 
     @staticmethod
-    def from_int(field: Field, n: int) -> "Element":
-        if n < 1:
-            raise ValueError
+    def from_int(field: Field, n: PositiveInt) -> "Element":
+        if not is_positive_int(n):
+            raise ValueError("n must be a positive integer.")
         remainders = [n % m for m in field.moduli]
         return Element(field, remainders)
 
@@ -169,7 +169,7 @@ class Element:
         r_digits = ", ".join((str(r) for r in self._remainders))
         m_digits = ", ".join((str(m) for m in self._field.moduli))
 
-        return f"({r_digits}) % ({m_digits}))"
+        return f"({r_digits}) % ({m_digits})"
 
     def __add__(self, other: object) -> "Element":
         # Note that we will be counting on CtrlElement initialization
@@ -210,3 +210,13 @@ class Element:
 
     def mul(self, other: object) -> "Element":
         return self.__mul__(other)
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, int):
+            return int(self) == other % self._field._product
+        elif isinstance(other, Element):
+            return (self.field == other.field) and (
+                self.remainders == other.remainders
+            )
+        else:
+            return NotImplemented

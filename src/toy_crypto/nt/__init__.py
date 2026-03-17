@@ -1,13 +1,12 @@
 # SPDX-FileCopyrightText: 2024-present Jeffrey Goldberg <jeffrey@goldmark.org>
 #
 # SPDX-License-Identifier: MIT
-from attr import dataclass
-import itertools
+
 
 import math
 import secrets
 from collections import UserList
-from collections.abc import Iterator, Iterable, Sequence, Collection
+from collections.abc import Iterator, Iterable, Sequence
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 try:
@@ -17,9 +16,9 @@ except ImportError:
 
 import primefac
 
-from . import rand
-from . import types
-from .utils import export
+from .. import rand
+from .. import types
+from ..utils import export
 
 import logging
 
@@ -562,177 +561,3 @@ def get_prime(
         if prime_test_count > prime_test_limit:
             raise Exception("failed to find prime meeting all conditions")
     return n
-
-
-class CrtField:
-    """
-    Chinese Remainder Theorem
-
-        In addition to being a theorem and an algorithm, we would suggest to the reader that the Chinese remainder theorem is also a state of mind.
-        — Hoffstein, Pipher, and Silverman (2008)
-    """
-
-    @dataclass(frozen=True, order=True)
-    class _Triple:
-        modulus: int  # Must be first member for ordering
-        partial_product: int
-        inverse: int
-
-        def __eq__(self, other: object) -> bool:
-            if not isinstance(other, CrtField._Triple):
-                return NotImplemented
-            return (
-                self.modulus == other.modulus
-                and self.partial_product == other.partial_product
-            )
-
-        def __hash__(self) -> int:
-            return hash((self.modulus, self.partial_product))
-
-    def __init__(self, moduli: Collection[types.PositiveInt]) -> None:
-        """Creates a CRT field with respect to moduli.
-
-        .. warning::
-
-            Current implementation only supports moduli that are
-            mutually co-prime with each other.
-
-        """
-
-        if len(moduli) == 0:
-            raise ValueError("At least one modulus must be given")
-
-        # sort and eliminate duplicates
-        self._moduli: Sequence[int] = sorted(list(set(list(moduli))))
-        if len(self._moduli) != len(moduli):
-            logging.warning(
-                f"{self.__class__.__name__} initialization has duplicate moduli"
-            )
-
-        for a, b in itertools.permutations(self._moduli, 2):
-            if gcd(a, b) != 1:
-                # TODO: handle this properly. But for now just warn
-                logging.warning(f"moduli {a} and {b} are not coprime")
-
-        self._product = math.prod(self._moduli)
-
-        partial_products: Sequence[int] = [
-            self._product // m for m in self._moduli
-        ]
-        inverses: Sequence[int] = [
-            egcd(p, m)[1] for p, m in zip(partial_products, self._moduli)
-        ]
-
-        self._data: Sequence[CrtField._Triple] = [
-            self._Triple(modulus=m, partial_product=p, inverse=i)
-            for m, p, i in zip(self._moduli, partial_products, inverses)
-        ]
-
-    @property
-    def moduli(self) -> Sequence[int]:
-        return self._moduli
-
-    def to_int(self, remainders: Sequence[int]) -> int:
-        """The smallest non-negative integer that produces these remainders
-
-        :param remainders:
-            The remainders corresponding to the *sorted* list of moduli.
-
-        :raises ValueError:
-            if the number of remainders does not match the number moduli
-            for this CRT field.
-        """
-        len_r = len(remainders)
-        len_m = len(self._data)
-        if len_r != len_m:
-            raise ValueError(
-                f"Number of remainders ({len_r}) must match"
-                f"number of moduli {len_m}."
-            )
-        x = 0
-        # TODO: zip this
-        for i in range(len_m):
-            x += (
-                remainders[i]
-                * self._data[i].partial_product
-                * self._data[i].inverse
-            ) % self._product
-        return x % self._product
-
-
-class CrtElement:
-    """An element (number) is a CRT Field."""
-
-    def __init__(self, field: CrtField, remainders: Sequence[int]) -> None:
-        """An element of a CRT field from remainders.
-
-        Remainders must be ordered so that the i-th remainder corresponds
-        to the i-th modulus in the field. The moduli in the field
-        are sorted in ascending order.
-        """
-        len_r = len(remainders)
-        len_m = len(field.moduli)
-        if len_r != len_m:
-            raise ValueError(
-                f"Number of remainders ({len_r}) must match"
-                f"number of moduli {len_m}."
-            )
-        self._field = field
-
-        # We will reduce the given remainders
-        self._remainders: Sequence[int] = [
-            r % m for r, m in zip(remainders, self._field.moduli)
-        ]
-
-    @property
-    def field(self) -> CrtField:
-        return self._field
-
-    @property
-    def remainders(self) -> Sequence[int]:
-        return self._remainders
-
-    def __int__(self) -> int:
-        return self._field.to_int(self._remainders)
-
-    def __str__(self) -> str:
-        r_digits = ", ".join((str(r) for r in self._remainders))
-        m_digits = ", ".join((str(m) for m in self._field.moduli))
-
-        return f"({r_digits}) % ({m_digits}))"
-
-    def add(self, other: object) -> "CrtElement":
-        # Note that we will be counting on CtrlElement initialization
-        # to do any needed modular reduction.
-        if isinstance(other, CrtElement):
-            added = [
-                left + right
-                for left, right in zip(self._remainders, other.remainders)
-            ]
-        elif isinstance(other, int):
-            added = [r + other for r in self._remainders]
-        else:
-            return NotImplemented
-
-        return CrtElement(self._field, added)
-
-    def __add__(self, other: object) -> "CrtElement":
-        return self.add(other)
-
-    def mul(self, other: object) -> "CrtElement":
-        # Note that we will be counting on CtrlElement initialization
-        # to do any needed modular reduction.
-        if isinstance(other, CrtElement):
-            added = [
-                left * right
-                for left, right in zip(self._remainders, other.remainders)
-            ]
-        elif isinstance(other, int):
-            added = [r * other for r in self._remainders]
-        else:
-            return NotImplemented
-
-        return CrtElement(self._field, added)
-
-    def __mul__(self, other: object) -> "CrtElement":
-        return self.mul(other)

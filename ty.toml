@@ -1,5 +1,5 @@
 [rules]
-unused-ignore-comment = "ignore"
+unused-type-ignore-comment = "ignore"
 
 [src]
 include = ["src/", "tests/"]

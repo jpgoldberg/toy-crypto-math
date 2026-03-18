@@ -38,7 +38,7 @@ class Ring:
             return hash((self.modulus, self.partial_product))
 
     def __init__(self, moduli: Collection[PositiveInt]) -> None:
-        """Creates a CRT field with respect to moduli.
+        """Creates a CRT ring with respect to moduli.
 
         .. warning::
 
@@ -116,7 +116,7 @@ class Ring:
 
         :raises ValueError:
             if the number of remainders does not match the number moduli
-            for this CRT field.
+            for this CRT ring.
         """
         len_r = len(remainders)
         len_m = len(self._data)
@@ -137,24 +137,24 @@ class Ring:
 
 
 class Element:
-    """An element (number) is a CRT Field."""
+    """An element (number) is a CRT Ring."""
 
-    def __init__(self, field: Ring, remainders: Sequence[int]) -> None:
-        """An element of a CRT field from remainders.
+    def __init__(self, ring: Ring, remainders: Sequence[int]) -> None:
+        """An element of a CRT ring from remainders.
 
         Remainders must be ordered so that the i-th remainder corresponds
-        to the i-th modulus in the field. The moduli in the field
+        to the i-th modulus in the ring. The moduli in the ring
         are sorted in ascending order.
         """
 
         len_r = len(remainders)
-        len_m = len(field.moduli)
+        len_m = len(ring.moduli)
         if len_r != len_m:
             raise ValueError(
                 f"Number of remainders ({len_r}) must match"
                 f"number of moduli {len_m}."
             )
-        self._field = field
+        self._field = ring
 
         # We will reduce the given remainders
         self._remainders: tuple[int, ...] = tuple(
@@ -188,14 +188,14 @@ class Element:
             self._mult_inverse = self
 
     @staticmethod
-    def from_int(field: Ring, n: PositiveInt) -> "Element":
+    def from_int(ring: Ring, n: PositiveInt) -> "Element":
         if not is_positive_int(n):
             raise ValueError("n must be a positive integer.")
-        remainders = [n % m for m in field.moduli]
-        return Element(field, remainders)
+        remainders = [n % m for m in ring.moduli]
+        return Element(ring, remainders)
 
     @property
-    def field(self) -> Ring:
+    def ring(self) -> Ring:
         return self._field
 
     @property
@@ -243,7 +243,7 @@ class Element:
             if other == 0:
                 return self
             if self._is_zero:
-                return self.field.element(other)
+                return self.ring.element(other)
             added = [r + other for r in self._remainders]
         else:
             return NotImplemented
@@ -275,7 +275,7 @@ class Element:
         if isinstance(other, int):
             return int(self) == other % self._field._product
         elif isinstance(other, Element):
-            return (self.field == other.field) and (
+            return (self.ring == other.ring) and (
                 self.remainders == other.remainders
             )
         else:
@@ -294,14 +294,14 @@ class Element:
 
         # if we reach this point, we need to attempt to compute inverse
         inverses: list[int] = list()
-        for r, m in zip(self._remainders, self.field.moduli):
+        for r, m in zip(self._remainders, self.ring.moduli):
             g, inv, _ = egcd(r, m)
             if g != 1:
                 self._invertible = False
                 raise NotInvertibleError
             inverses.append(r)
         # Yay! We have an inverse
-        inverse = self.field.element(inverses)
+        inverse = self.ring.element(inverses)
         self._inverse = inverse
 
         # And we know that self and its inverse are both invertible

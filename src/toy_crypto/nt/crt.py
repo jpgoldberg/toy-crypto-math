@@ -7,7 +7,6 @@ Chinese Remainder Theorem
 
 from typing import cast
 
-from functools import lru_cache
 import math
 
 import logging
@@ -17,9 +16,10 @@ from dataclasses import dataclass
 
 from ..types import PositiveInt, is_positive_int
 from . import egcd
+from .errors import NotInvertibleError
 
 
-class Field:
+class Ring:
     @dataclass(frozen=True, order=True)
     class _Triple:
         modulus: int  # Must be first member for ordering
@@ -27,7 +27,7 @@ class Field:
         inverse: int
 
         def __eq__(self, other: object) -> bool:
-            if not isinstance(other, Field._Triple):
+            if not isinstance(other, Ring._Triple):
                 return NotImplemented
             return (
                 self.modulus == other.modulus
@@ -71,7 +71,7 @@ class Field:
             [egcd(p, m)[1] for p, m in zip(partial_products, self._moduli)]
         )
 
-        self._data: tuple[Field._Triple, ...] = tuple(
+        self._data: tuple[Ring._Triple, ...] = tuple(
             [
                 self._Triple(modulus=m, partial_product=p, inverse=inv)
                 for m, p, inv in zip(self._moduli, partial_products, inverses)
@@ -82,7 +82,7 @@ class Field:
         return hash(self._data)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Field):
+        if not isinstance(other, Ring):
             return False
         return self._data == other._data
 
@@ -94,11 +94,6 @@ class Field:
     def modulus(self) -> int:
         return self._product
 
-    @property
-    @lru_cache
-    def inverses(self) -> tuple[int, ...]:
-        return tuple([datum.inverse for datum in self._data])
-
     def element(self, value: Sequence[int] | int) -> "Element":
         """New element from either remainders or an integer."""
 
@@ -106,6 +101,12 @@ class Field:
             return Element(self, cast(Sequence[int], value))
         elif isinstance(value, int):
             return Element.from_int(self, value)
+        else:
+            raise TypeError("'value' must be an int or sequence of ints")
+
+    def zero(self) -> "Element":
+        """Multiplicative identity"""
+        return self.element(0)
 
     def to_int(self, remainders: Sequence[int]) -> int:
         """The smallest non-negative integer that produces these remainders
@@ -138,13 +139,14 @@ class Field:
 class Element:
     """An element (number) is a CRT Field."""
 
-    def __init__(self, field: Field, remainders: Sequence[int]) -> None:
+    def __init__(self, field: Ring, remainders: Sequence[int]) -> None:
         """An element of a CRT field from remainders.
 
         Remainders must be ordered so that the i-th remainder corresponds
         to the i-th modulus in the field. The moduli in the field
         are sorted in ascending order.
         """
+
         len_r = len(remainders)
         len_m = len(field.moduli)
         if len_r != len_m:
@@ -159,15 +161,41 @@ class Element:
             [r % m for r, m in zip(remainders, self._field.moduli)]
         )
 
+        # Flagging elements to avoid recomputing things
+
+        # Easily mark multiplicative and additive identities
+        # These may get set to True in toward end of this method
+        self._is_zero = False
+        self._is_one = False
+
+        # To store the multiplicative inverse, there are three cases
+        # 1. The invertibility has not been computed yet.
+        # 2. It has an inverse (which will be an element)
+        # 3. We already know it is not invertible
+        self._invertible: bool | None = None  # Case 1
+        self._inverse: Element | None = None  # Case 1 or 3
+
+        if all((r == 0 for r in self._remainders)):
+            self._is_zero = True
+            self._is_one = False
+            self._invertible = False
+            self._inverse = None
+
+        if all((r == 1 for r in self._remainders)):
+            self._is_one = True
+            self._is_zero = False
+            self._invertible = True
+            self._mult_inverse = self
+
     @staticmethod
-    def from_int(field: Field, n: PositiveInt) -> "Element":
+    def from_int(field: Ring, n: PositiveInt) -> "Element":
         if not is_positive_int(n):
             raise ValueError("n must be a positive integer.")
         remainders = [n % m for m in field.moduli]
         return Element(field, remainders)
 
     @property
-    def field(self) -> Field:
+    def field(self) -> Ring:
         return self._field
 
     @property
@@ -183,12 +211,28 @@ class Element:
 
         return f"({r_digits}) % ({m_digits})"
 
+    # *** Arithmetic ***
+
+    # *** Arithmetic identities
+    def is_zero(self) -> bool:
+        """Is additive identity."""
+        return self._is_zero
+
+    def is_one(self) -> bool:
+        """Multiplicative identity."""
+        return self._is_one
+
+    # *** Arithmetical operators
     def __add__(self, other: object) -> "Element":
         # Note that we will be counting on CtrlElement initialization
         # to do any needed modular reduction.
 
         added: Sequence[int]
         if isinstance(other, Element):
+            if self._is_zero:
+                return other
+            if other._is_zero:
+                return self
             added = [
                 cast(int, left + right)
                 for (left, right) in zip(
@@ -196,6 +240,10 @@ class Element:
                 )
             ]
         elif isinstance(other, int):
+            if other == 0:
+                return self
+            if self._is_zero:
+                return self.field.element(other)
             added = [r + other for r in self._remainders]
         else:
             return NotImplemented
@@ -209,16 +257,16 @@ class Element:
         # Note that we will be counting on CtrlElement initialization
         # to do any needed modular reduction.
         if isinstance(other, Element):
-            added = [
+            multiplied = [
                 cast(int, left * right)
                 for left, right in zip(self._remainders, other.remainders)
             ]
         elif isinstance(other, int):
-            added = [r * other for r in self._remainders]
+            multiplied = [r * other for r in self._remainders]
         else:
             return NotImplemented
 
-        return Element(self._field, added)
+        return Element(self._field, multiplied)
 
     def mul(self, other: object) -> "Element":
         return self.__mul__(other)
@@ -232,3 +280,57 @@ class Element:
             )
         else:
             return NotImplemented
+
+    def mult_inverse(self) -> "Element":
+        """Returns multiplicative inverse if it exists.
+
+        :raise NotInvertibleError: if inverse does not exist.
+        """
+
+        if self._inverse:
+            return self._inverse
+        if not self._invertible:
+            raise NotInvertibleError
+
+        # if we reach this point, we need to attempt to compute inverse
+        inverses: list[int] = list()
+        for r, m in zip(self._remainders, self.field.moduli):
+            g, inv, _ = egcd(r, m)
+            if g != 1:
+                self._invertible = False
+                raise NotInvertibleError
+            inverses.append(r)
+        # Yay! We have an inverse
+        inverse = self.field.element(inverses)
+        self._inverse = inverse
+
+        # And we know that self and its inverse are both invertible
+        inverse._invertible = True
+        inverse._inverse = self
+        self._invertible = True
+
+        return self._inverse
+
+    def __truediv__(self, other: object) -> "Element":
+        """Returns self / other if other is invertible.
+
+        :raises ZeroDivisionError: if other is not invertible.
+        """
+        if isinstance(other, Element):
+            try:
+                return self.mul(other.mult_inverse())
+            except NotInvertibleError:
+                raise ZeroDivisionError
+
+        return NotImplemented
+
+    def div(self, other: object) -> "Element":
+        """Divides by other if possible.
+
+        :raises TypeError: if other is not a type this can handle.
+        :raises ZeroDivisionError: if other is not invertible.
+        """
+        try:
+            return self.__truediv__(other)
+        except NotImplementedError:
+            raise TypeError("type of 'other' cannot be a divisor")

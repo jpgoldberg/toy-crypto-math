@@ -1,16 +1,44 @@
+from collections.abc import Sequence
 import sys
 
 import pytest
 from toy_crypto.nt import crt
 
-class TestSolve:
-    def test_solve(self) -> None:
-        f = crt.Ring((4, 9, 25))
-        remainders = (3, 1, 14)
-        expected = 739
 
-        result = f.to_int(remainders)
+class TestSolve:
+    m_4_9_25: Sequence[int] = (4, 9, 25)
+    r_4_9_25: list[tuple[Sequence[int], int]] = [
+        ((3, 1, 14), 739),
+        ((57, 55, 68), 793),
+        ((369, 123, 1722), 897),
+        ((1, 1, 1), 1),
+        ((0, 0, 0), 0),
+        ((3, 8, 24), 899),
+    ]
+
+    @pytest.mark.parametrize(
+        "remainders, expected",
+        r_4_9_25,
+    )
+    def test_solve_4_9_25(
+        self, remainders: Sequence[int], expected: int
+    ) -> None:
+        moduli = (4, 9, 25)
+        ring = crt.Ring(moduli)
+
+        result = ring.to_int(remainders)
         assert result == expected
+
+
+class TestRing:
+    # Perhaps someday I will parametrize this
+    # and learn how to use fixtures
+    moduli = (4, 9, 25)
+
+    def test_modulus(self) -> None:
+        ring = crt.Ring(self.moduli)
+        expected_product = 900
+        assert ring.modulus == expected_product
 
 
 if __name__ == "__main__":

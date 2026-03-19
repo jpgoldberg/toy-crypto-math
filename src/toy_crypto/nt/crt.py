@@ -6,9 +6,7 @@ Chinese Remainder Theorem
 """
 
 from typing import cast
-
 import math
-
 import logging
 import itertools
 from collections.abc import Collection, Sequence
@@ -17,6 +15,38 @@ from dataclasses import dataclass
 from ..types import PositiveInt, is_positive_int
 from . import egcd
 from .errors import NotInvertibleError
+
+
+def solve(
+    moduli: Sequence[PositiveInt], remainders: Sequence[PositiveInt]
+) -> int:
+    """Returns number n s.t. n = remainders[i] % moduli[i].
+
+    :raises ValueError: if len(moduli) != len(remainders).
+    :raises ValueError: if len(moduli) == 1.
+    """
+    len_m = len(moduli)
+    if len_m != len(remainders):
+        raise ValueError(
+            "There must be as exactly as many remainders as moduli"
+        )
+    if len_m == 0:
+        raise ValueError("There must be at least one modulus")
+
+    # We could be clever an compute the big modulus and whether
+    # they are mutually coprime in one loop using the Extended Euclidean
+    # Algorithm, but let's not
+    modulus = math.lcm(*moduli)
+    if modulus != math.prod(moduli):
+        logging.warning("Moduli are not mutually co-prime")
+
+    result = 0
+    for m, r in zip(moduli, remainders, strict=True):
+        partial = modulus // m
+        _, inv, _ = egcd(partial, m)
+        result += r * inv * partial
+        result %= modulus  # Reduce early. Reduce often.
+    return result
 
 
 class Ring:

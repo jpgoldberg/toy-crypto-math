@@ -6,6 +6,21 @@ from toy_crypto.nt import crt
 
 
 class TestSolve:
+    @pytest.mark.parametrize(
+        "moduli, remainders, expected",
+        [
+            ((4, 9, 25), (3, 1, 14), 739),
+            ((3, 4, 7), (1, 1, 0), 49),
+        ],
+    )
+    def test_solve_coprime(
+        self, moduli: Sequence[int], remainders: Sequence[int], expected: int
+    ) -> None:
+        result = crt.solve(moduli, remainders)
+        assert result == expected
+
+
+class TestRing:
     m_4_9_25: Sequence[int] = (4, 9, 25)
     r_4_9_25: list[tuple[Sequence[int], int]] = [
         ((3, 1, 14), 739),
@@ -29,14 +44,9 @@ class TestSolve:
         result = ring.to_int(remainders)
         assert result == expected
 
-
-class TestRing:
-    # Perhaps someday I will parametrize this
-    # and learn how to use fixtures
-    moduli = (4, 9, 25)
-
     def test_modulus(self) -> None:
-        ring = crt.Ring(self.moduli)
+        moduli = (4, 9, 25)
+        ring = crt.Ring(moduli)
         expected_product = 900
         assert ring.modulus == expected_product
 

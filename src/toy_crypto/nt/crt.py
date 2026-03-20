@@ -36,8 +36,9 @@ def solve(
     # We could be clever an compute the big modulus and whether
     # they are mutually coprime in one loop using the Extended Euclidean
     # Algorithm, but let's not
-    modulus = math.lcm(*moduli)
-    if modulus != math.prod(moduli):
+    modulus = math.prod(moduli)
+    reduced_modulus = math.lcm(*moduli)
+    if modulus != reduced_modulus:
         logging.warning("Moduli are not mutually co-prime")
 
     result = 0
@@ -46,6 +47,11 @@ def solve(
         _, inv, _ = egcd(partial, m)
         result += r * inv * partial
         result %= modulus  # Reduce early. Reduce often.
+
+    # A solution that is equal to the LCM is possible,
+    # but can't be greater than the LCM
+    if result > reduced_modulus:
+        result %= reduced_modulus
     return result
 
 

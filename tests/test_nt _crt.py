@@ -19,6 +19,18 @@ class TestSolve:
         result = crt.solve(moduli, remainders)
         assert result == expected
 
+    @pytest.mark.parametrize(
+        "moduli, remainders, expected",
+        [
+            ((4, 6), (2, 0), 12),
+        ],
+    )
+    def test_solve_common_factor(
+        self, moduli: Sequence[int], remainders: Sequence[int], expected: int
+    ) -> None:
+        result = crt.solve(moduli, remainders)
+        assert result == expected
+
 
 class TestRing:
     m_4_9_25: Sequence[int] = (4, 9, 25)

@@ -21,12 +21,13 @@ class TestSolve:
 
     @pytest.mark.parametrize(
         "moduli, remainders, expected",
-        [
-            ((4, 6), (2, 0), 12),
-        ],
+        [((4, 6), (2, 0), 12), ((4, 6), (3, 0), None)],
     )
     def test_solve_common_factor(
-        self, moduli: Sequence[int], remainders: Sequence[int], expected: int
+        self,
+        moduli: Sequence[int],
+        remainders: Sequence[int],
+        expected: int | None,
     ) -> None:
         result = crt.solve(moduli, remainders)
         assert result == expected

@@ -5,6 +5,8 @@ Chinese Remainder Theorem
     — Hoffstein, Pipher, and Silverman (2008)
 """
 
+import re
+
 from typing import cast
 import math
 import logging
@@ -19,7 +21,7 @@ from .errors import NotInvertibleError
 
 def solve(
     moduli: Sequence[PositiveInt], remainders: Sequence[PositiveInt]
-) -> int:
+) -> int | None:
     """Returns number n s.t. n = remainders[i] % moduli[i].
 
     :raises ValueError: if len(moduli) != len(remainders).
@@ -36,22 +38,43 @@ def solve(
     # We could be clever an compute the big modulus and whether
     # they are mutually coprime in one loop using the Extended Euclidean
     # Algorithm, but let's not
-    modulus = math.prod(moduli)
+
+    product: int
     reduced_modulus = math.lcm(*moduli)
-    if modulus != reduced_modulus:
+    if math.gcd(*moduli) != 1:
         logging.warning("Moduli are not mutually co-prime")
+        product = math.prod(moduli)
+    else:
+        product = reduced_modulus
+
+    # Special case
+    # - when remainders are all 0, we return 0
+    if all([m == 0 for m in moduli]):
+        return 0
 
     result = 0
     for m, r in zip(moduli, remainders, strict=True):
-        partial = modulus // m
-        _, inv, _ = egcd(partial, m)
+        partial = product // m
+        _g, inv, _ = egcd(partial, m)
+        inv %= product
         result += r * inv * partial
-        result %= modulus  # Reduce early. Reduce often.
+        result %= product  # Reduce early. Reduce often.
+
+    # The algorithm above can produce incorrect results
+    # when moduli are not co-prime, so we will check the results
+    # in such cases
+    if product != reduced_modulus:
+        # Test below gives false negative when result equivalent to 0
+        if result % reduced_modulus != 0:
+            for m, r in zip(moduli, remainders, strict=True):
+                if (result % m) != r:
+                    return None
 
     # A solution that is equal to the LCM is possible,
     # but can't be greater than the LCM
     if result > reduced_modulus:
         result %= reduced_modulus
+
     return result
 
 

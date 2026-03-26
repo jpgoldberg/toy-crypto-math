@@ -5,12 +5,9 @@ Chinese Remainder Theorem
     — Hoffstein, Pipher, and Silverman (2008)
 """
 
-import re
-
 from typing import cast
 import math
 import logging
-import itertools
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 
@@ -40,12 +37,15 @@ def solve(
     # Algorithm, but let's not
 
     product: int
-    reduced_modulus = math.lcm(*moduli)
+    moduli_coprime: bool
+    least_cm = math.lcm(*moduli)
     if math.gcd(*moduli) != 1:
         logging.warning("Moduli are not mutually co-prime")
+        moduli_coprime = False
         product = math.prod(moduli)
     else:
-        product = reduced_modulus
+        product = least_cm
+        moduli_coprime = True
 
     # Special case
     # - when remainders are all 0, we return 0
@@ -63,17 +63,17 @@ def solve(
     # The algorithm above can produce incorrect results
     # when moduli are not co-prime, so we will check the results
     # in such cases
-    if product != reduced_modulus:
+    if not moduli_coprime:
         # Test below gives false negative when result equivalent to 0
-        if result % reduced_modulus != 0:
+        if result % least_cm != 0:
             for m, r in zip(moduli, remainders, strict=True):
                 if (result % m) != r:
                     return None
 
     # A solution that is equal to the LCM is possible,
     # but can't be greater than the LCM
-    if result > reduced_modulus:
-        result %= reduced_modulus
+    if result > least_cm:
+        result %= least_cm
 
     return result
 
@@ -103,7 +103,6 @@ class Ring:
 
             Current implementation only supports moduli that are
             mutually co-prime with each other.
-
         """
 
         if len(moduli) == 0:
@@ -115,13 +114,17 @@ class Ring:
             logging.warning(
                 f"{self.__class__.__name__} initialization has duplicate moduli"
             )
-
-        for a, b in itertools.permutations(self._moduli, 2):
-            if math.gcd(a, b) != 1:
-                # TODO: handle this properly. But for now just warn
-                logging.warning(f"moduli {a} and {b} are not coprime")
-
-        self._product: int = math.prod(self._moduli)
+        self._lcm = math.lcm(*self._moduli)
+        self._product: int
+        self._coprime_moduli: bool
+        if math.gcd(*self._moduli) != 1:
+            # TODO: handle this properly. But for now just warn
+            logging.warning("moduli are not coprime")
+            self._product = math.prod(self._moduli)
+            self._coprime_moduli = False
+        else:
+            self._product = self._lcm
+            self._coprime_moduli = True
 
         partial_products: tuple[int, ...] = tuple(
             [self._product // m for m in self._moduli]
@@ -213,11 +216,11 @@ class Element:
                 f"Number of remainders ({len_r}) must match"
                 f"number of moduli {len_m}."
             )
-        self._field = ring
+        self._ring = ring
 
         # We will reduce the given remainders
         self._remainders: tuple[int, ...] = tuple(
-            [r % m for r, m in zip(remainders, self._field.moduli)]
+            [r % m for r, m in zip(remainders, self._ring.moduli)]
         )
 
         # Flagging elements to avoid recomputing things
@@ -255,18 +258,18 @@ class Element:
 
     @property
     def ring(self) -> Ring:
-        return self._field
+        return self._ring
 
     @property
     def remainders(self) -> tuple[int, ...]:
         return self._remainders
 
     def __int__(self) -> int:
-        return self._field.to_int(self._remainders)
+        return self._ring.to_int(self._remainders)
 
     def __str__(self) -> str:
         r_digits = ", ".join((str(r) for r in self._remainders))
-        m_digits = ", ".join((str(m) for m in self._field.moduli))
+        m_digits = ", ".join((str(m) for m in self._ring.moduli))
 
         return f"({r_digits}) % ({m_digits})"
 
@@ -307,7 +310,7 @@ class Element:
         else:
             return NotImplemented
 
-        return Element(self._field, added)
+        return Element(self._ring, added)
 
     def add(self, other: object) -> "Element":
         return self.__add__(other)
@@ -325,14 +328,14 @@ class Element:
         else:
             return NotImplemented
 
-        return Element(self._field, multiplied)
+        return Element(self._ring, multiplied)
 
     def mul(self, other: object) -> "Element":
         return self.__mul__(other)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, int):
-            return int(self) == other % self._field._product
+            return int(self) == other % self._ring._product
         elif isinstance(other, Element):
             return (self.ring == other.ring) and (
                 self.remainders == other.remainders
@@ -389,7 +392,4 @@ class Element:
         :raises TypeError: if other is not a type this can handle.
         :raises ZeroDivisionError: if other is not invertible.
         """
-        try:
-            return self.__truediv__(other)
-        except NotImplementedError:
-            raise TypeError("type of 'other' cannot be a divisor")
+        return self.__truediv__(other)

@@ -48,9 +48,9 @@ def solve(
         moduli_coprime = True
 
     # Special case
-    # - when remainders are all 0, we return 0
-    if all([m == 0 for m in moduli]):
-        return 0
+    # - when remainders are all 0, we return the least common multiple
+    if all([r == 0 for r in remainders]):
+        return least_cm
 
     result = 0
     for m, r in zip(moduli, remainders, strict=True):
@@ -168,7 +168,7 @@ class Ring:
 
     def zero(self) -> "Element":
         """Multiplicative identity"""
-        return self.element(0)
+        return self.element(self._lcm)
 
     def to_int(self, remainders: Sequence[int]) -> int:
         """The smallest non-negative integer that produces these remainders
@@ -195,7 +195,10 @@ class Ring:
                 * self._data[i].partial_product
                 * self._data[i].inverse
             ) % self._product
-        return x % self._product
+        x %= self._product
+        if x == 0:
+            return self._lcm
+        return x
 
 
 class Element:
@@ -230,6 +233,9 @@ class Element:
         self._is_zero = False
         self._is_one = False
 
+        # Any calculated integer value
+        self._ivalue: int | None = None
+
         # To store the multiplicative inverse, there are three cases
         # 1. The invertibility has not been computed yet.
         # 2. It has an inverse (which will be an element)
@@ -242,12 +248,14 @@ class Element:
             self._is_one = False
             self._invertible = False
             self._inverse = None
+            self._ivalue = self._ring._lcm
 
         if all((r == 1 for r in self._remainders)):
             self._is_one = True
             self._is_zero = False
             self._invertible = True
             self._mult_inverse = self
+            self._ivalue = 1
 
     @staticmethod
     def from_int(ring: Ring, n: PositiveInt) -> "Element":
@@ -265,7 +273,9 @@ class Element:
         return self._remainders
 
     def __int__(self) -> int:
-        return self._ring.to_int(self._remainders)
+        if self._ivalue is None:
+            self._ivalue = self._ring.to_int(self._remainders)
+        return self._ivalue
 
     def __str__(self) -> str:
         r_digits = ", ".join((str(r) for r in self._remainders))

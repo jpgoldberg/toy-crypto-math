@@ -1,3 +1,4 @@
+import itertools
 from collections.abc import Sequence
 import sys
 
@@ -64,6 +65,17 @@ class TestRing:
         ring = crt.Ring(moduli)
         expected_product = 900
         assert ring.modulus == expected_product
+
+    def test_mul_4_9_25(self) -> None:
+        integers = [0, 1, 2, 3, 739, 54, 897, 899, 900]
+        ring = crt.Ring((4, 9, 25))
+        lcm = ring.modulus
+
+        for a, b in itertools.product(integers, repeat=2):
+            m_a = ring.element(a)
+            m_b = ring.element(b)
+            prod = m_a * m_b
+            assert (a * b) % lcm == int(prod) % lcm
 
 
 if __name__ == "__main__":

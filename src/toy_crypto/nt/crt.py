@@ -11,18 +11,18 @@ import logging
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 
-from ..types import PositiveInt, is_positive_int
+from ..types import PositiveInt
 from . import egcd
 from .errors import NotInvertibleError
 
 
 def solve(
-    moduli: Sequence[PositiveInt], remainders: Sequence[PositiveInt]
+    moduli: Sequence[PositiveInt], remainders: Sequence[int]
 ) -> int | None:
     """Returns number n s.t. n = remainders[i] % moduli[i].
 
     :raises ValueError: if len(moduli) != len(remainders).
-    :raises ValueError: if len(moduli) == 1.
+    :raises ValueError: if len(moduli) == 0.
     """
     len_m = len(moduli)
     if len_m != len(remainders):
@@ -47,13 +47,21 @@ def solve(
         product = least_cm
         moduli_coprime = True
 
+    reduced_remainders: Sequence[int] = tuple(
+        [r % m for m, r in zip(moduli, remainders)]
+    )
+
+    congruences: Sequence[tuple[int, int]] = tuple(
+        zip(moduli, reduced_remainders, strict=True)
+    )
+
     # Special case
     # - when remainders are all 0, we return the least common multiple
-    if all([r == 0 for r in remainders]):
+    if all([r == 0 for r in reduced_remainders]):
         return least_cm
 
     result = 0
-    for m, r in zip(moduli, remainders, strict=True):
+    for m, r in congruences:
         partial = product // m
         _g, inv, _ = egcd(partial, m)
         inv %= product
@@ -66,7 +74,7 @@ def solve(
     if not moduli_coprime:
         # Test below gives false negative when result equivalent to 0
         if result % least_cm != 0:
-            for m, r in zip(moduli, remainders, strict=True):
+            for m, r in congruences:
                 if (result % m) != r:
                     return None
 
@@ -171,7 +179,7 @@ class Ring:
         return self.element(self._lcm)
 
     def to_int(self, remainders: Sequence[int]) -> int:
-        """The smallest non-negative integer that produces these remainders
+        """The smallest positive integer that produces these remainders
 
         :param remainders:
             The remainders corresponding to the *sorted* list of moduli.
@@ -228,13 +236,13 @@ class Element:
 
         # Flagging elements to avoid recomputing things
 
-        # Easily mark multiplicative and additive identities
-        # These may get set to True in toward end of this method
+        # Mark multiplicative and additive identities
+        # These may get set to True toward end of this method
         self._is_zero = False
         self._is_one = False
 
         # Any calculated integer value
-        self._ivalue: int | None = None
+        self._ivalue: int | None = None  # None for not yet computed
 
         # To store the multiplicative inverse, there are three cases
         # 1. The invertibility has not been computed yet.
@@ -243,6 +251,7 @@ class Element:
         self._invertible: bool | None = None  # Case 1
         self._inverse: Element | None = None  # Case 1 or 3
 
+        # The conditions assume we have reduced all of the remainders
         if all((r == 0 for r in self._remainders)):
             self._is_zero = True
             self._is_one = False
@@ -258,18 +267,24 @@ class Element:
             self._ivalue = 1
 
     @staticmethod
-    def from_int(ring: Ring, n: PositiveInt) -> "Element":
-        if not is_positive_int(n):
-            raise ValueError("n must be a positive integer.")
+    def from_int(ring: Ring, n: int) -> "Element":
+        """New element from non-negative integer.
+
+        :raises ValueError: if n < 0.
+        """
+        if n < 0:
+            raise ValueError("n cannot be negative")
         remainders = [n % m for m in ring.moduli]
         return Element(ring, remainders)
 
     @property
     def ring(self) -> Ring:
+        """The ring to which this element belongs."""
         return self._ring
 
     @property
     def remainders(self) -> tuple[int, ...]:
+        """The remainders."""
         return self._remainders
 
     def __int__(self) -> int:

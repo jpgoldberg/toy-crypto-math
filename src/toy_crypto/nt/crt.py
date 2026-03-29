@@ -3,6 +3,9 @@ Chinese Remainder Theorem
 
     In addition to being a theorem and an algorithm, we would suggest to the reader that the Chinese remainder theorem is also a state of mind.
     — Hoffstein, Pipher, and Silverman (2008)
+
+This module includes utilities for working with Sunzi's Remainder Theorem
+better known as the Chinese Remainder Theorem.
 """
 
 from typing import cast
@@ -275,7 +278,12 @@ class Element:
         if n < 0:
             raise ValueError("n cannot be negative")
         remainders = [n % m for m in ring.moduli]
-        return Element(ring, remainders)
+        element = Element(ring, remainders)
+
+        # Might as well save the integer since we have it.
+        if element._ivalue is None:
+            element._ivalue = n % ring.modulus
+        return element
 
     @property
     def ring(self) -> Ring:

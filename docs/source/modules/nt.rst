@@ -95,6 +95,8 @@ which should almost always identify our pseudo prime as composite.
 
 .. autofunction:: probably_prime
 
+.. autofunction:: rabin_miller_witness
+
 .. autofunction:: get_prime
 
 Wrapping from primefac_

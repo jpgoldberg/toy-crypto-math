@@ -1,6 +1,6 @@
 import math
 import sys
-from typing import NamedTuple
+from typing import NamedTuple, cast
 
 import unittest
 import pytest
@@ -312,6 +312,48 @@ class TestPrimeTesting(unittest.TestCase):
                         assert result, f"False negative: {case}"
                     else:
                         assert not result, f"False positive: {case}"
+
+    @staticmethod
+    def _mr_reduction(n: int) -> tuple[int, int]:
+        """returns r, s such that 2^r * s = n - 1"""
+        r, s = 0, n - 1
+        while s % 2 == 0:
+            r += 1
+            s //= 2
+        return r, s
+
+    @pytest.mark.slow
+    def test_mb_witness(self) -> None:
+        try:
+            data = WP_DATA.load("primality_test.json")
+        except Exception as e:
+            raise Exception(f"Failed to load test vectors: {e}")
+
+        for group in data.groups:
+            for case in group.tests:
+                n = case.other_data["value"]
+                n = cast(int, n)
+
+                _, proof = nt.rabin_miller_witness(n, k=3)
+                if proof is None:
+                    continue
+
+                # sanity check on proof
+                assert proof > 1
+                assert proof < n
+
+                # Proof should be either a divisor or witness
+                if n % proof == 0:
+                    continue  # it is a divisor
+
+                r, s = self._mr_reduction(n)
+                x = pow(proof, 2, n)
+                assert x != 1
+                assert x != n - 1
+
+                for _ in range(r - 1):
+                    x = pow(x, 2, n)
+                    assert x != n - 1
 
     @pytest.mark.statistical
     @pytest.mark.xfail

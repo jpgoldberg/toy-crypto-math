@@ -341,22 +341,27 @@ def lcm(*integers: int) -> int:
 
 def _small_primality(
     n: int, primes: Sequence[int] = (2, 3, 5, 7, 11, 13, 17, 19)
-) -> bool | None:
+) -> tuple[bool | None, int | None]:
     """Testing small n.
 
-    Returns True if prime, False if composite, None if unknown
+    Returns (True, None) if prime, (False, factor | None) if composite, (None, None) if unknown
+
+    .. warning::
+
+        (False, None) is a possible return value when the factor has not been determined.
     """
     largest_small = primes[-1]
     if n in primes:
-        return True
+        return True, None
     if n < largest_small:
-        return False
-    if any((n % p == 0 for p in primes)):
-        return False
+        return False, None
+    for p in primes:
+        if n % p == 0:
+            return False, p
     if n <= largest_small**2:
-        return True
+        return True, None
 
-    return None
+    return None, None
 
 
 # lifted from https://gist.github.com/Ayrx/5884790
@@ -372,6 +377,27 @@ def probably_prime(n: int, k: int = 4) -> bool:
 
     If you need a real primality check, use sympy.isprime() instead.
     """
+    return rabin_miller_witness(n, k)[0]
+
+
+# lifted from https://gist.github.com/Ayrx/5884790
+@export
+def rabin_miller_witness(n: int, k: int = 4) -> tuple[bool, int | None]:
+    """Returns (True, None) if n probably prime prime else (False, proof)
+
+    Runs the Miller-Rabin primality test with k trials.
+
+    :param n: The number we are checking.
+    :param k: The number of random bases to test against.
+    :raises ValueError: if :math:`k < 1`.
+
+    The proof of the compositeness may be a divisor, a Rabin-Miller witness base, or in rare cases None for very small n.
+
+    .. warning::
+
+        This may return (False, None)
+
+    """
     # A few notational things to help make logic of code more readable
     PRIME = True
     PROBABLY_PRIME = True
@@ -381,10 +407,10 @@ def probably_prime(n: int, k: int = 4) -> bool:
         raise ValueError("k must be greater than 0")
 
     match _small_primality(n):
-        case True:
-            return PRIME
-        case False:
-            return COMPOSITE
+        case (True, _):
+            return (PRIME, None)
+        case (False, divisor):
+            return (COMPOSITE, divisor)
         case _:
             pass
 
@@ -413,7 +439,7 @@ def probably_prime(n: int, k: int = 4) -> bool:
     for a in bases:
         # 1 < a < n, so if gcd(a, n) != 1, n must be composite
         if math.gcd(a, n) != 1:
-            return COMPOSITE
+            return (COMPOSITE, a)
         x = pow(a, s, n)
         if x == 1 or x == n - 1:
             # Consistent with prime. Call the next potential witness!
@@ -429,10 +455,10 @@ def probably_prime(n: int, k: int = 4) -> bool:
                 break
         else:
             # a is a witness to n being composite
-            return COMPOSITE
+            return (COMPOSITE, a)
 
     # We've called k witnesses and none have said n is composite
-    return PROBABLY_PRIME
+    return (PROBABLY_PRIME, None)
 
 
 @export

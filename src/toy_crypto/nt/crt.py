@@ -348,6 +348,17 @@ class Element:
     def add(self, other: object) -> "Element":
         return self.__add__(other)
 
+    def __neg__(self) -> "Element":
+        """Additive inverse."""
+        negative: list[int] = [
+            (m - r) % m for r, m in zip(self._remainders, self.ring.moduli)
+        ]
+        return Element(self.ring, negative)
+
+    def neg(self) -> "Element":
+        """Additive inverse (negative)"""
+        return self.__neg__()
+
     def __mul__(self, other: object) -> "Element":
         # Note that we will be counting on CtrlElement initialization
         # to do any needed modular reduction.

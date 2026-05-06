@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Tested with Python 3.14
+- `nt.rabin_miller_witness` to return witness that proved compositeness.
   
 ### Improved
 

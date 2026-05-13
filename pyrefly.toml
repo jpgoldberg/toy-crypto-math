@@ -5,7 +5,7 @@ project-excludes = [
     "**/sage.py",
     "**/ttable2image.py",
 ]
-search-paths = [
+project-includes = [
     "./src",
     "./tests",
 ]

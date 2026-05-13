@@ -239,7 +239,7 @@ is_positive_int: Predicate = make_predicate(
 Char = Annotated[str, LengthRange(1, 1)]
 """A string of length 1"""
 
-assert isinstance(Char, AnnotatedType)
+assert isinstance(Char, AnnotatedType)  # pyrefly: ignore[unsafe-overlap]
 is_char: Predicate = make_predicate("is_char", Char)
 """True iff val is str and len(val) == 1"""
 
@@ -247,7 +247,7 @@ is_char: Predicate = make_predicate("is_char", Char)
 Byte = Annotated[int, ValueRange(0, 255)]
 """And int representing a single byte."""
 
-assert isinstance(Byte, AnnotatedType)
+assert isinstance(Byte, AnnotatedType)  # pyrefly: ignore[unsafe-overlap]
 is_byte: Predicate = make_predicate("is_byte", Byte)
 
 

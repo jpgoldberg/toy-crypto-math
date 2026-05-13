@@ -1,0 +1,16 @@
+project-excludes = [
+    "**/docs/",
+    "**/profiling/",
+    "**/tests/resources/wycheproof*",
+    "**/sage.py",
+    "**/ttable2image.py",
+]
+search-paths = [
+    "./src",
+    "./tests",
+]
+preset = "legacy"
+ignore-missing-imports = [
+    "pytest.*",
+    "primefac.*",
+]

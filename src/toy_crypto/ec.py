@@ -12,9 +12,9 @@ use of Self is minimal.
 https://github.com/python/mypy/labels/topic-self-types
 """
 
-from toy_crypto.bit_utils import bits  # noqa: E402
-from toy_crypto.nt import Modulus as Modulus  # noqa: E402
-from toy_crypto.nt import is_modulus, mod_sqrt  # noqa: E402
+from .bit_utils import bits  # noqa: E402
+from .nt import Modulus as Modulus  # noqa: E402
+from .nt import is_modulus, mod_sqrt  # noqa: E402
 
 __all__: list[str] = []  # Will be added to along the way
 

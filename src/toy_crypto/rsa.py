@@ -6,8 +6,8 @@ from hmac import compare_digest
 from math import gcd, lcm
 from typing import Callable, TypeAlias
 
-from toy_crypto import utils
-from toy_crypto.nt import modinv, probably_prime
+from . import utils
+from .nt import modinv, probably_prime
 
 _DEFAULT_E = 65537
 

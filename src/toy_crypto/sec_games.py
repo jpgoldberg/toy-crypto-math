@@ -5,7 +5,7 @@ from enum import StrEnum
 from functools import wraps
 from typing import Any, Generic, Optional, Protocol, TypeAlias, TypeVar, cast
 
-from toy_crypto.utils import hash_bytes
+from .utils import hash_bytes
 
 K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""

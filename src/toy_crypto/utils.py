@@ -23,7 +23,7 @@ from typing import (
     runtime_checkable,
 )
 
-from toy_crypto.types import Byte
+from .types import Byte
 
 logging.getLogger(__name__)
 

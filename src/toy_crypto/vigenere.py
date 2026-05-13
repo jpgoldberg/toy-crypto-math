@@ -8,10 +8,9 @@ try:
     from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
 except ImportError:
     from typing_extensions import deprecated  # novermin
-from toy_crypto.bit_utils import hamming_distance
-from toy_crypto.utils import FrozenBidict
-
+from .bit_utils import hamming_distance
 from .types import ValueRange
+from .utils import FrozenBidict
 
 Letter: TypeAlias = str
 """Intended to indicate a str of length 1"""

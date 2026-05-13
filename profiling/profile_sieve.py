@@ -1,5 +1,6 @@
-import timeit
 import json
+import timeit
+
 import polars as pl
 
 # import cProfile

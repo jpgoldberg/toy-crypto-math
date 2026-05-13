@@ -1,28 +1,27 @@
-from functools import cache
-from bisect import bisect_right
 import threading
 from abc import ABC, abstractmethod
+from bisect import bisect_right
+from functools import cache
+from math import isqrt
 from typing import (
+    TYPE_CHECKING,
     Any,
     Iterator,
     Self,
     Union,
-    TYPE_CHECKING,
 )
 
 from . import bit_utils
-from math import isqrt
-
 
 _has_bitarry = True
 if TYPE_CHECKING:
     from bitarray import bitarray
-    from bitarray.util import count_n, ba2int
+    from bitarray.util import ba2int, count_n
 
 else:
     try:
         from bitarray import bitarray
-        from bitarray.util import count_n, ba2int
+        from bitarray.util import ba2int, count_n
     except ImportError:
         _has_bitarry = False
 

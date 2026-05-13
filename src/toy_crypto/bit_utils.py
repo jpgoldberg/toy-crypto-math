@@ -6,9 +6,10 @@ as many where just quick things I needed.
 This is more of a trash heap than a well-thought-out module.
 """
 
-from typing import Optional, Any, Union, Callable, Self
-from collections.abc import Iterator
 import operator
+from collections.abc import Iterator
+from typing import Any, Callable, Optional, Self, Union
+
 from .utils import xor
 
 

@@ -1,9 +1,10 @@
+import secrets
 from collections.abc import Callable, KeysView, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
-import secrets
-from typing import Any, Generic, Optional, TypeAlias, TypeVar, cast, Protocol
 from functools import wraps
+from typing import Any, Generic, Optional, Protocol, TypeAlias, TypeVar, cast
+
 from toy_crypto.utils import hash_bytes
 
 K = TypeVar("K")

@@ -1,6 +1,7 @@
 import sys
 
 import pytest
+
 from toy_crypto.ec import Curve
 from toy_crypto.nt import Modulus
 

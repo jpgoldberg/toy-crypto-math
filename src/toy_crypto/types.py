@@ -6,24 +6,23 @@ They are not carefully thought out.
 This module is probably the least stable of any of these unstable modules.
 """
 
+import math
 import sys  # for getrecursionlimit
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-import math
 from typing import (
     Annotated,
     Any,
     Callable,
     NewType,
+    Protocol,
     Sequence,
     Sized,
     TypeAlias,
     TypeAliasType,
-    Protocol,
     TypeGuard,
     runtime_checkable,
 )
-
 
 _RECURSION_LIMIT = sys.getrecursionlimit()
 

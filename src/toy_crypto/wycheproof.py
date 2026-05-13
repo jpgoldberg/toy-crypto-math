@@ -6,24 +6,23 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
-from typing import TypeGuard, no_type_check
+import json
 from collections.abc import Iterator, Mapping, Sequence, Set
 from copy import copy
 from pathlib import Path
-import json
+from typing import TypeGuard, no_type_check
 
 try:
     from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
 except ImportError:
     from typing_extensions import deprecated  # novermin
 
-from jsonschema import validators
-from referencing import Resource, Registry
-from referencing.jsonschema import DRAFT202012
+import logging
 
 import jsonref  # type: ignore[import-untyped]
-
-import logging
+from jsonschema import validators
+from referencing import Registry, Resource
+from referencing.jsonschema import DRAFT202012
 
 logging.getLogger(__name__)
 

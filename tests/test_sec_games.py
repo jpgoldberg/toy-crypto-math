@@ -2,7 +2,8 @@ import secrets
 import sys
 
 import pytest
-from toy_crypto.sec_games import IndEav, IndCpa, StateError, IndCca2
+
+from toy_crypto.sec_games import IndCca2, IndCpa, IndEav, StateError
 
 
 class TestInd:

@@ -1,12 +1,13 @@
 import math
 import sys
+import unittest
 from typing import NamedTuple, cast
 
-import unittest
 import pytest
-from toy_crypto import nt
+
+from toy_crypto import nt, wycheproof
+
 from . import WP_ROOT
-from toy_crypto import wycheproof
 
 WP_DATA = wycheproof.Loader(WP_ROOT)
 

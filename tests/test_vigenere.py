@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 import pytest
+
 from toy_crypto import vigenere
 
 probabistic = pytest.mark.skip(reason="Probabilistic")

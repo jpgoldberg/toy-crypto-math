@@ -50,10 +50,10 @@ class Constraint(ABC):
         ...
 
 
-class ValueRange(Constraint):
+class ValueRange[T: SupportsLe](Constraint):
     """Constrain the values to a range."""
 
-    def __init__[T: SupportsLe](self, min: T | None, max: T | None) -> None:
+    def __init__(self, min: T | None, max: T | None) -> None:
         """Set minimum and maximum.
 
         Use `None` for no minimum or maximum

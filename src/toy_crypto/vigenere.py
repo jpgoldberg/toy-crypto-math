@@ -1,8 +1,8 @@
 from collections import UserDict
 from collections.abc import Mapping, Sequence
-from random import sample
-from typing import Any, Optional, TypeAlias, Annotated
 from itertools import combinations
+from random import sample
+from typing import Annotated, Any, Optional, TypeAlias
 
 try:
     from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
@@ -10,6 +10,7 @@ except ImportError:
     from typing_extensions import deprecated  # novermin
 from toy_crypto.bit_utils import hamming_distance
 from toy_crypto.utils import FrozenBidict
+
 from .types import ValueRange
 
 Letter: TypeAlias = str

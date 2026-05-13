@@ -1,10 +1,11 @@
 import io
-import polars as pl
-from polars.datatypes import UInt32, Float32
-from polars.dataframe.frame import DataFrame as PolarsDF
-import seaborn as sns
+
 import matplotlib.pyplot as plt
+import polars as pl
+import seaborn as sns
 from matplotlib.figure import Figure
+from polars.dataframe.frame import DataFrame as PolarsDF
+from polars.datatypes import Float32, UInt32
 
 
 def load_data() -> PolarsDF:

@@ -1,8 +1,8 @@
 from typing import Any
-import pydot  # types: ignore
-from toy_crypto.sec_games import Ind, IndEav, IndCpa, IndCca1, IndCca2
-from toy_crypto.sec_games import State
 
+import pydot  # types: ignore
+
+from toy_crypto.sec_games import Ind, IndCca1, IndCca2, IndCpa, IndEav, State
 
 games: dict[str, object] = {
     "IND-EAV": IndEav,

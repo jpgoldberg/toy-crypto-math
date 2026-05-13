@@ -1,5 +1,10 @@
 """Utility functions"""
 
+import itertools
+import logging
+import math
+import sys
+from base64 import a85encode
 from collections.abc import (
     Hashable,
     ItemsView,
@@ -8,10 +13,7 @@ from collections.abc import (
     Mapping,
     Sequence,
 )
-import itertools
 from hashlib import blake2b
-from base64 import a85encode
-import sys
 from typing import (
     Callable,
     Protocol,
@@ -20,10 +22,8 @@ from typing import (
     cast,
     runtime_checkable,
 )
-import math
-from toy_crypto.types import Byte
 
-import logging
+from toy_crypto.types import Byte
 
 logging.getLogger(__name__)
 

@@ -9,11 +9,11 @@
 import os
 import sys
 import tomllib
-from docutils.parsers.rst import Directive
-
-from pprint import pformat
 from importlib import import_module
+from pprint import pformat
+
 from docutils import nodes
+from docutils.parsers.rst import Directive
 from sphinx import addnodes
 from sphinx.application import Sphinx
 

@@ -6,8 +6,8 @@ try:
 except ImportError:
     from typing_extensions import deprecated  # novermin
 
+from .types import PositiveInt, Prob, is_positive_int, is_prob
 from .utils import export, find_zero
-from .types import Prob, is_prob, PositiveInt, is_positive_int
 
 __all__: list[str] = []  # will be appended to with each definition
 

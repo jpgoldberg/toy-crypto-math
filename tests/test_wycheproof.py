@@ -4,16 +4,16 @@ Because other tests make use of the module, those tests would fail
 if data could not be loaded correctly or contained bad data.
 """
 
-from collections.abc import Sequence
 import os
-from pathlib import Path
 import sys
-
 import unittest
-import pytest
-from toy_crypto import wycheproof
+from collections.abc import Sequence
+from pathlib import Path
 
+import pytest
 from referencing.exceptions import Unresolvable
+
+from toy_crypto import wycheproof
 
 WP_ROOT = Path(os.path.dirname(__file__)) / "resources" / "wycheproof"
 LOADER = wycheproof.Loader(WP_ROOT)

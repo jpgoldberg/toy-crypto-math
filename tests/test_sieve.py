@@ -3,6 +3,7 @@ import sys
 from typing import assert_type
 
 import pytest
+
 from toy_crypto import sieve
 
 

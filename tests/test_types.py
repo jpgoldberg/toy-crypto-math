@@ -1,6 +1,7 @@
 import sys
 
 import pytest
+
 from toy_crypto import types
 
 

@@ -5,7 +5,7 @@
 import math
 import secrets
 from collections import UserList
-from collections.abc import Iterator, Iterable, Sequence
+from collections.abc import Iterable, Iterator, Sequence
 from typing import Any, Generator, NewType, Optional, Self, TypeGuard
 
 try:
@@ -15,8 +15,7 @@ except ImportError:
 
 import primefac
 
-from . import rand
-from . import types
+from . import rand, types
 from .utils import export
 
 __all__: list[str] = []

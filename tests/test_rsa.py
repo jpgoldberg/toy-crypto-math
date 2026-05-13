@@ -1,12 +1,11 @@
 import base64
 import sys
 import unittest
-import pytest
-
 from collections import namedtuple
+from math import gcd, lcm
 from typing import Optional
-from math import lcm, gcd
 
+import pytest
 
 from toy_crypto import rsa, wycheproof
 from toy_crypto.nt import modinv

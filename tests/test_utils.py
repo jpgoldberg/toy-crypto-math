@@ -1,7 +1,8 @@
 import sys
+from collections.abc import Iterator
 
 import pytest
-from collections.abc import Iterator
+
 from toy_crypto import utils
 from toy_crypto.types import Byte
 

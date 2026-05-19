@@ -32,6 +32,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
+  "annotated-types>=0.7.0",
   "jsonref>=1.1.0",
   "jsonschema>=4.25.0",
   "primefac >= 2.0.12",

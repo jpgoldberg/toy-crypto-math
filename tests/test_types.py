@@ -58,7 +58,7 @@ class TestDocstrings:
         base_type: type = int
         constraints = (
             types.ValueRange(0, 255),
-            types.LengthRange(1, 1),
+            types.LengthRange.is_valid(1, 1),
         )
         d = types._predicate_description(base_type, constraints)
         assert d == expected

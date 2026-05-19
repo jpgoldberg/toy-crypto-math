@@ -7,21 +7,36 @@ This module is probably the least stable of any of these unstable modules.
 """
 
 import math
+import re
 import sys  # for getrecursionlimit
 from abc import ABC, abstractmethod
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from typing import (
     Annotated,
     Any,
     Callable,
     NewType,
     Protocol,
-    Sequence,
     Sized,
     TypeAlias,
     TypeAliasType,
     TypeGuard,
+    Union,
+    cast,
+    get_args,
+    get_origin,
     runtime_checkable,
+)
+
+import annotated_types
+from annotated_types import (
+    Interval,
+    SupportsGe,
+    SupportsGt,
+    SupportsLt,
+    SupportsMod,
 )
 
 _RECURSION_LIMIT = sys.getrecursionlimit()
@@ -41,16 +56,94 @@ class SupportsLe(Protocol):
     def __le__[T](self: T, __other: T) -> bool: ...
 
 
-class Constraint(ABC):
+class _Constraint(ABC):
     """Abstract class that constraints must subclass."""
 
     @abstractmethod
-    def __call__(self, val: object) -> bool:
+    def is_valid(self, val: object) -> bool:
         """True iff val satisfies the constraint"""
         ...
 
 
-class ValueRange[T: SupportsLe](Constraint):
+Constraint = Union[
+    annotated_types.BaseMetadata, slice, "re.Pattern[bytes]", "re.Pattern[str]"
+]
+
+
+def check_gt(constraint: Constraint, val: SupportsGt) -> bool:
+    assert isinstance(constraint, annotated_types.Gt)
+    return val > constraint.gt  # mypy: ignore[no-return-any]
+
+
+def check_lt(constraint: Constraint, val: SupportsLt) -> bool:
+    assert isinstance(constraint, annotated_types.Lt)
+    return val < constraint.lt  # mypy: ignore[no-return-any]
+
+
+def check_ge(constraint: Constraint, val: SupportsGe) -> bool:
+    assert isinstance(constraint, annotated_types.Ge)
+    return val >= constraint.ge  # mypy: ignore[no-return-any]
+
+
+def check_le(constraint: Constraint, val: SupportsLe) -> bool:
+    assert isinstance(constraint, annotated_types.Le)
+    return val <= constraint.le  # mypy: ignore[no-return-any]
+
+
+def check_multiple_of(constraint: Constraint, val: SupportsMod) -> bool:
+    assert isinstance(constraint, annotated_types.MultipleOf)
+    mult_of = constraint.multiple_of
+    mult_of = cast(SupportsMod, mult_of)
+    return val % mult_of == 0  # mypy: ignore[no-return-any]
+
+
+def check_len(constraint: Constraint, val: Any) -> bool:
+    if isinstance(constraint, slice):
+        constraint = annotated_types.Len(
+            constraint.start or 0, constraint.stop
+        )
+    assert isinstance(constraint, annotated_types.Len)
+    if len(val) < constraint.min_length:
+        return False
+    if constraint.max_length is not None and len(val) > constraint.max_length:
+        return False
+    return True
+
+
+def check_predicate(constraint: Constraint, val: Any) -> bool:
+    assert isinstance(constraint, annotated_types.Predicate)
+    return constraint.func(val)
+
+
+def check_timezone(constraint: Constraint, val: Any) -> bool:
+    assert isinstance(constraint, annotated_types.Timezone)
+    assert isinstance(val, datetime)
+    if isinstance(constraint.tz, str):
+        return val.tzinfo is not None and constraint.tz == val.tzname()
+    elif isinstance(constraint.tz, timezone):
+        return val.tzinfo is not None and val.tzinfo == constraint.tz
+    elif constraint.tz is None:
+        return val.tzinfo is None
+    # ellipsis
+    return val.tzinfo is not None
+
+
+type Validator = Callable[[Constraint, Any], bool]
+
+VALIDATORS: dict[type[Constraint], Validator] = {
+    annotated_types.Gt: check_gt,
+    annotated_types.Lt: check_lt,
+    annotated_types.Ge: check_ge,
+    annotated_types.Le: check_le,
+    annotated_types.MultipleOf: check_multiple_of,
+    annotated_types.Predicate: check_predicate,
+    annotated_types.Len: check_len,
+    annotated_types.Timezone: check_timezone,
+    slice: check_len,
+}
+
+
+class ValueRange[T: SupportsLe](_Constraint):
     """Constrain the values to a range."""
 
     def __init__(self, min: T | None, max: T | None) -> None:
@@ -69,7 +162,7 @@ class ValueRange[T: SupportsLe](Constraint):
     def max(self) -> SupportsLe:
         return self._max
 
-    def __call__(self, val: object) -> bool:
+    def is_valid(self, val: object) -> bool:
         """True iff min <= val <= max.
 
         If val can't be compared to min or max
@@ -82,7 +175,7 @@ class ValueRange[T: SupportsLe](Constraint):
 
 
 @dataclass
-class LengthRange(Constraint):
+class LengthRange(_Constraint):
     """Constrain the length to a range."""
 
     def __init__(self, min: int | None, max: int | None) -> None:
@@ -93,7 +186,7 @@ class LengthRange(Constraint):
         self._min: float = -math.inf if min is None else min
         self._max: float = math.inf if max is None else max
 
-    def __call__(self, val: object) -> bool:
+    def is_valid(self, val: object) -> bool:
         """True iff min <= len(val) <= max.
 
         :raises TypeError: if val is not Sized.
@@ -111,11 +204,13 @@ class LengthRange(Constraint):
         return self._max
 
     def __str__(self) -> str:
-        return f"LengthRange({self._min}, {self._max})"
+        return f"LengthRange.is_valid({self._min}, {self._max})"
 
 
 def _predicate_description(
-    base_type: type, constraints: Sequence[Constraint], param_name: str = "val"
+    base_type: type,
+    constraints: Sequence[_Constraint],
+    param_name: str = "val",
 ) -> str:
     type_name = base_type.__name__
 
@@ -128,7 +223,7 @@ def _predicate_description(
     return text
 
 
-Predicate: TypeAlias = Callable[[object], bool]
+_Predicate: TypeAlias = Callable[[object], bool]
 """Type of (generated) predicates."""
 
 
@@ -136,9 +231,9 @@ def make_predicate(
     name: str,
     # t: NewType | AnnotatedType | type,
     t: object,
-    constraints: Sequence[Constraint] = tuple(),
+    constraints: Sequence[_Constraint] = tuple(),
     docstring: bool = True,
-) -> Predicate:
+) -> _Predicate:
     """Create predicate from a type and constraints.
 
     :param name:
@@ -171,7 +266,7 @@ def make_predicate(
     if isinstance(t, AnnotatedType):
         base_type = t.__origin__
         cons += tuple(
-            filter(lambda c: isinstance(c, Constraint), t.__metadata__)
+            filter(lambda c: isinstance(c, _Constraint), t.__metadata__)
         )
 
     elif isinstance(t, NewType):
@@ -204,7 +299,7 @@ def make_predicate(
     def predicate(val: object) -> bool:
         if not isinstance(val, base_type):
             return False
-        if not all((c(val) for c in cons)):
+        if not all((c.is_valid(val) for c in cons)):
             return False
         return True
 
@@ -217,30 +312,50 @@ def make_predicate(
 
 
 # Prob = Annotated[float, ValueRange(0.0, 1.0)]
-Prob = NewType("Prob", float)
-
-# fmt: off
-_is_prob: Predicate = make_predicate("is_prob", Prob, (ValueRange(0.0, 1.0),))
-def is_prob(val: object) -> TypeGuard[Prob]:
-    return _is_prob(val)
-is_prob.__doc__ = _is_prob.__doc__
-# fmt: on
+# Prob = NewType("Prob", float)
 
 
-# PositiveInt = Annotated[int, ValueRange(1, math.inf)]
-type PositiveInt = int
+def get_constraints(tp: AnnotatedType) -> Iterator[Constraint]:
+    args = iter(get_args(tp))
+    next(args)
+    for arg in args:
+        if isinstance(arg, (annotated_types.BaseMetadata, re.Pattern, slice)):
+            yield arg
+        elif isinstance(arg, annotated_types.GroupedMetadata):
+            yield from arg  # type: ignore
 
 
-is_positive_int: Predicate = make_predicate(
-    "is_positive_int", PositiveInt, constraints=(ValueRange(1, math.inf),)
-)
+def is_valid(tp: Any, value: Any) -> bool:
+    if not isinstance(tp, AnnotatedType):
+        raise TypeError("type must be an Annotated type")
+    if not isinstance(value, tp.__origin__):
+        return False
+    for constraint in get_constraints(tp):
+        if not VALIDATORS[type(constraint)](constraint, value):
+            return False
+    return True
+
+
+Prob = Annotated[float, Interval(ge=0.0, le=1.0)]
+
+
+def is_prob(value: Any) -> TypeGuard[Prob]:
+    return is_valid(Prob, value)
+
+
+PositiveInt = Annotated[int, annotated_types.Ge(1)]
+
+def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
+    return is_valid(PositiveInt, val)
+
+
 
 
 Char = Annotated[str, LengthRange(1, 1)]
 """A string of length 1"""
 
 assert isinstance(Char, AnnotatedType)  # pyrefly: ignore[unsafe-overlap]
-is_char: Predicate = make_predicate("is_char", Char)
+is_char: _Predicate = make_predicate("is_char", Char)
 """True iff val is str and len(val) == 1"""
 
 
@@ -248,7 +363,7 @@ Byte = Annotated[int, ValueRange(0, 255)]
 """And int representing a single byte."""
 
 assert isinstance(Byte, AnnotatedType)  # pyrefly: ignore[unsafe-overlap]
-is_byte: Predicate = make_predicate("is_byte", Byte)
+is_byte: _Predicate = make_predicate("is_byte", Byte)
 
 
 @runtime_checkable

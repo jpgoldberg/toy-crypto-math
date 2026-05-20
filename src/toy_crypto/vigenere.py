@@ -9,7 +9,7 @@ try:
 except ImportError:
     from typing_extensions import deprecated  # novermin
 from .bit_utils import hamming_distance
-from .types import ValueRange
+from .types import Interval
 from .utils import FrozenBidict
 
 Letter: TypeAlias = str
@@ -228,7 +228,7 @@ class Cipher:
         return self.crypt(ciphertext, mode="decrypt")
 
 
-BitSimilarity: TypeAlias = Annotated[float, ValueRange(-4.0, 4.0)]
+BitSimilarity: TypeAlias = Annotated[float, Interval(ge=-4.0, le=4.0)]
 """A float in [-4.0, 4.0] the bit similarity per byte.
 -4 indicates that all bits are different.
 +4 indicates that all bits are the same.

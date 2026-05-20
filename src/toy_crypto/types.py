@@ -26,15 +26,18 @@ from typing import (
     Union,
     cast,
     get_args,
-    get_origin,
     runtime_checkable,
 )
 
 import annotated_types
 from annotated_types import (
-    Interval,
+    Interval as Interval,
+)
+from annotated_types import (
+    Len,
     SupportsGe,
     SupportsGt,
+    SupportsLe,
     SupportsLt,
     SupportsMod,
 )
@@ -48,14 +51,6 @@ class AnnotatedType(Protocol):
     __origin__: type
 
 
-# lifted from annotated-types
-
-
-@runtime_checkable
-class SupportsLe(Protocol):
-    def __le__[T](self: T, __other: T) -> bool: ...
-
-
 class _Constraint(ABC):
     """Abstract class that constraints must subclass."""
 
@@ -66,7 +61,10 @@ class _Constraint(ABC):
 
 
 Constraint = Union[
-    annotated_types.BaseMetadata, slice, "re.Pattern[bytes]", "re.Pattern[str]"
+    annotated_types.BaseMetadata,
+    "re.Pattern[bytes]",
+    "re.Pattern[str]",
+    slice,
 ]
 
 
@@ -97,15 +95,23 @@ def check_multiple_of(constraint: Constraint, val: SupportsMod) -> bool:
     return val % mult_of == 0  # mypy: ignore[no-return-any]
 
 
-def check_len(constraint: Constraint, val: Any) -> bool:
+def check_len(constraint: Constraint | slice, val: Any) -> bool:
+    """Checks length of val against Len, MinLen, MaxLen, or slice."""
+
+    # These are inclusive
+    min_length: int
+    max_length: int | None
+
     if isinstance(constraint, slice):
-        constraint = annotated_types.Len(
-            constraint.start or 0, constraint.stop
-        )
-    assert isinstance(constraint, annotated_types.Len)
-    if len(val) < constraint.min_length:
+        min_length = constraint.start or 0
+        max_length = constraint.stop
+    else:
+        min_length = getattr(constraint, "min_length", 0)
+        max_length = getattr(constraint, "max_length", None)
+
+    if len(val) < min_length:
         return False
-    if constraint.max_length is not None and len(val) > constraint.max_length:
+    if max_length is not None and len(val) > max_length:
         return False
     return True
 
@@ -130,7 +136,7 @@ def check_timezone(constraint: Constraint, val: Any) -> bool:
 
 type Validator = Callable[[Constraint, Any], bool]
 
-VALIDATORS: dict[type[Constraint], Validator] = {
+VALIDATORS: dict[type | slice, Validator] = {
     annotated_types.Gt: check_gt,
     annotated_types.Lt: check_lt,
     annotated_types.Ge: check_ge,
@@ -138,6 +144,8 @@ VALIDATORS: dict[type[Constraint], Validator] = {
     annotated_types.MultipleOf: check_multiple_of,
     annotated_types.Predicate: check_predicate,
     annotated_types.Len: check_len,
+    annotated_types.MaxLen: check_len,
+    annotated_types.MinLen: check_len,
     annotated_types.Timezone: check_timezone,
     slice: check_len,
 }
@@ -204,7 +212,7 @@ class LengthRange(_Constraint):
         return self._max
 
     def __str__(self) -> str:
-        return f"LengthRange.is_valid({self._min}, {self._max})"
+        return f"LengthRange({self._min}, {self._max})"
 
 
 def _predicate_description(
@@ -331,8 +339,15 @@ def is_valid(tp: Any, value: Any) -> bool:
     if not isinstance(value, tp.__origin__):
         return False
     for constraint in get_constraints(tp):
-        if not VALIDATORS[type(constraint)](constraint, value):
+        # if not VALIDATORS[type(constraint)](constraint, value):
+        #    return False
+
+        # Decomposed for debugging
+        validator = VALIDATORS[type(constraint)]
+        v = validator(constraint, value)
+        if not v:
             return False
+
     return True
 
 
@@ -345,25 +360,26 @@ def is_prob(value: Any) -> TypeGuard[Prob]:
 
 PositiveInt = Annotated[int, annotated_types.Ge(1)]
 
+
 def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     return is_valid(PositiveInt, val)
 
 
-
-
-Char = Annotated[str, LengthRange(1, 1)]
+Char = Annotated[str, Len(1, 1)]
 """A string of length 1"""
 
-assert isinstance(Char, AnnotatedType)  # pyrefly: ignore[unsafe-overlap]
-is_char: _Predicate = make_predicate("is_char", Char)
-"""True iff val is str and len(val) == 1"""
+
+def is_char(val: Any) -> TypeGuard[Char]:
+    """True iff val is str and len(val) == 1"""
+    return is_valid(Char, val)
 
 
-Byte = Annotated[int, ValueRange(0, 255)]
+Byte = Annotated[int, Interval(ge=0, le=255)]
 """And int representing a single byte."""
 
-assert isinstance(Byte, AnnotatedType)  # pyrefly: ignore[unsafe-overlap]
-is_byte: _Predicate = make_predicate("is_byte", Byte)
+
+def is_byte(val: Any) -> TypeGuard[Byte]:
+    return is_valid(Byte, val)
 
 
 @runtime_checkable

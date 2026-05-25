@@ -9,6 +9,7 @@ This module is probably the least stable of any of these unstable modules.
 import math
 import re
 import sys  # for getrecursionlimit
+import typing
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
@@ -25,7 +26,6 @@ from typing import (
     TypeGuard,
     Union,
     cast,
-    get_args,
     runtime_checkable,
 )
 
@@ -217,7 +217,7 @@ class LengthRange(_Constraint):
 
 def _predicate_description(
     base_type: type,
-    constraints: Sequence[_Constraint],
+    constraints: Sequence[_Constraint | Constraint],
     param_name: str = "val",
 ) -> str:
     type_name = base_type.__name__
@@ -227,6 +227,27 @@ def _predicate_description(
     conditions += [f"meets {c}" for c in constraints]
 
     text = "\n- ".join((intro, *conditions))
+
+    return text
+
+
+def _predicate_doc(
+    tp: Any, param_name: str = "value", prefix: str = "", suffix: str = ""
+) -> str:
+    """Generates docstring for predicates for annotated types."""
+
+    if typing.get_origin(tp) is not Annotated:
+        return f"True only if {param_name} is of {type(tp)}"
+
+    # Now for annotated types
+    origin = tp.__origin__
+    origin_name = origin.__name__
+
+    intro = f"True if and only if {param_name} satisfies all of\n"
+    conditions: list[str] = [f"is of type {origin_name}"]
+    conditions += [f"meets {c}" for c in get_constraints(tp)]
+
+    text = prefix + "\n- ".join((intro, *conditions)) + suffix
 
     return text
 
@@ -323,8 +344,9 @@ def make_predicate(
 # Prob = NewType("Prob", float)
 
 
-def get_constraints(tp: AnnotatedType) -> Iterator[Constraint]:
-    args = iter(get_args(tp))
+def get_constraints(tp: Any) -> Iterator[Constraint]:
+    # first get_args item is base type
+    args = iter(typing.get_args(tp))
     next(args)
     for arg in args:
         if isinstance(arg, (annotated_types.BaseMetadata, re.Pattern, slice)):
@@ -334,10 +356,15 @@ def get_constraints(tp: AnnotatedType) -> Iterator[Constraint]:
 
 
 def is_valid(tp: Any, value: Any) -> bool:
-    if not isinstance(tp, AnnotatedType):
-        raise TypeError("type must be an Annotated type")
-    if not isinstance(value, tp.__origin__):
+    """True iff all constraints on tp are true."""
+
+    if typing.get_origin(tp) is not Annotated:
+        return isinstance(tp, value)
+
+    base_type = tp.__origin__
+    if not isinstance(value, base_type):
         return False
+
     for constraint in get_constraints(tp):
         # if not VALIDATORS[type(constraint)](constraint, value):
         #    return False
@@ -356,6 +383,9 @@ Prob = Annotated[float, Interval(ge=0.0, le=1.0)]
 
 def is_prob(value: Any) -> TypeGuard[Prob]:
     return is_valid(Prob, value)
+
+
+is_prob.__doc__ = _predicate_doc(Prob)
 
 
 PositiveInt = Annotated[int, annotated_types.Ge(1)]

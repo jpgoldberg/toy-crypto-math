@@ -34,12 +34,12 @@ def _pbirthday_exact(n: int, classes: int, coincident: int) -> Prob:
     k = coincident
 
     if k < 2:
-        return Prob(1.0)
+        return 1.0
     if k > 2:
         return _pbirthday_approx(n, c, coincident=k)
 
     if n >= c:
-        return Prob(1.0)
+        return 1.0
 
     v_dn = math.perm(c, n)
     v_t = int(c**n)
@@ -57,10 +57,10 @@ def _pbirthday_approx(
     k = coincident
 
     if n >= c * (k - 1):
-        return Prob(1.0)
+        return 1.0
 
     if k < 2:
-        return Prob(1.0)
+        return 1.0
 
     # lifted from R src/library/stats/R/birthday.R
     LHS = n * math.exp(-n / (c * k)) / (1 - n / (c * (k + 1))) ** (1 / k)
@@ -97,7 +97,7 @@ def probability(
     k = coincident
 
     if k == 1:
-        return Prob(1.0)
+        return 1.0
 
     if mode == "auto":
         mode = "exact" if c < EXACT_THRESHOLD else "approximate"
@@ -126,7 +126,7 @@ __all__.append('P')  # fmt: skip
 
 @export
 def quantile(
-    prob: float = Prob(0.5),
+    prob: Prob = 0.5,
     classes: PositiveInt = 365,
     coincident: PositiveInt = 2,
 ) -> int:
@@ -152,7 +152,7 @@ def quantile(
     if prob > MAX_QBIRTHDAY_P:
         return c * (k - 1) + 1
 
-    if prob == Prob(0.0) or k < 2:
+    if prob == 0.0 or k < 2:
         return 1
 
     # Lifted from R src/library/stats/R/birthday.R
@@ -188,12 +188,12 @@ def quantile(
 
 
 @deprecated("Use 'quantile' instead")
-def Q(prob: float = 0.5, classes: int = 365, coincident: int = 2) -> int:
+def Q(prob: Prob = 0.5, classes: int = 365, coincident: int = 2) -> int:
     """
     .. deprecated:: 0.5
         Renamed. Use :func:`quantile`.
     """
-    return quantile(Prob(prob), classes, coincident)
+    return quantile(prob, classes, coincident)
 
 
 __all__.append("Q")

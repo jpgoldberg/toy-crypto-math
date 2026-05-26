@@ -50,10 +50,12 @@ class AnnotatedType(ABC):
     __metadata__: tuple[Any]
     __origin__: type
 
+
 # Used for function parameters for type or annotated types
 TypeOrAType = type | Annotated[Any, ...]
 
-def is_AnnotedType(val: Any) -> TypeGuard[AnnotatedType]:
+
+def is_annotated_type(val: Any) -> TypeGuard[AnnotatedType]:
     return typing.get_origin(val) is Annotated
 
 
@@ -238,15 +240,18 @@ def _predicate_description(
 
 
 def _predicate_doc(
-    tp: TypeOrAType, param_name: str = "value", prefix: str = "", suffix: str = ""
+    tp: TypeOrAType,
+    param_name: str = "value",
+    prefix: str = "",
+    suffix: str = "",
 ) -> str:
     """Generates docstring for predicates for annotated types."""
 
-    if typing.get_origin(tp) is not Annotated:
+    if not is_annotated_type(tp):
         return f"True only if {param_name} is of {type(tp)}"
 
     # Now for annotated types
-    origin = tp.__origin__  # mypy: ignore[union-attr]
+    origin = tp.__origin__
     origin_name = origin.__name__
 
     intro = f"True if and only if {param_name} satisfies all of\n"
@@ -298,7 +303,7 @@ def make_predicate(
 
     cons = tuple(constraints)
 
-    if is_AnnotedType(t):
+    if is_annotated_type(t):
         base_type = t.__origin__
         cons += tuple(
             filter(lambda c: isinstance(c, _Constraint), t.__metadata__)
@@ -386,10 +391,10 @@ def get_constraints(tp: TypeOrAType) -> Iterator[Constraint]:
 def is_valid(tp: TypeOrAType, value: Any) -> bool:
     """True iff all constraints on tp are true."""
 
-    if typing.get_origin(tp) is not Annotated:
+    if not is_annotated_type(tp):
         return isinstance(tp, value)
 
-    base_type = tp.__origin__   # mypy: ignore[union-attr]
+    base_type = tp.__origin__
     if not isinstance(value, base_type):
         return False
 

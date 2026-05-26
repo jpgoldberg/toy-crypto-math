@@ -6,7 +6,6 @@ They are not carefully thought out.
 This module is probably the least stable of any of these unstable modules.
 """
 
-from functools import wraps
 import math
 import re
 import sys  # for getrecursionlimit
@@ -15,6 +14,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from functools import wraps
 from typing import (
     Annotated,
     Any,
@@ -50,6 +50,8 @@ class AnnotatedType(ABC):
     __metadata__: tuple[Any]
     __origin__: type
 
+# Used for function parameters for type or annotated types
+TypeOrAType = type | Annotated[Any, ...]
 
 def is_AnnotedType(val: Any) -> TypeGuard[AnnotatedType]:
     return typing.get_origin(val) is Annotated
@@ -236,7 +238,7 @@ def _predicate_description(
 
 
 def _predicate_doc(
-    tp: Any, param_name: str = "value", prefix: str = "", suffix: str = ""
+    tp: TypeOrAType, param_name: str = "value", prefix: str = "", suffix: str = ""
 ) -> str:
     """Generates docstring for predicates for annotated types."""
 
@@ -244,7 +246,7 @@ def _predicate_doc(
         return f"True only if {param_name} is of {type(tp)}"
 
     # Now for annotated types
-    origin = tp.__origin__
+    origin = tp.__origin__  # mypy: ignore[union-attr]
     origin_name = origin.__name__
 
     intro = f"True if and only if {param_name} satisfies all of\n"
@@ -344,7 +346,9 @@ def make_predicate(
     return predicate
 
 
-def document_pred(tp: type) -> Callable[[_Predicate], _Predicate]:
+def document_pred(
+    tp: TypeOrAType,
+) -> Callable[[_Predicate], _Predicate]:
     """Decorator to add documentation for is_X where X is annotated type."""
 
     def decorator_doc(func: _Predicate) -> _Predicate:
@@ -368,7 +372,7 @@ def document_pred(tp: type) -> Callable[[_Predicate], _Predicate]:
 # Prob = NewType("Prob", float)
 
 
-def get_constraints(tp: Any) -> Iterator[Constraint]:
+def get_constraints(tp: TypeOrAType) -> Iterator[Constraint]:
     # first get_args item is base type
     args = iter(typing.get_args(tp))
     next(args)
@@ -379,13 +383,13 @@ def get_constraints(tp: Any) -> Iterator[Constraint]:
             yield from arg  # type: ignore
 
 
-def is_valid(tp: Any, value: Any) -> bool:
+def is_valid(tp: TypeOrAType, value: Any) -> bool:
     """True iff all constraints on tp are true."""
 
     if typing.get_origin(tp) is not Annotated:
         return isinstance(tp, value)
 
-    base_type = tp.__origin__
+    base_type = tp.__origin__   # mypy: ignore[union-attr]
     if not isinstance(value, base_type):
         return False
 
@@ -405,18 +409,15 @@ def is_valid(tp: Any, value: Any) -> bool:
 Prob = Annotated[float, Interval(ge=0.0, le=1.0)]
 
 
-@document_pred(Prob)  # pyrefly: ignore[bad-argument-type]
+@document_pred(Prob)
 def is_prob(value: Any) -> TypeGuard[Prob]:
     return is_valid(Prob, value)
-
-
-is_prob.__doc__ = _predicate_doc(Prob)
 
 
 PositiveInt = Annotated[int, annotated_types.Ge(1)]
 
 
-@document_pred(PositiveInt)  # pyrefly: ignore[bad-argument-type]
+@document_pred(PositiveInt)
 def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     return is_valid(PositiveInt, val)
 
@@ -425,7 +426,7 @@ Char = Annotated[str, Len(1, 1)]
 """A string of length 1"""
 
 
-@document_pred(Char)  # pyrefly: ignore[bad-argument-type]
+@document_pred(Char)
 def is_char(val: Any) -> TypeGuard[Char]:
     return is_valid(Char, val)
 
@@ -434,7 +435,7 @@ Byte = Annotated[int, Interval(ge=0, le=255)]
 """And int representing a single byte."""
 
 
-@document_pred(Byte)  # pyrefly: ignore[bad-argument-type]
+@document_pred(Byte)
 def is_byte(val: Any) -> TypeGuard[Byte]:
     return is_valid(Byte, val)
 

@@ -6,6 +6,7 @@ They are not carefully thought out.
 This module is probably the least stable of any of these unstable modules.
 """
 
+from functools import wraps
 import math
 import re
 import sys  # for getrecursionlimit
@@ -45,10 +46,13 @@ from annotated_types import (
 _RECURSION_LIMIT = sys.getrecursionlimit()
 
 
-@runtime_checkable
-class AnnotatedType(Protocol):
+class AnnotatedType(ABC):
     __metadata__: tuple[Any]
     __origin__: type
+
+
+def is_AnnotedType(val: Any) -> TypeGuard[AnnotatedType]:
+    return typing.get_origin(val) is Annotated
 
 
 class _Constraint(ABC):
@@ -252,7 +256,7 @@ def _predicate_doc(
     return text
 
 
-_Predicate: TypeAlias = Callable[[object], bool]
+_Predicate: TypeAlias = Callable[[Any], bool]
 """Type of (generated) predicates."""
 
 
@@ -292,7 +296,7 @@ def make_predicate(
 
     cons = tuple(constraints)
 
-    if isinstance(t, AnnotatedType):
+    if is_AnnotedType(t):
         base_type = t.__origin__
         cons += tuple(
             filter(lambda c: isinstance(c, _Constraint), t.__metadata__)
@@ -340,6 +344,26 @@ def make_predicate(
     return predicate
 
 
+def document_pred(tp: type) -> Callable[[_Predicate], _Predicate]:
+    """Decorator to add documentation for is_X where X is annotated type."""
+
+    def decorator_doc(func: _Predicate) -> _Predicate:
+        p_doc = _predicate_doc(tp)
+
+        @wraps(func)
+        def wrapper(value: Any) -> bool:
+            return func(value)
+
+        if func.__doc__ is None:
+            wrapper.__doc__ = p_doc
+        else:
+            wrapper.__doc__ = func.__doc__ + "\n" + p_doc
+
+        return wrapper
+
+    return decorator_doc
+
+
 # Prob = Annotated[float, ValueRange(0.0, 1.0)]
 # Prob = NewType("Prob", float)
 
@@ -381,6 +405,7 @@ def is_valid(tp: Any, value: Any) -> bool:
 Prob = Annotated[float, Interval(ge=0.0, le=1.0)]
 
 
+@document_pred(Prob)  # pyrefly: ignore[bad-argument-type]
 def is_prob(value: Any) -> TypeGuard[Prob]:
     return is_valid(Prob, value)
 
@@ -391,6 +416,7 @@ is_prob.__doc__ = _predicate_doc(Prob)
 PositiveInt = Annotated[int, annotated_types.Ge(1)]
 
 
+@document_pred(PositiveInt)  # pyrefly: ignore[bad-argument-type]
 def is_positive_int(val: Any) -> TypeGuard[PositiveInt]:
     return is_valid(PositiveInt, val)
 
@@ -399,8 +425,8 @@ Char = Annotated[str, Len(1, 1)]
 """A string of length 1"""
 
 
+@document_pred(Char)  # pyrefly: ignore[bad-argument-type]
 def is_char(val: Any) -> TypeGuard[Char]:
-    """True iff val is str and len(val) == 1"""
     return is_valid(Char, val)
 
 
@@ -408,6 +434,7 @@ Byte = Annotated[int, Interval(ge=0, le=255)]
 """And int representing a single byte."""
 
 
+@document_pred(Byte)  # pyrefly: ignore[bad-argument-type]
 def is_byte(val: Any) -> TypeGuard[Byte]:
     return is_valid(Byte, val)
 

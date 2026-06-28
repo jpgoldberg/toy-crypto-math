@@ -53,6 +53,7 @@ class AnnotatedType(ABC):
 
 # Used for function parameters for type or annotated types
 TypeOrAType = type | Annotated[Any, ...]
+#TypeOrAType = type | AnnotatedType  # leads to pyrefly weirdness
 
 
 def is_annotated_type(val: Any) -> TypeGuard[AnnotatedType]:

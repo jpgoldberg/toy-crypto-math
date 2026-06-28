@@ -672,6 +672,21 @@ def fips186_prime_gen(
 
     prime_size = n_len // 2
 
+    # The lower bound for a prime is sqrt(2)(2^{(prime_size) – 1})
+    # and is checked in steps 4.4 and 5.4
+
+    root2_bits = 0xB505  # the leading bits of sqrt(2)
+
+    # A nasty hack to allow us to work with very small primes
+    if prime_size < root2_bits.bit_length():
+        # We truncate this set of bits to ensure it is not larger than our prime
+        root2_bits >>= root2_bits.bit_length() - prime_size
+
+    lower_bound = root2_bits << (prime_size - root2_bits.bit_length())
+
+    # See https://github.com/jpgoldberg/toy-crypto-math/issues/27 for
+    # discussion of implementation.
+
     # Standard says p and q must differ within their 100 most significant
     # bits, but that prevents us from generating some of our standard defying
     # small keys. So we will relax the condition.
@@ -691,15 +706,16 @@ def fips186_prime_gen(
 
     i = 0  # Step 4.1
     while True:
-        p = secrets.randbits(prime_size - 2)  # Step 4.2
-        p += 0x3 << (prime_size - 2)
+        p = secrets.randbits(prime_size - 1)  # Step 4.2
+        p += 1 << (prime_size - 1)
 
         # Step 4.3 options (without options)
         if p % 2 == 0:
             p += 1
 
-        # Step 4.4 is not needed given how p is constructed
-        # if p >> (prime_size - 2) != 0x03:  continue
+        # Step 4.4
+        if p < lower_bound:
+            continue
 
         if gcd(p - 1, e) == 1:  # Step 4.5
             if probably_prime(p, k):
@@ -712,14 +728,15 @@ def fips186_prime_gen(
     # q is much the same, but we also check that it isn't too close to p
     i = 0  # Step 5.1
     while True:
-        q = secrets.randbits(prime_size - 2)  # Step 5.2
-        q += 0x3 << (prime_size - 2)
+        q = secrets.randbits(prime_size - 1)  # Step 5.2
+        q += 1 << (prime_size - 1)
 
         if q % 2 == 0:  # Step 5.3 without options
             q += 1
 
-        # Step 5.4 is not needed given how q is constructed
-        # if q >> (prime_size - 2) != 0x03:  continue
+        # Step 5.4
+        if q < lower_bound:
+            continue
 
         if (p >> shift) == (q >> shift):  # Step 5.5
             continue

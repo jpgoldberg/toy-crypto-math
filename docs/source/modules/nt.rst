@@ -51,14 +51,15 @@ that
     These are :wikipedia:`Carmichael number`\s.
 
 .. doctest::
+    :options: +ELLIPSIS
 
     >>> from toy_crypto import nt
     >>> pseudo_prime = 174763 * 199729 * 274627  # This is not prime
     >>> print(f"{pseudo_prime} isn't prime.")
     9585921133193329 isn't prime.
     >>> ft_result = nt.fermat_test(pseudo_prime)
-    >>> ft_message = f"Fermat test: {"probably prime" if ft_result else "composite"}.}
-    >>> print(ft_message) # doctest: +ELLIPSES
+    >>> ft_message = f'Fermat test: {"probably prime" if ft_result else "composite"}.'
+    >>> print(ft_message)
     Fermat test: ....
 
 
@@ -72,10 +73,11 @@ The Rabin-Miller test, which is used in :func:`probably_prime` will
 do better.
 
 .. doctest::
+    :options: +ELLIPSIS
 
     >>> rb_result = nt.probably_prime(9585921133193329)
-    >>> rb_message = f"Miller-Rabin test: {"probably prime" if ft_result else "composite"}.}
-    >>> print(rb_message)  # doctest: +ELLIPSES
+    >>> rb_message = f'Miller-Rabin test: {"probably prime" if ft_result else "composite"}.'
+    >>> print(rb_message)
     Miller-Rabin test: ....
 
 which should almost always identify our pseudo prime as composite.

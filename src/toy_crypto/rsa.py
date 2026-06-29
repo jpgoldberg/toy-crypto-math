@@ -1,15 +1,26 @@
 import hashlib
+import logging
 import math
 import secrets
 from dataclasses import dataclass
 from hmac import compare_digest
 from math import gcd, lcm
-from typing import Callable, TypeAlias
+from typing import Callable, Final, TypeAlias
 
 from . import utils
 from .nt import modinv, probably_prime
 
+logging.getLogger(__name__)
+
 _DEFAULT_E = 65537
+
+MIN__STD_KEYSIZE: Final[int] = 2048
+"""
+Minimum standard keysize in bits
+
+We allow smaller keys, but will issue warnings
+when those are created.
+"""
 
 
 def default_e() -> int:
@@ -243,6 +254,10 @@ class Oaep:
 class PublicKey:
     def __init__(self, modulus: int, public_exponent: int) -> None:
         """Public key from public values."""
+        if modulus.bit_length() < MIN__STD_KEYSIZE:
+            logging.warning(
+                f"Keysize ({modulus.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+            )
         self._N = modulus
         self._e = public_exponent
 
@@ -320,12 +335,12 @@ class PublicKey:
 
         k = (self.N.bit_length() + 7) // 8  # length of N in bytes
 
-        if len(message) > k - 2 * h.digest_size - 2:
-            raise ValueError("message too long")
+        ps_length = k - len(message) - 2 * h.digest_size - 2
+        if ps_length < 2:
+            raise ValueError("key isn't big enough to handle this")
 
         lhash = h.function(label).digest()
 
-        ps_length = k - len(message) - 2 * h.digest_size - 2
         padding_string = bytes(ps_length)
 
         data_block = lhash + padding_string + bytes([0x01]) + message
@@ -376,6 +391,10 @@ class PrivateKey:
         self._e = pub_exponent
 
         self._N = self._p * self._q
+        if self._N.bit_length() < MIN__STD_KEYSIZE:
+            logging.warning(
+                f"Keysize ({self._N.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+            )
         self._pubkey = PublicKey(self._N, self._e)
 
         self._dP = modinv(self._e, p - 1)
@@ -568,7 +587,7 @@ def key_gen(
 
 
     :raises ValueError:
-        if bit_size is even smaller that the small values allowed by this toy.
+        if bit_size is even smaller than the small values allowed by this toy.
     :raises ValueError:
         if bit_size doesn't correspond to an even number of bytes.
         (This is not a requirement of standards, but is of this implementation.)
@@ -661,6 +680,11 @@ def fips186_prime_gen(
     """
 
     # We don't enforce Step 1 for this toy
+    # but we do warn
+    if n_len.bit_length() < MIN__STD_KEYSIZE:
+            logging.warning(
+                f"Keysize ({n_len.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+            )
 
     # Step 2
     if not (16 <= e.bit_length() <= 256):
@@ -725,6 +749,9 @@ def fips186_prime_gen(
         if i >= 5 * prime_size:  # Step 4.7
             raise Exception(f"Failure generating p: i = {i}")
 
+    # Broken out of while loop looking for
+    logging.info(f"Prime p found after {i - 1} primality tests.")
+
     # q is much the same, but we also check that it isn't too close to p
     i = 0  # Step 5.1
     while True:
@@ -743,6 +770,7 @@ def fips186_prime_gen(
 
         if gcd(q - 1, e) == 1:  # Step 5.6
             if probably_prime(q, k):
+                logging.info(f"Prime q found after {i - 1} primality tests.")
                 return p, q
 
         i += 1  # Step 5.7

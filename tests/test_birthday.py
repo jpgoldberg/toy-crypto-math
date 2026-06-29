@@ -169,9 +169,11 @@ class TestBirthday:
     @staticmethod
     @pytest.mark.parametrize(
         "bits, p, n",
-        itertools.filterfalse(
-            lambda v: v[2] == 6,  # type: ignore[index]
-            hash_vectors,
+        list(
+            itertools.filterfalse(
+                lambda v: v[2] == 6,  # type: ignore[index]
+                hash_vectors,
+            )
         ),
     )
     def test_wp_data_q(bits: int, p: float, n: int) -> None:

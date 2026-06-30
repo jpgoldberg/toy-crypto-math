@@ -2,6 +2,7 @@ import hashlib
 import logging
 import math
 import secrets
+import sys
 from dataclasses import dataclass
 from hmac import compare_digest
 from math import gcd, lcm
@@ -654,6 +655,17 @@ def key_gen(
     return (key.pub_key, key)
 
 
+def _float_bits(nbits: int, value: float) -> int:
+    """returns int made from nbits leading bits of mantissa of value"""
+    if nbits < 1:
+        raise ValueError("number of bits must be positive")
+
+    nbits = min(nbits, sys.float_info.mant_dig)
+    m, _ = math.frexp(value)
+    m = abs(m)
+    return int(m * (2 << (nbits - 1)))
+
+
 def fips186_prime_gen(
     n_len: int, e: int = 65537, k: int = 4
 ) -> tuple[int, int]:
@@ -682,9 +694,9 @@ def fips186_prime_gen(
     # We don't enforce Step 1 for this toy
     # but we do warn
     if n_len.bit_length() < MIN__STD_KEYSIZE:
-            logging.warning(
-                f"Keysize ({n_len.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
-            )
+        logging.warning(
+            f"Keysize ({n_len.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+        )
 
     # Step 2
     if not (16 <= e.bit_length() <= 256):
@@ -697,9 +709,11 @@ def fips186_prime_gen(
     prime_size = n_len // 2
 
     # The lower bound for a prime is sqrt(2)(2^{(prime_size) – 1})
-    # and is checked in steps 4.4 and 5.4
+    # and is checked in steps 4.4 and 5.4 using the
+    # most signification bits of sqrt(2)
 
-    root2_bits = 0xB505  # the leading bits of sqrt(2)
+    # root2_bits = _float_bits(32, math.sqrt(2))
+    root2_bits = 0xB504F333  # the leading bits of sqrt(2)
 
     # A nasty hack to allow us to work with very small primes
     if prime_size < root2_bits.bit_length():
@@ -707,6 +721,7 @@ def fips186_prime_gen(
         root2_bits >>= root2_bits.bit_length() - prime_size
 
     lower_bound = root2_bits << (prime_size - root2_bits.bit_length())
+    lower_bound += 1  # round up
 
     # See https://github.com/jpgoldberg/toy-crypto-math/issues/27 for
     # discussion of implementation.

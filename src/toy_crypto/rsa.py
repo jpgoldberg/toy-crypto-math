@@ -655,15 +655,24 @@ def key_gen(
     return (key.pub_key, key)
 
 
-def _float_bits(nbits: int, value: float) -> int:
-    """returns int made from nbits leading bits of mantissa of value"""
-    if nbits < 1:
+_MANTISSA_BITS = sys.float_info.mant_dig
+
+
+def _mantissa_to_int(value: float, prec: int = 53) -> int:
+    """returns int made from the precision bits of mantissa of value"""
+    if prec < 1:
         raise ValueError("number of bits must be positive")
 
-    nbits = min(nbits, sys.float_info.mant_dig)
+    if sys.float_info.radix != 2:
+        raise Exception(
+            "WFT? Are you really running this on a non-binary architecture?"
+        )
+
+    value = abs(value)
+
+    lshift = min(prec, _MANTISSA_BITS) - 1
     m, _ = math.frexp(value)
-    m = abs(m)
-    return int(m * (2 << (nbits - 1)))
+    return int(m * (2 << lshift))
 
 
 def fips186_prime_gen(
@@ -711,9 +720,12 @@ def fips186_prime_gen(
     # The lower bound for a prime is sqrt(2)(2^{(prime_size) – 1})
     # and is checked in steps 4.4 and 5.4 using the
     # most signification bits of sqrt(2)
+    # See https://github.com/jpgoldberg/toy-crypto-math/issues/27 for
+    # discussion of implementation.
 
-    # root2_bits = _float_bits(32, math.sqrt(2))
+    # root2_bits = _mantissa_to_int(value=math.sqrt(2), prec = 32)
     root2_bits = 0xB504F333  # the leading bits of sqrt(2)
+    root2_bits += 1  # Round up so we never allow something we shouldn't
 
     # A nasty hack to allow us to work with very small primes
     if prime_size < root2_bits.bit_length():
@@ -721,10 +733,6 @@ def fips186_prime_gen(
         root2_bits >>= root2_bits.bit_length() - prime_size
 
     lower_bound = root2_bits << (prime_size - root2_bits.bit_length())
-    lower_bound += 1  # round up
-
-    # See https://github.com/jpgoldberg/toy-crypto-math/issues/27 for
-    # discussion of implementation.
 
     # Standard says p and q must differ within their 100 most significant
     # bits, but that prevents us from generating some of our standard defying

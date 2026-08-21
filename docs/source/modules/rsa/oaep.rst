@@ -33,7 +33,7 @@ an invitation to use it that way.
 Examples
 =========
 
-RSA keys used with OAEP need to have moduli large enough to handle a couple of hash digests and a few other bytes, so we will use a 1024-bit key for our examples.
+RSA keys used with OAEP need to have moduli large enough to handle a couple of hash digests and a few other bytes, so we will use a 2048-bit key for our examples.
 
 .. testcode::
     :hide:
@@ -83,8 +83,8 @@ Just showing that the key exists and is the right size.
     pub2048 = key2048.pub_key
     assert  2048 - 7 < pub2048.N.bit_length() <= 2048
 
-And lets demo an unfortunate (unless you are an attacker) property of primitive 
-RSA.
+And let's demo an unfortunate (unless you are an attacker)
+property of primitive RSA.
 Our primitive encryption and decryption functions take and yield integers
 
 .. testcode::
@@ -124,7 +124,7 @@ A (very limited) choice of hashes
 
 For my purposes, I could have just hardcoded use of
 :py:func:`hashlib.sha256` or a more modern one,
-but most of published test vectors
+but most published test vectors
 for RSA-OAEP use :py:func:`hashlib.sha1`.
 
 .. autodata:: HashFunc

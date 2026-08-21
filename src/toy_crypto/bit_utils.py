@@ -1,5 +1,5 @@
 """
-Various utilities for manipulationg bit-like things.
+Various utilities for manipulating bit-like things.
 
 The utilities here are most subject to change
 as many where just quick things I needed.
@@ -100,7 +100,7 @@ def bit_index(n: int, k: int, b: bool | int = 1) -> int | None:
         return bit_index_linear(n, k, b)
 
     mid_index = bl // 2
-    midpoint = int(1 << mid_index)
+    midpoint = 1 << mid_index
     upper, lower = divmod(n, midpoint)
 
     # Debugging check against alternative way to compute upper and lower

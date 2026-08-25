@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Tested with Python 3.14
 - `nt.rabin_miller_witness` to return witness that proved compositeness.
+
+### Deprecations
+
+- The entire wycheproof module is deprecated
+
+### Fixed
+
+- wycheproof methods work with versions of Wycheproof data that use the `CompressedHexBytes` type.
   
 ### Improved
 

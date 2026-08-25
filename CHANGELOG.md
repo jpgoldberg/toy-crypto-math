@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   
 ### Improved
 
+- Improved lower bound for RSA prime selection
 - Improved test automation for multiple versions of Python
 - Other improvements in building and testing automations
 

@@ -8,11 +8,11 @@ This module includes utilities for working with Sunzi's Remainder Theorem
 better known as the Chinese Remainder Theorem.
 """
 
-from typing import cast
-import math
 import logging
+import math
 from collections.abc import Collection, Sequence
 from dataclasses import dataclass
+from typing import cast
 
 from ..types import PositiveInt
 from . import egcd

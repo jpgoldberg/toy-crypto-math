@@ -14,13 +14,12 @@ try:
 except ImportError:
     from typing_extensions import deprecated  # novermin
 
+import logging
+
 import primefac
 
-from .. import rand
-from .. import types
+from .. import rand, types
 from ..utils import export
-
-import logging
 
 logging.getLogger(__name__)
 

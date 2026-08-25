@@ -15,7 +15,7 @@ logging.getLogger(__name__)
 
 _DEFAULT_E = 65537
 
-MIN__STD_KEYSIZE: Final[int] = 2048
+MIN_STD_KEYSIZE: Final[int] = 2048
 """
 Minimum standard keysize in bits
 
@@ -255,9 +255,9 @@ class Oaep:
 class PublicKey:
     def __init__(self, modulus: int, public_exponent: int) -> None:
         """Public key from public values."""
-        if modulus.bit_length() < MIN__STD_KEYSIZE:
+        if modulus.bit_length() < MIN_STD_KEYSIZE:
             logging.warning(
-                f"Keysize ({modulus.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+                f"Keysize ({modulus.bit_length()}) is smaller than required ({MIN_STD_KEYSIZE})"
             )
         self._N = modulus
         self._e = public_exponent
@@ -288,7 +288,7 @@ class PublicKey:
         finite group mod N, self._N would be converted to that before
         comparison and self._N ≡ 0 (mod self._N).
         """
-        if not int(message) < self._N:
+        if not int(message) < self._N:  # type: ignore[unnecessary-type-conversion]
             raise ValueError("Message too big")
 
         return pow(base=message, exp=self._e, mod=self._N)
@@ -392,9 +392,9 @@ class PrivateKey:
         self._e = pub_exponent
 
         self._N = self._p * self._q
-        if self._N.bit_length() < MIN__STD_KEYSIZE:
+        if self._N.bit_length() < MIN_STD_KEYSIZE:
             logging.warning(
-                f"Keysize ({self._N.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+                f"Keysize ({self._N.bit_length()}) is smaller than required ({MIN_STD_KEYSIZE})"
             )
         self._pubkey = PublicKey(self._N, self._e)
 
@@ -451,7 +451,7 @@ class PrivateKey:
         :param ciphertext: Ciphertext as :py:class:`int`
         :raises ValueError: if **ciphertext** is out of range for this key.
         """
-        ciphertext = int(ciphertext)  # See comment in PublicKey.encrypt()
+        ciphertext = int(ciphertext)  # type: ignore[unnecessary-type-conversion]
 
         if ciphertext < 1 or ciphertext >= self.pub_key.N:
             raise ValueError("ciphertext is out of range")
@@ -702,9 +702,9 @@ def fips186_prime_gen(
 
     # We don't enforce Step 1 for this toy
     # but we do warn
-    if n_len.bit_length() < MIN__STD_KEYSIZE:
+    if n_len.bit_length() < MIN_STD_KEYSIZE:
         logging.warning(
-            f"Keysize ({n_len.bit_length()}) is smaller than required ({MIN__STD_KEYSIZE})"
+            f"Keysize ({n_len.bit_length()}) is smaller than required ({MIN_STD_KEYSIZE})"
         )
 
     # Step 2

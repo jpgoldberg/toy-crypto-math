@@ -9,6 +9,8 @@
 Wycheproof
 =================
 
+.. deprecated:: 0.6.2 Use pyca_'s test framework instead.
+
 .. py:module:: toy_crypto.wycheproof
     :synopsis: Utilities for loading and using Wycheproof project data
 

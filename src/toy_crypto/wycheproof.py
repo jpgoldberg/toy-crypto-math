@@ -1,10 +1,26 @@
+# ruff: noqa: E402
 """Loading and parsing Wycheproof test data.
+
+.. version-deprecated:: 0.6.2 Use pyca's test functions instead
 
 Assumes you have a local copy, clone (submodule) of
 https://github.com/C2SP/wycheproof
 
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
+
+import warnings
+import zlib
+
+# Google's AI suggested this to deprecate module
+# I haven't tinkered with tests of this.
+warnings.warn(
+    "The 'wycheproof' module is deprecated shortly."
+    "Consider using the test framework from pyca instead.",
+    category=DeprecationWarning,
+    stacklevel=2,
+)
+
 
 import json
 from collections.abc import Iterator, Mapping, Sequence, Set
@@ -86,6 +102,9 @@ def deserialize_top_level(
             case "EcCurve" | "MdName":
                 # These are meant to be strings
                 pass
+            case "CompressedHexBytes":
+                properties[p] = zlib.decompress(bytes.fromhex(s))
+
             case _:
                 logging.info(f"'{p}' has unexpected format: {formats[p]}")
                 pass

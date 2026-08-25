@@ -6,6 +6,8 @@
 Usage
 =================
 
+.. deprecated:: 0.6.2 Use pyca_'s test framework instead.
+
 .. currentmodule:: toy_crypto.wycheproof
 
 This document walks through a concrete example.

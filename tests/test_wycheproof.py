@@ -77,7 +77,7 @@ class TestAssumptions(unittest.TestCase):
         # https://github.com/C2SP/wycheproof/blob/main/doc/formats.md#data-types
         known = [
             "HexBytes", "BigInt", "Der", "Pem",
-            "Asn", "EcCurve", "MdName",
+            "Asn", "EcCurve", "MdName", "CompressedHexBytes",
             ]  # fmt: skip
 
         # Until https://github.com/C2SP/wycheproof/issues/165 is resolved

@@ -9,6 +9,7 @@ try:
 except ImportError:
     from typing_extensions import deprecated  # novermin
 from .bit_utils import hamming_distance
+from .rand import choices
 from .types import ValueRange
 from .utils import FrozenBidict
 
@@ -147,6 +148,16 @@ class Alphabet:
         Invalid input may lead to a KeyError
         """
         return self.add(a, self.inverse(b))
+
+    def keygen(self, length: int) -> str:
+        """Generate a random key of length length.
+
+        .. versionadded:: 0.6.2
+        
+        """
+
+        s = choices(self.alphabet, k=length)
+        return "".join(s)
 
 
 class Cipher:

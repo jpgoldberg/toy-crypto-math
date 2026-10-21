@@ -153,7 +153,7 @@ class Alphabet:
         """Generate a random key of length length.
 
         .. versionadded:: 0.6.2
-        
+
         """
 
         s = choices(self.alphabet, k=length)

@@ -2,6 +2,7 @@ import base64
 import sys
 import unittest
 from collections import namedtuple
+from collections.abc import Mapping, Sequence
 from math import gcd, lcm
 
 import pytest
@@ -41,16 +42,18 @@ class TestCitm:
 
             self.test_data: list[tuple[int, int]] = []
 
-    e = 17
 
     patty = Critter((107, 151), 16157, 1403)
-    patty.test_data = [(1234, 8900)]
+    # pyrefly: ignore[bad-assignment]
+    patty.test_data: Sequence = [(1234, 8900)]
 
     molly = Critter((97, 43), 4171, 593)
-    molly.test_data = [(1313, 530), (1729, 2826)]
+    # pyrefly: ignore[bad-assignment]
+    molly.test_data: Sequence = [(1313, 530), (1729, 2826)]
 
     mr_talk = Critter((47, 89), 4183, 1905)
-    mr_talk.test_data = [(1729, 2016)]
+    # pyrefly: ignore[bad-assignment]
+    mr_talk.test_data: Sequence = [(1729, 2016)]
 
     def test_encrypt(self) -> None:
         for critter in [self.patty, self.molly, self.mr_talk]:
@@ -256,7 +259,7 @@ class TestOaep(unittest.TestCase):
     exponent = 65537
 
     # test vectors from https://github.com/bdauvergne/python-pkcs1/
-    pkcs_vector: dict[str, bytes] = {
+    pkcs_vector: Mapping[str, bytes] = {
         "prime1": bytes.fromhex(
             "ee cf ae 81 b1 b9 b3 c9 08 81 0b 10 a1 b5 60 01"
             "99 eb 9f 44 ae f4 fd a4 93 b8 1a 9e 3d 84 f6 32"
@@ -612,9 +615,7 @@ class TestKeyGen:
 
             p_remainder = pb[nbytes + 1] & mask
             q_remainder = qb[nbytes + 1] & mask
-            if q_remainder != p_remainder:
-                return True
-            return False
+            return q_remainder != p_remainder
 
         vectors: dict[int, int] = {
             2048: 100,

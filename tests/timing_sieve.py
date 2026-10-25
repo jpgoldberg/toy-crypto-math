@@ -6,7 +6,7 @@ PROJECT_PATH = os.getcwd()
 SOURCE_PATH = os.path.join(PROJECT_PATH, "src")
 sys.path.append(SOURCE_PATH)
 
-from toy_crypto.sieve import BaSieve  # noqa: E402
+from toy_crypto.sieve import BaSieve
 
 setup = """
 from toy_crypto.sieve import Sieve

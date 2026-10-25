@@ -3,7 +3,6 @@ import sys
 import unittest
 from collections import namedtuple
 from math import gcd, lcm
-from typing import Optional
 
 import pytest
 
@@ -34,7 +33,7 @@ class TestCitm:
             self,
             factors: tuple[int, int],
             expected_N: int,
-            expected_d: Optional[int] = None,
+            expected_d: int | None = None,
         ) -> None:
             self.factors = factors
             self.expected_N = expected_N

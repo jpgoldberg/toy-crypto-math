@@ -3,7 +3,7 @@ import secrets
 from bisect import bisect
 from collections.abc import MutableSequence, Sequence
 from itertools import accumulate, repeat
-from typing import Any, Optional
+from typing import Any
 
 
 def randrange(*args: int) -> int:
@@ -80,9 +80,9 @@ def random() -> float:
 
 def choices[T](
     population: Sequence[T],
-    weights: Optional[Sequence[float]] = None,
+    weights: Sequence[float] | None = None,
     *,
-    cum_weights: Optional[Sequence[float]] = None,
+    cum_weights: Sequence[float] | None = None,
     k: int = 1,
 ) -> Sequence[T]:
     """Return a k sized list of population elements chosen with replacement.

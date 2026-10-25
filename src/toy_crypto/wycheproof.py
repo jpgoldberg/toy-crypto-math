@@ -1,4 +1,3 @@
-# ruff: noqa: E402
 """Loading and parsing Wycheproof test data.
 
 .. version-deprecated:: 0.6.2 Use pyca's test functions instead
@@ -52,7 +51,7 @@ type StrDict = dict[str, object]
 def is_strdict(val: object) -> TypeGuard[dict[str, object]]:
     if not isinstance(val, dict):
         return False
-    return all((isinstance(k, str) for k in val.keys()))
+    return all(isinstance(k, str) for k in val.keys())
 
 
 type JsonObject = dict[str, JsonValue]
@@ -64,11 +63,11 @@ def is_jsonvalue(val: object) -> TypeGuard[JsonValue]:
         return True
     if isinstance(val, dict):
         # This does not check values in dict
-        return all((isinstance(k, str) for k in val.keys()))
+        return all(isinstance(k, str) for k in val.keys())
     if isinstance(val, list):
         # This does recurse through lists of lists,
         # but we don't expect too many of those
-        return all((is_jsonvalue(v) for v in val))
+        return all(is_jsonvalue(v) for v in val)
     return False
 
 
@@ -107,7 +106,6 @@ def deserialize_top_level(
 
             case _:
                 logging.info(f"'{p}' has unexpected format: {formats[p]}")
-                pass
 
 
 class TestCase:
@@ -199,9 +197,9 @@ class TestCase:
         if self.comment != "":
             s += f" ({self.comment})"
         s += f"; {self._result}"
-        flag_repr = f"{repr(self.flags)}" if self.flags else "None"
+        flag_repr = f"{self.flags!r}" if self.flags else "None"
         s += f"; flags: {flag_repr}"
-        s += f"; other: {repr(self._fields)}"
+        s += f"; other: {self._fields!r}"
 
         return s
 

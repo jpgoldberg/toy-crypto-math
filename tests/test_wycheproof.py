@@ -103,9 +103,7 @@ class TestTests:
         formats = data.formats
         assert "privateExponent" in formats
 
-        assert data.header == str(
-            "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
-        )
+        assert data.header == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
 
         for group in data.groups:
             privateKey = group.other_data["privateKey"]

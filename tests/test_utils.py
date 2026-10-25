@@ -61,7 +61,7 @@ class TestXor:
     def test_iter(self) -> None:
         pad = bytes.fromhex("00 36 5C")
         p_modulus = len(pad)
-        single = list(range(0, 256))
+        single = list(range(256))
         s_modulus = len(single)
         message: Iterator[Byte] = iter(single * 10)
 

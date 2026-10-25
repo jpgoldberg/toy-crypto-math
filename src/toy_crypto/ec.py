@@ -1,7 +1,7 @@
 """Simple elliptic curve groups."""
 
 from functools import cached_property
-from typing import Optional, Self
+from typing import Self
 
 from .utils import export
 
@@ -12,9 +12,9 @@ use of Self is minimal.
 https://github.com/python/mypy/labels/topic-self-types
 """
 
-from .bit_utils import bits  # noqa: E402
-from .nt import Modulus as Modulus  # noqa: E402
-from .nt import is_modulus, mod_sqrt  # noqa: E402
+from .bit_utils import bits
+from .nt import Modulus as Modulus
+from .nt import is_modulus, mod_sqrt
 
 __all__: list[str] = []  # Will be added to along the way
 
@@ -39,7 +39,7 @@ class Curve:
         if not is_modulus(self.p):
             raise ValueError("Bad modulus p")
 
-        self._pai: Optional[Point] = None
+        self._pai: Point | None = None
 
         # This assumes (without checking) that the curve has good parameters
         # and that a generator (base point) has been chosen correctly/
@@ -92,7 +92,7 @@ class Curve:
 
         return f"y^2 = x^3 {ax} {b} (mod {self._p})"
 
-    def compute_y(self, x: int) -> Optional[tuple[int, int]]:
+    def compute_y(self, x: int) -> tuple[int, int] | None:
         "Returns pair of y values for x on curve. None otherwise."
         a = self._a
         b = self._b
@@ -331,7 +331,7 @@ class Point:
 
         return P
 
-    def _xy_double(self) -> Optional[tuple[int, int]]:
+    def _xy_double(self) -> tuple[int, int] | None:
         """(x, y) for x, y of doubled point. None if point at infinity
 
         :returns: new coordinates, x and y

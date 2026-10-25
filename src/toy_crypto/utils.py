@@ -6,19 +6,19 @@ import math
 import sys
 from base64 import a85encode
 from collections.abc import (
+    Callable,
     Hashable,
     ItemsView,
     Iterator,
     KeysView,
     Mapping,
     Sequence,
+    ValuesView,
 )
 from hashlib import blake2b
 from typing import (
-    Callable,
     Protocol,
     Self,
-    ValuesView,
     cast,
     runtime_checkable,
 )
@@ -302,7 +302,7 @@ def export[F: SuppprtsName](fn: F) -> F:
     if hasattr(mod, "__all__"):
         mod.__all__.append(name)
     else:
-        setattr(mod, "__all__", [name])
+        mod.__all__ = [name]
     return fn
 
 

@@ -3,7 +3,7 @@ from collections.abc import Callable, KeysView, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from functools import wraps
-from typing import Any, Generic, Optional, Protocol, TypeAlias, TypeVar, cast
+from typing import Any, Generic, Protocol, TypeAlias, TypeVar, cast
 
 from .utils import hash_bytes
 
@@ -123,8 +123,8 @@ class Ind(Generic[K]):
         self,
         key_gen: KeyGenerator[K],
         encryptor: Cryptor[K],
-        decryptor: Optional[Cryptor[K]] = None,
-        transition_table: Optional[TransitionTable] = None,
+        decryptor: Cryptor[K] | None = None,
+        transition_table: TransitionTable | None = None,
     ) -> None:
         """
         A super class for symmetric Indistinguishability games.
@@ -137,8 +137,8 @@ class Ind(Generic[K]):
         self._encryptor = encryptor
         self._decryptor = decryptor if decryptor else self._undefined_decryptor
 
-        self._key: Optional[K] = None
-        self._b: Optional[bool] = None
+        self._key: K | None = None
+        self._b: bool | None = None
         self._state = State.STARTED
 
         self._challenge_ctexts: set[str] = set()
@@ -163,10 +163,10 @@ class Ind(Generic[K]):
     def _undefined_decryptor(self, key: K, ctext: bytes) -> bytes:
         raise StateError("Method not allowed in this game")
         return (  # Compiler should know this is unreachable
-            "Does this ever return?"
-            " No, this never returns,"
-            " And its fate is still unlearned."
-        ).encode()
+            b"Does this ever return?"
+            b" No, this never returns,"
+            b" And its fate is still unlearned."
+        )
 
     @manage_state
     def initialize(self) -> None:

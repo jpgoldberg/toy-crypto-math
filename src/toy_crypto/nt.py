@@ -5,8 +5,8 @@
 import math
 import secrets
 from collections import UserList
-from collections.abc import Iterable, Iterator, Sequence
-from typing import Any, Generator, NewType, Optional, Self, TypeGuard
+from collections.abc import Generator, Iterable, Iterator, Sequence
+from typing import Any, NewType, Self, TypeGuard
 
 try:
     from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
@@ -92,11 +92,11 @@ class FactorList(UserList[tuple[int, int]]):
         self.normalize(check_primes=check_primes)
 
         # property-like things that are computed when first needed
-        self._n: Optional[int] = None
-        self._totient: Optional[int] = None
-        self._radical: Optional[FactorList] = None
-        self._radical_value: Optional[int] = None
-        self._factors_are_prime: Optional[bool] = None
+        self._n: int | None = None
+        self._totient: int | None = None
+        self._radical: FactorList | None = None
+        self._radical_value: int | None = None
+        self._factors_are_prime: bool | None = None
 
     def __repr__(self) -> str:
         s: list[str] = []

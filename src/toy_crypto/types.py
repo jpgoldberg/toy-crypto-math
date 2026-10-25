@@ -9,15 +9,14 @@ This module is probably the least stable of any of these unstable modules.
 import math
 import sys  # for getrecursionlimit
 from abc import ABC, abstractmethod
+from collections.abc import Callable, Sequence, Sized
 from dataclasses import dataclass
 from typing import (
     Annotated,
     Any,
-    Callable,
     NewType,
     Protocol,
-    Sequence,
-    Sized,
+    Self,
     TypeAlias,
     TypeAliasType,
     TypeGuard,
@@ -38,7 +37,7 @@ class AnnotatedType(Protocol):
 
 @runtime_checkable
 class SupportsLe(Protocol):
-    def __le__[T](self: T, __other: T) -> bool: ...
+    def __le__(self, __other: Self) -> bool: ...
 
 
 class Constraint(ABC):
@@ -204,7 +203,7 @@ def make_predicate(
     def predicate(val: object) -> bool:
         if not isinstance(val, base_type):
             return False
-        if not all((c(val) for c in cons)):
+        if not all(c(val) for c in cons):
             return False
         return True
 

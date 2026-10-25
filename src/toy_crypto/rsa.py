@@ -1,10 +1,11 @@
 import hashlib
 import math
 import secrets
+from collections.abc import Callable
 from dataclasses import dataclass
 from hmac import compare_digest
 from math import gcd, lcm
-from typing import Callable, TypeAlias
+from typing import TypeAlias
 
 from . import utils
 from .nt import modinv, probably_prime

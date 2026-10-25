@@ -7,8 +7,8 @@ This is more of a trash heap than a well-thought-out module.
 """
 
 import operator
-from collections.abc import Iterator
-from typing import Any, Callable, Optional, Self, Union
+from collections.abc import Callable, Iterator
+from typing import Any, Self, Union
 
 from .utils import xor
 
@@ -129,8 +129,8 @@ class Bit:
 
     def __init__(self, b: object) -> None:
         self._value: bool = bool(b)
-        self._as_int: Optional[int] = None
-        self._as_bytes: Optional[bytes] = None
+        self._as_int: int | None = None
+        self._as_bytes: bytes | None = None
 
     def __bool__(self) -> bool:
         """Every Bit should be Truthy."""
@@ -162,7 +162,7 @@ class Bit:
         return self._value == ob
 
     @staticmethod
-    def _other_bool(other: object) -> Optional[bool]:
+    def _other_bool(other: object) -> bool | None:
         if isinstance(other, bytes):
             ob = any([b != 0 for b in other])
         else:

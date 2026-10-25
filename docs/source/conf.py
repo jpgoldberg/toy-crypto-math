@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.abspath("../../src"))
 
 import toy_crypto  # noqa
 
-from toy_crypto import __about__  # noqa: E402
+from toy_crypto import __about__
 
 version = __about__.__version__
 

@@ -1,14 +1,13 @@
 import threading
 from abc import ABC, abstractmethod
 from bisect import bisect_right
+from collections.abc import Iterator
 from functools import cache
 from math import isqrt
 from typing import (
     TYPE_CHECKING,
     Any,
-    Iterator,
     Self,
-    Union,
 )
 
 from . import bit_utils
@@ -62,7 +61,7 @@ class Sievish(ABC):
         """
         ...
 
-    _data: Union[bitarray, list[int], int]
+    _data: bitarray | list[int] | int
 
     @property
     @abstractmethod
@@ -461,7 +460,7 @@ class SetSieve(Sievish):
 
     def __int__(self) -> int:
         ip = bisect_right(self._common_data, self._n)
-        result = sum((int(1 << p) for p in self._common_data[:ip]))
+        result = sum(int(1 << p) for p in self._common_data[:ip])
         return result
 
     @property
@@ -514,7 +513,7 @@ class IntSieve(Sievish):
             size = max_prime
 
         instance = cls.__new__(cls)
-        instance._data = sum((int(1 << p) for p in primes))
+        instance._data = sum(int(1 << p) for p in primes)
         instance._n = size
         instance._count = int(instance._data.bit_count())
         return instance

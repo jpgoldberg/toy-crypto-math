@@ -2,7 +2,7 @@ from collections import UserDict
 from collections.abc import Mapping, Sequence
 from itertools import combinations
 from random import sample
-from typing import Annotated, Any, Optional, TypeAlias
+from typing import Annotated, Any, TypeAlias
 
 try:
     from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
@@ -48,8 +48,8 @@ class Alphabet:
 
     def __init__(
         self,
-        alphabet: Optional[str] = None,
-        pre_baked: Optional[str] = None,
+        alphabet: str | None = None,
+        pre_baked: str | None = None,
     ):
         """
         :param alphabet:
@@ -251,7 +251,7 @@ class SimilarityScores(UserDict[int, list[BitSimilarity]]):
 
     def __init__(self) -> None:
         self.data: dict[int, list[BitSimilarity]] = {}
-        self._best: Optional[int] = None
+        self._best: int | None = None
 
     @staticmethod
     def is_keysize(k: object) -> bool:

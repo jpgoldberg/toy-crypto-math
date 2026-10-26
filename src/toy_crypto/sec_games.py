@@ -3,17 +3,17 @@ from collections.abc import Callable, KeysView, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from functools import wraps
-from typing import Any, Generic, Protocol, TypeAlias, TypeVar, cast
+from typing import Any, Protocol, TypeVar, cast
 
 from .utils import hash_bytes
 
 K = TypeVar("K")
 """Unbounded type variable intended for any type of key."""
 
-KeyGenerator: TypeAlias = Callable[[], K]
+type KeyGenerator[K] = Callable[[], K]
 """To describe key generation functions"""
 
-Cryptor: TypeAlias = Callable[[K, bytes], bytes]
+type Cryptor[K] = Callable[[K, bytes], bytes]
 """To describe encryptor/decryptor functions."""
 
 
@@ -77,7 +77,7 @@ class TransitionTable:
         result = "{\n"
         for key in self.keys():
             result += f"{pad}State.{key.name}:\n"
-            for act in self.table[key].keys():
+            for act in self.table[key]:
                 result += f"{pad * 2}Action.{act.name}"
                 result += f" -> State.{self.table[key][act].name}\n"
         result += "}"
@@ -113,7 +113,7 @@ def manage_state[F: Callable[..., Any]](fn: F) -> F:
     return cast(F, decorator)
 
 
-class Ind(Generic[K]):
+class Ind[K]:
     T_TABLE: TransitionTable
 
     #: Game does not track which challenge texts have been created

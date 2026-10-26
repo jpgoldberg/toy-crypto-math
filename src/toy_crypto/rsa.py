@@ -3,6 +3,7 @@ import logging
 import math
 import secrets
 import sys
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from hmac import compare_digest
 from math import gcd, lcm
@@ -39,7 +40,7 @@ class DecryptionError(Exception):
     """
 
 
-HashFunc: TypeAlias = Callable[
+type HashFunc = Callable[
     [bytes],
     hashlib._hashlib.HASH,  # type: ignore[name-defined,attr-defined]
 ]
@@ -51,7 +52,7 @@ HashFunc: TypeAlias = Callable[
     and so may break at any time in the future.
 """
 
-MgfFunc: TypeAlias = Callable[[bytes, int, str], bytes]
+type MgfFunc = Callable[[bytes, int, str], bytes]
 """Type for RFC8017 Mask Generation Function."""
 
 
@@ -77,9 +78,7 @@ class Oaep:
     def are_unsafe_messages_allowed(cls) -> bool:
         """Does what it says on the tin."""
 
-        if cls._unsafe_messages == "allow":
-            return True
-        return False
+        return cls._unsafe_messages == "allow"
 
     @classmethod
     def _unsafe_msg(cls, message: str) -> str:
@@ -178,7 +177,7 @@ class Oaep:
         mask = bytes(t[:length])
         return mask
 
-    KNOWN_HASHES: dict[str, HashInfo] = {
+    KNOWN_HASHES: Mapping[str, HashInfo] = {
         "sha256": HashInfo(
             hashlib_name="sha256",
             function=hashlib.sha256,
@@ -195,7 +194,7 @@ class Oaep:
     }
     """Hashes known for OAEP. keys will be hashlib names."""
 
-    KNOWN_MGFS: dict[str, MgfInfo] = {
+    KNOWN_MGFS: Mapping[str, MgfInfo] = {
         "mgf1SHA256": MgfInfo(
             algorithm="id_mgf1", hashAlgorithm="sha256", function=mgf1
         ),
@@ -524,7 +523,7 @@ class PrivateKey:
         # Step 2.b
         try:
             m = self.decrypt(c)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             raise DecryptionError(
                 Oaep._unsafe_msg(f"Primitive decryption error: {e}")
             )
@@ -640,8 +639,8 @@ def key_gen(
     while True:
         try:
             p, q = fips186_prime_gen(key_size, e=e, k=k)
-        except Exception as ex:
-            raise Exception(f"prime creation error: {ex}")
+        except Exception as ex:  # noqa: BLE001
+            raise Exception(f"prime creation error: {ex}")  # noqa: TRY002
         key = PrivateKey(p, q, e)
         if key._d.bit_length() < key_size // 2:
             continue
@@ -650,7 +649,7 @@ def key_gen(
     m = secrets.randbelow(key._N - 2) + 1
     c = key.pub_key.encrypt(m)
     if key.decrypt(c) != m:
-        raise Exception("pair-wise consistency failure")
+        raise Exception("pair-wise consistency failure")  # noqa: TRY002
 
     return (key.pub_key, key)
 
@@ -764,16 +763,13 @@ def fips186_prime_gen(
         if p < lower_bound:
             continue
 
-        if gcd(p - 1, e) == 1:  # Step 4.5
+        if gcd(p - 1, e) == 1:  # Step 4.5  # noqa: SIM102
             if probably_prime(p, k):
                 break
 
         i += 1  # Step 4.6
         if i >= 5 * prime_size:  # Step 4.7
-            raise Exception(f"Failure generating p: i = {i}")
-
-    # Broken out of while loop looking for
-    logging.info(f"Prime p found after {i - 1} primality tests.")
+            raise Exception(f"Failure generating p: i = {i}")  # noqa: TRY002
 
     # q is much the same, but we also check that it isn't too close to p
     i = 0  # Step 5.1
@@ -791,7 +787,7 @@ def fips186_prime_gen(
         if (p >> shift) == (q >> shift):  # Step 5.5
             continue
 
-        if gcd(q - 1, e) == 1:  # Step 5.6
+        if gcd(q - 1, e) == 1:  # Step 5.6  # noqa: SIM102
             if probably_prime(q, k):
                 logging.info(f"Prime q found after {i - 1} primality tests.")
                 return p, q
@@ -799,7 +795,7 @@ def fips186_prime_gen(
         i += 1  # Step 5.7
 
         if i >= 5 * prime_size:  # Step 5.8
-            raise Exception(f"Failure generating q: i = {i}")
+            raise Exception(f"Failure generating q: i = {i}")  # noqa: TRY002
 
 
 def estimate_strength(key_size: int) -> int:

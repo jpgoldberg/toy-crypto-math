@@ -1,8 +1,7 @@
-from collections.abc import Sequence
 import threading
 from abc import ABC, abstractmethod
 from bisect import bisect_right
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from functools import cache
 from math import isqrt
 from typing import (

@@ -220,9 +220,9 @@ class TestMath:
                 for root in expected:
                     assert a == root * root % m
 
-            e: list[int] = [] if expected is None else sorted(list(expected))
+            e: list[int] = [] if expected is None else sorted(expected)
             ret = nt.mod_sqrt(a, m)
-            r: list[int] = [] if ret is None else sorted(list(ret))
+            r: list[int] = [] if ret is None else sorted(ret)
             assert e == r
 
     def test_modinv(self) -> None:
@@ -261,10 +261,7 @@ class TestMath:
 class TestPrimeTesting(unittest.TestCase):
     @pytest.mark.slow
     def test_probably_prime(self) -> None:
-        try:
-            data = WP_DATA.load("primality_test.json")
-        except Exception as e:
-            raise Exception(f"Failed to load test vectors: {e}")
+        data = WP_DATA.load("primality_test.json")
 
         for group in data.groups:
             for case in group.tests:
@@ -277,10 +274,7 @@ class TestPrimeTesting(unittest.TestCase):
                     value = case.other_data["value"]
                     assert isinstance(value, int)
 
-                    try:
-                        result = nt.probably_prime(value, k=5)
-                    except Exception as e:
-                        assert False, f"Runtime error in {case}: {e}"
+                    result = nt.probably_prime(value, k=5)
                     if expected:
                         assert result, f"False negative: {case}"
                     else:
@@ -288,11 +282,7 @@ class TestPrimeTesting(unittest.TestCase):
 
     @pytest.mark.statistical
     def test_worst_cases(self) -> None:
-        try:
-            data = WP_DATA.load("primality_test.json")
-        except Exception as e:
-            raise Exception(f"Failed to load test vectors: {e}")
-
+        data = WP_DATA.load("primality_test.json")
         for group in data.groups:
             for case in group.tests:
                 if not case.has_flag("WorstCaseMillerRabin"):
@@ -305,10 +295,7 @@ class TestPrimeTesting(unittest.TestCase):
                     value = case.other_data["value"]
                     assert isinstance(value, int)
 
-                    try:
-                        result = nt.probably_prime(value, k=4)
-                    except Exception as e:
-                        assert False, f"Runtime error in {case}: {e}"
+                    result = nt.probably_prime(value, k=4)
                     if expected:
                         assert result, f"False negative: {case}"
                     else:
@@ -325,10 +312,7 @@ class TestPrimeTesting(unittest.TestCase):
 
     @pytest.mark.slow
     def test_mb_witness(self) -> None:
-        try:
-            data = WP_DATA.load("primality_test.json")
-        except Exception as e:
-            raise Exception(f"Failed to load test vectors: {e}")
+        data = WP_DATA.load("primality_test.json")
 
         for group in data.groups:
             for case in group.tests:
@@ -347,7 +331,7 @@ class TestPrimeTesting(unittest.TestCase):
                 if n % proof == 0:
                     continue  # it is a divisor
 
-                r, s = self._mr_reduction(n)
+                r, _ = self._mr_reduction(n)
                 x = pow(proof, 2, n)
                 assert x != 1
                 assert x != n - 1

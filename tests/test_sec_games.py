@@ -189,7 +189,7 @@ class TestInd:
         _ = challenger.decrypt(cct1)
         ctext = challenger.encrypt_one(m0, m1)
 
-        with pytest.raises(Exception):
+        with pytest.raises(StateError):
             _ = challenger.decrypt(ctext)
 
         # check that both encrypt and decrypt can still be called
@@ -207,7 +207,7 @@ class TestInd:
         # This call should be allowed
         _ = challenger.decrypt(ctext)
 
-        with pytest.raises(Exception):
+        with pytest.raises(StateError):
             _ = challenger.decrypt(new_ctext)
 
 

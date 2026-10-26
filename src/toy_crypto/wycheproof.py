@@ -8,8 +8,11 @@ https://github.com/C2SP/wycheproof
 Adapted from https://appsec.guide/docs/crypto/wycheproof/wycheproo_example/
 """
 
+import logging
 import warnings
 import zlib
+
+logger = logging.getLogger(__name__)
 
 # Google's AI suggested this to deprecate module
 # I haven't tinkered with tests of this.
@@ -22,7 +25,8 @@ warnings.warn(
 
 
 import json
-from collections.abc import Iterator, Mapping, Sequence, Set
+from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Set as AbstractSet
 from copy import copy
 from pathlib import Path
 from typing import TypeGuard, no_type_check
@@ -51,7 +55,7 @@ type StrDict = dict[str, object]
 def is_strdict(val: object) -> TypeGuard[dict[str, object]]:
     if not isinstance(val, dict):
         return False
-    return all(isinstance(k, str) for k in val.keys())
+    return all(isinstance(k, str) for k in val)
 
 
 type JsonObject = dict[str, JsonValue]
@@ -63,7 +67,7 @@ def is_jsonvalue(val: object) -> TypeGuard[JsonValue]:
         return True
     if isinstance(val, dict):
         # This does not check values in dict
-        return all(isinstance(k, str) for k in val.keys())
+        return all(isinstance(k, str) for k in val)
     if isinstance(val, list):
         # This does recurse through lists of lists,
         # but we don't expect too many of those
@@ -105,7 +109,7 @@ def deserialize_top_level(
                 properties[p] = zlib.decompress(bytes.fromhex(s))
 
             case _:
-                logging.info(f"'{p}' has unexpected format: {formats[p]}")
+                logger.info(f"'{p}' has unexpected format: {formats[p]}")
 
 
 class TestCase:
@@ -121,7 +125,7 @@ class TestCase:
 
         result = data.pop("result", None)
         if not isinstance(result, str):
-            raise ValueError('Missing or garbled "result"')
+            raise TypeError('Missing or garbled "result"')
 
         if result not in ("valid", "invalid", "acceptable"):
             raise ValueError("Weird result status")
@@ -133,7 +137,7 @@ class TestCase:
 
         t_flags = data.pop("flags", [])
         assert isinstance(t_flags, list)
-        self._flags: Set[str] = set(t_flags)
+        self._flags: AbstractSet[str] = set(t_flags)
 
         self._fields = data
 
@@ -183,7 +187,7 @@ class TestCase:
         return self._comment
 
     @property
-    def flags(self) -> Set[str]:
+    def flags(self) -> AbstractSet[str]:
         """The set of flags that are set for the case."""
         return self._flags
 
@@ -343,7 +347,7 @@ class TestData:
             header = " ".join(header)
         self._header = header
 
-        src_notes = _data.get("Notes", dict())
+        src_notes = _data.get("Notes", {})
         assert is_strdict(src_notes)
         self._notes = {
             name: Note(name, note) for name, note in src_notes.items()
@@ -550,24 +554,24 @@ class Loader:
         try:
             with open(path, "r") as f:
                 wycheproof_json = json.loads(f.read())
-        except Exception as e:
-            raise Exception(f"failed to load JSON: {e}")
+        except Exception as e:  # noqa: BLE001
+            raise Exception(f"failed to load JSON: {e}")  # noqa: TRY002
 
         scheme_file = wycheproof_json["schema"]
         scheme_path = Path(self._schemata_dir / scheme_file)
 
-        scheme: Mapping[str, object] = dict()
+        scheme: Mapping[str, object] = {}
         schema_status: str = "not-loaded"
-        formats: Mapping[str, str] = dict()
+        formats: Mapping[str, str] = {}
         try:
             with open(scheme_path, "r") as s:
                 scheme = json.load(s)
                 schema_status = "loaded"
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             msg = f"Schema loading failed: {e}"
             if strict_validation:
-                raise Exception(msg)
-            logging.warning(msg)
+                raise Exception(msg)  # noqa: TRY002
+            logger.warning(msg)
 
         if schema_status == "loaded":
             validator = validators.Draft202012Validator(
@@ -577,11 +581,11 @@ class Loader:
             try:
                 validator.validate(wycheproof_json)
                 schema_status = "valid"
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 msg = f"JSON validation failed: {e}"
                 if strict_validation:
-                    raise Exception(msg)
-                logging.warning(f"JSON validation failed: {e}")
+                    raise Exception(msg)  # noqa: TRY002
+                logger.warning(f"JSON validation failed: {e}")
 
             if schema_status == "valid":
                 schemata_uri = (self._schemata_dir / "ALL_YOUR_BASE").as_uri()

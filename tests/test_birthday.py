@@ -33,7 +33,7 @@ class TestBirthday:
         0.001, 0.01, 0.25, 0.50, 0.75,
     ]  # fmt: skip
 
-    hash_vectors: ClassVar[list[HashVector]]= []
+    hash_vectors: ClassVar[list[HashVector]] = []
     """Data from Wikipedia Birthday Attack article."""
     hv16: Sequence[HashVector] = [
         HashVector(16, p, n)

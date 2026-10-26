@@ -1,4 +1,5 @@
 import sys
+from collections.abc import Sequence
 
 import pytest
 
@@ -7,7 +8,7 @@ from toy_crypto import bit_utils
 
 @pytest.fixture
 def sets() -> dict[str, set[int]]:
-    sets: dict[str, set[int]] = dict()
+    sets: dict[str, set[int]] = {}
     sets["universe"] = set(range(100))
 
     sets["primes"] = {
@@ -95,7 +96,7 @@ class TestPyBitArray:
 
 class TestOtherBits:
     def bits(self) -> None:
-        vectors = [
+        vectors: Sequence[tuple[int, Sequence[int]]] = [
             (0b1101, [1, 0, 1, 1]),
             (1, [1]),
             (0, []),
@@ -117,7 +118,7 @@ class TestOtherBits:
 class TestIntBits:
     """Tests for the bit manipulation of ints"""
 
-    vectors: list[tuple[int, tuple[int, bool], int]] = [
+    vectors: Sequence[tuple[int, tuple[int, bool], int]] = [
         (0, (0, True), 1),
         (1, (0, True), 1),
         (1, (0, False), 0),

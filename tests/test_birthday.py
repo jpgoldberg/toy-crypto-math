@@ -1,7 +1,8 @@
 import itertools
 import math
 import sys
-from typing import NamedTuple
+from collections.abc import Sequence
+from typing import ClassVar, NamedTuple
 
 import pytest
 
@@ -15,7 +16,7 @@ class HashVector(NamedTuple):
 
 
 class TestBirthday:
-    vectors: list[tuple[int, int, float]] = [
+    vectors: ClassVar[list[tuple[int, int, float]]] = [
         (
             23,
             365,
@@ -27,28 +28,28 @@ class TestBirthday:
 
     # data from table in https://en.wikipedia.org/wiki/Birthday_attack
     # tuples are (bits, prob, n)
-    _table_p: list[float] = [
+    _table_p: Sequence[float] = [
         1e-18, 1e-15, 1e-12, 1e-9, 1e-6,
         0.001, 0.01, 0.25, 0.50, 0.75,
     ]  # fmt: skip
 
-    hash_vectors: list[HashVector] = []
+    hash_vectors: ClassVar[list[HashVector]]= []
     """Data from Wikipedia Birthday Attack article."""
-    hv16 = [
-        HashVector(16, p, int(n))
+    hv16: Sequence[HashVector] = [
+        HashVector(16, p, n)
         for p, n in zip(_table_p, [2, 2, 2, 2, 2, 11, 36, 190, 300, 430])
     ]
     hash_vectors.extend(hv16)
 
-    hv32 = [
-        HashVector(32, p, int(n))
+    hv32: Sequence[HashVector] = [
+        HashVector(32, p, n)
         for p, n in zip(
             _table_p, [2, 2, 2, 3, 93, 2900, 9300, 50_000, 77_000, 110_000]
         )
     ]
     hash_vectors.extend(hv32)
 
-    hv64 = [
+    hv64: Sequence[HashVector] = [
         HashVector(64, p, int(n))
         for p, n in zip(
             _table_p,
@@ -60,7 +61,7 @@ class TestBirthday:
     ]  # fmt: skip
     hash_vectors.extend(hv64)
 
-    hv96 = [
+    hv96: Sequence[HashVector] = [
         HashVector(96, p, int(n))
         for p, n in zip(
             _table_p,
@@ -72,7 +73,7 @@ class TestBirthday:
     ]  # fmt: skip
     hash_vectors.extend(hv96)
 
-    hv128 = [
+    hv128: Sequence[HashVector] = [
         HashVector(128, p, int(n))
         for p, n in zip(
             _table_p,
@@ -84,7 +85,7 @@ class TestBirthday:
     ]  # fmt: skip
     hash_vectors.extend(hv128)
 
-    hv192 = [
+    hv192: Sequence[HashVector] = [
         HashVector(192, p, int(n))
         for p, n in zip(
             _table_p,
@@ -96,7 +97,7 @@ class TestBirthday:
     ]  # fmt: skip
     hash_vectors.extend(hv192)
 
-    hv256 = [
+    hv256: Sequence[HashVector] = [
         HashVector(256, p, int(n))
         for p, n in zip(
             _table_p,
@@ -108,7 +109,7 @@ class TestBirthday:
     ]  # fmt: skip
     hash_vectors.extend(hv256)
 
-    k_p50_c365_vectors = [
+    k_p50_c365_vectors: Sequence[tuple[int, int]] = [
         (2, 23), (3, 88), (4, 187), (5, 313),
         (6, 460), (7, 623), (8, 798), (9, 985),
         (10, 1181), (11, 1385), (12, 1596), (13, 1813),

@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 import threading
 from abc import ABC, abstractmethod
 from bisect import bisect_right
@@ -122,7 +123,7 @@ class Sievish(ABC):
     @classmethod
     @abstractmethod
     def from_list[S](
-        cls: type[S], primes: list[int], size: int | None = None
+        cls: type[S], primes: Sequence[int], size: int | None = None
     ) -> S:
         """Returns a new sieve of primes from list.
 

@@ -17,7 +17,7 @@ class TestRandRange:
 
         # could run a more sophisticated statistical test, but
         # let's start with this
-        assert all([c > 0 for c in counts.values()])
+        assert all(c > 0 for c in counts.values())
 
     def test_single_arg(self) -> None:
         top = 20
@@ -31,7 +31,7 @@ class TestRandRange:
 
             counts[r] += 1
 
-        assert all([c > 0 for c in counts.values()])
+        assert all(c > 0 for c in counts.values())
 
 
 def test_random() -> None:

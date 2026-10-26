@@ -42,7 +42,6 @@ class TestCitm:
 
             self.test_data: list[tuple[int, int]] = []
 
-
     patty = Critter((107, 151), 16157, 1403)
     # pyrefly: ignore[bad-assignment]
     patty.test_data: Sequence = [(1234, 8900)]

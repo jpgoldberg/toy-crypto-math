@@ -1,5 +1,6 @@
 # mypy: disable-error-code="type-abstract"
 import sys
+from collections.abc import Sequence
 from typing import assert_type
 
 import pytest
@@ -13,11 +14,11 @@ class Fixed:
     expected30_int = 545925292
     """stringy bitarray for primes below 30"""
 
-    ints: list[tuple[int, int]] = [
+    ints: Sequence[tuple[int, int]] = [
         (30, int("100000100010100010100010101100", 2)),  # 545925292
         (100, 159085582874019712269820766380),
     ]
-    primes100: list[int] = [
+    primes100: Sequence[int] = [
         2, 3, 5, 7, 11, 13, 17, 19,
         23, 29, 31, 37, 41, 43, 47,
         53, 59, 61, 67, 71, 73,
@@ -25,7 +26,7 @@ class Fixed:
     ]  # fmt: skip
     """primes below 100"""
 
-    primes30: list[int] = [
+    primes30: Sequence[int] = [
         2, 3, 5, 7, 11, 13, 17, 19,
         23, 29,
     ]  # fmt: skip
@@ -73,7 +74,7 @@ class Fixed:
 
     @classmethod
     def t_from_list(cls, sc: type[sieve.Sievish]) -> None:
-        vectors: list[tuple[list[int], int]] = [
+        vectors: Sequence[tuple[Sequence[int], int]] = [
             (cls.primes100, 100),
             (cls.primes30, 30),
         ]
@@ -84,8 +85,8 @@ class Fixed:
 
     @classmethod
     def t_nomut(cls, sc: type[sieve.Sievish]) -> None:
-        p30_in = cls.primes30.copy()
-        p100_in = cls.primes100.copy()
+        p30_in = cls.primes30[:]
+        p100_in = cls.primes100[:]
         _ = sc.from_list(cls.primes30)
         _ = sc.from_list(cls.primes100)
         assert cls.primes100 == p100_in

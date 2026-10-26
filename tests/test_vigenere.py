@@ -1,5 +1,6 @@
 import base64
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 import pytest
@@ -22,7 +23,7 @@ class TestCryptionDefault:
             self.ptext = ptext
             self.ctext = ctext
 
-    vectors = [
+    vectors: Sequence[TVector] = [
         TVector(
             "AAAA",
             "ONCE UPON A MIDNIGHT DREARY",
@@ -71,7 +72,7 @@ class TestCryptionCapsOnly:
             self.ptext = ptext
             self.ctext = ctext
 
-    vectors = [
+    vectors: Sequence[TVector] = [
         TVector(
             "AAAA",
             "ONCE UPON A MIDNIGHT DREARY",
@@ -120,7 +121,7 @@ class TestCryptionPrintable:
             self.ptext = ptext
             self.ctext = ctext
 
-    vectors = [
+    vectors: Sequence[TVector] = [
         TVector(
             abc.alphabet[0],
             "ONCE UPON A MIDNIGHT DREARY",
@@ -164,7 +165,7 @@ class TestCryptionCustomAbc:
             self.ptext = ptext
             self.ctext = ctext
 
-    vectors = [
+    vectors: Sequence[TVector] = [
         TVector(
             abc[0],
             "DEAD BEEF BAD 5EED",

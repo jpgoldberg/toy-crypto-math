@@ -52,7 +52,7 @@ class TestAssumptions(unittest.TestCase):
             stem = file.stem
             try:
                 data = LOADER.load(file_name)
-            except Exception as e:
+            except Exception as e:  # ruff: ignore[BLE001]
                 assert False, f"loading error for {file_name}: {e}"
 
             # Are any of these empty?
@@ -103,7 +103,10 @@ class TestTests:
         formats = data.formats
         assert "privateExponent" in formats
 
-        assert data.header == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
+        assert (
+            data.header
+            == "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
+        )
 
         for group in data.groups:
             privateKey = group.other_data["privateKey"]

@@ -1,5 +1,5 @@
 import sys
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 
 import pytest
 
@@ -79,7 +79,7 @@ class TestXor:
 
 
 class TestRsa29Encoding:
-    vectors: list[tuple[str, int]] = [
+    vectors: Sequence[tuple[str, int]] = [
         ("ITS ALL GREEK TO ME", 9201900011212000718050511002015001305),
         (
             "THE MAGIC WORDS ARE SQUEAMISH OSSIFRAGE",

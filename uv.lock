@@ -1,6 +1,6 @@
 version = 1
-revision = 3
-requires-python = ">=3.12"
+revision = 5
+requires-python = ">=3.12.16"
 resolution-markers = [
     "python_full_version >= '3.15' and sys_platform == 'win32'",
     "python_full_version >= '3.15' and sys_platform == 'emscripten'",
@@ -2437,7 +2437,7 @@ lint = [
     { name = "polars", specifier = ">=1.30" },
     { name = "types-docutils", specifier = ">=0.21.0.20241128" },
     { name = "types-seaborn", specifier = ">=0.13.2.20250111" },
-    { name = "vermin", specifier = ">=1.6.0" },
+    { name = "vermin", specifier = ">=1.9.2" },
 ]
 prof = [
     { name = "matplotlib", specifier = ">=3.10.1" },

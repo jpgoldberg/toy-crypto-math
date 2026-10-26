@@ -273,7 +273,7 @@ class BaSieve(Sievish):
         """The number of primes in the sieve."""
         return self._count
 
-    @cache
+    @cache  # noqa: B019
     def nth_prime(self, n: int) -> int:  # pyright: ignore
         assert isinstance(self._common_data, bitarray)
         if n < 1:
@@ -317,8 +317,8 @@ class SetSieve(Sievish):
     the integer or bitarray sieves.
     """
 
-    _base_sieve: list[int] = [2, 3]
-    _common_data = _base_sieve.copy()
+    _base_sieve: Sequence[int] = [2, 3]
+    _common_data = _base_sieve[:]
     _largest_n: int = 3
 
     lock = threading.Lock()

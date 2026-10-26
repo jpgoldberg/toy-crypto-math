@@ -16,8 +16,6 @@ from typing import (
     Any,
     NewType,
     Protocol,
-    Self,
-    TypeAlias,
     TypeAliasType,
     TypeGuard,
     runtime_checkable,
@@ -37,7 +35,7 @@ class AnnotatedType(Protocol):
 
 @runtime_checkable
 class SupportsLe(Protocol):
-    def __le__(self, __other: Self) -> bool: ...
+    def __le__(self, /) -> bool: ...
 
 
 class Constraint(ABC):
@@ -57,8 +55,8 @@ class ValueRange[T: SupportsLe](Constraint):
 
         Use `None` for no minimum or maximum
         """
-        self._min: T | float = -math.inf if min is None else min
-        self._max: T | float = math.inf if max is None else max
+        self._min: T = -math.inf if min is None else min
+        self._max: T = math.inf if max is None else max
 
     @property
     def min(self) -> SupportsLe:
@@ -127,7 +125,7 @@ def _predicate_description(
     return text
 
 
-Predicate: TypeAlias = Callable[[object], bool]
+type Predicate = Callable[[object], bool]
 """Type of (generated) predicates."""
 
 
@@ -135,7 +133,7 @@ def make_predicate(
     name: str,
     # t: NewType | AnnotatedType | type,
     t: object,
-    constraints: Sequence[Constraint] = tuple(),
+    constraints: Sequence[Constraint] = (),
     docstring: bool = True,
 ) -> Predicate:
     """Create predicate from a type and constraints.
@@ -163,6 +161,8 @@ def make_predicate(
 
     The order in which constraints are tested in the generated
     predicate is not defined.
+
+    :raises RecursionError: if TypeAlias unpacking exceeds recursion limit.
     """
 
     cons = tuple(constraints)
@@ -180,7 +180,7 @@ def make_predicate(
         st_loop_count = 0  # Probably not needed, but I feel safer this way
         while not isinstance(st, type):
             if st_loop_count >= _RECURSION_LIMIT:
-                raise Exception("NewTypes went too deep")
+                raise RecursionError("NewTypes went too deep")
             st = st.__supertype__
             st_loop_count += 1
         base_type = st
@@ -190,7 +190,7 @@ def make_predicate(
         tv_loop_count = 0
         while not isinstance(tv, type):
             if tv_loop_count >= _RECURSION_LIMIT:
-                raise Exception("TypeAliases went too deep")
+                raise RecursionError("TypeAliases went too deep")
             tv = tv.__value
             tv_loop_count += 1
         base_type = tv
@@ -203,9 +203,7 @@ def make_predicate(
     def predicate(val: object) -> bool:
         if not isinstance(val, base_type):
             return False
-        if not all(c(val) for c in cons):
-            return False
-        return True
+        return all(c(val) for c in cons)
 
     predicate.__name__ = name
     if docstring:

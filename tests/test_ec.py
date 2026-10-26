@@ -1,4 +1,5 @@
 import sys
+from collections.abc import Mapping
 
 import pytest
 
@@ -20,7 +21,7 @@ class TestSeriousCurve:
     Qx = 146
 
     # Computed using SageMath
-    sage_vectors: dict[int, tuple[int, int]] = {
+    sage_vectors: Mapping[int, tuple[int, int]] = {
         1: (146, 131), 2: (8, 174), 3: (137, 161), 4: (4, 96),
         5: (61, 163), 6: (34, 83), 7: (171, 22), 8: (18, 52),
         9: (174, 180), 10: (77, 133), 11: (186, 75), 12: (136, 46),

@@ -25,7 +25,7 @@ from typing import (
 
 from .types import Byte
 
-logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def digit_count(n: int, base: int = 10) -> int:
@@ -327,7 +327,7 @@ class _Point:
     @classmethod
     def from_n(cls, n: int) -> "_Point":
         if cls.function is None:
-            raise Exception("function has not been defined")
+            raise Exception("function has not been defined")  # noqa: TRY002
         return _Point(n, cls.function(n))
 
     @property
@@ -504,7 +504,7 @@ def find_zero(
         case -1:
             highest_below = new_point
 
-    logging.info(
+    logger.info(
         f"zero in ({highest_below.n}, {lowest_above.n} "
         f"after {call_count} calls to function."
     )
@@ -529,5 +529,5 @@ def find_zero(
             highest_below = new_point
         else:
             lowest_above = new_point
-    logging.info(f"bisection done after {call_count} function calls")
+    logger.info(f"bisection done after {call_count} function calls")
     return lowest_above.n

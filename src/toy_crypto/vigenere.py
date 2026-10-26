@@ -2,7 +2,7 @@ from collections import UserDict
 from collections.abc import Mapping, Sequence
 from itertools import combinations
 from random import sample
-from typing import Annotated, Any, TypeAlias
+from typing import Annotated, Any
 
 try:
     from warnings import deprecated  # novermin # ty: ignore[unresolved-import]
@@ -13,7 +13,7 @@ from .rand import choices
 from .types import ValueRange
 from .utils import FrozenBidict
 
-Letter: TypeAlias = str
+type Letter = str
 """Intended to indicate a str of length 1"""
 
 
@@ -174,7 +174,7 @@ class Cipher:
         if not key:
             raise ValueError("key must not be empty")
 
-        if any([k not in self._alphabet for k in key]):
+        if any(k not in self._alphabet for k in key):
             raise ValueError(
                 "key must be comprised of characters in the alphabet"
             )
@@ -239,7 +239,7 @@ class Cipher:
         return self.crypt(ciphertext, mode="decrypt")
 
 
-BitSimilarity: TypeAlias = Annotated[float, ValueRange(-4.0, 4.0)]
+type BitSimilarity = Annotated[float, ValueRange(-4.0, 4.0)]
 """A float in [-4.0, 4.0] the bit similarity per byte.
 -4 indicates that all bits are different.
 +4 indicates that all bits are the same.
@@ -266,7 +266,7 @@ class SimilarityScores(UserDict[int, list[BitSimilarity]]):
         return x >= -4.0 and x <= 4.0
 
     def is_valid(self) -> bool:
-        if not all(SimilarityScores.is_keysize(k) for k in self.data.keys()):
+        if not all(SimilarityScores.is_keysize(k) for k in self.data):
             return False
 
         for scores in self.data.values():
@@ -292,7 +292,7 @@ class SimilarityScores(UserDict[int, list[BitSimilarity]]):
 
         best_so_far: tuple[int, float] = (0, -4.0)
 
-        for k in self.data.keys():
+        for k in self.data:
             mean = self.mean(k)
             if mean > best_so_far[1]:
                 best_so_far = (k, mean)
@@ -349,8 +349,9 @@ def probable_keysize(
         pairs = sample(all_pairs, trial_pairs)
 
         def get_block(idx: int) -> bytes:
-            idx *= keysize
-            return ciphertext[idx : idx + keysize]
+            nonlocal keysize
+            idx *= keysize  # noqa: B023
+            return ciphertext[idx : idx + keysize]  # noqa: B023
 
         s_scores: list[float] = []
         for i, j in pairs:

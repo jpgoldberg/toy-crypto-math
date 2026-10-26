@@ -231,7 +231,7 @@ class Ind(Generic[K]):
         assert self._key is not None
 
         if hash_bytes(ctext) in self._challenge_ctexts:
-            raise Exception(
+            raise StateError(
                 "Adversary is not allowed to call decrypt on challenge ctext"
             )
 

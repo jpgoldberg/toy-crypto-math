@@ -1,13 +1,42 @@
 digraph "IND-CCA1" {
-rankdir=LR;
-ranksep=1.5;
-nodesep=0.75;
-node [shape=circle];
-edge [penwidth=0.75, labelfloat=true, fontname="Anonymous Pro Bold", fontsize=12];
-S -> I [label="initialize()"];
-I -> C [label="encrypt_one()"];
-I -> I [label="encrypt()"];
-I -> I [label="decrypt()"];
-C -> S [label="finalize()"];
-C -> C [label="encrypt()"];
+	graph [bb="0,0,338.38,200.75",
+		nodesep=0.75,
+		rankdir=LR,
+		ranksep=1.5
+	];
+	node [label="\N",
+		shape=circle
+	];
+	edge [fontname="Anonymous Pro Bold",
+		fontsize=12,
+		labelfloat=true,
+		penwidth=0.75
+	];
+	S	[height=0.5,
+		pos="18,18",
+		width=0.5];
+	I	[height=0.5,
+		pos="163,62",
+		width=0.5];
+	S -> I	[label="initialize()",
+		lp="90.5,46.375",
+		pos="e,145.42,56.899 35.684,23.133 60.117,30.651 105.89,44.736 135.11,53.727"];
+	I -> I	[label="encrypt()",
+		lp="163,140.38",
+		pos="e,167.53,79.715 158.47,79.715 154.34,104.11 155.85,134 163,134 169.12,134 171.11,112.13 168.96,90.532"];
+	I -> I	[label="decrypt()",
+		lp="163,194.38",
+		pos="e,168.95,79.473 157.05,79.473 145.16,123.69 147.14,188 163,188 177.62,188 180.45,133.34 171.48,90.163"];
+	C	[height=0.5,
+		pos="308,18",
+		width=0.5];
+	I -> C	[label="encrypt_one()",
+		lp="235.5,46.375",
+		pos="e,290.42,23.101 180.68,56.867 205.12,49.349 250.89,35.264 280.11,26.273"];
+	C -> S	[label="finalize()",
+		lp="163,22.375",
+		pos="e,36.118,17.642 289.97,17.563 260.46,16.856 197.88,15.58 145,16 111.38,16.267 72.725,16.934 47.191,17.425"];
+	C -> C	[label="encrypt()",
+		lp="308,96.375",
+		pos="e,316.55,34.273 299.45,34.273 290.57,58.919 293.42,90 308,90 320.53,90 324.4,67.046 319.6,44.948"];
 }

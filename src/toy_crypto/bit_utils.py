@@ -164,7 +164,7 @@ class Bit:
     @staticmethod
     def _other_bool(other: object) -> bool | None:
         if isinstance(other, bytes):
-            ob = any([b != 0 for b in other])
+            ob = any(b != 0 for b in other)
         else:
             ob = bool(other)
         return ob
@@ -382,7 +382,7 @@ class PyBitArray:
             case None, _:  # sign is negative
                 stop = 0
             case _, _:
-                stop = stop
+                pass
 
         # I know this, you know this. Now the type checker will know this
         assert stop is not None

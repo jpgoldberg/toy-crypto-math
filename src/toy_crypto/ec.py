@@ -13,8 +13,7 @@ https://github.com/python/mypy/labels/topic-self-types
 """
 
 from .bit_utils import bits
-from .nt import Modulus as Modulus
-from .nt import is_modulus, mod_sqrt
+from .nt import Modulus, is_modulus, mod_sqrt
 
 __all__: list[str] = []  # Will be added to along the way
 
@@ -186,9 +185,7 @@ class Point:
             return True
         if self._x != Q.x or self._y != Q.y:  # x's and y's don't match
             return False
-        if self._curve != Q.curve:  # They are defined for different curves
-            return False
-        return True
+        return self._curve == Q.curve  # They are defined for different curves
 
     def __bool__(self) -> bool:
         """P is True iff P is not the zero point."""

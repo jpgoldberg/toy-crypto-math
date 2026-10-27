@@ -86,7 +86,7 @@ def fermat_factor(n: int, ith: int = 0) -> nt.FactorList:
     top = root_n
 
     if ith < len(LOW_PRIMES):
-        for ith, p in enumerate(LOW_PRIMES[ith:]):
+        for nth, p in enumerate(LOW_PRIMES[ith:]):
             if p > top:
                 break
             reduced, remainder = divmod(n, p)
@@ -98,7 +98,7 @@ def fermat_factor(n: int, ith: int = 0) -> nt.FactorList:
                     prev_reduced = reduced
                     reduced, remainder = divmod(reduced, p)
                 factors.append((p, exponent))
-                return factors + fermat_factor(prev_reduced, ith)
+                return factors + fermat_factor(prev_reduced, nth)
 
     # n is not divisible by any of our low primes
     if n <= LOW_PRIMES[-1] ** 2:  # n is prime
@@ -319,9 +319,9 @@ def mod_sqrt(a: int, m: int) -> list[int]:
 
     # just a check that we got an e and q
     if m != (1 << e) * q + 1:
-        raise Exception(f"Shouldn't happen: 2^{e} * {q} + 1 != {m}")
+        raise Exception(f"Shouldn't happen: 2^{e} * {q} + 1 != {m}")  # noqa: TRY002
     if q % 2 == 0:
-        raise Exception(f"Shouldn't happen: q ({q}) isn't odd.")
+        raise Exception(f"Shouldn't happen: q ({q}) isn't odd.")  # noqa: TRY002
 
     # Step 2.
     # Find an x such that x is a quadratic non-residue of m.

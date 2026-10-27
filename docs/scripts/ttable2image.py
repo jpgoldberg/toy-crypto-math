@@ -1,20 +1,9 @@
-from typing import Any
-
-import pydot  # types: ignore
+import pydot
 
 from toy_crypto.sec_games import Ind, IndCca1, IndCca2, IndCpa, IndEav, State
 
-games: dict[str, object] = {
-    "IND-EAV": IndEav,
-    "IND-CPA": IndCpa,
-    "IND-CCA1": IndCca1,
-    "IND-CCA2": IndCca2,
-}
 
-extra_state_abbr: list[str] = list("αβγδεζηθικλμνξπρστφχψω")[::-1]
-
-
-def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
+def make_graph(game: type[Ind], name: str) -> pydot.Dot:
     ttable = game.T_TABLE
     states: list[State] = list(ttable.keys())
     label = f"State transitions in {name} game"
@@ -41,7 +30,17 @@ def make_graph(game: Ind[Any], name: str) -> pydot.Graph:
 
     return graph
 
+def main() -> None:
 
-for name, game in games.items():
-    graph: pydot.Graph = make_graph(game, name)  # type: ignore[arg-type]
-    graph.write_raw(f"{name}.gv")
+    games: dict[str, type[Ind]] = {
+        "IND-EAV": IndEav,
+        "IND-CPA": IndCpa,
+        "IND-CCA1": IndCca1,
+        "IND-CCA2": IndCca2,
+    }
+    for name, game in games.items():
+        graph: pydot.Graph = make_graph(game, name)
+        graph.write_dot(f"{name}.gv")  # type: ignore[missing-attribute]
+
+if __name__ == '__main__':
+    main()

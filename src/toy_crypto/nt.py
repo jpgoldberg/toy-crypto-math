@@ -33,9 +33,7 @@ def is_modulus(n: Any) -> TypeGuard[Modulus]:
         return False
     if n < 2:
         return False
-    if not isprime(n):
-        return False
-    return True
+    return isprime(n)
 
 
 @export
@@ -77,7 +75,7 @@ class FactorList(UserList[tuple[int, int]]):
 
     def __init__(
         self,
-        prime_factors: list[tuple[int, int]] = [],
+        prime_factors: list[tuple[int, int]] | None = None,
         check_primes: bool = False,
     ) -> None:
         """
@@ -86,6 +84,8 @@ class FactorList(UserList[tuple[int, int]]):
         Either you ensure that the primes really are prime or use
         ``check_primes = True``.
         """
+        if prime_factors is None:
+            prime_factors = []
         super().__init__(prime_factors)
 
         # Normalization will do some sanity checking as well
@@ -161,9 +161,8 @@ class FactorList(UserList[tuple[int, int]]):
                 continue
             if e < 0:
                 raise ValueError(f"exponent ({e}) should not be negative")
-            if check_primes:
-                if not isprime(p):
-                    raise ValueError(f"{p} is composite")
+            if check_primes and not isprime(p):
+                raise ValueError(f"{p} is composite")
             d[p] += e
 
         self.data = [(p, d[p]) for p in sorted(d.keys())]
@@ -175,7 +174,7 @@ class FactorList(UserList[tuple[int, int]]):
         """True iff all the alleged primes are prime."""
         if self._factors_are_prime is not None:
             return self._factors_are_prime
-        self._factors_are_prime = all([isprime(p) for p, _ in self.data])
+        self._factors_are_prime = all(isprime(p) for p, _ in self.data)
         return self._factors_are_prime
 
     @property
@@ -206,7 +205,7 @@ class FactorList(UserList[tuple[int, int]]):
     def coprimes(self) -> Iterator[int]:
         """Iterator of coprimes."""
         for a in range(1, self.n):
-            if not any([a % p == 0 for p, _ in self.data]):
+            if not any(a % p == 0 for p, _ in self.data):
                 yield a
 
     def unit(self) -> int:
@@ -579,5 +578,6 @@ def get_prime(
             break
         prime_test_count += 1
         if prime_test_count > prime_test_limit:
+            # ruff: ignore[TRY002]
             raise Exception("failed to find prime meeting all conditions")
     return n

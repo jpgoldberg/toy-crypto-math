@@ -1,7 +1,7 @@
-requires = ["tox>=4"]
+requires = ["tox>=4", "tox-uv>=1"]
 
 # Update this when project python_version is changed
-env_list = ["3.14", "3.13", "3.12"]
+env_list = ["3.14", "3.13", "3.12.16"]
 
 runner = "uv-venv-lock-runner"
 

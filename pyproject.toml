@@ -67,6 +67,9 @@ markers = [
 ]
 addopts = ["-m not (slow or statistical)"]
 
+[tool.uv]
+python-preference = "managed"
+
 [dependency-groups]
 dev = [
     "mypy >= 1.15",

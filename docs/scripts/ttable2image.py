@@ -30,6 +30,7 @@ def make_graph(game: type[Ind], name: str) -> pydot.Dot:
 
     return graph
 
+
 def main() -> None:
 
     games: dict[str, type[Ind]] = {
@@ -42,5 +43,6 @@ def main() -> None:
         graph: pydot.Graph = make_graph(game, name)
         graph.write_dot(f"{name}.gv")  # type: ignore[missing-attribute]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

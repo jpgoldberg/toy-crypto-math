@@ -48,7 +48,7 @@ class Constraint(ABC):
 class ValueRange[TO: TLE](Constraint):
     """Constrain the values to a range."""
 
-    def __init__(self, min: TLE| None, max: TLE | None) -> None:
+    def __init__(self, min: TLE | None, max: TLE | None) -> None:
         """Set minimum and maximum.
 
         Use `None` for no minimum or maximum

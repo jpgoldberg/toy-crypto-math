@@ -217,7 +217,7 @@ class BaSieve(Sievish):
         return instance
 
     @classmethod
-    def from_list(cls, primes: list[int], size: int | None = None) -> Self:
+    def from_list(cls, primes: Sequence[int], size: int | None = None) -> Self:
         if not primes:
             raise ValueError("primes cannot be empty")
         primes = sorted(primes)
@@ -318,7 +318,7 @@ class SetSieve(Sievish):
     """
 
     _base_sieve: Sequence[int] = [2, 3]
-    _common_data = _base_sieve[:]
+    _common_data: list[int] = list(_base_sieve[:])  # noqa: RUF012
     _largest_n: int = 3
 
     lock = threading.Lock()
@@ -374,7 +374,7 @@ class SetSieve(Sievish):
         return instance
 
     @classmethod
-    def from_list(cls, primes: list[int], size: int | None = None) -> Self:
+    def from_list(cls, primes: Sequence[int], size: int | None = None) -> Self:
         if not primes:
             raise ValueError("primes cannot be empty")
 
@@ -503,7 +503,7 @@ class IntSieve(Sievish):
 
     @classmethod
     def from_list(
-        cls, primes: list[int], size: int | None = None
+        cls, primes: Sequence[int], size: int | None = None
     ) -> "IntSieve":
         if not primes:
             raise ValueError("primes cannot be empty")
@@ -513,7 +513,7 @@ class IntSieve(Sievish):
             size = max_prime
 
         instance = cls.__new__(cls)
-        instance._data = sum(int(1 << p) for p in primes)
+        instance._data = sum((1 << p) for p in primes)
         instance._n = size
         instance._count = int(instance._data.bit_count())
         return instance
@@ -524,7 +524,7 @@ class IntSieve(Sievish):
         self._count: int = self._data.bit_count()
 
     def _extend(self, n: int) -> None:
-        if n <= int(self._common_data).bit_length():
+        if n <= self._common_data.bit_length():
             return
         ones: int = (1 << ((n - self._n) + 1)) - 1
         ones = ones << self._n

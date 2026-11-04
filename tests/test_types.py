@@ -1,9 +1,9 @@
-from toy_crypto.types import Constraint
 import sys
 
 import pytest
 
 from toy_crypto import types
+from toy_crypto.types import Constraint
 
 
 class TestChar:

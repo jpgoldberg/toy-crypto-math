@@ -9,7 +9,7 @@ description = 'Modules that can be used to illustrate and explore cryptographic 
 readme = "README.md"
 
 # be sure to adjust tox.toml when this changes
-requires-python = ">=3.12.16"
+requires-python = ">=3.12"
 license = "MIT"
 keywords = []
 authors = [

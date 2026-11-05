@@ -21,6 +21,40 @@ def b64_to_int(s: str) -> int:
     return int.from_bytes(b, byteorder="big")
 
 
+# Really should parameterize tests instead
+# of defining these in this scope
+class Critter:
+    def __init__(
+        self,
+        factors: tuple[int, int],
+        expected_N: int,
+        expected_d: int | None = None,
+    ) -> None:
+        self.factors = factors
+        self.expected_N = expected_N
+        self.expected_d = expected_d
+
+        self._test_data: Sequence[tuple[int, int]] = []
+
+    def set_test_data(self, data: Sequence[tuple[int, int]]) -> None:
+        self._test_data = data
+
+    @property
+    def test_data(self) -> Sequence[tuple[int, int]]:
+        return self._test_data
+
+
+patty = Critter((107, 151), 16157, 1403)
+patty.set_test_data([(1234, 8900)])
+
+molly = Critter((97, 43), 4171, 593)
+molly.set_test_data([(1313, 530), (1729, 2826)])
+
+mr_talk = Critter((47, 89), 4183, 1905)
+# pyrefly: ignore[bad-assignment]
+mr_talk.set_test_data([(1729, 2016)])
+
+
 class TestCitm:
     """Tests using Cat in the Middle story"""
 
@@ -29,42 +63,17 @@ class TestCitm:
 
     e = 17
 
-    class Critter:
-        def __init__(
-            self,
-            factors: tuple[int, int],
-            expected_N: int,
-            expected_d: int | None = None,
-        ) -> None:
-            self.factors = factors
-            self.expected_N = expected_N
-            self.expected_d = expected_d
-
-            self.test_data: list[tuple[int, int]] = []
-
-    patty = Critter((107, 151), 16157, 1403)
-    # pyrefly: ignore[bad-assignment]
-    patty.test_data: Sequence = [(1234, 8900)]
-
-    molly = Critter((97, 43), 4171, 593)
-    # pyrefly: ignore[bad-assignment]
-    molly.test_data: Sequence = [(1313, 530), (1729, 2826)]
-
-    mr_talk = Critter((47, 89), 4183, 1905)
-    # pyrefly: ignore[bad-assignment]
-    mr_talk.test_data: Sequence = [(1729, 2016)]
-
     def test_encrypt(self) -> None:
-        for critter in [self.patty, self.molly, self.mr_talk]:
+        for critter in [patty, molly, mr_talk]:
             p, q = critter.factors
             key = rsa.PrivateKey(p, q, pub_exponent=self.e)
             pubkey = key.pub_key
 
-            for ptext, ctext in critter.test_data:
+            for ptext, ctext in critter._test_data:
                 assert ctext == pubkey.encrypt(ptext)
 
     def test_decrypt(self) -> None:
-        for critter in [self.patty, self.molly, self.mr_talk]:
+        for critter in [patty, molly, mr_talk]:
             p, q = critter.factors
             key = rsa.PrivateKey(p, q, pub_exponent=self.e)
 
@@ -72,7 +81,7 @@ class TestCitm:
                 assert ptext == key.decrypt(ctext)
 
     def test_N(self) -> None:
-        for critter in [self.patty, self.molly, self.mr_talk]:
+        for critter in [patty, molly, mr_talk]:
             p, q = critter.factors
             key = rsa.PrivateKey(p, q, pub_exponent=self.e)
             pubkey = key.pub_key
@@ -80,7 +89,7 @@ class TestCitm:
             assert critter.expected_N == pubkey.N
 
     def test_d(self) -> None:
-        for critter in [self.patty, self.molly, self.mr_talk]:
+        for critter in [patty, molly, mr_talk]:
             p, q = critter.factors
             key = rsa.PrivateKey(p, q, pub_exponent=self.e)
 

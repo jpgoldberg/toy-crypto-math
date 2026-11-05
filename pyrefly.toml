@@ -2,13 +2,16 @@ project-excludes = [
     "**/docs/",
     "**/profiling/",
     "**/tests/resources/wycheproof*",
-    "**/sage.py",
+    "**/tests/*.sage.py",
     "**/ttable2image.py",
 ]
+
 project-includes = [
     "./src",
     "./tests",
 ]
+
+
 preset = "legacy"
 ignore-missing-imports = [
     "pytest.*",

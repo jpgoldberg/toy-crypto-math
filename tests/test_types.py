@@ -3,6 +3,7 @@ import sys
 import pytest
 
 from toy_crypto import types
+from toy_crypto.types import Constraint
 
 
 class TestChar:
@@ -56,7 +57,7 @@ class TestDocstrings:
             "\n- meets LengthRange(1, 1)"
         )
         base_type: type = int
-        constraints = (
+        constraints: tuple[Constraint, ...] = (
             types.ValueRange(0, 255),
             types.LengthRange(1, 1),
         )

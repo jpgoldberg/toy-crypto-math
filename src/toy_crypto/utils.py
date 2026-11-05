@@ -302,7 +302,7 @@ def export[F: SuppprtsName](fn: F) -> F:
     if hasattr(mod, "__all__"):
         mod.__all__.append(name)
     else:
-        mod.__all__ = [name]
+        setattr(mod, "__all__", [name])  # noqa: B010
     return fn
 
 

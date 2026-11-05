@@ -7,7 +7,7 @@ This module is probably the least stable of any of these unstable modules.
 """
 
 import math
-import sys  # for getrecursionlimit
+import sys
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence, Sized
 from dataclasses import dataclass
@@ -18,6 +18,7 @@ from typing import (
     Protocol,
     TypeAliasType,
     TypeGuard,
+    cast,
     runtime_checkable,
 )
 
@@ -30,12 +31,9 @@ class AnnotatedType(Protocol):
     __origin__: type
 
 
-# lifted from annotated-types
-
-
-@runtime_checkable
-class SupportsLe(Protocol):
-    def __le__(self, /) -> bool: ...
+# For reasons I don't understand, creating a protocol didn't work.
+type TLE = float | int | str
+"""Supports __le__()."""
 
 
 class Constraint(ABC):
@@ -47,23 +45,24 @@ class Constraint(ABC):
         ...
 
 
-class ValueRange[T: SupportsLe](Constraint):
+class ValueRange[TO: TLE](Constraint):
     """Constrain the values to a range."""
 
-    def __init__(self, min: T | None, max: T | None) -> None:
+    def __init__(self, min: TLE | None, max: TLE | None) -> None:
         """Set minimum and maximum.
 
         Use `None` for no minimum or maximum
         """
-        self._min: T = -math.inf if min is None else min
-        self._max: T = math.inf if max is None else max
+
+        self._min = cast(TO, -math.inf if min is None else min)
+        self._max = cast(TO, math.inf if max is None else max)
 
     @property
-    def min(self) -> SupportsLe:
+    def min(self) -> TLE:
         return self._min
 
     @property
-    def max(self) -> SupportsLe:
+    def max(self) -> TLE:
         return self._max
 
     def __call__(self, val: object) -> bool:
@@ -217,6 +216,7 @@ def make_predicate(
 Prob = NewType("Prob", float)
 
 # fmt: off
+# pyrefly: ignore[bad-argument-type]
 _is_prob: Predicate = make_predicate("is_prob", Prob, (ValueRange(0.0, 1.0),))
 def is_prob(val: object) -> TypeGuard[Prob]:
     return _is_prob(val)
@@ -229,7 +229,10 @@ type PositiveInt = int
 
 
 is_positive_int: Predicate = make_predicate(
-    "is_positive_int", PositiveInt, constraints=(ValueRange(1, math.inf),)
+    # pyrefly: ignore[bad-argument-type]
+    "is_positive_int",
+    PositiveInt,
+    constraints=(ValueRange(1, math.inf),),
 )
 
 

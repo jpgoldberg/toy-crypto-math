@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improved test automation for multiple versions of Python
 - Other improvements in building and testing automations
+- Updated linters (ruff ruff 0.17.3, mypy, 2.5.1, pyrefly 1.4.0)
+- Pass tests for stricter/updated linting
 
 ### Documentation
 

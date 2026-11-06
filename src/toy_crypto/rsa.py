@@ -7,12 +7,12 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from hmac import compare_digest
 from math import gcd, lcm
-from typing import Callable, Final, TypeAlias
+from typing import Final
 
 from . import utils
 from .nt import modinv, probably_prime
 
-logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 _DEFAULT_E = 65537
 
@@ -255,7 +255,7 @@ class PublicKey:
     def __init__(self, modulus: int, public_exponent: int) -> None:
         """Public key from public values."""
         if modulus.bit_length() < MIN_STD_KEYSIZE:
-            logging.warning(
+            logger.warning(
                 f"Keysize ({modulus.bit_length()}) is smaller than required ({MIN_STD_KEYSIZE})"
             )
         self._N = modulus
@@ -392,7 +392,7 @@ class PrivateKey:
 
         self._N = self._p * self._q
         if self._N.bit_length() < MIN_STD_KEYSIZE:
-            logging.warning(
+            logger.warning(
                 f"Keysize ({self._N.bit_length()}) is smaller than required ({MIN_STD_KEYSIZE})"
             )
         self._pubkey = PublicKey(self._N, self._e)
@@ -663,7 +663,7 @@ def _mantissa_to_int(value: float, prec: int = 53) -> int:
         raise ValueError("number of bits must be positive")
 
     if sys.float_info.radix != 2:
-        raise Exception(
+        raise Exception(  # noqa: TRY002
             "WFT? Are you really running this on a non-binary architecture?"
         )
 
@@ -702,7 +702,7 @@ def fips186_prime_gen(
     # We don't enforce Step 1 for this toy
     # but we do warn
     if n_len.bit_length() < MIN_STD_KEYSIZE:
-        logging.warning(
+        logger.warning(
             f"Keysize ({n_len.bit_length()}) is smaller than required ({MIN_STD_KEYSIZE})"
         )
 
@@ -771,6 +771,9 @@ def fips186_prime_gen(
         if i >= 5 * prime_size:  # Step 4.7
             raise Exception(f"Failure generating p: i = {i}")  # noqa: TRY002
 
+    # Broken out of while loop looking for
+    logger.info(f"Prime p found after {i - 1} primality tests.")
+
     # q is much the same, but we also check that it isn't too close to p
     i = 0  # Step 5.1
     while True:
@@ -789,7 +792,7 @@ def fips186_prime_gen(
 
         if gcd(q - 1, e) == 1:  # Step 5.6  # noqa: SIM102
             if probably_prime(q, k):
-                logging.info(f"Prime q found after {i - 1} primality tests.")
+                logger.info(f"Prime q found after {i - 1} primality tests.")
                 return p, q
 
         i += 1  # Step 5.7

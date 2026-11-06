@@ -531,3 +531,29 @@ def find_zero(
             lowest_above = new_point
     logger.info(f"bisection done after {call_count} function calls")
     return lowest_above.n
+
+
+_MANTISSA_BITS = sys.float_info.mant_dig
+
+
+def mantissa_to_int(value: float, prec: int = 53) -> int:
+    """returns int made from the precision bits of mantissa of value.
+
+    :raises ValueError: if precision is less than 1.
+    :raises Exception: if floats aren't binary bits.
+    """
+    # See https://github.com/jpgoldberg/toy-crypto-math/issues/27 for
+    # discussion of implementation and history.
+    if prec < 1:
+        raise ValueError("number of bits must be positive")
+
+    if sys.float_info.radix != 2:
+        raise Exception(  # noqa: TRY002
+            "WFT? Are you really running this on a non-binary architecture?"
+        )
+
+    value = abs(value)
+
+    lshift = min(prec, _MANTISSA_BITS) - 1
+    m, _ = math.frexp(value)
+    return int(m * (2 << lshift))

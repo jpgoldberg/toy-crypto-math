@@ -2,7 +2,6 @@ import hashlib
 import logging
 import math
 import secrets
-import sys
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from hmac import compare_digest
@@ -654,26 +653,6 @@ def key_gen(
     return (key.pub_key, key)
 
 
-_MANTISSA_BITS = sys.float_info.mant_dig
-
-
-def _mantissa_to_int(value: float, prec: int = 53) -> int:
-    """returns int made from the precision bits of mantissa of value"""
-    if prec < 1:
-        raise ValueError("number of bits must be positive")
-
-    if sys.float_info.radix != 2:
-        raise Exception(  # noqa: TRY002
-            "WFT? Are you really running this on a non-binary architecture?"
-        )
-
-    value = abs(value)
-
-    lshift = min(prec, _MANTISSA_BITS) - 1
-    m, _ = math.frexp(value)
-    return int(m * (2 << lshift))
-
-
 def fips186_prime_gen(
     n_len: int, e: int = 65537, k: int = 4
 ) -> tuple[int, int]:
@@ -719,10 +698,8 @@ def fips186_prime_gen(
     # The lower bound for a prime is sqrt(2)(2^{(prime_size) – 1})
     # and is checked in steps 4.4 and 5.4 using the
     # most signification bits of sqrt(2)
-    # See https://github.com/jpgoldberg/toy-crypto-math/issues/27 for
-    # discussion of implementation.
 
-    # root2_bits = _mantissa_to_int(value=math.sqrt(2), prec = 32)
+    # root2_bits = utils.mantissa_to_int(value=math.sqrt(2), prec = 32)
     root2_bits = 0xB504F333  # the leading bits of sqrt(2)
     root2_bits += 1  # Round up so we never allow something we shouldn't
 

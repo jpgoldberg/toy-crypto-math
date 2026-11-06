@@ -116,5 +116,35 @@ class TestFindZero:
         assert zero == expected_zero
 
 
+class TestMantissa:
+    SQRT2 = 1.4142135623730951454746218587388284504413604736328125000
+
+    @pytest.mark.parametrize(
+        "input_float,precision,expected",
+        [
+            (2.0, 32, 0x80000000),
+            (2.0, 8, 128),
+            (2.0, 7, 64),
+            (SQRT2, 32, 0xB504F333),
+        ],
+    )
+    def test_mantissa(self, input_float: float, precision: int, expected: int):
+        m = utils.mantissa_to_int(input_float, prec=precision)
+        assert m == expected
+
+    @pytest.mark.parametrize(
+        "input_float,precision",
+        [
+            (2.0, 32),
+            (0.4, 32),
+            (2.0, 7),
+            (SQRT2, 53),
+        ],
+    )
+    def test_mantissa_length(self, input_float: float, precision: int):
+        m = utils.mantissa_to_int(input_float, prec=precision)
+        assert m.bit_length() == precision
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(args=[__file__]))
